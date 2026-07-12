@@ -1,0 +1,330 @@
+@use 'sass:color';
+
+// ========================================
+// TOKENS DE DISEÑO - UniLab Portal
+// ========================================
+$primary-blue: #243b8e;
+$light-blue: #1c9dd8;
+$yellow: #fcc202;
+$naranja: rgb(240, 134, 0);
+$white: #ffffff;
+$light-gray: #f5f5f5;
+$soft-1: #ebf5ff;
+$border-gray: #d8d8d8;
+$text-dark: #333333;
+$text-body: #777777;
+$text-light: #999999;
+$error: #d32f2f;
+$success: #388e3c;
+
+// ========================================
+// LAYOUT PRINCIPAL
+// ========================================
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: $soft-1;
+  padding: 16px;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.login-card {
+  background: $white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 460px;
+  text-align: center;
+
+  // Logo con círculo azul
+  .logo-circle {
+    width: 80px;
+    height: 80px;
+    background: $primary-blue;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 32px;
+    font-size: 40px;
+  }
+
+  // Título principal
+  h1 {
+    color: $text-dark;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    text-align: center;
+  }
+
+  // Subtítulo descriptivo
+  .subtitle {
+    color: $text-body;
+    font-size: 15px;
+    text-align: center;
+    margin: 0 0 32px;
+    line-height: 1.6;
+  }
+
+  // Contenedor del formulario
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+// ========================================
+// ALERTAS
+// ========================================
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+
+  &.alert-error {
+    background-color: #ffebee;
+    color: $error;
+    border-left: 4px solid $error;
+  }
+
+  &.alert-success {
+    background-color: #e8f5e9;
+    color: $success;
+    border-left: 4px solid $success;
+  }
+}
+
+// ========================================
+// GRUPOS DE FORMULARIO
+// ========================================
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  .hint-text {
+    font-size: 12px;
+    color: $text-light;
+    margin-top: -2px;
+    line-height: 1.4;
+  }
+
+  .error-text {
+    font-size: 12px;
+    color: $error;
+    margin-top: 4px;
+  }
+}
+
+// ========================================
+// INPUTS
+// ========================================
+.form-control {
+  padding: 12px 14px;
+  font-size: 14px;
+  border: 1px solid $border-gray;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', inherit;
+  background: $white;
+
+  &::placeholder {
+    color: $text-light;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $light-blue;
+    box-shadow: 0 0 0 3px rgba(28, 157, 216, 0.1);
+  }
+
+  &.is-invalid {
+    border-color: $error;
+    background-color: #fff5f5;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+    }
+  }
+}
+
+// ========================================
+// PASSWORD WRAPPER (CON TOGGLE DE VISIBILIDAD)
+// ========================================
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .form-control {
+    padding-right: 40px;
+    width: 100%;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-body;
+    font-size: 16px;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+// ========================================
+// BOTONES
+// ========================================
+.btn {
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background-color: $primary-blue;
+    color: $white;
+    width: 100%;
+
+    &:hover:not(:disabled) {
+      background-color: color.adjust($primary-blue, $lightness: -10%);
+      box-shadow: 0 4px 12px rgba(36, 59, 142, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      background-color: color.adjust($primary-blue, $lightness: -15%);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: $light-gray;
+    color: $text-dark;
+
+    &:hover:not(:disabled) {
+      background-color: color.adjust($light-gray, $lightness: -5%);
+    }
+  }
+}
+
+// ========================================
+// ENLACE DE SOPORTE
+// ========================================
+.support-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: $text-body;
+
+  a {
+    color: $light-blue;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ========================================
+// FOOTER CON BADGE SEGURIDAD
+// ========================================
+.footer-badge {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid $border-gray;
+  text-align: center;
+  font-size: 12px;
+  color: $text-light;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+@media (max-width: 768px) {
+  .login-card {
+    padding: 32px 24px;
+
+    h1 {
+      font-size: 22px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+    }
+
+    form {
+      gap: 16px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 12px;
+  }
+
+  .login-card {
+    padding: 24px 16px;
+
+    .logo-circle {
+      width: 60px;
+      height: 60px;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      font-size: 13px;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "UniLab",
+    "subtitle": "Plataforma de Gestión Académica"
+  },
+  "auth": {
+    "login": {
+      "title": "UniLab",
+      "subtitle": "Ingrese sus credenciales universitarias para gestionar sus solicitudes académicas.",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "Ej: estudiante@uniautónoma.edu",
+      "emailHint": "Ingresa tu correo electrónico institucional.",
+      "password": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "showPassword": "Mostrar contraseña",
+      "submitButton": "Ingresar al Portal →",
+      "support": "¿Problemas para ingresar?",
+      "supportLink": "Contactar Soporte",
+      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL"
+    },
+    "cambiarPassword": {
+      "title": "Cambiar Contraseña",
+      "subtitle": "Este es tu primer ingreso. Por favor, establece una contraseña nueva y segura para tu cuenta.",
+      "nuevaPassword": "Nueva Contraseña",
+      "confirmarPassword": "Confirmar Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Mínimo 8 caracteres. Usa mayúsculas, números y caracteres especiales.",
+      "showPassword": "Mostrar contraseña",
+      "submitButton": "Actualizar Contraseña",
+      "passwordsMismatch": "Las contraseñas no coinciden",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL",
+      "securityBadge": "🔒"
+    }
+  },
+  "dashboard": {
+    "title": "UniLab - Dashboard",
+    "welcome": "Bienvenido,",
+    "logout": "Cerrar Sesión",
+    "heading": "Bienvenido al Sistema",
+    "description": "Esta es una ruta autenticada de prueba.",
+    "roleLabel": "Tu rol actual es:",
+    "users": "Usuarios",
+    "projects": "Proyectos",
+    "seminaries": "Semilleros",
+    "events": "Eventos"
+  },
+  "common": {
+    "error": "Error",
+    "success": "Éxito",
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar"
+  }
+}

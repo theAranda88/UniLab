@@ -1,0 +1,469 @@
+// Schema Prisma — 22 tablas según docs/00-esquema-bd-referencia.md
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =============================================================================
+// MÓDULO A — USUARIOS Y ROLES
+// =============================================================================
+
+model roles {
+  id_rol      Int      @id @default(autoincrement())
+  nombre_rol  String   @db.VarChar(255)
+  descripcion String?  @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+  created_by  Int?
+  deleted_at  DateTime? @db.Timestamp(6)
+
+  creador  usuarios?  @relation("roles_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  usuarios usuarios[]
+}
+
+model usuarios {
+  id_usuario          Int      @id @default(autoincrement())
+  id_rol              Int
+  nombres             String   @db.VarChar(255)
+  apellidos           String   @db.VarChar(255)
+  email               String   @db.VarChar(255)
+  password_hash       String   @db.VarChar(255)
+  documento_identidad String   @db.VarChar(255)
+  telefono            String   @db.VarChar(255)
+  activo              Boolean  @default(true)
+  primer_login        Boolean  @default(true)
+  created_at          DateTime @default(now()) @db.Timestamp(6)
+  updated_at          DateTime @updatedAt @db.Timestamp(6)
+  created_by          Int?
+  deleted_at          DateTime? @db.Timestamp(6)
+
+  rol    roles     @relation(fields: [id_rol], references: [id_rol], onDelete: Restrict)
+  creador usuarios? @relation("usuarios_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  usuarios_creados              usuarios[]              @relation("usuarios_creador")
+  roles_creados                 roles[]                 @relation("roles_creador")
+  perfiles_coordinador_creados  perfiles_coordinador[]  @relation("perfiles_coordinador_creador")
+  perfiles_profesor_creados     perfiles_profesor[]     @relation("perfiles_profesor_creador")
+  perfiles_estudiante_creados   perfiles_estudiante[]   @relation("perfiles_estudiante_creador")
+  perfiles_externo_creados      perfiles_externo[]      @relation("perfiles_externo_creador")
+  escuelas_creadas              escuelas[]              @relation("escuelas_creador")
+  cursos_creados                cursos[]                @relation("cursos_creador")
+  curso_autorizaciones_creadas  curso_autorizaciones[]  @relation("curso_autorizaciones_creador")
+  proyectos_creados             proyectos[]             @relation("proyectos_creador")
+  proyecto_coordinadores_creados proyecto_coordinadores[] @relation("proyecto_coordinadores_creador")
+  proyecto_autores_creados      proyecto_autores[]      @relation("proyecto_autores_creador")
+  calificaciones_creadas        calificaciones[]        @relation("calificaciones_creador")
+  comentarios_creados           comentarios[]           @relation("comentarios_creador")
+  proyecto_vistas_creadas       proyecto_vistas[]       @relation("proyecto_vistas_creador")
+  semilleros_creados            semilleros[]            @relation("semilleros_creador")
+  semillero_profesores_creados  semillero_profesores[]  @relation("semillero_profesores_creador")
+  semillero_miembros_creados    semillero_miembros[]    @relation("semillero_miembros_creador")
+  eventos_creados               eventos[]               @relation("eventos_creador")
+  evento_jornadas_creadas       evento_jornadas[]       @relation("evento_jornadas_creador")
+  inscripciones_creadas         inscripciones[]         @relation("inscripciones_creador")
+  asistencias_creadas           asistencias[]           @relation("asistencias_creador")
+
+  perfil_coordinador            perfiles_coordinador?
+  perfil_profesor               perfiles_profesor?
+  perfil_estudiante             perfiles_estudiante?
+  perfil_externo                perfiles_externo?
+
+  autorizaciones_como_estudiante  curso_autorizaciones[] @relation("curso_autorizaciones_estudiante")
+  autorizaciones_como_profesor    curso_autorizaciones[] @relation("curso_autorizaciones_profesor")
+  proyectos_como_creador          proyectos[]            @relation("proyectos_estudiante_creador")
+  proyectos_como_aprobador        proyectos[]            @relation("proyectos_aprobador")
+  proyectos_como_coordinador      proyecto_coordinadores[] @relation("proyecto_coordinadores_profesor")
+  proyectos_como_autor            proyecto_autores[]     @relation("proyecto_autores_estudiante")
+  calificaciones                  calificaciones[]
+  comentarios                     comentarios[]
+  vistas_proyecto                 proyecto_vistas[]
+  semilleros_como_lider           semilleros[]           @relation("semilleros_profesor_lider")
+  semilleros_como_profesor        semillero_profesores[] @relation("semillero_profesores_profesor")
+  membresias_semillero            semillero_miembros[]   @relation("semillero_miembros_estudiante")
+  autorizaciones_semillero        semillero_miembros[]   @relation("semillero_miembros_profesor")
+  eventos_organizados             eventos[]              @relation("eventos_organizador")
+  inscripciones                   inscripciones[]
+
+  @@unique([email], where: { deleted_at: null })
+}
+
+model perfiles_coordinador {
+  id_usuario  Int      @id
+  cargo       String   @db.VarChar(255)
+  dependencia String   @db.VarChar(255)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+  created_by  Int?
+  deleted_at  DateTime? @db.Timestamp(6)
+
+  usuario usuarios  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  creador usuarios? @relation("perfiles_coordinador_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+}
+
+model perfiles_profesor {
+  id_usuario     Int      @id
+  codigo_docente String   @db.VarChar(255)
+  id_escuela     Int
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  updated_at     DateTime @updatedAt @db.Timestamp(6)
+  created_by     Int?
+  deleted_at     DateTime? @db.Timestamp(6)
+
+  usuario usuarios @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  escuela escuelas @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
+  creador usuarios? @relation("perfiles_profesor_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+}
+
+model perfiles_estudiante {
+  id_usuario         Int      @id
+  codigo_estudiantil String   @db.VarChar(255)
+  id_escuela         Int
+  created_at         DateTime @default(now()) @db.Timestamp(6)
+  updated_at         DateTime @updatedAt @db.Timestamp(6)
+  created_by         Int?
+  deleted_at         DateTime? @db.Timestamp(6)
+
+  usuario usuarios @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  escuela escuelas @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
+  creador usuarios? @relation("perfiles_estudiante_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+}
+
+model perfiles_externo {
+  id_usuario   Int      @id
+  institucion  String   @db.VarChar(255)
+  ocupacion    String   @db.VarChar(255)
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  updated_at   DateTime @updatedAt @db.Timestamp(6)
+  created_by   Int?
+  deleted_at   DateTime? @db.Timestamp(6)
+
+  usuario usuarios  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  creador usuarios? @relation("perfiles_externo_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+}
+
+// =============================================================================
+// MÓDULO B — PROYECTOS
+// =============================================================================
+
+model escuelas {
+  id_escuela     Int      @id @default(autoincrement())
+  nombre_escuela String   @db.VarChar(255)
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  updated_at     DateTime @updatedAt @db.Timestamp(6)
+  created_by     Int?
+  deleted_at     DateTime? @db.Timestamp(6)
+
+  creador             usuarios?             @relation("escuelas_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  cursos              cursos[]
+  perfiles_profesor   perfiles_profesor[]
+  perfiles_estudiante perfiles_estudiante[]
+  semilleros          semilleros[]
+}
+
+model cursos {
+  id_curso          Int      @id @default(autoincrement())
+  id_escuela        Int
+  nombre_curso      String   @db.VarChar(255)
+  periodo_academico String   @db.VarChar(255)
+  created_at        DateTime @default(now()) @db.Timestamp(6)
+  updated_at        DateTime @updatedAt @db.Timestamp(6)
+  created_by        Int?
+  deleted_at        DateTime? @db.Timestamp(6)
+
+  escuela         escuelas               @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
+  creador         usuarios?              @relation("cursos_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  autorizaciones  curso_autorizaciones[]
+  proyectos       proyectos[]
+}
+
+model curso_autorizaciones {
+  id_autorizacion         Int      @id @default(autoincrement())
+  id_curso                Int
+  id_estudiante           Int
+  id_profesor_autorizador Int
+  autorizado              Boolean  @default(true)
+  fecha_autorizacion      DateTime @db.Timestamp(6)
+  created_at              DateTime @default(now()) @db.Timestamp(6)
+  updated_at              DateTime @updatedAt @db.Timestamp(6)
+  created_by              Int?
+  deleted_at              DateTime? @db.Timestamp(6)
+
+  curso                cursos   @relation(fields: [id_curso], references: [id_curso], onDelete: Restrict)
+  estudiante           usuarios @relation("curso_autorizaciones_estudiante", fields: [id_estudiante], references: [id_usuario], onDelete: Restrict)
+  profesor_autorizador usuarios @relation("curso_autorizaciones_profesor", fields: [id_profesor_autorizador], references: [id_usuario], onDelete: Restrict)
+  creador              usuarios? @relation("curso_autorizaciones_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@unique([id_curso, id_estudiante], where: { deleted_at: null })
+}
+
+model proyectos {
+  id_proyecto           Int       @id @default(autoincrement())
+  id_curso              Int
+  id_semillero          Int?
+  id_estudiante_creador Int
+  titulo                String    @db.VarChar(255)
+  descripcion           String    @db.Text
+  tipo_proyecto         String    @db.VarChar(50)
+  url_aplicativo        String    @db.VarChar(500)
+  url_apk               String?   @db.VarChar(500)
+  url_youtube           String?   @db.VarChar(500)
+  url_spotify           String?   @db.VarChar(500)
+  contador_vistas       Int       @default(0)
+  estado_proyecto       String    @db.VarChar(50)
+  id_aprobador          Int?
+  fecha_publicacion     DateTime? @db.Timestamp(6)
+  created_at            DateTime  @default(now()) @db.Timestamp(6)
+  updated_at            DateTime  @updatedAt @db.Timestamp(6)
+  created_by            Int?
+  deleted_at            DateTime? @db.Timestamp(6)
+
+  curso              cursos    @relation(fields: [id_curso], references: [id_curso], onDelete: Restrict)
+  semillero          semilleros? @relation(fields: [id_semillero], references: [id_semillero], onDelete: Restrict)
+  estudiante_creador usuarios  @relation("proyectos_estudiante_creador", fields: [id_estudiante_creador], references: [id_usuario], onDelete: Restrict)
+  aprobador          usuarios? @relation("proyectos_aprobador", fields: [id_aprobador], references: [id_usuario], onDelete: Restrict)
+  creador            usuarios? @relation("proyectos_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  coordinadores proyecto_coordinadores[]
+  autores       proyecto_autores[]
+  calificaciones calificaciones[]
+  comentarios   comentarios[]
+  vistas        proyecto_vistas[]
+}
+
+model proyecto_coordinadores {
+  id_proyecto Int
+  id_profesor Int
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+  created_by  Int?
+  deleted_at  DateTime? @db.Timestamp(6)
+
+  proyecto proyectos @relation(fields: [id_proyecto], references: [id_proyecto], onDelete: Restrict)
+  profesor usuarios  @relation("proyecto_coordinadores_profesor", fields: [id_profesor], references: [id_usuario], onDelete: Restrict)
+  creador  usuarios? @relation("proyecto_coordinadores_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@id([id_proyecto, id_profesor])
+}
+
+model proyecto_autores {
+  id_proyecto   Int
+  id_estudiante Int
+  rol_autor     String?  @db.VarChar(50)
+  created_at    DateTime @default(now()) @db.Timestamp(6)
+  updated_at    DateTime @updatedAt @db.Timestamp(6)
+  created_by    Int?
+  deleted_at    DateTime? @db.Timestamp(6)
+
+  proyecto   proyectos @relation(fields: [id_proyecto], references: [id_proyecto], onDelete: Restrict)
+  estudiante usuarios  @relation("proyecto_autores_estudiante", fields: [id_estudiante], references: [id_usuario], onDelete: Restrict)
+  creador    usuarios? @relation("proyecto_autores_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@id([id_proyecto, id_estudiante])
+}
+
+model calificaciones {
+  id_calificacion Int      @id @default(autoincrement())
+  id_proyecto     Int
+  id_usuario      Int
+  puntuacion      Int      @db.SmallInt
+  created_at      DateTime @default(now()) @db.Timestamp(6)
+  updated_at      DateTime @updatedAt @db.Timestamp(6)
+  created_by      Int?
+  deleted_at      DateTime? @db.Timestamp(6)
+
+  proyecto proyectos @relation(fields: [id_proyecto], references: [id_proyecto], onDelete: Restrict)
+  usuario  usuarios  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  creador  usuarios? @relation("calificaciones_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@unique([id_proyecto, id_usuario], where: { deleted_at: null })
+}
+
+model comentarios {
+  id_comentario       Int      @id @default(autoincrement())
+  id_proyecto         Int
+  id_usuario          Int
+  id_comentario_padre Int?
+  contenido           String   @db.Text
+  fecha_comentario    DateTime @db.Timestamp(6)
+  created_at          DateTime @default(now()) @db.Timestamp(6)
+  updated_at          DateTime @updatedAt @db.Timestamp(6)
+  created_by          Int?
+  deleted_at          DateTime? @db.Timestamp(6)
+
+  proyecto         proyectos   @relation(fields: [id_proyecto], references: [id_proyecto], onDelete: Restrict)
+  usuario          usuarios    @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  comentario_padre comentarios? @relation("comentarios_hilo", fields: [id_comentario_padre], references: [id_comentario], onDelete: Restrict)
+  respuestas       comentarios[] @relation("comentarios_hilo")
+  creador          usuarios?   @relation("comentarios_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+}
+
+model proyecto_vistas {
+  id_vista          BigInt   @id @default(autoincrement())
+  id_proyecto       Int
+  id_usuario        Int?
+  fecha_hora_visita DateTime @default(now()) @db.Timestamp(6)
+  created_at        DateTime @default(now()) @db.Timestamp(6)
+  updated_at        DateTime @updatedAt @db.Timestamp(6)
+  created_by        Int?
+  deleted_at        DateTime? @db.Timestamp(6)
+
+  proyecto proyectos @relation(fields: [id_proyecto], references: [id_proyecto], onDelete: Restrict)
+  usuario  usuarios? @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  creador  usuarios? @relation("proyecto_vistas_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+}
+
+// =============================================================================
+// MÓDULO C — SEMILLEROS
+// =============================================================================
+
+model semilleros {
+  id_semillero      Int      @id @default(autoincrement())
+  nombre_semillero  String   @db.VarChar(255)
+  descripcion       String   @db.Text
+  id_escuela        Int
+  id_profesor_lider Int
+  activo            Boolean  @default(true)
+  created_at        DateTime @default(now()) @db.Timestamp(6)
+  updated_at        DateTime @updatedAt @db.Timestamp(6)
+  created_by        Int?
+  deleted_at        DateTime? @db.Timestamp(6)
+
+  escuela        escuelas @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
+  profesor_lider usuarios @relation("semilleros_profesor_lider", fields: [id_profesor_lider], references: [id_usuario], onDelete: Restrict)
+  creador        usuarios? @relation("semilleros_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  profesores semillero_profesores[]
+  miembros   semillero_miembros[]
+  proyectos  proyectos[]
+}
+
+model semillero_profesores {
+  id_semillero     Int
+  id_profesor      Int
+  es_lider         Boolean  @default(false)
+  fecha_asignacion DateTime @db.Date
+  created_at       DateTime @default(now()) @db.Timestamp(6)
+  updated_at       DateTime @updatedAt @db.Timestamp(6)
+  created_by       Int?
+  deleted_at       DateTime? @db.Timestamp(6)
+
+  semillero semilleros @relation(fields: [id_semillero], references: [id_semillero], onDelete: Restrict)
+  profesor  usuarios   @relation("semillero_profesores_profesor", fields: [id_profesor], references: [id_usuario], onDelete: Restrict)
+  creador   usuarios?  @relation("semillero_profesores_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@id([id_semillero, id_profesor])
+}
+
+model semillero_miembros {
+  id_membresia            Int       @id @default(autoincrement())
+  id_semillero            Int
+  id_estudiante           Int
+  estado_solicitud        String    @db.VarChar(50)
+  fecha_resolucion        DateTime? @db.Timestamp(6)
+  puede_publicar          Boolean   @default(false)
+  fecha_autorizacion      DateTime? @db.Timestamp(6)
+  id_profesor_autorizador Int?
+  created_at              DateTime  @default(now()) @db.Timestamp(6)
+  updated_at              DateTime  @updatedAt @db.Timestamp(6)
+  created_by              Int?
+  deleted_at              DateTime? @db.Timestamp(6)
+
+  semillero            semilleros @relation(fields: [id_semillero], references: [id_semillero], onDelete: Restrict)
+  estudiante           usuarios   @relation("semillero_miembros_estudiante", fields: [id_estudiante], references: [id_usuario], onDelete: Restrict)
+  profesor_autorizador usuarios?  @relation("semillero_miembros_profesor", fields: [id_profesor_autorizador], references: [id_usuario], onDelete: Restrict)
+  creador              usuarios?  @relation("semillero_miembros_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@unique([id_semillero, id_estudiante], where: { deleted_at: null })
+}
+
+// =============================================================================
+// MÓDULO D — EVENTOS
+// =============================================================================
+
+model eventos {
+  id_evento      Int      @id @default(autoincrement())
+  nombre_evento  String   @db.VarChar(255)
+  tipo_evento    String   @db.VarChar(255)
+  descripcion    String   @db.Text
+  fecha_inicio   DateTime @db.Date
+  fecha_fin      DateTime @db.Date
+  lugar          String   @db.VarChar(255)
+  id_organizador Int
+  estado         String   @db.VarChar(50)
+  requiere_pago  Boolean  @default(false)
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  updated_at     DateTime @updatedAt @db.Timestamp(6)
+  created_by     Int?
+  deleted_at     DateTime? @db.Timestamp(6)
+
+  organizador usuarios @relation("eventos_organizador", fields: [id_organizador], references: [id_usuario], onDelete: Restrict)
+  creador     usuarios? @relation("eventos_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  jornadas      evento_jornadas[]
+  inscripciones inscripciones[]
+}
+
+model evento_jornadas {
+  id_jornada     Int      @id @default(autoincrement())
+  id_evento      Int
+  nombre_jornada String   @db.VarChar(255)
+  fecha          DateTime @db.Date
+  hora_inicio    DateTime @db.Time(6)
+  hora_fin       DateTime @db.Time(6)
+  codigo_qr      String   @unique @db.VarChar(255)
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  updated_at     DateTime @updatedAt @db.Timestamp(6)
+  created_by     Int?
+  deleted_at     DateTime? @db.Timestamp(6)
+
+  evento      eventos       @relation(fields: [id_evento], references: [id_evento], onDelete: Restrict)
+  creador     usuarios?     @relation("evento_jornadas_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  asistencias asistencias[]
+}
+
+model inscripciones {
+  id_inscripcion      Int      @id @default(autoincrement())
+  id_evento           Int
+  id_usuario          Int
+  tipo_asistente      String   @db.VarChar(50)
+  nombre_completo     String   @db.VarChar(255)
+  documento_identidad String   @db.VarChar(255)
+  email               String   @db.VarChar(255)
+  telefono            String   @db.VarChar(255)
+  institucion         String?  @db.VarChar(255)
+  genero              String   @db.VarChar(50)
+  estado_pago         String?  @db.VarChar(50)
+  created_at          DateTime @default(now()) @db.Timestamp(6)
+  updated_at          DateTime @updatedAt @db.Timestamp(6)
+  created_by          Int?
+  deleted_at          DateTime? @db.Timestamp(6)
+
+  evento      eventos       @relation(fields: [id_evento], references: [id_evento], onDelete: Restrict)
+  usuario     usuarios      @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  creador     usuarios?     @relation("inscripciones_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  asistencias asistencias[]
+
+  @@unique([id_evento, id_usuario], where: { deleted_at: null })
+}
+
+model asistencias {
+  id_asistencia         Int      @id @default(autoincrement())
+  id_inscripcion        Int
+  id_jornada            Int
+  fecha_hora_registro   DateTime @db.Timestamp(6)
+  created_at            DateTime @default(now()) @db.Timestamp(6)
+  updated_at            DateTime @updatedAt @db.Timestamp(6)
+  created_by            Int?
+  deleted_at            DateTime? @db.Timestamp(6)
+
+  inscripcion inscripciones   @relation(fields: [id_inscripcion], references: [id_inscripcion], onDelete: Restrict)
+  jornada     evento_jornadas @relation(fields: [id_jornada], references: [id_jornada], onDelete: Restrict)
+  creador     usuarios?       @relation("asistencias_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@unique([id_inscripcion, id_jornada], where: { deleted_at: null })
+}

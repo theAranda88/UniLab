@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "UniLab",
+    "subtitle": "Academic Management Platform"
+  },
+  "auth": {
+    "login": {
+      "title": "UniLab",
+      "subtitle": "Enter your university credentials to manage your academic requests.",
+      "email": "Email",
+      "emailPlaceholder": "E.g: student@uniautonomous.edu",
+      "emailHint": "Enter your institutional email.",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "showPassword": "Show password",
+      "submitButton": "Sign In →",
+      "support": "Having trouble signing in?",
+      "supportLink": "Contact Support",
+      "security": "SECURE CONNECTION · INSTITUTIONAL SSL"
+    },
+    "cambiarPassword": {
+      "title": "Change Password",
+      "subtitle": "This is your first login. Please set a new and secure password for your account.",
+      "nuevaPassword": "New Password",
+      "confirmarPassword": "Confirm Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Minimum 8 characters. Use uppercase letters, numbers and special characters.",
+      "showPassword": "Show password",
+      "submitButton": "Update Password",
+      "passwordsMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "security": "SECURE CONNECTION · INSTITUTIONAL SSL",
+      "securityBadge": "🔒"
+    }
+  },
+  "dashboard": {
+    "title": "UniLab - Dashboard",
+    "welcome": "Welcome,",
+    "logout": "Sign Out",
+    "heading": "Welcome to the System",
+    "description": "This is an authenticated test route.",
+    "roleLabel": "Your current role is:",
+    "users": "Users",
+    "projects": "Projects",
+    "seminaries": "Research Groups",
+    "events": "Events"
+  },
+  "common": {
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close"
+  }
+}

@@ -1,0 +1,98 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo con círculo azul -->
+    <div class="logo-circle">
+      <span class="logo-icon">🎓</span>
+    </div>
+    
+    <h1>{{ 'auth.login.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Error Message -->
+      @if (errorMessage) {
+        <div class="alert alert-error">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <!-- Email Field (Correo Electrónico) -->
+      <div class="form-group">
+        <label for="email">{{ 'auth.login.email' | translate }}</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
+          formControlName="email"
+          [placeholder]="'auth.login.emailPlaceholder' | translate"
+        />
+        <small class="hint-text">{{ 'auth.login.emailHint' | translate }}</small>
+        @if (email?.invalid && (email?.dirty || email?.touched)) {
+          <span class="error-text">
+            @if (email?.errors?.['required']) {
+              {{ 'auth.login.email' | translate }} {{ 'common.error' | translate | lowercase }}
+            }
+            @if (email?.errors?.['email']) {
+              Ingresa un correo válido
+            }
+          </span>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">{{ 'auth.login.password' | translate }}</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)"
+            formControlName="password"
+            [placeholder]="'auth.login.passwordPlaceholder' | translate"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="(showPassword ? 'Ocultar' : 'auth.login.showPassword' | translate)"
+          >
+            <span class="eye-icon">{{ showPassword ? '👁️' : '👁️‍🗨️' }}</span>
+          </button>
+        </div>
+        @if (password?.invalid && (password?.dirty || password?.touched)) {
+          <span class="error-text">
+            @if (password?.errors?.['required']) {
+              {{ 'auth.login.password' | translate }}
+            }
+            @if (password?.errors?.['minlength']) {
+              Mínimo 6 caracteres
+            }
+          </span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loginForm.invalid || loading"
+      >
+        {{ loading ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
+      </button>
+    </form>
+
+    <!-- Support Link -->
+    <div class="support-link">
+      {{ 'auth.login.support' | translate }}
+      <a href="#" (click)="$event.preventDefault()">{{ 'auth.login.supportLink' | translate }}</a>
+    </div>
+
+    <!-- Security Badge Footer -->
+    <div class="footer-badge">
+      <span class="badge-icon">🔒</span>
+      <span>{{ 'auth.login.security' | translate }}</span>
+    </div>
+  </div>
+</div>

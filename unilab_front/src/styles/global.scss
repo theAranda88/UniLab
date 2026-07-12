@@ -1,0 +1,170 @@
+// ==========================================
+// GLOBAL STYLES
+// ==========================================
+
+@use './design-tokens' as tokens;
+
+// Reset & Normalize
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: tokens.$font-family-base;
+  font-size: tokens.$font-size-base;
+  line-height: tokens.$line-height-normal;
+  color: tokens.$text-dark;
+  background-color: tokens.$white;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: tokens.$light-blue;
+  text-decoration: none;
+  transition: color tokens.$transition-base;
+
+  &:hover {
+    color: tokens.$primary-blue;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid tokens.$light-blue;
+    outline-offset: 2px;
+  }
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+input,
+select,
+textarea {
+  border: none;
+  background: none;
+}
+
+textarea {
+  resize: vertical;
+  overflow: auto;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: tokens.$font-weight-bold;
+  line-height: tokens.$line-height-tight;
+  margin-bottom: tokens.$space-16;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+h1 {
+  font-size: tokens.$font-size-3xl;
+}
+
+h2 {
+  font-size: tokens.$font-size-2xl;
+}
+
+h3 {
+  font-size: tokens.$font-size-xl;
+}
+
+h4 {
+  font-size: tokens.$font-size-lg;
+}
+
+h5,
+h6 {
+  font-size: tokens.$font-size-base;
+}
+
+p {
+  margin-bottom: tokens.$space-16;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+ul,
+ol {
+  margin-bottom: tokens.$space-16;
+  margin-left: tokens.$space-24;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  li {
+    margin-bottom: tokens.$space-8;
+  }
+}
+
+// Scrollbar Styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: tokens.$light-gray;
+}
+
+::-webkit-scrollbar-thumb {
+  background: tokens.$gray-400;
+  border-radius: tokens.$radius-base;
+
+  &:hover {
+    background: tokens.$gray-500;
+  }
+}
+
+// Focus Styles
+:focus-visible {
+  outline: 2px solid tokens.$light-blue;
+  outline-offset: 2px;
+}
+
+// Selection
+::selection {
+  background-color: tokens.$light-blue;
+  color: tokens.$white;
+}

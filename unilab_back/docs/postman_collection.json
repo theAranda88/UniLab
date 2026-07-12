@@ -1,0 +1,606 @@
+{
+  "info": {
+    "name": "API UniLab",
+    "description": "Colección Postman de la plataforma universitaria UniLab.\n\n**Contraseña de prueba (seed):** Password123!\n\n**Uso:**\n1. Importar el entorno `postman_environment.json`\n2. Ejecutar «Iniciar sesión (Administrador)» — guarda el token automáticamente\n3. Probar el resto de solicitudes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "description": "Inicio de sesión, registro y cambio de contraseña",
+      "item": [
+        {
+          "name": "Iniciar sesión (Administrador)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@unilab.edu\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": "{{base_url}}/auth/login",
+            "description": "Emite JWT. El script de prueba guarda el token en la variable de entorno `token`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  pm.environment.set('token', json.token);",
+                  "  console.log('Token guardado en la variable de entorno.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Iniciar sesión (Estudiante)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"estudiante1@unilab.edu\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": "{{base_url}}/auth/login",
+            "description": "Login con usuario estudiante del seeder."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('token', pm.response.json().token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Iniciar sesión (Profesor)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"profesor1@unilab.edu\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": "{{base_url}}/auth/login",
+            "description": "Login con profesor líder del seeder."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('token', pm.response.json().token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar estudiante",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Nuevo\",\n  \"apellidos\": \"Estudiante\",\n  \"email\": \"nuevo.estudiante@unilab.edu\",\n  \"documento_identidad\": \"1099999999\",\n  \"telefono\": \"3009999999\",\n  \"rol\": \"Estudiante\",\n  \"codigo_estudiantil\": \"EST-999\",\n  \"id_escuela\": 5\n}"
+            },
+            "url": "{{base_url}}/auth/register",
+            "description": "Autorregistro. Devuelve `password_temporal` una sola vez."
+          }
+        },
+        {
+          "name": "Registrar externo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Nuevo\",\n  \"apellidos\": \"Externo\",\n  \"email\": \"nuevo.externo@unilab.edu\",\n  \"documento_identidad\": \"1098888888\",\n  \"telefono\": \"3008888888\",\n  \"rol\": \"Externo\",\n  \"institucion\": \"Empresa Aliada\",\n  \"ocupacion\": \"Consultor\"\n}"
+            },
+            "url": "{{base_url}}/auth/register",
+            "description": "Autorregistro de usuario externo."
+          }
+        },
+        {
+          "name": "Cambiar contraseña (primer login)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nueva_password\": \"MiNuevaClave2026!\"\n}"
+            },
+            "url": "{{base_url}}/auth/cambiar-password",
+            "description": "Caso A: usuario autenticado con `primer_login=true`."
+          }
+        },
+        {
+          "name": "Cambiar contraseña (reset por correo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"estudiante1@unilab.edu\"\n}"
+            },
+            "url": "{{base_url}}/auth/cambiar-password",
+            "description": "Caso B: sin token. Genera contraseña temporal en la respuesta."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "description": "Gestión de usuarios — solo Administrador",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/usuarios",
+            "description": "Lista todos los usuarios activos."
+          }
+        },
+        {
+          "name": "Listar usuarios por rol",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/usuarios?rol=Estudiante",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"],
+              "query": [{ "key": "rol", "value": "Estudiante", "description": "Filtrar por rol" }]
+            },
+            "description": "Filtro opcional: Administrador, Coordinador, Profesor, Estudiante, Externo."
+          }
+        },
+        {
+          "name": "Obtener usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/usuarios/1",
+            "description": "Detalle de un usuario (incluye perfil extendido)."
+          }
+        },
+        {
+          "name": "Crear usuario (profesor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Nuevo\",\n  \"apellidos\": \"Profesor\",\n  \"email\": \"nuevo.profesor@unilab.edu\",\n  \"documento_identidad\": \"1088888888\",\n  \"telefono\": \"3008888888\",\n  \"rol\": \"Profesor\",\n  \"codigo_docente\": \"DOC-999\",\n  \"id_escuela\": 5\n}"
+            },
+            "url": "{{base_url}}/usuarios",
+            "description": "Devuelve `password_temporal` para entregar al usuario."
+          }
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"3001111111\"\n}"
+            },
+            "url": "{{base_url}}/usuarios/2",
+            "description": "Actualiza campos del usuario y perfil extendido."
+          }
+        },
+        {
+          "name": "Suspender / reactivar usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/usuarios/2/suspender",
+            "description": "Alterna el campo `activo` del usuario."
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/usuarios/99",
+            "description": "Soft-delete (marca `deleted_at`)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Escuelas y Cursos",
+      "description": "Lectura: autenticado. Escritura: Administrador. Autorizaciones: Profesor.",
+      "item": [
+        {
+          "name": "Listar escuelas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/escuelas"
+          }
+        },
+        {
+          "name": "Obtener escuela por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/escuelas/5"
+          }
+        },
+        {
+          "name": "Crear escuela",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_escuela\": \"Escuela de Prueba API\"\n}"
+            },
+            "url": "{{base_url}}/escuelas"
+          }
+        },
+        {
+          "name": "Actualizar escuela",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_escuela\": \"Escuela Actualizada\"\n}"
+            },
+            "url": "{{base_url}}/escuelas/6"
+          }
+        },
+        {
+          "name": "Eliminar escuela",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/escuelas/6",
+            "description": "Soft-delete con cascada lógica a cursos."
+          }
+        },
+        {
+          "name": "Listar cursos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/cursos"
+          }
+        },
+        {
+          "name": "Listar cursos por escuela",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/cursos?id_escuela=5",
+              "host": ["{{base_url}}"],
+              "path": ["cursos"],
+              "query": [{ "key": "id_escuela", "value": "5", "description": "ID de la escuela" }]
+            }
+          }
+        },
+        {
+          "name": "Crear curso",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_escuela\": 5,\n  \"nombre_curso\": \"Curso de Prueba API\",\n  \"periodo_academico\": \"2026-1\"\n}"
+            },
+            "url": "{{base_url}}/cursos"
+          }
+        },
+        {
+          "name": "Autorizar estudiante en curso",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_estudiante\": 5\n}"
+            },
+            "url": "{{base_url}}/cursos/13/autorizaciones",
+            "description": "Requiere token de Profesor. Habilita al estudiante para crear proyectos."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Proyectos",
+      "description": "Creación solo Estudiante con autorización vigente.",
+      "item": [
+        {
+          "name": "Listar proyectos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/proyectos"
+          }
+        },
+        {
+          "name": "Obtener proyecto por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/proyectos/1",
+            "description": "Registra una vista en cada llamada."
+          }
+        },
+        {
+          "name": "Crear proyecto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_curso\": 13,\n  \"titulo\": \"App UniLab Demo\",\n  \"descripcion\": \"Proyecto de demostración\",\n  \"tipo_proyecto\": \"web\",\n  \"url_aplicativo\": \"https://example.com\"\n}"
+            },
+            "url": "{{base_url}}/proyectos",
+            "description": "Usar token de Estudiante autorizado."
+          }
+        },
+        {
+          "name": "Cambiar estado del proyecto",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado_proyecto\": \"en_revision\"\n}"
+            },
+            "url": "{{base_url}}/proyectos/1/estado"
+          }
+        },
+        {
+          "name": "Agregar comentario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contenido\": \"Muy buen proyecto, felicitaciones.\"\n}"
+            },
+            "url": "{{base_url}}/proyectos/1/comentarios"
+          }
+        },
+        {
+          "name": "Calificar proyecto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puntuacion\": 5\n}"
+            },
+            "url": "{{base_url}}/proyectos/1/calificacion",
+            "description": "Upsert — una calificación por usuario y proyecto."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Semilleros",
+      "description": "Gestión de semilleros de investigación.",
+      "item": [
+        {
+          "name": "Listar semilleros",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros"
+          }
+        },
+        {
+          "name": "Obtener semillero por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1"
+          }
+        },
+        {
+          "name": "Crear semillero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_semillero\": \"Semillero de Prueba\",\n  \"descripcion\": \"Semillero creado desde Postman\",\n  \"id_escuela\": 5,\n  \"id_profesor_lider\": 3\n}"
+            },
+            "url": "{{base_url}}/semilleros",
+            "description": "Solo Administrador."
+          }
+        },
+        {
+          "name": "Solicitar membresía",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{base_url}}/semilleros/1/miembros",
+            "description": "Token de Estudiante. Body vacío usa el usuario autenticado."
+          }
+        },
+        {
+          "name": "Autorizar publicación (semillero)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/miembros/5/autorizar-publicacion",
+            "description": "Solo profesor líder del semillero."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Eventos",
+      "description": "Congresos, foros y control de asistencia por QR.",
+      "item": [
+        {
+          "name": "Listar eventos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos"
+          }
+        },
+        {
+          "name": "Obtener evento por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/1"
+          }
+        },
+        {
+          "name": "Crear evento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_evento\": \"Congreso de Prueba\",\n  \"tipo_evento\": \"Congreso\",\n  \"descripcion\": \"Evento de prueba desde Postman\",\n  \"fecha_inicio\": \"2026-09-01\",\n  \"fecha_fin\": \"2026-09-02\",\n  \"lugar\": \"Auditorio Central\",\n  \"estado\": \"planeado\",\n  \"requiere_pago\": false\n}"
+            },
+            "url": "{{base_url}}/eventos",
+            "description": "Solo Administrador."
+          }
+        },
+        {
+          "name": "Crear jornada",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_jornada\": \"Día 1 - Mañana\",\n  \"fecha\": \"2026-09-01\",\n  \"hora_inicio\": \"08:00:00\",\n  \"hora_fin\": \"12:00:00\"\n}"
+            },
+            "url": "{{base_url}}/eventos/1/jornadas",
+            "description": "Genera `codigo_qr` único automáticamente."
+          }
+        },
+        {
+          "name": "Inscribirse a evento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo_asistente\": \"estudiante\",\n  \"nombre_completo\": \"Sofía Estudiante\",\n  \"documento_identidad\": \"1000000005\",\n  \"email\": \"estudiante1@unilab.edu\",\n  \"telefono\": \"3000000005\",\n  \"genero\": \"femenino\"\n}"
+            },
+            "url": "{{base_url}}/eventos/1/inscripciones"
+          }
+        },
+        {
+          "name": "Registrar asistencia (QR)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo_qr\": \"PEGAR_CODIGO_QR_DE_LA_JORNADA\"\n}"
+            },
+            "url": "{{base_url}}/jornadas/1/asistencia",
+            "description": "Requiere inscripción previa al evento."
+          }
+        },
+        {
+          "name": "Reportes del evento",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/1/reportes",
+            "description": "Administrador o Coordinador."
+          }
+        },
+        {
+          "name": "Actualizar estado de pago",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado_pago\": \"confirmado\"\n}"
+            },
+            "url": "{{base_url}}/inscripciones/1/pago",
+            "description": "Solo si el evento requiere pago. Solo Administrador."
+          }
+        }
+      ]
+    }
+  ]
+}
