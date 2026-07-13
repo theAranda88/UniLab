@@ -48,9 +48,8 @@ export const eventoController = {
 
   registrarAsistencia: asyncHandler(async (req: Request, res: Response) => {
     const asistencia = await eventoService.registrarAsistencia(
-      Number(req.params.id),
-      req.user!.id_usuario,
       req.body.codigo_qr,
+      req.user!.id_usuario,
     );
     res.status(201).json(asistencia);
   }),
@@ -58,5 +57,39 @@ export const eventoController = {
   reportes: asyncHandler(async (req: Request, res: Response) => {
     const reporte = await eventoService.reportes(Number(req.params.id));
     res.status(200).json(reporte);
+  }),
+
+  obtenerJornadas: asyncHandler(async (req: Request, res: Response) => {
+    const jornadas = await eventoService.obtenerJornadas(Number(req.params.id));
+    res.status(200).json(jornadas);
+  }),
+
+  exportarCSV: asyncHandler(async (req: Request, res: Response) => {
+    const csv = await eventoService.exportarCSV(Number(req.params.id));
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', `attachment; filename="reporte_evento_${req.params.id}.csv"`);
+    res.send(csv);
+  }),
+
+  exportarExcel: asyncHandler(async (req: Request, res: Response) => {
+    const excel = await eventoService.exportarExcel(Number(req.params.id));
+    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.header('Content-Disposition', `attachment; filename="reporte_evento_${req.params.id}.xlsx"`);
+    res.send(excel);
+  }),
+
+  generarQR: asyncHandler(async (req: Request, res: Response) => {
+    const codigo_qr = String(req.params.codigo_qr);
+    const formato = (req.query.formato as string) || 'svg';
+
+    const qr = await eventoService.generarQR(codigo_qr, formato as 'svg' | 'png');
+
+    if (formato === 'png') {
+      res.header('Content-Type', 'image/png');
+      res.send(qr);
+    } else {
+      res.header('Content-Type', 'image/svg+xml');
+      res.send(qr);
+    }
   }),
 };

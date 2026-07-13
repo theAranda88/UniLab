@@ -1,0 +1,238 @@
+.evento-detalle-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  .loading,
+  .error {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-radius: 4px;
+  }
+
+  .evento-content {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .evento-header {
+      padding: 2rem;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+        color: var(--primary-color, #333);
+        flex: 1;
+      }
+
+      .estado {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
+
+        &.estado-planeado {
+          background-color: #e3f2fd;
+          color: #1976d2;
+        }
+
+        &.estado-activo {
+          background-color: #e8f5e9;
+          color: #388e3c;
+        }
+
+        &.estado-finalizado {
+          background-color: #f3e5f5;
+          color: #7b1fa2;
+        }
+      }
+    }
+
+    .evento-info {
+      padding: 2rem;
+      border-bottom: 1px solid #f0f0f0;
+
+      .info-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+
+        strong {
+          min-width: 150px;
+          color: var(--primary-color, #333);
+        }
+
+        span {
+          color: #666;
+        }
+      }
+    }
+
+    .descripcion-section {
+      padding: 2rem;
+      border-bottom: 1px solid #f0f0f0;
+
+      h3 {
+        margin: 0 0 1rem 0;
+        color: var(--primary-color, #333);
+      }
+
+      p {
+        margin: 0;
+        color: #666;
+        line-height: 1.6;
+      }
+    }
+
+    .acciones {
+      padding: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #f0f0f0;
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+
+        &.btn-primary,
+        &.btn-success {
+          color: white;
+
+          &:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+          }
+        }
+
+        &.btn-primary {
+          background-color: var(--primary-color, #007bff);
+        }
+
+        &.btn-success {
+          background-color: #28a745;
+        }
+      }
+    }
+
+    .jornadas-section {
+      padding: 2rem;
+
+      h3 {
+        margin: 0 0 1.5rem 0;
+        color: var(--primary-color, #333);
+      }
+
+      .no-data {
+        color: #999;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .jornadas-list {
+        display: grid;
+        gap: 1rem;
+
+        .jornada-card {
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+
+          &:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          }
+
+          .jornada-header {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+
+            h4 {
+              margin: 0;
+              color: var(--primary-color, #333);
+            }
+          }
+
+          .jornada-info {
+            padding: 1rem;
+
+            p {
+              margin: 0.5rem 0;
+              color: #666;
+              font-size: 0.95rem;
+
+              strong {
+                color: #333;
+              }
+            }
+
+            .qr-section {
+              margin-top: 1rem;
+              padding-top: 1rem;
+              border-top: 1px solid #e0e0e0;
+
+              strong {
+                display: block;
+                color: #333;
+                margin-bottom: 0.75rem;
+              }
+
+              .qr-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                border: 1px solid #e0e0e0;
+
+                .qr-image {
+                  max-width: 200px;
+                  height: auto;
+                  padding: 10px;
+                  background-color: white;
+                  border-radius: 4px;
+                  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                }
+
+                .qr-loading {
+                  color: #999;
+                  font-size: 0.9rem;
+                  text-align: center;
+                }
+
+                .qr-code-text {
+                  font-family: 'Courier New', monospace;
+                  font-size: 0.85rem;
+                  color: #666;
+                  word-break: break-all;
+                  text-align: center;
+                  max-width: 200px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

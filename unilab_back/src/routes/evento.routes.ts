@@ -21,8 +21,26 @@ const adminCoord = [...auth, requireRole(['Administrador', 'Coordinador'])] as c
 const autenticado = [...auth] as const;
 
 router.get('/', ...autenticado, eventoController.listar);
-router.get('/:id', ...autenticado, validate(idParamSchema, 'params'), eventoController.obtener);
 router.post('/', ...admin, validate(eventoSchema), eventoController.crear);
+
+// Asistencias (debe estar antes de /:id para no ser capturada por el parámetro)
+router.post(
+  '/asistencias/registrar',
+  ...autenticado,
+  validate(asistenciaSchema),
+  eventoController.registrarAsistencia,
+);
+
+// QR (debe estar antes de /:id para no ser capturada por el parámetro)
+router.get('/qr/:codigo_qr', ...autenticado, eventoController.generarQR);
+
+router.get('/:id', ...autenticado, validate(idParamSchema, 'params'), eventoController.obtener);
+router.get(
+  '/:id/jornadas',
+  ...autenticado,
+  validate(idParamSchema, 'params'),
+  eventoController.obtenerJornadas,
+);
 router.post(
   '/:id/jornadas',
   ...admin,
@@ -42,6 +60,18 @@ router.get(
   ...adminCoord,
   validate(idParamSchema, 'params'),
   eventoController.reportes,
+);
+router.get(
+  '/:id/reportes/export/csv',
+  ...adminCoord,
+  validate(idParamSchema, 'params'),
+  eventoController.exportarCSV,
+);
+router.get(
+  '/:id/reportes/export/excel',
+  ...adminCoord,
+  validate(idParamSchema, 'params'),
+  eventoController.exportarExcel,
 );
 
 export default router;

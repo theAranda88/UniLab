@@ -366,4 +366,15 @@ export const schemas = {
       codigo_qr: { type: 'string', description: 'UUID único de la jornada', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
     },
   },
+  AsistenciaResponse: {
+    type: 'object',
+    properties: {
+      id_asistencia: { type: 'integer', description: 'ID único de la asistencia', example: 42 },
+      id_inscripcion: { type: 'integer', description: 'ID de la inscripción del usuario al evento', example: 10 },
+      id_jornada: { type: 'integer', description: 'ID de la jornada', example: 1 },
+      fecha_hora_registro: { type: 'string', format: 'date-time', description: 'Fecha y hora exacta del registro de asistencia (ISO 8601)', example: '2026-07-19T10:30:45Z' },
+      created_at: { type: 'string', format: 'date-time', description: 'Timestamp de creación del registro', example: '2026-07-12T04:10:32Z' },
+      created_by: { type: 'integer', description: 'ID del usuario que registró la asistencia', example: 5 },
+    },
+  },
 };

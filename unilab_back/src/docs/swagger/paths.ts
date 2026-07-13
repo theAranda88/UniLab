@@ -459,14 +459,103 @@ export const paths = {
       responses: { 200: { description: 'Pago actualizado' }, ...err },
     },
   },
+  '/eventos/{id}/reportes/export/csv': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Exportar reporte a CSV',
+      description: '**Rol requerido:** Administrador o Coordinador. Descarga un archivo CSV con los datos de asistentes, documentos, emails, tipos de asistente, estado de pago y porcentaje de asistencia.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Archivo CSV descargado',
+          content: { 'text/csv': { schema: { type: 'string', format: 'binary' } } },
+        },
+        ...err,
+      },
+    },
+  },
+  '/eventos/{id}/reportes/export/excel': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Exportar reporte a Excel',
+      description: '**Rol requerido:** Administrador o Coordinador. Descarga un archivo XLSX con los datos formateados: encabezados azules (#243B8E), columnas para nombre, documento, email, tipo de asistente, estado de pago y asistencias.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Archivo Excel descargado',
+          content: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { schema: { type: 'string', format: 'binary' } } },
+        },
+        ...err,
+      },
+    },
+  },
+
+  // ─── INSCRIPCIONES / JORNADAS ─────────────────────────────────────────────
+  '/asistencias/registrar': {
+    post: {
+      tags: ['Eventos'],
+      summary: 'Registrar asistencia por escaneo QR',
+      description: '**Rol requerido:** Autenticado (cualquier usuario inscrito). Valida que el usuario esté inscrito en el evento de la jornada, que el código QR sea válido, y que no tenga asistencia duplicada. El QR puede ser escaneado directamente desde `http://localhost:4200/eventos/{id}/asistencia?qr={codigo_qr}` (deeplink automático) o ingresado manualmente. Genera un registro en la tabla `asistencias` con la fecha/hora del registro.',
+      requestBody: jsonBody('#/components/schemas/AsistenciaRequest'),
+      responses: {
+        201: {
+          description: 'Asistencia registrada correctamente',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/AsistenciaResponse' } } },
+        },
+        400: err[400],
+        401: err[401],
+        403: err[403],
+        404: err[404],
+        409: { ...err[409], description: 'Asistencia ya registrada en esa jornada' },
+        422: { ...err[422], description: 'Código QR inválido o usuario no inscrito en el evento' },
+      },
+    },
+  },
+  '/eventos/qr/{codigo_qr}': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Generar imagen QR (Backend)',
+      description: '**Rol requerido:** Autenticado. Genera una imagen PNG o SVG del código QR para una jornada. Generalmente no se usa directamente; el frontend genera QRs con `QRCode.toDataURL()`. Parámetro query: `formato=png` (default) o `formato=svg`.',
+      parameters: [
+        {
+          name: 'codigo_qr',
+          in: 'path',
+          required: true,
+          schema: { type: 'string', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+          description: 'UUID único de la jornada',
+        },
+        {
+          name: 'formato',
+          in: 'query',
+          required: false,
+          schema: { type: 'string', enum: ['png', 'svg'], default: 'png' },
+          description: 'Formato de la imagen QR',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Imagen QR en formato solicitado',
+          content: { 'image/png': { schema: { type: 'string', format: 'binary' } } },
+        },
+        ...err,
+      },
+    },
+  },
   '/jornadas/{id}/asistencia': {
     post: {
       tags: ['Eventos'],
-      summary: 'Registrar asistencia (escaneo QR)',
-      description: 'Valida inscripción activa al evento e inserta en `asistencias`.',
+      summary: 'Registrar asistencia (Ruta alternativa)',
+      description: '**Rol requerido:** Autenticado. Endpoint alternativo (mismo que POST /asistencias/registrar). Mantiene retrocompatibilidad con versiones anteriores.',
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/AsistenciaRequest'),
-      responses: { 201: { description: 'Asistencia registrada' }, ...err },
+      responses: {
+        201: {
+          description: 'Asistencia registrada correctamente',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/AsistenciaResponse' } } },
+        },
+        ...err,
+      },
     },
   },
 };
+

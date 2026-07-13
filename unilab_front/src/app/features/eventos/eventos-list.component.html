@@ -1,0 +1,58 @@
+<div class="eventos-list-container">
+  <div class="header">
+    <h1>{{ 'eventos.listar' | translate }}</h1>
+    @if (esAdmin()) {
+      <button class="btn btn-primary" (click)="crearEvento()">
+        {{ 'eventos.crear' | translate }}
+      </button>
+    }
+  </div>
+
+  <div class="filters">
+    <input
+      type="text"
+      placeholder="{{ 'eventos.filtroTipo' | translate }}"
+      [(ngModel)]="filtroTipo"
+      class="filter-input"
+    />
+    <select [(ngModel)]="filtroEstado" class="filter-select">
+      <option value="">{{ 'eventos.filtroEstado' | translate }}</option>
+      <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
+      <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
+      <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
+    </select>
+  </div>
+
+  @if (cargando()) {
+    <p class="loading">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (eventosFiltrados().length === 0) {
+    <p class="no-data">{{ 'eventos.sinEventos' | translate }}</p>
+  } @else {
+    <div class="eventos-grid">
+      @for (evento of eventosFiltrados(); track evento.id_evento) {
+        <div class="evento-card" (click)="verDetalle(evento.id_evento)">
+          <div class="evento-header">
+            <h3>{{ evento.nombre_evento }}</h3>
+            <span class="estado" [class]="'estado-' + evento.estado">
+              {{ 'eventos.estado.' + evento.estado | translate }}
+            </span>
+          </div>
+          <div class="evento-body">
+            <p><strong>{{ 'eventos.tipo' | translate }}:</strong> {{ evento.tipo_evento }}</p>
+            <p><strong>{{ 'eventos.lugar' | translate }}:</strong> {{ evento.lugar }}</p>
+            <p><strong>{{ 'eventos.fecha' | translate }}:</strong> {{ formatearFecha(evento.fecha_inicio) }} - {{ formatearFecha(evento.fecha_fin) }}</p>
+            <p class="descripcion">{{ evento.descripcion | slice: 0: 100 }}...</p>
+            @if (evento.requiere_pago) {
+              <span class="badge badge-info">{{ 'eventos.requierePago' | translate }}</span>
+            }
+          </div>
+          <div class="evento-footer">
+            <button class="btn btn-link">{{ 'common.verDetalles' | translate }}</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

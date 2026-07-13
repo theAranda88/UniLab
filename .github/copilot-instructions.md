@@ -12,12 +12,13 @@ Monorepo con dos carpetas raíz: `unilab_back/` (Node.js/TypeScript/Express/Pris
 
 ## 🎯 Inicio Rápido — Sistema SDD
 
-Este proyecto usa un **sistema SDD (Spec Driven Development) coordinado** con skills especializadas:
+Este proyecto usa un **sistema SDD (Spec Driven Development) coordinado** con skills especializadas y documentación integrada:
 
 1. **Lee:** `.github/QUICK_START.md` (2 min)
 2. **Elige:** Un skill de la tabla (backend-crud, frontend-crud, auth-flow, etc.)
-3. **Chat:** Describe tu necesidad siguiendo el formato del skill
-4. **Agent:** Guía SPEC → Confirmación → Implementación
+3. **Documenta:** Swagger + Postman como PARTE del skill (ref: `.github/DOCUMENTACION.md`)
+4. **Chat:** Describe tu necesidad siguiendo el formato del skill
+5. **Agent:** Guía SPEC → Confirmación → Implementación → Documentación
 
 Documentación completa: `.github/INDEX.md`
 

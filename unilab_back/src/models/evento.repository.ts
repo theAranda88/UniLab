@@ -44,6 +44,13 @@ export const eventoRepository = {
     });
   },
 
+  findJornadasByEventoId(id_evento: number) {
+    return prisma.evento_jornadas.findMany({
+      where: { id_evento, ...activo },
+      orderBy: { fecha: 'asc' },
+    });
+  },
+
   crearInscripcion(data: Prisma.inscripcionesCreateInput) {
     return prisma.inscripciones.create({ data });
   },

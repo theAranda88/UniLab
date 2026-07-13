@@ -1,0 +1,120 @@
+<div class="evento-form-container">
+  <div class="form-card">
+    <h1>{{ 'eventos.crear' | translate }}</h1>
+
+    @if (error()) {
+      <div class="error-message">{{ error() }}</div>
+    }
+
+    <form [formGroup]="formulario" (ngSubmit)="submit()" class="form">
+      <div class="form-group">
+        <label for="nombre_evento">{{ 'eventos.nombre' | translate }} *</label>
+        <input
+          type="text"
+          id="nombre_evento"
+          formControlName="nombre_evento"
+          class="form-control"
+          [class.is-invalid]="formulario.get('nombre_evento')?.invalid && formulario.get('nombre_evento')?.touched"
+        />
+        @if (formulario.get('nombre_evento')?.invalid && formulario.get('nombre_evento')?.touched) {
+          <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="tipo_evento">{{ 'eventos.tipo' | translate }} *</label>
+        <input
+          type="text"
+          id="tipo_evento"
+          formControlName="tipo_evento"
+          class="form-control"
+          [class.is-invalid]="formulario.get('tipo_evento')?.invalid && formulario.get('tipo_evento')?.touched"
+        />
+        @if (formulario.get('tipo_evento')?.invalid && formulario.get('tipo_evento')?.touched) {
+          <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">{{ 'eventos.descripcion' | translate }} *</label>
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
+          class="form-control"
+          rows="4"
+          [class.is-invalid]="formulario.get('descripcion')?.invalid && formulario.get('descripcion')?.touched"
+        ></textarea>
+        @if (formulario.get('descripcion')?.invalid && formulario.get('descripcion')?.touched) {
+          <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fecha_inicio">{{ 'eventos.fechaInicio' | translate }} *</label>
+          <input
+            type="date"
+            id="fecha_inicio"
+            formControlName="fecha_inicio"
+            class="form-control"
+            [class.is-invalid]="formulario.get('fecha_inicio')?.invalid && formulario.get('fecha_inicio')?.touched"
+          />
+          @if (formulario.get('fecha_inicio')?.invalid && formulario.get('fecha_inicio')?.touched) {
+            <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="fecha_fin">{{ 'eventos.fechaFin' | translate }} *</label>
+          <input
+            type="date"
+            id="fecha_fin"
+            formControlName="fecha_fin"
+            class="form-control"
+            [class.is-invalid]="formulario.get('fecha_fin')?.invalid && formulario.get('fecha_fin')?.touched"
+          />
+          @if (formulario.get('fecha_fin')?.invalid && formulario.get('fecha_fin')?.touched) {
+            <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lugar">{{ 'eventos.lugar' | translate }} *</label>
+        <input
+          type="text"
+          id="lugar"
+          formControlName="lugar"
+          class="form-control"
+          [class.is-invalid]="formulario.get('lugar')?.invalid && formulario.get('lugar')?.touched"
+        />
+        @if (formulario.get('lugar')?.invalid && formulario.get('lugar')?.touched) {
+          <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="estado">{{ 'eventos.estado' | translate }} *</label>
+        <select id="estado" formControlName="estado" class="form-control">
+          <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
+          <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
+          <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox">
+        <input type="checkbox" id="requiere_pago" formControlName="requiere_pago" />
+        <label for="requiere_pago">{{ 'eventos.requierePago' | translate }}</label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+          {{ enviando() ? 'Creando...' : ('eventos.crear' | translate) }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="volver()">
+          {{ 'common.cancelar' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

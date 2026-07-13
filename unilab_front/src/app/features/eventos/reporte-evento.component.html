@@ -1,0 +1,68 @@
+<div class="reporte-container">
+  <div class="reporte-header">
+    <h1>{{ 'reporte.titulo' | translate }}</h1>
+    <div class="acciones">
+      <button class="btn btn-primary" (click)="exportarCSV()">
+        {{ 'reporte.exportarCSV' | translate }}
+      </button>
+      <button class="btn btn-primary" (click)="exportarExcel()">
+        {{ 'reporte.exportarExcel' | translate }}
+      </button>
+      <button class="btn btn-secondary" (click)="volver()">
+        {{ 'common.volver' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="loading">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (reporte()) {
+    <div class="reporte-content">
+      <div class="resumen">
+        <div class="stat-card">
+          <h3>{{ 'reporte.totalInscritos' | translate }}</h3>
+          <p class="stat-value">{{ reporte()!.inscritos.length }}</p>
+        </div>
+      </div>
+
+      <div class="tabla-container">
+        <table class="reporte-tabla">
+          <thead>
+            <tr>
+              <th>{{ 'common.nombre' | translate }}</th>
+              <th>{{ 'common.documento' | translate }}</th>
+              <th>{{ 'common.email' | translate }}</th>
+              <th>{{ 'inscripcion.tipoAsistente' | translate }}</th>
+              <th>{{ 'reporte.estadoPago' | translate }}</th>
+              <th>{{ 'reporte.asistencia' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inscrito of reporte()!.inscritos; track inscrito.id_inscripcion) {
+              <tr>
+                <td>{{ inscrito.nombre_completo }}</td>
+                <td>{{ inscrito.documento_identidad }}</td>
+                <td>{{ inscrito.email }}</td>
+                <td>
+                  <span class="badge" [class]="'tipo-' + inscrito.tipo_asistente">
+                    {{ 'inscripcion.' + inscrito.tipo_asistente | translate }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge-pago" [class]="'pago-' + (inscrito.estado_pago || 'null')">
+                    {{ 'reporte.pago.' + (inscrito.estado_pago || 'sin-procesar') | translate }}
+                  </span>
+                </td>
+                <td>
+                  <span class="porcentaje">{{ ((inscrito.total_asistencias / reporte()!.jornadas.length) * 100 | number: '1.0-0') }}%</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

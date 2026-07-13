@@ -1,0 +1,261 @@
+.reporte-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  .reporte-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: var(--primary-color, #333);
+    }
+
+    .acciones {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+
+        &.btn-primary {
+          background-color: var(--primary-color, #007bff);
+          color: white;
+
+          &:hover {
+            background-color: var(--primary-dark, #0056b3);
+          }
+        }
+
+        &.btn-secondary {
+          background-color: #6c757d;
+          color: white;
+
+          &:hover {
+            background-color: #5a6268;
+          }
+        }
+      }
+    }
+  }
+
+  .loading,
+  .error {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-radius: 4px;
+  }
+
+  .reporte-content {
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+
+      .stat-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        h3 {
+          margin: 0 0 1rem 0;
+          font-size: 1rem;
+          color: #666;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+
+        .stat-value {
+          margin: 0;
+          font-size: 2.5rem;
+          color: var(--primary-color, #007bff);
+          font-weight: 700;
+        }
+      }
+    }
+
+    .tabla-container {
+      background-color: white;
+      border-radius: 8px;
+      overflow-x: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .reporte-tabla {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+
+        thead {
+          background-color: #f8f9fa;
+          border-bottom: 2px solid #dee2e6;
+
+          th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+          }
+        }
+
+        tbody {
+          tr {
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background-color: #f8f9fa;
+            }
+
+            td {
+              padding: 1rem;
+
+              .badge {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+
+                &.tipo-estudiante {
+                  background-color: #e3f2fd;
+                  color: #1976d2;
+                }
+
+                &.tipo-profesor {
+                  background-color: #f3e5f5;
+                  color: #7b1fa2;
+                }
+
+                &.tipo-externo {
+                  background-color: #fff3e0;
+                  color: #e65100;
+                }
+              }
+
+              .badge-pago {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 4px;
+                font-size: 0.85rem;
+                font-weight: 600;
+
+                &.pago-pendiente {
+                  background-color: #fff3cd;
+                  color: #856404;
+                }
+
+                &.pago-confirmado {
+                  background-color: #d4edda;
+                  color: #155724;
+                }
+
+                &.pago-exento {
+                  background-color: #d1ecf1;
+                  color: #0c5460;
+                }
+
+                &.pago-null {
+                  background-color: #e2e3e5;
+                  color: #383d41;
+                }
+
+                &.pago-sin-procesar {
+                  background-color: #e2e3e5;
+                  color: #383d41;
+                }
+              }
+
+              .porcentaje {
+                display: block;
+                font-weight: 700;
+                color: var(--primary-color, #007bff);
+                margin-bottom: 0.5rem;
+              }
+
+              .asistencias-detalle {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+
+                .jornada-asistencia {
+                  font-size: 0.85rem;
+                  padding: 0.25rem 0.5rem;
+                  background-color: #f5f5f5;
+                  border-radius: 3px;
+                  font-family: 'Courier New', monospace;
+
+                  &.presente {
+                    color: #28a745;
+                    font-weight: 600;
+                  }
+
+                  &:not(.presente) {
+                    color: #dc3545;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .reporte-container {
+    padding: 1rem;
+
+    .reporte-header {
+      flex-direction: column;
+      align-items: stretch;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .acciones {
+        .btn {
+          flex: 1;
+        }
+      }
+    }
+
+    .reporte-content {
+      .tabla-container {
+        font-size: 0.85rem;
+
+        .reporte-tabla {
+          thead th {
+            padding: 0.75rem 0.5rem;
+          }
+
+          tbody td {
+            padding: 0.75rem 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}

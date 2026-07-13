@@ -585,19 +585,55 @@
           }
         },
         {
-          "name": "Actualizar estado de pago",
+          "name": "Registrar asistencia - Endpoint principal",
           "request": {
-            "method": "PATCH",
+            "method": "POST",
             "header": [
               { "key": "Authorization", "value": "Bearer {{token}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"estado_pago\": \"confirmado\"\n}"
+              "raw": "{\n  \"codigo_qr\": \"0998e6b9-b814-450a-a510-83ae222d5757\"\n}"
             },
-            "url": "{{base_url}}/inscripciones/1/pago",
-            "description": "Solo si el evento requiere pago. Solo Administrador."
+            "url": "{{base_url}}/asistencias/registrar",
+            "description": "Registra la asistencia de un usuario a una jornada escaneando el código QR. Requiere:\n- Token de autenticación\n- Usuario inscrito en el evento\n- Código QR válido de la jornada\n- Sin asistencia duplicada en esa jornada\n\nResulta en un registro en la tabla `asistencias` con fecha_hora_registro."
+          }
+        },
+        {
+          "name": "Exportar reporte a CSV",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/1/reportes/export/csv",
+            "description": "Descarga un archivo CSV con los datos del reporte del evento. Columnas: Nombre, Documento, Email, Tipo Asistente, Estado Pago, Asistencias (porcentaje).\n\nRol requerido: Administrador o Coordinador."
+          }
+        },
+        {
+          "name": "Exportar reporte a Excel",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/1/reportes/export/excel",
+            "description": "Descarga un archivo XLSX con los datos formateados:\n- Encabezados con fondo azul (#243B8E) y texto blanco\n- Columnas: Nombre, Documento, Email, Tipo Asistente, Estado Pago, Asistencias\n- Ancho de columnas ajustado automáticamente\n\nRol requerido: Administrador o Coordinador."
+          }
+        },
+        {
+          "name": "Generar QR (Backend - PNG)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/qr/0998e6b9-b814-450a-a510-83ae222d5757?formato=png",
+            "description": "Genera una imagen PNG del código QR de una jornada. Parámetros query:\n- `formato=png` (default): devuelve PNG\n- `formato=svg`: devuelve SVG\n\nNota: En el flujo actual, el frontend genera QRs automáticamente usando `QRCode.toDataURL()`, por lo que este endpoint no se necesita usualmente."
+          }
+        },
+        {
+          "name": "Generar QR (Backend - SVG)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/qr/0998e6b9-b814-450a-a510-83ae222d5757?formato=svg",
+            "description": "Genera una imagen SVG del código QR de una jornada. Útil para impresión o integración con sistemas de terceros."
           }
         }
       ]

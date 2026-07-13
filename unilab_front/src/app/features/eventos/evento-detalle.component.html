@@ -1,0 +1,109 @@
+<div class="evento-detalle-container">
+  @if (cargando()) {
+    <p class="loading">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (evento()) {
+    <div class="evento-content">
+      <div class="evento-header">
+        <h1>{{ evento()!.nombre_evento }}</h1>
+        <span class="estado" [class]="'estado-' + evento()!.estado">
+          {{ 'eventos.estado.' + evento()!.estado | translate }}
+        </span>
+      </div>
+
+      <div class="evento-info">
+        <div class="info-row">
+          <strong>{{ 'eventos.tipo' | translate }}:</strong>
+          <span>{{ evento()!.tipo_evento }}</span>
+        </div>
+        <div class="info-row">
+          <strong>{{ 'eventos.lugar' | translate }}:</strong>
+          <span>{{ evento()!.lugar }}</span>
+        </div>
+        <div class="info-row">
+          <strong>{{ 'eventos.fecha' | translate }}:</strong>
+          <span>{{ formatearFecha(evento()!.fecha_inicio) }} - {{ formatearFecha(evento()!.fecha_fin) }}</span>
+        </div>
+        @if (evento()!.requiere_pago) {
+          <div class="info-row">
+            <strong>{{ 'eventos.requierePago' | translate }}</strong>
+          </div>
+        }
+      </div>
+
+      <div class="descripcion-section">
+        <h3>{{ 'eventos.descripcion' | translate }}</h3>
+        <p>{{ evento()!.descripcion }}</p>
+      </div>
+
+      <div class="acciones">
+        @if (esAdmin()) {
+          <button class="btn btn-primary" (click)="abrirFormularioJornada()">
+            {{ 'jornadas.crear' | translate }}
+          </button>
+        }
+        @if (puedeInscribirse()) {
+          <button class="btn btn-success" (click)="abrirFormularioInscripcion()">
+            {{ 'inscripcion.btnInscribirse' | translate }}
+          </button>
+        }
+      </div>
+
+      <div class="jornadas-section">
+        <h3>{{ 'jornadas.titulo' | translate }} ({{ jornadas().length }})</h3>
+        @if (jornadas().length === 0) {
+          <p class="no-data">{{ 'jornadas.sinJornadas' | translate }}</p>
+        } @else {
+          <div class="jornadas-list">
+            @for (jornada of jornadas(); track jornada.id_jornada) {
+              <div class="jornada-card">
+                <div class="jornada-header">
+                  <h4>{{ jornada.nombre_jornada }}</h4>
+                </div>
+                <div class="jornada-info">
+                  <p><strong>{{ 'jornadas.fecha' | translate }}:</strong> {{ formatearFecha(jornada.fecha) }}</p>
+                  <p>
+                    <strong>{{ 'jornadas.hora' | translate }}:</strong>
+                    {{ formatearHora(jornada.hora_inicio) }} - {{ formatearHora(jornada.hora_fin) }}
+                  </p>
+                  <div class="qr-section">
+                    <strong>{{ 'jornadas.codigoQR' | translate }}:</strong>
+                    <div class="qr-container">
+                      @if (obtenerQRParaJornada(jornada.id_jornada)) {
+                        <img 
+                          [src]="obtenerQRParaJornada(jornada.id_jornada)" 
+                          [alt]="'QR: ' + jornada.codigo_qr"
+                          class="qr-image"
+                        />
+                      } @else {
+                        <div class="qr-loading">{{ 'common.cargando' | translate }} QR...</div>
+                      }
+                      <code class="qr-code-text">{{ jornada.codigo_qr }}</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (mostrarFormularioInscripcion()) {
+        <app-inscripcion-form
+          [evento]="evento()!"
+          (cerrar)="cerrarFormularioInscripcion()"
+          (inscripcionExitosa)="cerrarFormularioInscripcion()"
+        ></app-inscripcion-form>
+      }
+
+      @if (mostrarFormularioJornada()) {
+        <app-jornada-form
+          [idEvento]="evento()!.id_evento"
+          (cerrar)="cerrarFormularioJornada()"
+          (jornadaCreada)="cargarJornadas(evento()!.id_evento)"
+        ></app-jornada-form>
+      }
+    </div>
+  }
+</div>

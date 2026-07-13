@@ -5,6 +5,12 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { CambiarPasswordComponent } from './features/auth/cambiar-password/cambiar-password.component';
 import { CambiarPasswordGuard } from './core/auth/cambiar-password.guard';
+import { EventosListComponent } from './features/eventos/eventos-list.component';
+import { EventoDetalleComponent } from './features/eventos/evento-detalle.component';
+import { EventoFormComponent } from './features/eventos/evento-form.component';
+import { JornadaFormComponent } from './features/eventos/jornada-form.component';
+import { AsistenciaQrComponent } from './features/eventos/asistencia-qr.component';
+import { ReporteEventoComponent } from './features/eventos/reporte-evento.component';
 
 @Component({
   selector: 'app-unauthorized',
@@ -84,6 +90,36 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     data: { requireAuth: true }
+  },
+  {
+    path: 'eventos',
+    component: EventosListComponent,
+    data: { requireAuth: true }
+  },
+  {
+    path: 'eventos/crear',
+    component: EventoFormComponent,
+    data: { requireAuth: true, roles: ['Administrador'] }
+  },
+  {
+    path: 'eventos/:id',
+    component: EventoDetalleComponent,
+    data: { requireAuth: true }
+  },
+  {
+    path: 'eventos/:id/jornadas/crear',
+    component: JornadaFormComponent,
+    data: { requireAuth: true, roles: ['Administrador'] }
+  },
+  {
+    path: 'eventos/:id/asistencia',
+    component: AsistenciaQrComponent,
+    data: { requireAuth: true }
+  },
+  {
+    path: 'eventos/:id/reporte',
+    component: ReporteEventoComponent,
+    data: { requireAuth: true, roles: ['Administrador', 'Coordinador'] }
   },
   {
     path: 'unauthorized',

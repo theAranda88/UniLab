@@ -1,0 +1,42 @@
+<div class="asistencia-qr-container">
+  <div class="qr-card">
+    <h1>{{ 'asistencia.titulo' | translate }}</h1>
+
+    <div class="qr-input-section">
+      <label for="codigoQr">{{ 'asistencia.ingresaCodigoQR' | translate }}</label>
+      <input
+        type="text"
+        id="codigoQr"
+        [(ngModel)]="codigoQr"
+        (keyup.enter)="registrarAsistencia()"
+        class="qr-input"
+        placeholder="{{ 'asistencia.placeholderQR' | translate }}"
+        [disabled]="registrando()"
+        autofocus
+      />
+    </div>
+
+    @if (mensaje()) {
+      <div class="mensaje" [class]="'mensaje-' + tipoMensaje()">
+        {{ mensaje() }}
+      </div>
+    }
+
+    <div class="actions">
+      <button
+        class="btn btn-primary"
+        (click)="registrarAsistencia()"
+        [disabled]="registrando() || !codigoQr()"
+      >
+        {{ registrando() ? 'Registrando...' : ('asistencia.registrar' | translate) }}
+      </button>
+      <button class="btn btn-secondary" (click)="volver()">
+        {{ 'common.volver' | translate }}
+      </button>
+    </div>
+
+    <div class="info-box">
+      <p>{{ 'asistencia.instrucciones' | translate }}</p>
+    </div>
+  </div>
+</div>
