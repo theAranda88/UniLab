@@ -65,10 +65,11 @@ coverage/
 sdd-notes/
 session-notes/
 
-# GitHub workflows artifacts & cache (generated locally)
-.github/cache/
-.github/workflows/cache/
-.github/artifacts/
+# GitHub - Ignore all except instructions and copilot-instructions
+.github/
+!.github/copilot-instructions.md
+!.github/instructions/
+!.github/instructions/**
 
 # Prisma
 prisma/.env
