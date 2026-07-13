@@ -6,7 +6,20 @@ Plataforma universitaria para gestión de proyectos académicos, semilleros de i
 Monorepo con dos carpetas raíz: `unilab_back/` (Node.js/TypeScript/Express/Prisma) y `unilab_front/` (Angular 17+).
 
 - Modelo de datos canónico: `00-esquema-bd-referencia.md` en la raíz. Es la fuente de verdad. Si una funcionalidad requiere un campo o tabla que no está ahí, PREGUNTA antes de tocar `schema.prisma`.
-- Prompt maestro original (referencia histórica): `01-prompt-maestro-backend.md`.
+- **Sistema SDD coordinado:** Ver `.github/INDEX.md` para flujos de trabajo y skills (8 skills específicas para diferentes tipos de funcionalidades).
+
+---
+
+## 🎯 Inicio Rápido — Sistema SDD
+
+Este proyecto usa un **sistema SDD (Spec Driven Development) coordinado** con skills especializadas:
+
+1. **Lee:** `.github/QUICK_START.md` (2 min)
+2. **Elige:** Un skill de la tabla (backend-crud, frontend-crud, auth-flow, etc.)
+3. **Chat:** Describe tu necesidad siguiendo el formato del skill
+4. **Agent:** Guía SPEC → Confirmación → Implementación
+
+Documentación completa: `.github/INDEX.md`
 
 ---
 
