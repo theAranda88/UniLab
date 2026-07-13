@@ -3,6 +3,61 @@
     "title": "UniLab",
     "subtitle": "Plataforma de Gestión Académica"
   },
+  "shell": {
+    "brand": {
+      "title": "Plataforma Universitaria",
+      "subtitle": "Panel de gestión"
+    },
+    "nav": {
+      "comingSoon": "Próximamente",
+      "dashboard": "Dashboard",
+      "miPanel": "Mi panel",
+      "usuarios": "Usuarios",
+      "escuelas": "Escuelas y carreras",
+      "cursos": "Cursos",
+      "proyectos": "Proyectos",
+      "semilleros": "Semilleros",
+      "eventos": "Eventos",
+      "asistencia": "Control de asistencia",
+      "reportes": "Reportes",
+      "configuracion": "Configuración",
+      "estadisticas": "Estadísticas",
+      "exportar": "Exportar reportes",
+      "profesores": "Profesores",
+      "estudiantes": "Estudiantes",
+      "misSemilleros": "Mis semilleros",
+      "misEstudiantes": "Mis estudiantes",
+      "proyectosAsignados": "Proyectos asignados",
+      "pendientesAprobar": "Pendientes de aprobar",
+      "cursosCarreras": "Cursos y carreras",
+      "sections": {
+        "general": "General",
+        "academico": "Académico",
+        "eventos": "Eventos",
+        "sistema": "Sistema",
+        "analisis": "Análisis",
+        "seguimiento": "Seguimiento",
+        "miGestion": "Mi gestión",
+        "proyectos": "Proyectos",
+        "recursos": "Recursos"
+      }
+    },
+    "pages": {
+      "dashboard": "Dashboard general",
+      "miPanel": "Mi panel",
+      "eventos": "Eventos"
+    },
+    "cta": {
+      "crearUsuario": "Crear usuario",
+      "exportarReporte": "Exportar reporte",
+      "autorizarEstudiante": "Autorizar estudiante"
+    },
+    "roles": {
+      "admin": { "sub": "Acceso completo" },
+      "coord": { "sub": "Vista analítica" },
+      "prof": { "sub": "Gestión académica" }
+    }
+  },
   "auth": {
     "login": {
       "title": "UniLab",
@@ -16,7 +71,12 @@
       "submitButton": "Ingresar al Portal →",
       "support": "¿Problemas para ingresar?",
       "supportLink": "Contactar Soporte",
-      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL"
+      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL",
+      "formInvalid": "Por favor completa todos los campos correctamente.",
+      "invalidCredentials": "Credenciales inválidas. Por favor intenta de nuevo.",
+      "emailRequired": "El correo electrónico es requerido",
+      "passwordRequired": "La contraseña es requerida",
+      "passwordMinLength": "Mínimo 6 caracteres"
     },
     "cambiarPassword": {
       "title": "Cambiar Contraseña",
@@ -43,7 +103,101 @@
     "users": "Usuarios",
     "projects": "Proyectos",
     "seminaries": "Semilleros",
-    "events": "Eventos"
+    "events": "Eventos",
+    "admin": {
+      "stats": {
+        "usuarios": "Usuarios activos",
+        "usuariosSub": "↑ 12 este mes",
+        "proyectos": "Proyectos publicados",
+        "proyectosSub": "32 en revisión",
+        "semilleros": "Semilleros activos",
+        "semillerosSub": "3 escuelas",
+        "eventos": "Eventos próximos",
+        "eventosSub": "1 esta semana"
+      },
+      "left": {
+        "title": "Últimos proyectos",
+        "link": "Ver todos",
+        "item1": { "title": "App de gestión ambiental", "sub": "Ing. Software · Carlos R." },
+        "item2": { "title": "Podcast: Finanzas para todos", "sub": "Negocios · Ana M." },
+        "item3": { "title": "App de seguimiento deportivo", "sub": "Educación · Luis T." }
+      },
+      "right": {
+        "title": "Inscripciones pendientes",
+        "link": "Gestionar",
+        "empty": "No hay pagos pendientes",
+        "pagoPendiente": "pago pendiente",
+        "confirmar": "Confirmar"
+      },
+      "pills": {
+        "publicado": "Publicado",
+        "revision": "En revisión"
+      }
+    },
+    "coord": {
+      "stats": {
+        "proyectos": "Proyectos totales",
+        "proyectosSub": "↑ 8 este periodo",
+        "calificacion": "Calificación promedio",
+        "calificacionSub": "sobre 5.0",
+        "vistas": "Total de vistas",
+        "vistasSub": "proyectos publicados",
+        "eventos": "Eventos realizados",
+        "eventosSub": "este año"
+      },
+      "left": {
+        "title": "Proyectos por escuela",
+        "link": "Ver detalle",
+        "item1": { "title": "Esc. Software y Tecnología", "sub": "54 proyectos · 4.4 ★" },
+        "item2": { "title": "Esc. Ingeniería y Sosten.", "sub": "38 proyectos · 4.1 ★" },
+        "item3": { "title": "Esc. de Negocios", "sub": "31 proyectos · 4.3 ★" }
+      },
+      "right": {
+        "title": "Semilleros activos",
+        "link": "Ver todos",
+        "item1": { "title": "Semillero de IA y Datos", "sub": "12 estudiantes · 3 proyectos" },
+        "item2": { "title": "Semillero Ambiental", "sub": "8 estudiantes · 2 proyectos" },
+        "item3": { "title": "Semillero de Derecho", "sub": "5 estudiantes · 1 proyecto" }
+      },
+      "pills": {
+        "up23": "↑ 23%",
+        "up11": "↑ 11%",
+        "up9": "↑ 9%",
+        "activo": "Activo"
+      }
+    },
+    "prof": {
+      "stats": {
+        "estudiantes": "Estudiantes activos",
+        "estudiantesSub": "en mis semilleros",
+        "proyectos": "Proyectos asignados",
+        "proyectosSub": "3 por aprobar",
+        "autorizaciones": "Autorizaciones dadas",
+        "autorizacionesSub": "este semestre",
+        "comentarios": "Comentarios dados",
+        "comentariosSub": "en proyectos"
+      },
+      "left": {
+        "title": "Estudiantes por autorizar",
+        "link": "Ver todos",
+        "item1": { "title": "Sofía Martínez", "sub": "Semillero IA · solicitud de publicar" },
+        "item2": { "title": "Andrés Cárdenas", "sub": "Física I · solicitud de subir proyecto" },
+        "item3": { "title": "Valentina Cruz", "sub": "Cálculo II · ya autorizada" }
+      },
+      "right": {
+        "title": "Proyectos en revisión",
+        "link": "Revisar",
+        "item1": { "title": "Sistema de riego inteligente", "sub": "Ing. Civil · enviado hoy" },
+        "item2": { "title": "App de rutas verdes", "sub": "Ing. Ambiental · enviado ayer" },
+        "item3": { "title": "Dashboard financiero", "sub": "Contabilidad · revisado" }
+      },
+      "pills": {
+        "pendiente": "Pendiente",
+        "listo": "Listo",
+        "revision": "En revisión",
+        "aprobado": "Aprobado"
+      }
+    }
   },
   "common": {
     "error": "Error",
@@ -67,7 +221,27 @@
     "masculino": "Masculino",
     "femenino": "Femenino",
     "otro": "Otro",
-    "seleccionar": "Seleccionar"
+    "seleccionar": "Seleccionar",
+    "creando": "Creando...",
+    "enviando": "Enviando..."
+  },
+  "dialog": {
+    "success": {
+      "title": "Operación exitosa"
+    },
+    "error": {
+      "title": "Error"
+    },
+    "warning": {
+      "title": "Advertencia"
+    },
+    "info": {
+      "title": "Información"
+    },
+    "confirm": {
+      "deleteTitle": "Confirmar eliminación",
+      "updateTitle": "Confirmar acción"
+    }
   },
   "validation": {
     "requerido": "Este campo es requerido"
@@ -91,7 +265,26 @@
     "requierePago": "Requiere Pago",
     "filtroTipo": "Filtrar por tipo...",
     "filtroEstado": "Filtrar por estado",
-    "sinEventos": "No hay eventos disponibles"
+    "sinEventos": "No hay eventos disponibles",
+    "errorCargar": "Error al cargar los eventos",
+    "errorCrear": "Error al crear el evento",
+    "errorActualizar": "Error al actualizar el evento",
+    "exitoCrear": "El evento fue creado correctamente.",
+    "exitoActualizar": "El evento fue actualizado correctamente.",
+    "formInvalid": "Por favor completa todos los campos correctamente",
+    "editar": "Editar Evento",
+    "guardar": "Guardar Cambios",
+    "eliminar": "Eliminar Evento",
+    "confirmarEliminar": "¿Está seguro de eliminar este evento? Esta acción no se puede deshacer.",
+    "exitoEliminar": "El evento fue eliminado correctamente.",
+    "errorEliminar": "No se pudo eliminar el evento.",
+    "confirmarPago": "¿Confirmar el pago de esta inscripción?",
+    "exitoPago": "El pago fue confirmado correctamente.",
+    "errorPago": "No se pudo confirmar el pago.",
+    "inscripciones": {
+      "titulo": "Inscripciones",
+      "sinInscripciones": "No hay inscripciones registradas"
+    }
   },
   "jornadas": {
     "title": "Jornadas",
@@ -103,7 +296,13 @@
     "horaInicio": "Hora de Inicio",
     "horaFin": "Hora de Fin",
     "codigoQR": "Código QR",
-    "sinJornadas": "No hay jornadas disponibles"
+    "sinJornadas": "No hay jornadas disponibles",
+    "exitoCrear": "La jornada fue creada correctamente.",
+    "errorCrear": "No se pudo crear la jornada.",
+    "fechaFueraRango": "La fecha debe estar dentro del rango del evento.",
+    "rangoFechas": "Rango permitido",
+    "requiereInscripcion": "Debes inscribirte al evento para ver las jornadas.",
+    "pagoPendiente": "Tu pago debe estar confirmado para ver las jornadas."
   },
   "inscripcion": {
     "titulo": "Inscribirse al Evento",
@@ -113,16 +312,33 @@
     "profesor": "Profesor",
     "externo": "Externo",
     "institucion": "Institución",
-    "requierePago": "Este evento requiere pago"
+    "requierePago": "Este evento requiere pago",
+    "exito": "¡Te has inscrito correctamente al evento!",
+    "yaInscrito": "Ya estás inscrito",
+    "errorRegistrar": "No se pudo completar la inscripción."
   },
   "asistencia": {
     "titulo": "Registrar Asistencia",
     "ingresaCodigoQR": "Ingresa el Código QR",
     "placeholderQR": "Escanea o pega el código QR aquí",
     "registrar": "Registrar Asistencia",
+    "registrando": "Registrando...",
     "escanearQR": "Escanear Código QR",
-    "registrada": "Asistencia Registrada Correctamente",
-    "instrucciones": "Por favor, escanea el código QR de la jornada para registrar tu asistencia."
+    "registrada": "¡Asistencia registrada correctamente!",
+    "instrucciones": "Por favor, escanea el código QR de la jornada para registrar tu asistencia.",
+    "errorCodigoVacio": "Por favor ingresa el código QR",
+    "errorRegistrar": "Error al registrar la asistencia",
+    "sinJornadas": "No hay jornadas creadas. No es posible registrar asistencia.",
+    "requiereInscripcion": "Debes estar inscrito en el evento para registrar asistencia.",
+    "pagoPendiente": "Tu pago debe estar confirmado por un administrador antes de registrar asistencia.",
+    "errorSinQr": "Debes escanear el código QR de una jornada para registrar asistencia.",
+    "instruccionesQr": "Para registrar tu asistencia, escanea el código QR que el organizador comparte en cada jornada del evento.",
+    "mobile": {
+      "registrando": "Registrando tu asistencia...",
+      "exitoTitulo": "¡Registro exitoso!",
+      "errorTitulo": "No se pudo registrar",
+      "preparando": "Preparando registro de asistencia..."
+    }
   },
   "reporte": {
     "titulo": "Reporte del Evento",
@@ -133,6 +349,8 @@
     "asistencia": "Asistencia",
     "exportarCSV": "Descargar CSV",
     "exportarExcel": "Descargar Excel",
+    "errorCargar": "Error al cargar el reporte",
+    "acciones": "Acciones",
     "pago.pendiente": "Pendiente",
     "pago.confirmado": "Confirmado",
     "pago.exento": "Exento",

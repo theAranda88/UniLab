@@ -329,6 +329,20 @@ export const schemas = {
       requiere_pago: { type: 'boolean', default: false },
     },
   },
+  EventoUpdateRequest: {
+    type: 'object',
+    minProperties: 1,
+    properties: {
+      nombre_evento: { type: 'string', example: 'Foro Universitario de Proyectos 2026' },
+      tipo_evento: { type: 'string', example: 'Foro académico' },
+      descripcion: { type: 'string', example: 'Evento de exhibición de proyectos estudiantiles' },
+      fecha_inicio: { type: 'string', format: 'date', example: '2026-06-15' },
+      fecha_fin: { type: 'string', format: 'date', example: '2026-06-16' },
+      lugar: { type: 'string', example: 'Auditorio Principal' },
+      estado: { type: 'string', enum: ['planeado', 'activo', 'finalizado'], example: 'activo' },
+      requiere_pago: { type: 'boolean', example: true },
+    },
+  },
   JornadaRequest: {
     type: 'object',
     required: ['nombre_jornada', 'fecha', 'hora_inicio', 'hora_fin'],
@@ -350,6 +364,37 @@ export const schemas = {
       telefono: { type: 'string', example: '3000000005' },
       institucion: { type: 'string', example: 'Universidad Autónoma' },
       genero: { type: 'string', example: 'femenino' },
+    },
+  },
+  InscripcionResponse: {
+    type: 'object',
+    properties: {
+      id_inscripcion: { type: 'integer', example: 10 },
+      id_evento: { type: 'integer', example: 1 },
+      id_usuario: { type: 'integer', example: 5 },
+      tipo_asistente: { type: 'string', example: 'estudiante' },
+      nombre_completo: { type: 'string', example: 'Sofía Estudiante' },
+      documento_identidad: { type: 'string', example: '1000000005' },
+      email: { type: 'string', example: 'estudiante1@unilab.edu' },
+      telefono: { type: 'string', example: '3000000005' },
+      institucion: { type: 'string', nullable: true, example: 'Universidad Autónoma' },
+      genero: { type: 'string', example: 'femenino' },
+      estado_pago: { type: 'string', nullable: true, enum: ['pendiente', 'confirmado', 'exento'], example: 'pendiente' },
+      usuario: {
+        type: 'object',
+        properties: {
+          id_usuario: { type: 'integer', example: 5 },
+          email: { type: 'string', example: 'estudiante1@unilab.edu' },
+          nombres: { type: 'string', example: 'Sofía' },
+          apellidos: { type: 'string', example: 'Estudiante' },
+          rol: {
+            type: 'object',
+            properties: {
+              nombre_rol: { type: 'string', example: 'Estudiante' },
+            },
+          },
+        },
+      },
     },
   },
   PagoInscripcionRequest: {

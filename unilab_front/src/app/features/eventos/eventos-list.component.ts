@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
 import { Evento } from '../../core/models/evento.model';
-import { AuthService } from '../../core/auth/auth.service';
+import { formatearFechaLocal } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-eventos-list',
@@ -15,8 +15,7 @@ import { AuthService } from '../../core/auth/auth.service';
   styleUrl: './eventos-list.component.scss',
 })
 export class EventosListComponent implements OnInit {
-  private eventoService = inject(EventosService);
-  private authService = inject(AuthService);
+  eventoService = inject(EventosService);
   private router = inject(Router);
 
   eventos = signal<Evento[]>([]);
@@ -25,7 +24,7 @@ export class EventosListComponent implements OnInit {
   filtroEstado = signal<string>('');
   filtroTipo = signal<string>('');
 
-  usuarioRol = signal<string | null>(null);
+  puedeCrear = computed(() => this.eventoService.puedeCrear());
 
   eventosFiltrados = computed(() => {
     let filtered = this.eventos();
@@ -35,7 +34,9 @@ export class EventosListComponent implements OnInit {
     }
 
     if (this.filtroTipo()) {
-      filtered = filtered.filter((e) => e.tipo_evento.toLowerCase().includes(this.filtroTipo().toLowerCase()));
+      filtered = filtered.filter((e) =>
+        e.tipo_evento.toLowerCase().includes(this.filtroTipo().toLowerCase()),
+      );
     }
 
     return filtered;
@@ -43,11 +44,6 @@ export class EventosListComponent implements OnInit {
 
   ngOnInit() {
     this.cargarEventos();
-    this.authService.user$.subscribe((user) => {
-      if (user) {
-        this.usuarioRol.set(user.id_rol);
-      }
-    });
   }
 
   cargarEventos() {
@@ -59,27 +55,22 @@ export class EventosListComponent implements OnInit {
         this.eventos.set(data);
         this.cargando.set(false);
       },
-      error: (err: any) => {
-        console.error('Error al cargar eventos:', err);
-        this.error.set('Error al cargar los eventos');
+      error: () => {
+        this.error.set('eventos.errorCargar');
         this.cargando.set(false);
       },
     });
   }
 
   crearEvento() {
-    this.router.navigate(['/eventos/crear']);
+    this.router.navigate([this.eventoService.getBasePath(), 'crear']);
   }
 
   verDetalle(id: number) {
-    this.router.navigate(['/eventos', id]);
-  }
-
-  esAdmin(): boolean {
-    return this.usuarioRol() === 'Administrador';
+    this.router.navigate([this.eventoService.getBasePath(), id]);
   }
 
   formatearFecha(fecha: string): string {
-    return new Date(fecha).toLocaleDateString();
+    return formatearFechaLocal(fecha);
   }
 }

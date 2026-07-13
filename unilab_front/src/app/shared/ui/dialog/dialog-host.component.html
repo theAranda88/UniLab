@@ -1,0 +1,54 @@
+@if (dialog.active(); as cfg) {
+  <div class="dialog-overlay" (click)="onOverlayClick()" role="presentation">
+    <div
+      class="dialog-card"
+      [class]="'dialog-' + cfg.type"
+      (click)="$event.stopPropagation()"
+      role="alertdialog"
+      aria-modal="true"
+    >
+      <div class="dialog-icon">
+        <i class="ti {{ iconFor(cfg.type) }}" aria-hidden="true"></i>
+      </div>
+
+      <h3 class="dialog-title">
+        @if (cfg.titleKey) {
+          {{ cfg.titleKey | translate }}
+        } @else {
+          {{ cfg.title }}
+        }
+      </h3>
+
+      @if (cfg.messageKey || cfg.message) {
+        <p class="dialog-message">
+          @if (cfg.messageKey) {
+            {{ cfg.messageKey | translate }}
+          } @else {
+            {{ cfg.message }}
+          }
+        </p>
+      }
+
+      <div class="dialog-actions">
+        @if (cfg.type === 'confirm') {
+          <button type="button" class="btn btn-secondary" (click)="dialog.cancelAction()">
+            {{ (cfg.cancelKey || 'common.cancelar') | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn"
+            [class.btn-danger]="cfg.destructive !== false"
+            [class.btn-primary]="cfg.destructive === false"
+            (click)="dialog.confirmAction()"
+          >
+            {{ (cfg.confirmKey || 'common.delete') | translate }}
+          </button>
+        } @else {
+          <button type="button" class="btn btn-primary" (click)="dialog.acknowledge()">
+            {{ (cfg.confirmKey || 'common.close') | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

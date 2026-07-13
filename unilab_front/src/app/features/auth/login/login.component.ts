@@ -1,39 +1,41 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
+import { getDefaultRouteForRole } from '../../../core/config/role-redirect';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
+  private formBuilder = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+
   loginForm!: FormGroup;
-  loading = false;
-  errorMessage: string | null = null;
-  showPassword = false;
+  loading = signal(false);
+  errorMessage = signal<string | null>(null);
+  showPassword = signal(false);
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {
-    this.createForm();
-  }
-
   ngOnInit(): void {
-    // Si ya está autenticado, redirigir al dashboard
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.redirectAfterAuth();
     }
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
   }
 
   ngOnDestroy(): void {
@@ -41,40 +43,46 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private createForm(): void {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
-  }
-
   onSubmit(): void {
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Por favor completa todos los campos correctamente.';
+      this.errorMessage.set(this.translate.instant('auth.login.formInvalid'));
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = null;
+    this.loading.set(true);
+    this.errorMessage.set(null);
 
     this.authService
       .login(this.loginForm.value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
+          this.loading.set(false);
           if (response.usuario.primer_login) {
             this.router.navigate(['/cambiar-password']);
           } else {
-            this.router.navigate(['/dashboard']);
+            this.redirectAfterAuth();
           }
-          this.loading = false;
         },
-        error: (err: any) => {
-          this.loading = false;
-          // El interceptor global ya maneja la notificación de errores
-          this.errorMessage = err.error?.error ?? 'Credenciales inválidas. Por favor intenta de nuevo.';
-        }
+        error: (err: { error?: { error?: string } }) => {
+          this.loading.set(false);
+          this.errorMessage.set(
+            err.error?.error ?? this.translate.instant('auth.login.invalidCredentials'),
+          );
+        },
       });
+  }
+
+  private redirectAfterAuth(): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.router.navigate([getDefaultRouteForRole(user.id_rol)]);
+    }
   }
 
   get email() {
@@ -85,4 +93,3 @@ export class LoginComponent implements OnInit, OnDestroy {
     return this.loginForm.get('password');
   }
 }
-

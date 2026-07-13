@@ -1,70 +1,74 @@
-<div class="modal-overlay" (click)="cerrarModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>{{ 'jornadas.crear' | translate }}</h2>
-      <button class="close-btn" (click)="cerrarModal()">✕</button>
+<app-modal-shell
+  [open]="true"
+  titleKey="jornadas.crear"
+  [loading]="enviando()"
+  [dismissible]="!enviando()"
+  (closed)="cerrarModal()"
+>
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  <form [formGroup]="formulario" (ngSubmit)="submit()" class="form">
+    <div class="form-group">
+      <label for="nombre_jornada">{{ 'jornadas.nombre' | translate }} *</label>
+      <input
+        type="text"
+        id="nombre_jornada"
+        formControlName="nombre_jornada"
+        class="form-control"
+        placeholder="Ej: Día 1 - Jornada Mañana"
+        [class.is-invalid]="formulario.get('nombre_jornada')?.invalid && formulario.get('nombre_jornada')?.touched"
+      />
     </div>
 
-    @if (error()) {
-      <div class="error-message">{{ error() }}</div>
-    }
+    <div class="form-group">
+      <label for="fecha">{{ 'jornadas.fecha' | translate }} *</label>
+      <input
+        type="date"
+        id="fecha"
+        formControlName="fecha"
+        class="form-control"
+        [min]="fechaMin"
+        [max]="fechaMax"
+        [class.is-invalid]="formulario.get('fecha')?.invalid && formulario.get('fecha')?.touched"
+      />
+      @if (fechaMin && fechaMax) {
+        <small class="hint">{{ 'jornadas.rangoFechas' | translate }}: {{ fechaMin }} — {{ fechaMax }}</small>
+      }
+    </div>
 
-    <form [formGroup]="formulario" (ngSubmit)="submit()" class="form">
+    <div class="form-row">
       <div class="form-group">
-        <label for="nombre_jornada">{{ 'jornadas.nombre' | translate }} *</label>
+        <label for="hora_inicio">{{ 'jornadas.horaInicio' | translate }} *</label>
         <input
-          type="text"
-          id="nombre_jornada"
-          formControlName="nombre_jornada"
+          type="time"
+          id="hora_inicio"
+          formControlName="hora_inicio"
           class="form-control"
-          placeholder="Ej: Día 1 - Jornada Mañana"
-          [class.is-invalid]="formulario.get('nombre_jornada')?.invalid && formulario.get('nombre_jornada')?.touched"
+          [class.is-invalid]="formulario.get('hora_inicio')?.invalid && formulario.get('hora_inicio')?.touched"
         />
       </div>
 
       <div class="form-group">
-        <label for="fecha">{{ 'jornadas.fecha' | translate }} *</label>
+        <label for="hora_fin">{{ 'jornadas.horaFin' | translate }} *</label>
         <input
-          type="date"
-          id="fecha"
-          formControlName="fecha"
+          type="time"
+          id="hora_fin"
+          formControlName="hora_fin"
           class="form-control"
-          [class.is-invalid]="formulario.get('fecha')?.invalid && formulario.get('fecha')?.touched"
+          [class.is-invalid]="formulario.get('hora_fin')?.invalid && formulario.get('hora_fin')?.touched"
         />
       </div>
+    </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="hora_inicio">{{ 'jornadas.horaInicio' | translate }} *</label>
-          <input
-            type="time"
-            id="hora_inicio"
-            formControlName="hora_inicio"
-            class="form-control"
-            [class.is-invalid]="formulario.get('hora_inicio')?.invalid && formulario.get('hora_inicio')?.touched"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="hora_fin">{{ 'jornadas.horaFin' | translate }} *</label>
-          <input
-            type="time"
-            id="hora_fin"
-            formControlName="hora_fin"
-            class="form-control"
-            [class.is-invalid]="formulario.get('hora_fin')?.invalid && formulario.get('hora_fin')?.touched"
-          />
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" [disabled]="enviando()">
-          {{ enviando() ? 'Creando...' : ('jornadas.crear' | translate) }}
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
-          {{ 'common.cancelar' | translate }}
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="modal-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+        {{ enviando() ? ('common.creando' | translate) : ('jornadas.crear' | translate) }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cerrarModal()" [disabled]="enviando()">
+        {{ 'common.cancelar' | translate }}
+      </button>
+    </div>
+  </form>
+</app-modal-shell>

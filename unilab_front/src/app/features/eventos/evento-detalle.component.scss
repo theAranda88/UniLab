@@ -1,234 +1,292 @@
+@use '../../../styles/design-tokens' as t;
+@use '../../../styles/eventos-ui' as ui;
+
 .evento-detalle-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem;
+  @include ui.eventos-page;
 
   .loading,
   .error {
     text-align: center;
-    padding: 2rem;
-    font-size: 1.1rem;
+    padding: t.$space-32;
+    font-size: t.$font-size-sm;
   }
 
   .error {
-    color: #dc3545;
-    background-color: #f8d7da;
-    border-radius: 4px;
+    color: t.$error;
+    background: #ffebee;
+    border-radius: t.$radius-md;
   }
 
   .evento-content {
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    @include ui.eventos-card;
 
     .evento-header {
-      padding: 2rem;
-      border-bottom: 2px solid #f0f0f0;
+      padding: t.$space-24;
+      border-bottom: 1px solid t.$border-gray;
       display: flex;
       justify-content: space-between;
-      align-items: start;
-      gap: 1rem;
+      align-items: flex-start;
+      gap: t.$space-16;
 
       h1 {
         margin: 0;
-        font-size: 2rem;
-        color: var(--primary-color, #333);
+        font-size: t.$font-size-2xl;
+        color: t.$primary-blue;
         flex: 1;
       }
 
       .estado {
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        white-space: nowrap;
+        @include ui.estado-pill;
 
         &.estado-planeado {
-          background-color: #e3f2fd;
-          color: #1976d2;
+          background: #e3f2fd;
+          color: t.$info;
         }
 
         &.estado-activo {
-          background-color: #e8f5e9;
-          color: #388e3c;
+          background: #e8f5e9;
+          color: t.$success;
         }
 
         &.estado-finalizado {
-          background-color: #f3e5f5;
+          background: #f3e5f5;
           color: #7b1fa2;
         }
       }
     }
 
     .evento-info {
-      padding: 2rem;
-      border-bottom: 1px solid #f0f0f0;
+      padding: t.$space-24;
+      border-bottom: 1px solid t.$border-gray;
 
       .info-row {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 0.75rem;
+        gap: t.$space-12;
+        margin-bottom: t.$space-8;
+        font-size: t.$font-size-sm;
 
         strong {
-          min-width: 150px;
-          color: var(--primary-color, #333);
+          min-width: 140px;
+          color: t.$text-dark;
         }
 
         span {
-          color: #666;
+          color: t.$text-light;
         }
       }
     }
 
     .descripcion-section {
-      padding: 2rem;
-      border-bottom: 1px solid #f0f0f0;
+      padding: t.$space-24;
+      border-bottom: 1px solid t.$border-gray;
 
       h3 {
-        margin: 0 0 1rem 0;
-        color: var(--primary-color, #333);
+        margin: 0 0 t.$space-12;
+        font-size: t.$font-size-base;
+        color: t.$primary-blue;
       }
 
       p {
         margin: 0;
-        color: #666;
-        line-height: 1.6;
+        color: t.$text-light;
+        line-height: t.$line-height-relaxed;
+        font-size: t.$font-size-sm;
       }
     }
 
     .acciones {
-      padding: 2rem;
+      padding: t.$space-24;
       display: flex;
-      gap: 1rem;
+      gap: t.$space-12;
       flex-wrap: wrap;
-      border-bottom: 1px solid #f0f0f0;
+      align-items: center;
+      border-bottom: 1px solid t.$border-gray;
 
       .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-
-        &.btn-primary,
-        &.btn-success {
-          color: white;
-
-          &:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-          }
-        }
-
         &.btn-primary {
-          background-color: var(--primary-color, #007bff);
+          @include ui.btn-primary;
+        }
+
+        &.btn-secondary {
+          @include ui.btn-secondary;
         }
 
         &.btn-success {
-          background-color: #28a745;
+          @include ui.btn-success;
+        }
+
+        &.btn-danger {
+          @include ui.btn-danger;
+        }
+
+        &.btn-sm {
+          @include ui.btn-sm;
+        }
+      }
+
+      .badge-inscrito {
+        display: inline-flex;
+        align-items: center;
+        gap: t.$space-8;
+        padding: t.$space-8 t.$space-16;
+        background: #e8f5e9;
+        color: t.$success;
+        border-radius: t.$radius-full;
+        font-size: t.$font-size-sm;
+        font-weight: t.$font-weight-semibold;
+      }
+    }
+
+    .inscripciones-section,
+    .jornadas-section {
+      padding: t.$space-24;
+
+      h3 {
+        margin: 0 0 t.$space-16;
+        font-size: t.$font-size-base;
+        color: t.$primary-blue;
+      }
+
+      .no-data {
+        color: t.$text-light;
+        font-size: t.$font-size-sm;
+      }
+
+      .aviso-jornadas {
+        padding: t.$space-12 t.$space-16;
+        background: #fff8e1;
+        border: 1px solid rgba(245, 124, 0, 0.25);
+        border-radius: t.$radius-md;
+        color: t.$warning;
+      }
+    }
+
+    .inscripciones-section {
+      border-bottom: 1px solid t.$border-gray;
+    }
+
+    .inscripciones-list {
+      display: flex;
+      flex-direction: column;
+      gap: t.$space-12;
+    }
+
+    .inscripcion-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: t.$space-16;
+      padding: t.$space-16;
+      border: 1px solid t.$border-gray;
+      border-radius: t.$radius-md;
+      background: t.$light-gray;
+
+      .inscripcion-info {
+        display: flex;
+        flex-direction: column;
+        gap: t.$space-4;
+
+        strong {
+          font-size: t.$font-size-sm;
+          color: t.$text-dark;
+        }
+
+        span {
+          font-size: t.$font-size-xs;
+          color: t.$text-light;
+        }
+
+        .rol-tag {
+          display: inline-block;
+          width: fit-content;
+          padding: 2px t.$space-8;
+          background: rgba(28, 157, 216, 0.12);
+          color: t.$light-blue;
+          border-radius: t.$radius-full;
+          font-size: t.$font-size-xs;
+        }
+      }
+
+      .inscripcion-pago {
+        display: flex;
+        align-items: center;
+        gap: t.$space-8;
+      }
+
+      .badge-pago {
+        @include ui.estado-pill;
+        background: t.$gray-200;
+        color: t.$text-light;
+
+        &.pago-pendiente {
+          background: #fff3e0;
+          color: t.$warning;
+        }
+
+        &.pago-confirmado,
+        &.pago-exento {
+          background: #e8f5e9;
+          color: t.$success;
         }
       }
     }
 
-    .jornadas-section {
-      padding: 2rem;
+    .jornadas-list {
+      display: flex;
+      flex-direction: column;
+      gap: t.$space-16;
+    }
 
-      h3 {
-        margin: 0 0 1.5rem 0;
-        color: var(--primary-color, #333);
+    .jornada-card {
+      border: 1px solid t.$border-gray;
+      border-radius: t.$radius-md;
+      overflow: hidden;
+
+      .jornada-header {
+        padding: t.$space-12 t.$space-16;
+        background: t.$light-gray;
+        border-bottom: 1px solid t.$border-gray;
+
+        h4 {
+          margin: 0;
+          font-size: t.$font-size-sm;
+          color: t.$primary-blue;
+        }
       }
 
-      .no-data {
-        color: #999;
-        text-align: center;
-        padding: 1rem;
-      }
+      .jornada-info {
+        padding: t.$space-16;
 
-      .jornadas-list {
-        display: grid;
-        gap: 1rem;
+        p {
+          margin: 0 0 t.$space-8;
+          font-size: t.$font-size-sm;
+          color: t.$text-light;
 
-        .jornada-card {
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
-          overflow: hidden;
-          transition: all 0.3s ease;
-
-          &:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          strong {
+            color: t.$text-dark;
           }
+        }
 
-          .jornada-header {
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #e0e0e0;
+        .qr-section {
+          margin-top: t.$space-12;
 
-            h4 {
-              margin: 0;
-              color: var(--primary-color, #333);
-            }
-          }
+          .qr-container {
+            margin-top: t.$space-8;
+            padding: t.$space-12;
+            background: t.$light-gray;
+            border-radius: t.$radius-md;
+            text-align: center;
 
-          .jornada-info {
-            padding: 1rem;
-
-            p {
-              margin: 0.5rem 0;
-              color: #666;
-              font-size: 0.95rem;
-
-              strong {
-                color: #333;
-              }
+            .qr-image {
+              max-width: 160px;
+              margin: 0 auto t.$space-8;
             }
 
-            .qr-section {
-              margin-top: 1rem;
-              padding-top: 1rem;
-              border-top: 1px solid #e0e0e0;
-
-              strong {
-                display: block;
-                color: #333;
-                margin-bottom: 0.75rem;
-              }
-
-              .qr-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                background-color: #f9f9f9;
-                border-radius: 8px;
-                border: 1px solid #e0e0e0;
-
-                .qr-image {
-                  max-width: 200px;
-                  height: auto;
-                  padding: 10px;
-                  background-color: white;
-                  border-radius: 4px;
-                  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                }
-
-                .qr-loading {
-                  color: #999;
-                  font-size: 0.9rem;
-                  text-align: center;
-                }
-
-                .qr-code-text {
-                  font-family: 'Courier New', monospace;
-                  font-size: 0.85rem;
-                  color: #666;
-                  word-break: break-all;
-                  text-align: center;
-                  max-width: 200px;
-                }
-              }
+            .qr-code-text {
+              display: block;
+              font-size: t.$font-size-xs;
+              color: t.$text-light;
+              word-break: break-all;
             }
           }
         }

@@ -4,8 +4,10 @@ import {
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
+  UrlTree,
 } from '@angular/router';
 import { AuthService } from './auth.service';
+import { getDefaultRouteForRole } from '../config/role-redirect';
 
 /**
  * Guardia de autenticación.
@@ -80,4 +82,17 @@ export const primerLoginGuard: CanActivateFn = (
   }
 
   return true;
+};
+
+/**
+ * Redirige a la ruta por defecto según el rol del usuario autenticado.
+ */
+export const roleRedirectGuard: CanActivateFn = (): UrlTree => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const user = authService.getCurrentUser();
+  if (!user) {
+    return router.createUrlTree(['/login']);
+  }
+  return router.createUrlTree([getDefaultRouteForRole(user.id_rol)]);
 };

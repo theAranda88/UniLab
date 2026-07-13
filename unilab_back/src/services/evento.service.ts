@@ -3,9 +3,22 @@ import QRCode from 'qrcode';
 import ExcelJS from 'exceljs';
 import { AppError } from '../utils/AppError';
 import { eventoRepository } from '../models/evento.repository';
+import { prisma } from '../models/prisma.client';
 
 function parseDate(fecha: string): Date {
-  return new Date(fecha);
+  const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return new Date(fecha);
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10) - 1;
+  const day = parseInt(match[3], 10);
+  return new Date(year, month, day);
+}
+
+function toDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function parseTime(hora: string): Date {
@@ -49,12 +62,74 @@ export const eventoService = {
     });
   },
 
+  async actualizar(
+    id: number,
+    data: {
+      nombre_evento?: string;
+      tipo_evento?: string;
+      descripcion?: string;
+      fecha_inicio?: string;
+      fecha_fin?: string;
+      lugar?: string;
+      estado?: string;
+      requiere_pago?: boolean;
+    },
+  ) {
+    await eventoService.obtener(id);
+    return eventoRepository.update(id, {
+      nombre_evento: data.nombre_evento,
+      tipo_evento: data.tipo_evento,
+      descripcion: data.descripcion,
+      fecha_inicio: data.fecha_inicio ? parseDate(data.fecha_inicio) : undefined,
+      fecha_fin: data.fecha_fin ? parseDate(data.fecha_fin) : undefined,
+      lugar: data.lugar,
+      estado: data.estado,
+      requiere_pago: data.requiere_pago,
+    });
+  },
+
+  async eliminar(id: number) {
+    await eventoService.obtener(id);
+    const ahora = new Date();
+    await prisma.$transaction([
+      eventoRepository.softDeleteJornadasPorEvento(id, ahora),
+      eventoRepository.softDeleteInscripcionesPorEvento(id, ahora),
+      prisma.eventos.update({
+        where: { id_evento: id },
+        data: { deleted_at: ahora },
+      }),
+    ]);
+  },
+
+  async listarInscripciones(id_evento: number) {
+    await eventoService.obtener(id_evento);
+    return eventoRepository.inscripcionesPorEvento(id_evento);
+  },
+
+  async obtenerMiInscripcion(id_evento: number, id_usuario: number) {
+    await eventoService.obtener(id_evento);
+    const inscripcion = await eventoRepository.findInscripcionEventoUsuario(id_evento, id_usuario);
+    return { inscrito: !!inscripcion, inscripcion };
+  },
+
   async crearJornada(
     id_evento: number,
     data: { nombre_jornada: string; fecha: string; hora_inicio: string; hora_fin: string },
     created_by: number,
   ) {
-    await eventoService.obtener(id_evento);
+    const evento = await eventoService.obtener(id_evento);
+    const fechaJornada = data.fecha.match(/^(\d{4})-(\d{2})-(\d{2})/)?.[0];
+    if (!fechaJornada) throw new AppError('Fecha de jornada inválida', 400);
+
+    const inicio = toDateKey(evento.fecha_inicio);
+    const fin = toDateKey(evento.fecha_fin);
+    if (fechaJornada < inicio || fechaJornada > fin) {
+      throw new AppError(
+        'La fecha de la jornada debe estar dentro del rango del evento',
+        422,
+      );
+    }
+
     return eventoRepository.crearJornada({
       nombre_jornada: data.nombre_jornada,
       fecha: parseDate(data.fecha),
@@ -116,6 +191,14 @@ export const eventoService = {
       throw new AppError('Debe estar inscrito en el evento', 422);
     }
 
+    const evento = await eventoService.obtener(jornada.id_evento);
+    if (evento.requiere_pago && inscripcion.estado_pago !== 'confirmado') {
+      throw new AppError(
+        'El pago de la inscripción debe estar confirmado para registrar asistencia',
+        422,
+      );
+    }
+
     const yaRegistrada = await eventoRepository.buscarAsistencia(
       inscripcion.id_inscripcion,
       jornada.id_jornada,
@@ -165,8 +248,26 @@ export const eventoService = {
     };
   },
 
-  async obtenerJornadas(id_evento: number) {
-    await eventoService.obtener(id_evento);
+  async obtenerJornadas(id_evento: number, id_usuario: number, rol: string) {
+    const evento = await eventoService.obtener(id_evento);
+    const rolesStaff = ['Administrador', 'Coordinador'];
+
+    if (!rolesStaff.includes(rol)) {
+      const inscripcion = await eventoRepository.findInscripcionEventoUsuario(
+        id_evento,
+        id_usuario,
+      );
+      if (!inscripcion) {
+        throw new AppError('Debe estar inscrito en el evento para ver las jornadas', 403);
+      }
+      if (evento.requiere_pago && inscripcion.estado_pago !== 'confirmado') {
+        throw new AppError(
+          'El pago de la inscripción debe estar confirmado para ver las jornadas',
+          403,
+        );
+      }
+    }
+
     return eventoRepository.findJornadasByEventoId(id_evento);
   },
 

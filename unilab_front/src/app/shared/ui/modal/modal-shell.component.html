@@ -1,0 +1,35 @@
+@if (open) {
+  <div class="modal-overlay" (click)="onOverlayClick()" role="presentation">
+    <div
+      class="modal-content"
+      [class.modal-sm]="size === 'sm'"
+      [class.modal-lg]="size === 'lg'"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="modal-header">
+        <h2>
+          @if (titleKey) {
+            {{ titleKey | translate }}
+          } @else {
+            {{ title }}
+          }
+        </h2>
+        <button
+          type="button"
+          class="close-btn"
+          (click)="onCloseClick()"
+          [disabled]="loading"
+          [attr.aria-label]="'common.close' | translate"
+        >
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <ng-content />
+      </div>
+    </div>
+  </div>
+}

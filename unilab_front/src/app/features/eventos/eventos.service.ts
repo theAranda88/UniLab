@@ -7,20 +7,64 @@ import {
   Inscripcion,
   Asistencia,
   CreateEventoDto,
+  UpdateEventoDto,
   CreateJornadaDto,
   CreateInscripcionDto,
-  RegistrarAsistenciaDto,
+  MiInscripcionResponse,
   ReporteEvento,
 } from '../../core/models/evento.model';
+import { AuthService } from '../../core/auth/auth.service';
+import { getEventosBasePath } from '../../core/config/eventos-paths';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventosService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private apiUrl = 'http://localhost:3000/api/eventos';
+  private inscripcionesUrl = 'http://localhost:3000/api/inscripciones';
 
-  // Eventos
+  getBasePath(): string {
+    return getEventosBasePath(this.authService.getCurrentUser()?.id_rol);
+  }
+
+  puedeCrear(): boolean {
+    return this.authService.hasRole('Administrador');
+  }
+
+  puedeEditar(): boolean {
+    return this.authService.hasRole('Administrador');
+  }
+
+  puedeEliminar(): boolean {
+    return this.authService.hasRole('Administrador');
+  }
+
+  puedeVerReportes(): boolean {
+    return this.authService.hasAnyRole(['Administrador', 'Coordinador']);
+  }
+
+  puedeListarInscripciones(): boolean {
+    return this.authService.hasAnyRole(['Administrador', 'Coordinador']);
+  }
+
+  puedeActualizarPago(): boolean {
+    return this.authService.hasRole('Administrador');
+  }
+
+  puedeInscribirse(): boolean {
+    return !this.authService.hasRole('Administrador');
+  }
+
+  puedeAsistenciaManual(): boolean {
+    return this.authService.hasAnyRole(['Administrador', 'Coordinador', 'Profesor']);
+  }
+
+  esAsistenciaSoloQr(): boolean {
+    return this.authService.hasAnyRole(['Estudiante', 'Externo']);
+  }
+
   listar(): Observable<Evento[]> {
     return this.http.get<Evento[]>(`${this.apiUrl}`);
   }
@@ -33,40 +77,51 @@ export class EventosService {
     return this.http.post<Evento>(`${this.apiUrl}`, data);
   }
 
-  // Jornadas
+  actualizar(id: number, data: UpdateEventoDto): Observable<Evento> {
+    return this.http.patch<Evento>(`${this.apiUrl}/${id}`, data);
+  }
+
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  listarInscripciones(idEvento: number): Observable<Inscripcion[]> {
+    return this.http.get<Inscripcion[]>(`${this.apiUrl}/${idEvento}/inscripciones`);
+  }
+
+  obtenerMiInscripcion(idEvento: number): Observable<MiInscripcionResponse> {
+    return this.http.get<MiInscripcionResponse>(`${this.apiUrl}/${idEvento}/mi-inscripcion`);
+  }
+
   crearJornada(idEvento: number, data: CreateJornadaDto): Observable<EventoJornada> {
-    return this.http.post<EventoJornada>(
-      `${this.apiUrl}/${idEvento}/jornadas`,
-      data
-    );
+    return this.http.post<EventoJornada>(`${this.apiUrl}/${idEvento}/jornadas`, data);
   }
 
   obtenerJornadas(idEvento: number): Observable<EventoJornada[]> {
     return this.http.get<EventoJornada[]>(`${this.apiUrl}/${idEvento}/jornadas`);
   }
 
-  // Inscripciones
   inscribirse(idEvento: number, data: CreateInscripcionDto): Observable<Inscripcion> {
-    return this.http.post<Inscripcion>(
-      `${this.apiUrl}/${idEvento}/inscripciones`,
-      data
-    );
+    return this.http.post<Inscripcion>(`${this.apiUrl}/${idEvento}/inscripciones`, data);
   }
 
-  // Asistencias (QR)
+  actualizarPago(
+    idInscripcion: number,
+    estado_pago: 'pendiente' | 'confirmado' | 'exento',
+  ): Observable<Inscripcion> {
+    return this.http.patch<Inscripcion>(`${this.inscripcionesUrl}/${idInscripcion}/pago`, {
+      estado_pago,
+    });
+  }
+
   registrarAsistencia(codigo_qr: string): Observable<Asistencia> {
-    return this.http.post<Asistencia>(
-      `${this.apiUrl}/asistencias/registrar`,
-      { codigo_qr },
-    );
+    return this.http.post<Asistencia>(`${this.apiUrl}/asistencias/registrar`, { codigo_qr });
   }
 
-  // Reportes
   obtenerReporte(idEvento: number): Observable<ReporteEvento> {
     return this.http.get<ReporteEvento>(`${this.apiUrl}/${idEvento}/reportes`);
   }
 
-  // Exportar
   exportarCSV(idEvento: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${idEvento}/reportes/export/csv`, {
       responseType: 'blob',

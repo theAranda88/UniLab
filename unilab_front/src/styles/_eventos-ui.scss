@@ -1,0 +1,118 @@
+@use './design-tokens' as t;
+
+@mixin eventos-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: t.$space-20;
+}
+
+@mixin eventos-card {
+  background: t.$white;
+  border: 1px solid t.$border-gray;
+  border-radius: t.$radius-lg;
+  box-shadow: t.$shadow-sm;
+  overflow: hidden;
+}
+
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: t.$space-8;
+  padding: t.$space-8 t.$space-16;
+  border: 1px solid transparent;
+  border-radius: t.$radius-md;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all t.$transition-base;
+  text-decoration: none;
+  line-height: 1.4;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+@mixin btn-primary {
+  @include btn-base;
+  background: t.$primary-blue;
+  color: t.$white;
+  border-color: t.$primary-blue;
+
+  &:hover:not(:disabled) {
+    background: t.$primary-blue-dark;
+    border-color: t.$primary-blue-dark;
+  }
+}
+
+@mixin btn-secondary {
+  @include btn-base;
+  background: t.$white;
+  color: t.$text-dark;
+  border-color: t.$border-gray;
+
+  &:hover:not(:disabled) {
+    background: t.$light-gray;
+  }
+}
+
+@mixin btn-success {
+  @include btn-base;
+  background: t.$success;
+  color: t.$white;
+  border-color: t.$success;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.92);
+  }
+}
+
+@mixin btn-danger {
+  @include btn-base;
+  background: t.$error;
+  color: t.$white;
+  border-color: t.$error;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.92);
+  }
+}
+
+@mixin btn-sm {
+  padding: t.$space-4 t.$space-12;
+  font-size: t.$font-size-xs;
+}
+
+@mixin form-control {
+  width: 100%;
+  padding: t.$space-8 t.$space-12;
+  border: 1px solid t.$border-gray;
+  border-radius: t.$radius-md;
+  font-size: t.$font-size-sm;
+  font-family: inherit;
+  background: t.$white;
+  color: t.$text-dark;
+  transition: border-color t.$transition-base, box-shadow t.$transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: t.$light-blue;
+    box-shadow: 0 0 0 3px rgba(28, 157, 216, 0.12);
+  }
+
+  &.is-invalid {
+    border-color: t.$error;
+    background: #fff5f5;
+  }
+}
+
+@mixin estado-pill {
+  padding: t.$space-4 t.$space-12;
+  border-radius: t.$radius-full;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  white-space: nowrap;
+}

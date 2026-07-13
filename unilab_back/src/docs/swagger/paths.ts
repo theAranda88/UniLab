@@ -417,6 +417,21 @@ export const paths = {
       parameters: [paramId],
       responses: { 200: { description: 'Detalle con jornadas e inscripciones' }, ...err },
     },
+    patch: {
+      tags: ['Eventos'],
+      summary: 'Actualizar evento',
+      description: '**Rol requerido:** Administrador. Actualización parcial; al menos un campo.',
+      parameters: [paramId],
+      requestBody: jsonBody('#/components/schemas/EventoUpdateRequest'),
+      responses: { 200: { description: 'Evento actualizado' }, ...err },
+    },
+    delete: {
+      tags: ['Eventos'],
+      summary: 'Eliminar evento (soft-delete)',
+      description: '**Rol requerido:** Administrador. Soft-delete en cascada de jornadas e inscripciones activas.',
+      parameters: [paramId],
+      responses: { 204: { description: 'Evento eliminado' }, ...err },
+    },
   },
   '/eventos/{id}/jornadas': {
     post: {
@@ -429,6 +444,26 @@ export const paths = {
     },
   },
   '/eventos/{id}/inscripciones': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Listar inscripciones del evento',
+      description: '**Rol requerido:** Administrador o Coordinador. Incluye datos del usuario y `estado_pago`.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Lista de inscripciones',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/InscripcionResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
     post: {
       tags: ['Eventos'],
       summary: 'Inscribirse al evento',

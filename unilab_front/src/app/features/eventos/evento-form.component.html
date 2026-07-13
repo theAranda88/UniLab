@@ -1,9 +1,14 @@
 <div class="evento-form-container">
-  <div class="form-card">
-    <h1>{{ 'eventos.crear' | translate }}</h1>
+  <app-breadcrumb [items]="breadcrumbItems()" />
 
+  <div class="form-card">
+    <h1>{{ (modoEdicion() ? 'eventos.editar' : 'eventos.crear') | translate }}</h1>
+
+    @if (cargando()) {
+      <p class="loading">{{ 'common.cargando' | translate }}</p>
+    } @else {
     @if (error()) {
-      <div class="error-message">{{ error() }}</div>
+      <div class="error-message">{{ error() | translate }}</div>
     }
 
     <form [formGroup]="formulario" (ngSubmit)="submit()" class="form">
@@ -109,12 +114,17 @@
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" [disabled]="enviando()">
-          {{ enviando() ? 'Creando...' : ('eventos.crear' | translate) }}
+          @if (enviando()) {
+            {{ 'common.cargando' | translate }}
+          } @else {
+            {{ (modoEdicion() ? 'eventos.guardar' : 'eventos.crear') | translate }}
+          }
         </button>
         <button type="button" class="btn btn-secondary" (click)="volver()">
           {{ 'common.cancelar' | translate }}
         </button>
       </div>
     </form>
+    }
   </div>
 </div>

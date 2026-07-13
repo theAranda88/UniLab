@@ -1,28 +1,66 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
-import { CreateEventoDto } from '../../core/models/evento.model';
+import { CreateEventoDto, UpdateEventoDto } from '../../core/models/evento.model';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
 
 @Component({
   selector: 'app-evento-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, BreadcrumbComponent],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',
 })
-export class EventoFormComponent {
+export class EventoFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private eventoService = inject(EventosService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
 
   formulario!: FormGroup;
   enviando = signal(false);
+  cargando = signal(false);
   error = signal<string | null>(null);
+  modoEdicion = signal(false);
+  idEvento = signal<number | null>(null);
+  nombreEvento = signal('');
 
-  constructor() {
+  breadcrumbItems = computed<BreadcrumbItem[]>(() => {
+    const base = this.eventoService.getBasePath();
+    if (this.modoEdicion()) {
+      const id = this.idEvento();
+      const items: BreadcrumbItem[] = [
+        { labelKey: 'eventos.title', route: base },
+      ];
+      if (this.nombreEvento()) {
+        items.push({ label: this.nombreEvento(), route: id ? [base, String(id)] : undefined });
+      }
+      items.push({ labelKey: 'eventos.editar' });
+      return items;
+    }
+    return [
+      { labelKey: 'eventos.title', route: base },
+      { labelKey: 'eventos.crear' },
+    ];
+  });
+
+  ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.modoEdicion.set(true);
+      this.idEvento.set(Number(idParam));
+      this.cargarEvento(Number(idParam));
+    }
+    this.inicializarFormulario();
+  }
+
+  private inicializarFormulario(): void {
     this.formulario = this.fb.group({
       nombre_evento: ['', [Validators.required, Validators.minLength(3)]],
       tipo_evento: ['', Validators.required],
@@ -35,29 +73,83 @@ export class EventoFormComponent {
     });
   }
 
+  private cargarEvento(id: number): void {
+    this.cargando.set(true);
+    this.eventoService.obtener(id).subscribe({
+      next: (evento) => {
+        this.nombreEvento.set(evento.nombre_evento);
+        this.formulario.patchValue({
+          nombre_evento: evento.nombre_evento,
+          tipo_evento: evento.tipo_evento,
+          descripcion: evento.descripcion,
+          fecha_inicio: this.toDateInput(evento.fecha_inicio),
+          fecha_fin: this.toDateInput(evento.fecha_fin),
+          lugar: evento.lugar,
+          estado: evento.estado,
+          requiere_pago: evento.requiere_pago,
+        });
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.error.set('eventos.errorCargar');
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  private toDateInput(fecha: string): string {
+    return fecha.split('T')[0];
+  }
+
   submit() {
     if (this.formulario.invalid) {
-      this.error.set('Por favor completa todos los campos correctamente');
+      this.error.set(this.translate.instant('eventos.formInvalid'));
       return;
     }
 
     this.enviando.set(true);
     this.error.set(null);
 
-    const eventoData: CreateEventoDto = this.formulario.value;
-    this.eventoService.crear(eventoData).subscribe({
-      next: (evento: any) => {
-        this.router.navigate(['/eventos', evento.id_evento]);
-      },
-      error: (err: any) => {
-        console.error('Error:', err);
-        this.error.set('Error al crear el evento');
-        this.enviando.set(false);
-      },
-    });
+    if (this.modoEdicion()) {
+      const data: UpdateEventoDto = this.formulario.value;
+      this.eventoService.actualizar(this.idEvento()!, data).subscribe({
+        next: async () => {
+          this.enviando.set(false);
+          await this.dialog.success({
+            titleKey: 'dialog.success.title',
+            messageKey: 'eventos.exitoActualizar',
+          });
+          this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
+        },
+        error: async (err: { message?: string }) => {
+          this.error.set(err.message ?? 'eventos.errorActualizar');
+          this.enviando.set(false);
+        },
+      });
+    } else {
+      const eventoData: CreateEventoDto = this.formulario.value;
+      this.eventoService.crear(eventoData).subscribe({
+        next: async (evento) => {
+          this.enviando.set(false);
+          await this.dialog.success({
+            titleKey: 'dialog.success.title',
+            messageKey: 'eventos.exitoCrear',
+          });
+          this.router.navigate([this.eventoService.getBasePath(), evento.id_evento]);
+        },
+        error: async (err: { message?: string }) => {
+          this.error.set(err.message ?? 'eventos.errorCrear');
+          this.enviando.set(false);
+        },
+      });
+    }
   }
 
   volver() {
-    this.router.navigate(['/eventos']);
+    if (this.modoEdicion() && this.idEvento()) {
+      this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
+    } else {
+      this.router.navigate([this.eventoService.getBasePath()]);
+    }
   }
 }

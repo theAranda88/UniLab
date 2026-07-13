@@ -1,0 +1,28 @@
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    @for (item of items; track $index; let last = $last) {
+      <li class="breadcrumb-item" [class.active]="last">
+        @if (!last && item.route) {
+          <a [routerLink]="item.route">
+            @if (item.labelKey) {
+              {{ item.labelKey | translate }}
+            } @else {
+              {{ item.label }}
+            }
+          </a>
+        } @else {
+          <span>
+            @if (item.labelKey) {
+              {{ item.labelKey | translate }}
+            } @else {
+              {{ item.label }}
+            }
+          </span>
+        }
+        @if (!last) {
+          <i class="ti ti-chevron-right separator" aria-hidden="true"></i>
+        }
+      </li>
+    }
+  </ol>
+</nav>

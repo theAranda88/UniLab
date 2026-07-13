@@ -1,22 +1,23 @@
 <div class="login-container">
   <div class="login-card">
-    <!-- Logo con círculo azul -->
-    <div class="logo-circle">
-      <span class="logo-icon">🎓</span>
+    <div class="login-card-bg" aria-hidden="true"></div>
+
+    <div class="login-card-content">
+    <div class="logo-area">
+      <img src="assets/images/uniautonoma_cauca.png" alt="Universidad Autónoma del Cauca" class="logo-img" />
+      <div class="logo-text">
+        <h1>{{ 'auth.login.title' | translate }}</h1>
+        <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+      </div>
     </div>
-    
-    <h1>{{ 'auth.login.title' | translate }}</h1>
-    <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <!-- Error Message -->
-      @if (errorMessage) {
+      @if (errorMessage()) {
         <div class="alert alert-error">
-          {{ errorMessage }}
+          {{ errorMessage() }}
         </div>
       }
 
-      <!-- Email Field (Correo Electrónico) -->
       <div class="form-group">
         <label for="email">{{ 'auth.login.email' | translate }}</label>
         <input
@@ -31,22 +32,18 @@
         @if (email?.invalid && (email?.dirty || email?.touched)) {
           <span class="error-text">
             @if (email?.errors?.['required']) {
-              {{ 'auth.login.email' | translate }} {{ 'common.error' | translate | lowercase }}
-            }
-            @if (email?.errors?.['email']) {
-              Ingresa un correo válido
+              {{ 'auth.login.emailRequired' | translate }}
             }
           </span>
         }
       </div>
 
-      <!-- Password Field -->
       <div class="form-group">
         <label for="password">{{ 'auth.login.password' | translate }}</label>
         <div class="password-wrapper">
           <input
             id="password"
-            [type]="showPassword ? 'text' : 'password'"
+            [type]="showPassword() ? 'text' : 'password'"
             class="form-control"
             [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)"
             formControlName="password"
@@ -55,44 +52,38 @@
           <button
             type="button"
             class="toggle-password"
-            (click)="showPassword = !showPassword"
-            [attr.aria-label]="(showPassword ? 'Ocultar' : 'auth.login.showPassword' | translate)"
+            (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="'auth.login.showPassword' | translate"
           >
-            <span class="eye-icon">{{ showPassword ? '👁️' : '👁️‍🗨️' }}</span>
+            <i class="ti" [class.ti-eye]="!showPassword()" [class.ti-eye-off]="showPassword()" aria-hidden="true"></i>
           </button>
         </div>
         @if (password?.invalid && (password?.dirty || password?.touched)) {
           <span class="error-text">
             @if (password?.errors?.['required']) {
-              {{ 'auth.login.password' | translate }}
+              {{ 'auth.login.passwordRequired' | translate }}
             }
             @if (password?.errors?.['minlength']) {
-              Mínimo 6 caracteres
+              {{ 'auth.login.passwordMinLength' | translate }}
             }
           </span>
         }
       </div>
 
-      <!-- Submit Button -->
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="loginForm.invalid || loading"
-      >
-        {{ loading ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">
+        {{ loading() ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
       </button>
     </form>
 
-    <!-- Support Link -->
     <div class="support-link">
       {{ 'auth.login.support' | translate }}
       <a href="#" (click)="$event.preventDefault()">{{ 'auth.login.supportLink' | translate }}</a>
     </div>
 
-    <!-- Security Badge Footer -->
     <div class="footer-badge">
-      <span class="badge-icon">🔒</span>
+      <i class="ti ti-lock" aria-hidden="true"></i>
       <span>{{ 'auth.login.security' | translate }}</span>
+    </div>
     </div>
   </div>
 </div>

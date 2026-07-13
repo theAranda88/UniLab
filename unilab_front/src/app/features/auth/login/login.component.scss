@@ -20,61 +20,86 @@ $success: #388e3c;
 // ========================================
 // LAYOUT PRINCIPAL
 // ========================================
+:host {
+  display: block;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100%;
   background: $soft-1;
-  padding: 16px;
+  padding: 8px;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
 }
 
 .login-card {
+  position: relative;
+  overflow: hidden;
   background: $white;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-  padding: 48px 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(36, 59, 142, 0.12);
+  padding: 24px 28px;
   width: 100%;
-  max-width: 460px;
-  text-align: center;
+  max-width: 420px;
+  max-height: calc(100dvh - 16px);
 
-  // Logo con círculo azul
-  .logo-circle {
-    width: 80px;
-    height: 80px;
-    background: $primary-blue;
-    border-radius: 50%;
+  .login-card-bg {
+    position: absolute;
+    inset: 0;
+    background: url('/assets/images/quime-02.png') center 38% / 42% auto no-repeat;
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .login-card-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-area {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin: 0 auto 32px;
-    font-size: 40px;
-  }
-
-  // Título principal
-  h1 {
-    color: $text-dark;
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 12px;
     text-align: center;
+    margin-bottom: 18px;
   }
 
-  // Subtítulo descriptivo
-  .subtitle {
-    color: $text-body;
-    font-size: 15px;
-    text-align: center;
-    margin: 0 0 32px;
-    line-height: 1.6;
+  .logo-img {
+    width: 96px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 8px;
   }
 
-  // Contenedor del formulario
+  .logo-text {
+    h1 {
+      color: $primary-blue;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: $text-body;
+      font-size: 13px;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
   form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
   }
 }
 
@@ -106,20 +131,20 @@ $success: #388e3c;
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   text-align: left;
 
   label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: $text-dark;
   }
 
   .hint-text {
-    font-size: 12px;
+    font-size: 11px;
     color: $text-light;
-    margin-top: -2px;
-    line-height: 1.4;
+    margin-top: 0;
+    line-height: 1.3;
   }
 
   .error-text {
@@ -133,7 +158,7 @@ $success: #388e3c;
 // INPUTS
 // ========================================
 .form-control {
-  padding: 12px 14px;
+  padding: 10px 12px;
   font-size: 14px;
   border: 1px solid $border-gray;
   border-radius: 4px;
@@ -202,8 +227,8 @@ $success: #388e3c;
 // BOTONES
 // ========================================
 .btn {
-  padding: 14px 20px;
-  font-size: 16px;
+  padding: 11px 16px;
+  font-size: 15px;
   font-weight: 600;
   border: none;
   border-radius: 4px;
@@ -250,8 +275,8 @@ $success: #388e3c;
 // ========================================
 .support-link {
   text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 13px;
   color: $text-body;
 
   a {
@@ -269,11 +294,11 @@ $success: #388e3c;
 // FOOTER CON BADGE SEGURIDAD
 // ========================================
 .footer-badge {
-  margin-top: 32px;
-  padding-top: 20px;
+  margin-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid $border-gray;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   color: $text-light;
   display: flex;
   justify-content: center;
@@ -284,47 +309,63 @@ $success: #388e3c;
 // ========================================
 // RESPONSIVE
 // ========================================
-@media (max-width: 768px) {
+@media (max-height: 700px) {
   .login-card {
-    padding: 32px 24px;
+    padding: 18px 22px;
 
-    h1 {
-      font-size: 22px;
+    .logo-area {
+      margin-bottom: 12px;
     }
 
-    .subtitle {
-      font-size: 13px;
+    .logo-img {
+      width: 80px;
+      margin-bottom: 6px;
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+    }
+
+    .logo-text .subtitle {
+      font-size: 12px;
     }
 
     form {
-      gap: 16px;
+      gap: 10px;
+    }
+
+    .support-link {
+      margin-top: 8px;
+    }
+
+    .footer-badge {
+      margin-top: 10px;
+      padding-top: 8px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    padding: 20px 20px;
+    max-width: 100%;
+
+    form {
+      gap: 12px;
     }
   }
 }
 
 @media (max-width: 480px) {
   .login-container {
-    padding: 12px;
+    padding: 6px;
   }
 
   .login-card {
-    padding: 24px 16px;
+    padding: 18px 16px;
 
-    .logo-circle {
-      width: 60px;
-      height: 60px;
-      font-size: 32px;
-      margin: 0 auto 24px;
-    }
-
-    h1 {
-      font-size: 20px;
-      margin: 0 0 8px;
-    }
-
-    .subtitle {
-      margin: 0 0 24px;
-      font-size: 13px;
+    .logo-img {
+      width: 84px;
     }
   }
 }

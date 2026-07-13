@@ -26,6 +26,31 @@ export const eventoRepository = {
     return prisma.eventos.create({ data });
   },
 
+  update(id: number, data: Prisma.eventosUpdateInput) {
+    return prisma.eventos.update({ where: { id_evento: id }, data });
+  },
+
+  softDelete(id: number) {
+    return prisma.eventos.update({
+      where: { id_evento: id },
+      data: { deleted_at: new Date() },
+    });
+  },
+
+  softDeleteJornadasPorEvento(id_evento: number, deleted_at: Date) {
+    return prisma.evento_jornadas.updateMany({
+      where: { id_evento, ...activo },
+      data: { deleted_at },
+    });
+  },
+
+  softDeleteInscripcionesPorEvento(id_evento: number, deleted_at: Date) {
+    return prisma.inscripciones.updateMany({
+      where: { id_evento, ...activo },
+      data: { deleted_at },
+    });
+  },
+
   crearJornada(data: Prisma.evento_jornadasCreateInput) {
     return prisma.evento_jornadas.create({ data });
   },
@@ -98,7 +123,18 @@ export const eventoRepository = {
   inscripcionesPorEvento(id_evento: number) {
     return prisma.inscripciones.findMany({
       where: { id_evento, ...activo },
-      include: { usuario: true },
+      include: {
+        usuario: {
+          select: {
+            id_usuario: true,
+            email: true,
+            nombres: true,
+            apellidos: true,
+            rol: { select: { nombre_rol: true } },
+          },
+        },
+      },
+      orderBy: { id_inscripcion: 'desc' },
     });
   },
 };

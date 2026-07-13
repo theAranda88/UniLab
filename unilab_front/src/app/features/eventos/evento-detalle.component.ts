@@ -1,58 +1,99 @@
-import { Component, OnInit, inject, signal, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import QRCode from 'qrcode';
 import { EventosService } from './eventos.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { Evento, EventoJornada } from '../../core/models/evento.model';
+import { Evento, EventoJornada, Inscripcion } from '../../core/models/evento.model';
 import { FormsModule } from '@angular/forms';
 import { InscripcionFormComponent } from './inscripcion-form.component';
 import { JornadaFormComponent } from './jornada-form.component';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { formatearFechaLocal, toDateInputValue } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslatePipe, InscripcionFormComponent, JornadaFormComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    TranslatePipe,
+    InscripcionFormComponent,
+    JornadaFormComponent,
+    BreadcrumbComponent,
+  ],
   templateUrl: './evento-detalle.component.html',
   styleUrl: './evento-detalle.component.scss',
 })
-export class EventoDetalleComponent implements OnInit, AfterViewInit {
-  private eventoService = inject(EventosService);
-  private authService = inject(AuthService);
+export class EventoDetalleComponent implements OnInit {
+  eventoService = inject(EventosService);
   private route = inject(ActivatedRoute);
-  private sanitizer = inject(DomSanitizer);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
 
   evento = signal<Evento | null>(null);
   jornadas = signal<EventoJornada[]>([]);
+  inscripciones = signal<Inscripcion[]>([]);
   cargando = signal(true);
+  cargandoInscripciones = signal(false);
+  eliminando = signal(false);
+  actualizandoPagoId = signal<number | null>(null);
   error = signal<string | null>(null);
-  usuarioRol = signal<string | null>(null);
-  usuarioId = signal<number | null>(null);
+  yaInscrito = signal(false);
+  miInscripcion = signal<Inscripcion | null>(null);
+
+  puedeCrear = computed(() => this.eventoService.puedeCrear());
+  puedeEditar = computed(() => this.eventoService.puedeEditar());
+  puedeEliminar = computed(() => this.eventoService.puedeEliminar());
+  puedeInscribirse = computed(
+    () => this.eventoService.puedeInscribirse() && !this.yaInscrito(),
+  );
+  puedeAsistenciaManual = computed(() => this.eventoService.puedeAsistenciaManual());
+  pagoConfirmado = computed(() => {
+    const ev = this.evento();
+    if (!ev?.requiere_pago) return true;
+    return this.miInscripcion()?.estado_pago === 'confirmado';
+  });
+  motivoAsistenciaDeshabilitada = computed<string | null>(() => {
+    if (!this.eventoService.esAsistenciaSoloQr()) return null;
+    if (!this.yaInscrito()) return 'asistencia.requiereInscripcion';
+    if (this.jornadas().length === 0) return 'asistencia.sinJornadas';
+    if (!this.pagoConfirmado()) return 'asistencia.pagoPendiente';
+    return null;
+  });
+  puedeVerReportes = computed(() => this.eventoService.puedeVerReportes());
+  puedeListarInscripciones = computed(() => this.eventoService.puedeListarInscripciones());
+  puedeActualizarPago = computed(() => this.eventoService.puedeActualizarPago());
+  puedeVerJornadas = computed(
+    () =>
+      this.eventoService.puedeListarInscripciones() ||
+      (this.yaInscrito() && this.pagoConfirmado()),
+  );
+  mensajeJornadasOcultas = computed<string | null>(() => {
+    if (this.eventoService.puedeListarInscripciones()) return null;
+    if (!this.yaInscrito()) return 'jornadas.requiereInscripcion';
+    if (!this.pagoConfirmado()) return 'jornadas.pagoPendiente';
+    return null;
+  });
+
+  breadcrumbItems = computed<BreadcrumbItem[]>(() => {
+    const ev = this.evento();
+    if (!ev) return [{ labelKey: 'eventos.title', route: this.eventoService.getBasePath() }];
+    return [
+      { labelKey: 'eventos.title', route: this.eventoService.getBasePath() },
+      { label: ev.nombre_evento },
+    ];
+  });
 
   mostrarFormularioInscripcion = signal(false);
   mostrarFormularioJornada = signal(false);
-
-  // Mapa de URLs de QR por id de jornada
   qrUrls = signal<Record<number, string>>({});
 
   ngOnInit() {
     this.cargarEvento();
-    this.authService.user$.subscribe((user) => {
-      if (user) {
-        this.usuarioRol.set(user.id_rol);
-        this.usuarioId.set(user.id_usuario);
-      }
-    });
-  }
-
-  ngAfterViewInit() {
-    // Generar QR para cada jornada que se cargue
-    const jornadas = this.jornadas();
-    if (jornadas.length > 0) {
-      this.generarQRsParaJornadas(jornadas);
-    }
   }
 
   async generarQRsParaJornadas(jornadas: EventoJornada[]): Promise<void> {
@@ -61,28 +102,21 @@ export class EventoDetalleComponent implements OnInit, AfterViewInit {
 
     for (const jornada of jornadas) {
       try {
-        // Generar deeplink: http://localhost:4200/eventos/2/asistencia?qr=UUID
         const deeplink = `${window.location.origin}/eventos/${idEvento}/asistencia?qr=${encodeURIComponent(jornada.codigo_qr)}`;
-        
         const qrDataUrl = await QRCode.toDataURL(deeplink, {
           errorCorrectionLevel: 'H',
-          type: 'image/png' as any,
+          type: 'image/png' as 'image/png',
           width: 200,
           margin: 1,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF',
-          },
+          color: { dark: '#243b8e', light: '#FFFFFF' },
         });
         urls[jornada.id_jornada] = qrDataUrl;
-        console.log(`QR generado para jornada ${jornada.id_jornada} con deeplink:`, deeplink);
-      } catch (error) {
-        console.error(`Error generando QR para jornada ${jornada.id_jornada}:`, error);
+      } catch {
+        // QR generation failed for this jornada
       }
     }
 
     this.qrUrls.set(urls);
-    console.log('QRs finales con deeplinks:', this.qrUrls());
   }
 
   cargarEvento() {
@@ -92,11 +126,34 @@ export class EventoDetalleComponent implements OnInit, AfterViewInit {
     this.eventoService.obtener(id).subscribe({
       next: (data: Evento) => {
         this.evento.set(data);
-        this.cargarJornadas(id);
+        if (this.eventoService.puedeListarInscripciones()) {
+          this.cargarInscripciones(id);
+          this.cargarJornadas(id);
+        } else {
+          this.verificarMiInscripcion(id);
+        }
       },
-      error: (err: any) => {
-        console.error('Error:', err);
-        this.error.set('Error al cargar el evento');
+      error: () => {
+        this.error.set('eventos.errorCargar');
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  verificarMiInscripcion(id: number) {
+    this.eventoService.obtenerMiInscripcion(id).subscribe({
+      next: (res) => {
+        this.yaInscrito.set(res.inscrito);
+        this.miInscripcion.set(res.inscripcion);
+        if (res.inscrito && this.pagoConfirmado()) {
+          this.cargarJornadas(id);
+        } else {
+          this.cargando.set(false);
+        }
+      },
+      error: () => {
+        this.yaInscrito.set(false);
+        this.miInscripcion.set(null);
         this.cargando.set(false);
       },
     });
@@ -107,30 +164,59 @@ export class EventoDetalleComponent implements OnInit, AfterViewInit {
       next: (data: EventoJornada[]) => {
         this.jornadas.set(data);
         this.cargando.set(false);
-        // Generar QR para todas las jornadas
-        this.generarQRsParaJornadas(data);
+        if (this.eventoService.puedeListarInscripciones()) {
+          this.generarQRsParaJornadas(data);
+        }
       },
-      error: (err: any) => {
-        console.error('Error:', err);
+      error: (err: { status?: number }) => {
+        this.jornadas.set([]);
         this.cargando.set(false);
+        if (err.status !== 403) {
+          this.error.set('eventos.errorCargar');
+        }
       },
     });
   }
 
-  esAdmin(): boolean {
-    return this.usuarioRol() === 'Administrador';
-  }
-
-  puedeInscribirse(): boolean {
-    return this.usuarioRol() !== 'Administrador';
+  cargarInscripciones(id: number) {
+    this.cargandoInscripciones.set(true);
+    this.eventoService.listarInscripciones(id).subscribe({
+      next: (data) => {
+        this.inscripciones.set(data);
+        this.cargandoInscripciones.set(false);
+      },
+      error: () => this.cargandoInscripciones.set(false),
+    });
   }
 
   abrirFormularioInscripcion() {
+    if (this.yaInscrito()) return;
     this.mostrarFormularioInscripcion.set(true);
   }
 
   cerrarFormularioInscripcion() {
     this.mostrarFormularioInscripcion.set(false);
+  }
+
+  async onInscripcionExitosa() {
+    this.cerrarFormularioInscripcion();
+    const id = this.evento()?.id_evento;
+    if (!id) return;
+
+    this.eventoService.obtenerMiInscripcion(id).subscribe({
+      next: (res) => {
+        this.yaInscrito.set(res.inscrito);
+        this.miInscripcion.set(res.inscripcion);
+        if (res.inscrito && this.pagoConfirmado()) {
+          this.cargarJornadas(id);
+        }
+      },
+    });
+
+    await this.dialog.success({
+      titleKey: 'dialog.success.title',
+      messageKey: 'inscripcion.exito',
+    });
   }
 
   abrirFormularioJornada() {
@@ -141,12 +227,136 @@ export class EventoDetalleComponent implements OnInit, AfterViewInit {
     this.mostrarFormularioJornada.set(false);
   }
 
+  async onJornadaCreada() {
+    const id = this.evento()?.id_evento;
+    if (id) this.cargarJornadas(id);
+    this.cerrarFormularioJornada();
+    await this.dialog.success({
+      titleKey: 'dialog.success.title',
+      messageKey: 'jornadas.exitoCrear',
+    });
+  }
+
+  irAEditar() {
+    const id = this.evento()?.id_evento;
+    if (id) {
+      this.router.navigate([this.eventoService.getBasePath(), id, 'editar']);
+    }
+  }
+
+  async eliminarEvento() {
+    const id = this.evento()?.id_evento;
+    if (!id) return;
+
+    const confirmar = await this.dialog.confirm({
+      titleKey: 'dialog.confirm.deleteTitle',
+      messageKey: 'eventos.confirmarEliminar',
+      confirmKey: 'common.delete',
+      cancelKey: 'common.cancelar',
+    });
+    if (!confirmar) return;
+
+    this.eliminando.set(true);
+    this.eventoService.eliminar(id).subscribe({
+      next: async () => {
+        await this.dialog.success({
+          titleKey: 'dialog.success.title',
+          messageKey: 'eventos.exitoEliminar',
+        });
+        this.router.navigate([this.eventoService.getBasePath()]);
+      },
+      error: async (err: { message?: string }) => {
+        this.eliminando.set(false);
+        await this.dialog.error({
+          titleKey: 'dialog.error.title',
+          message: err.message ?? this.translate.instant('eventos.errorEliminar'),
+        });
+      },
+    });
+  }
+
+  async confirmarPago(inscripcion: Inscripcion) {
+    const ok = await this.dialog.confirm({
+      titleKey: 'dialog.confirm.updateTitle',
+      messageKey: 'eventos.confirmarPago',
+      confirmKey: 'dashboard.admin.right.confirmar',
+      cancelKey: 'common.cancelar',
+      destructive: false,
+    });
+    if (!ok) return;
+
+    this.actualizandoPagoId.set(inscripcion.id_inscripcion);
+    this.eventoService.actualizarPago(inscripcion.id_inscripcion, 'confirmado').subscribe({
+      next: async () => {
+        this.actualizandoPagoId.set(null);
+        this.cargarInscripciones(this.evento()!.id_evento);
+        await this.dialog.success({
+          titleKey: 'dialog.success.title',
+          messageKey: 'eventos.exitoPago',
+        });
+      },
+      error: async (err: { message?: string }) => {
+        this.actualizandoPagoId.set(null);
+        await this.dialog.error({
+          titleKey: 'dialog.error.title',
+          message: err.message ?? this.translate.instant('eventos.errorPago'),
+        });
+      },
+    });
+  }
+
+  irAAsistencia() {
+    const id = this.evento()?.id_evento;
+    if (!id) return;
+
+    if (this.jornadas().length === 0) {
+      void this.dialog.warning({
+        titleKey: 'dialog.warning.title',
+        messageKey: 'asistencia.sinJornadas',
+      });
+      return;
+    }
+
+    this.router.navigate([this.eventoService.getBasePath(), id, 'asistencia']);
+  }
+
+  async onAsistenciaQrClick() {
+    const motivo = this.motivoAsistenciaDeshabilitada();
+    if (motivo) {
+      await this.dialog.warning({
+        titleKey: 'dialog.warning.title',
+        messageKey: motivo,
+      });
+      return;
+    }
+
+    await this.dialog.info({
+      titleKey: 'asistencia.titulo',
+      messageKey: 'asistencia.instruccionesQr',
+    });
+  }
+
+  irAReporte() {
+    const id = this.evento()?.id_evento;
+    if (id) {
+      this.router.navigate([this.eventoService.getBasePath(), id, 'reporte']);
+    }
+  }
+
   formatearFecha(fecha: string): string {
-    return new Date(fecha).toLocaleDateString();
+    return formatearFechaLocal(fecha);
+  }
+
+  toDateInput(fecha: string): string {
+    return toDateInputValue(fecha);
   }
 
   formatearHora(hora: string): string {
-    return hora.substring(0, 5);
+    if (!hora) return '—';
+    const match = hora.match(/T(\d{2}:\d{2})/);
+    if (match) return match[1];
+    if (hora.length >= 5 && hora.includes(':')) return hora.substring(0, 5);
+    return hora;
   }
 
   obtenerQRParaJornada(idJornada: number): string {

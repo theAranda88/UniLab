@@ -1,4 +1,6 @@
 <div class="reporte-container">
+  <app-breadcrumb [items]="breadcrumbItems()" />
+
   <div class="reporte-header">
     <h1>{{ 'reporte.titulo' | translate }}</h1>
     <div class="acciones">
@@ -17,7 +19,7 @@
   @if (cargando()) {
     <p class="loading">{{ 'common.cargando' | translate }}</p>
   } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+    <p class="error">{{ error() | translate }}</p>
   } @else if (reporte()) {
     <div class="reporte-content">
       <div class="resumen">
@@ -37,6 +39,9 @@
               <th>{{ 'inscripcion.tipoAsistente' | translate }}</th>
               <th>{{ 'reporte.estadoPago' | translate }}</th>
               <th>{{ 'reporte.asistencia' | translate }}</th>
+              @if (puedeActualizarPago()) {
+                <th>{{ 'reporte.acciones' | translate }}</th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -56,8 +61,21 @@
                   </span>
                 </td>
                 <td>
-                  <span class="porcentaje">{{ ((inscrito.total_asistencias / reporte()!.jornadas.length) * 100 | number: '1.0-0') }}%</span>
+                  <span class="porcentaje">{{ calcularPorcentajeAsistencia(inscrito) }}</span>
                 </td>
+                @if (puedeActualizarPago()) {
+                  <td>
+                    @if (inscrito.estado_pago === 'pendiente') {
+                      <button
+                        class="btn btn-sm btn-primary"
+                        (click)="confirmarPago(inscrito.id_inscripcion)"
+                        [disabled]="actualizandoPagoId() === inscrito.id_inscripcion"
+                      >
+                        {{ 'dashboard.admin.right.confirmar' | translate }}
+                      </button>
+                    }
+                  </td>
+                }
               </tr>
             }
           </tbody>

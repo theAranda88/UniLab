@@ -1,7 +1,7 @@
 <div class="eventos-list-container">
   <div class="header">
     <h1>{{ 'eventos.listar' | translate }}</h1>
-    @if (esAdmin()) {
+    @if (puedeCrear()) {
       <button class="btn btn-primary" (click)="crearEvento()">
         {{ 'eventos.crear' | translate }}
       </button>
@@ -11,11 +11,12 @@
   <div class="filters">
     <input
       type="text"
-      placeholder="{{ 'eventos.filtroTipo' | translate }}"
-      [(ngModel)]="filtroTipo"
+      [placeholder]="'eventos.filtroTipo' | translate"
+      [ngModel]="filtroTipo()"
+      (ngModelChange)="filtroTipo.set($event)"
       class="filter-input"
     />
-    <select [(ngModel)]="filtroEstado" class="filter-select">
+    <select [ngModel]="filtroEstado()" (ngModelChange)="filtroEstado.set($event)" class="filter-select">
       <option value="">{{ 'eventos.filtroEstado' | translate }}</option>
       <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
       <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
@@ -26,7 +27,7 @@
   @if (cargando()) {
     <p class="loading">{{ 'common.cargando' | translate }}</p>
   } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+    <p class="error">{{ error() | translate }}</p>
   } @else if (eventosFiltrados().length === 0) {
     <p class="no-data">{{ 'eventos.sinEventos' | translate }}</p>
   } @else {

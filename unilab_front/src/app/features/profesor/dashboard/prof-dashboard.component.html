@@ -1,0 +1,51 @@
+<div class="dashboard-page">
+  <div class="stats-row">
+    @for (stat of mock.stats; track stat.labelKey) {
+      <div class="stat-card">
+        <div class="stat-label">{{ stat.labelKey | translate }}</div>
+        <div class="stat-num" [class.accent]="stat.accent">{{ stat.num }}</div>
+        <div class="stat-sub">{{ stat.subKey | translate }}</div>
+      </div>
+    }
+  </div>
+
+  <div class="bottom-row">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">{{ mock.left.titleKey | translate }}</span>
+        <button class="card-link" type="button" disabled>{{ mock.left.linkKey | translate }} →</button>
+      </div>
+      @for (item of mock.left.items; track item.titleKey) {
+        <div class="list-item">
+          <div class="li-icon {{ item.iconVariant }}">
+            <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+          </div>
+          <div class="li-main">
+            <div class="li-title">{{ item.titleKey | translate }}</div>
+            <div class="li-sub">{{ item.subKey | translate }}</div>
+          </div>
+          <span class="pill {{ item.pillVariant }}">{{ item.pillKey | translate }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">{{ right.titleKey | translate }}</span>
+        <button class="card-link" type="button" disabled>{{ right.linkKey | translate }} →</button>
+      </div>
+      @for (item of right.items; track item.titleKey) {
+        <div class="list-item">
+          <div class="li-icon {{ item.iconVariant }}">
+            <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+          </div>
+          <div class="li-main">
+            <div class="li-title">{{ item.titleKey | translate }}</div>
+            <div class="li-sub">{{ item.subKey | translate }}</div>
+          </div>
+          <span class="pill {{ item.pillVariant }}">{{ item.pillKey | translate }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

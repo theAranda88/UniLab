@@ -529,6 +529,31 @@
           }
         },
         {
+          "name": "Actualizar evento",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"activo\",\n  \"requiere_pago\": true\n}"
+            },
+            "url": "{{base_url}}/eventos/1",
+            "description": "Solo Administrador. Actualización parcial; al menos un campo."
+          }
+        },
+        {
+          "name": "Eliminar evento (soft-delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/1",
+            "description": "Solo Administrador. Soft-delete en cascada de jornadas e inscripciones activas."
+          }
+        },
+        {
           "name": "Crear jornada",
           "request": {
             "method": "POST",
@@ -542,6 +567,15 @@
             },
             "url": "{{base_url}}/eventos/1/jornadas",
             "description": "Genera `codigo_qr` único automáticamente."
+          }
+        },
+        {
+          "name": "Listar inscripciones del evento",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/1/inscripciones",
+            "description": "Administrador o Coordinador. Incluye usuario y estado_pago."
           }
         },
         {

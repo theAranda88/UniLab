@@ -30,6 +30,14 @@ export interface EventoJornada {
 }
 
 // Inscripción
+export interface InscripcionUsuario {
+  id_usuario: number;
+  email: string;
+  nombres: string;
+  apellidos: string;
+  rol: { nombre_rol: string };
+}
+
 export interface Inscripcion {
   id_inscripcion: number;
   id_evento: number;
@@ -45,6 +53,7 @@ export interface Inscripcion {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  usuario?: InscripcionUsuario;
 }
 
 // Asistencia
@@ -70,11 +79,27 @@ export interface CreateEventoDto {
   requiere_pago?: boolean;
 }
 
+export interface UpdateEventoDto {
+  nombre_evento?: string;
+  tipo_evento?: string;
+  descripcion?: string;
+  fecha_inicio?: string;
+  fecha_fin?: string;
+  lugar?: string;
+  estado?: 'planeado' | 'activo' | 'finalizado';
+  requiere_pago?: boolean;
+}
+
 export interface CreateJornadaDto {
   nombre_jornada: string;
   fecha: string;
   hora_inicio: string;
   hora_fin: string;
+}
+
+export interface MiInscripcionResponse {
+  inscrito: boolean;
+  inscripcion: Inscripcion | null;
 }
 
 export interface CreateInscripcionDto {

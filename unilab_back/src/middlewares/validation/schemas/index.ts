@@ -134,6 +134,11 @@ export const eventoSchema = z.object({
   requiere_pago: z.boolean().optional(),
 });
 
+export const eventoUpdateSchema = eventoSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'Debe enviar al menos un campo para actualizar' },
+);
+
 export const jornadaSchema = z.object({
   nombre_jornada: z.string().min(1),
   fecha: z.string(),

@@ -1,15 +1,16 @@
 import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
 import { Evento, CreateInscripcionDto } from '../../core/models/evento.model';
 import { AuthService } from '../../core/auth/auth.service';
+import { ModalShellComponent } from '../../shared/ui/modal/modal-shell.component';
 
 @Component({
   selector: 'app-inscripcion-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, ModalShellComponent],
   templateUrl: './inscripcion-form.component.html',
   styleUrl: './inscripcion-form.component.scss',
 })
@@ -21,6 +22,7 @@ export class InscripcionFormComponent {
   private fb = inject(FormBuilder);
   private eventoService = inject(EventosService);
   private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   formulario!: FormGroup;
   enviando = signal(false);
@@ -50,7 +52,7 @@ export class InscripcionFormComponent {
   }
 
   mapearRolATipoAsistente(rol: string): string {
-    const mapa: { [key: string]: string } = {
+    const mapa: Record<string, string> = {
       Profesor: 'profesor',
       Estudiante: 'estudiante',
       Externo: 'externo',
@@ -60,7 +62,7 @@ export class InscripcionFormComponent {
 
   submit() {
     if (this.formulario.invalid) {
-      this.error.set('Por favor completa todos los campos correctamente');
+      this.error.set(this.translate.instant('eventos.formInvalid'));
       return;
     }
 
@@ -70,17 +72,18 @@ export class InscripcionFormComponent {
     const inscripcionData: CreateInscripcionDto = this.formulario.value;
     this.eventoService.inscribirse(this.evento.id_evento, inscripcionData).subscribe({
       next: () => {
+        this.enviando.set(false);
         this.inscripcionExitosa.emit();
       },
-      error: (err: any) => {
-        console.error('Error:', err);
-        this.error.set(err.error?.message || 'Error al registrar la inscripción');
+      error: (err: { message?: string }) => {
+        this.error.set(err.message ?? this.translate.instant('inscripcion.errorRegistrar'));
         this.enviando.set(false);
       },
     });
   }
 
   cerrarModal() {
+    if (this.enviando()) return;
     this.cerrar.emit();
   }
 }

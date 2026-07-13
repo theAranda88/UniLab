@@ -32,10 +32,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           this.router.navigate(['/unauthorized']);
         } else if (error.status === 404) {
           errorMessage = 'Recurso no encontrado.';
+        } else if (error.status === 409) {
+          errorMessage = error.error?.error || error.error?.message || 'Conflicto con el recurso.';
         } else if (error.status === 422) {
-          errorMessage = error.error.message || 'Violación de regla de negocio.';
+          errorMessage = error.error?.error || error.error?.message || 'Violación de regla de negocio.';
         } else if (error.status === 500) {
           errorMessage = 'Error interno del servidor.';
+        } else if (error.error?.error) {
+          errorMessage = error.error.error;
         } else if (error.error?.message) {
           errorMessage = error.error.message;
         }
@@ -72,10 +76,14 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigate(['/unauthorized']);
       } else if (error.status === 404) {
         errorMessage = 'Recurso no encontrado.';
+      } else if (error.status === 409) {
+        errorMessage = error.error?.error || error.error?.message || 'Conflicto con el recurso.';
       } else if (error.status === 422) {
-        errorMessage = error.error?.message || 'Violación de regla de negocio.';
+        errorMessage = error.error?.error || error.error?.message || 'Violación de regla de negocio.';
       } else if (error.status === 500) {
         errorMessage = 'Error interno del servidor.';
+      } else if (error.error?.error) {
+        errorMessage = error.error.error;
       } else if (error.error?.message) {
         errorMessage = error.error.message;
       }

@@ -7,6 +7,7 @@ import { validate } from '../middlewares/validation/validate';
 import {
   idParamSchema,
   eventoSchema,
+  eventoUpdateSchema,
   jornadaSchema,
   inscripcionSchema,
   pagoInscripcionSchema,
@@ -35,6 +36,19 @@ router.post(
 router.get('/qr/:codigo_qr', ...autenticado, eventoController.generarQR);
 
 router.get('/:id', ...autenticado, validate(idParamSchema, 'params'), eventoController.obtener);
+router.patch(
+  '/:id',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  validate(eventoUpdateSchema),
+  eventoController.actualizar,
+);
+router.delete(
+  '/:id',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  eventoController.eliminar,
+);
 router.get(
   '/:id/jornadas',
   ...autenticado,
@@ -47,6 +61,18 @@ router.post(
   validate(idParamSchema, 'params'),
   validate(jornadaSchema),
   eventoController.crearJornada,
+);
+router.get(
+  '/:id/mi-inscripcion',
+  ...autenticado,
+  validate(idParamSchema, 'params'),
+  eventoController.obtenerMiInscripcion,
+);
+router.get(
+  '/:id/inscripciones',
+  ...adminCoord,
+  validate(idParamSchema, 'params'),
+  eventoController.listarInscripciones,
 );
 router.post(
   '/:id/inscripciones',

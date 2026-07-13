@@ -1,0 +1,204 @@
+@use '../../../../styles/design-tokens' as t;
+
+.dashboard-page {
+  display: grid;
+  gap: t.$space-16;
+  align-content: start;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: t.$space-12;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  background: t.$white;
+  border: 1px solid t.$border-gray;
+  border-radius: t.$radius-lg;
+  padding: 14px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: t.$text-light;
+  margin-bottom: 6px;
+}
+
+.stat-num {
+  font-size: 22px;
+  font-weight: t.$font-weight-medium;
+  color: t.$text-dark;
+
+  &.accent {
+    color: t.$light-blue;
+  }
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: t.$text-light;
+  margin-top: 2px;
+}
+
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: t.$space-12;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: t.$white;
+  border: 1px solid t.$border-gray;
+  border-radius: t.$radius-lg;
+  padding: t.$space-16;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: t.$space-12;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: t.$font-weight-medium;
+  color: t.$text-dark;
+}
+
+.card-link {
+  font-size: 11px;
+  color: t.$light-blue;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid t.$border-gray;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.li-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: t.$radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+
+  &.accent {
+    background: rgba(t.$light-blue, 0.15);
+    color: t.$light-blue;
+  }
+
+  &.warning {
+    background: rgba(t.$warning, 0.15);
+    color: t.$warning;
+  }
+
+  &.success {
+    background: rgba(t.$success, 0.15);
+    color: t.$success;
+  }
+
+  &.danger {
+    background: rgba(t.$error, 0.15);
+    color: t.$error;
+  }
+}
+
+.li-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.li-title {
+  font-size: 12px;
+  font-weight: t.$font-weight-medium;
+  color: t.$text-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.li-sub {
+  font-size: 11px;
+  color: t.$text-light;
+}
+
+.pill {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+
+  &.pub {
+    background: rgba(t.$success, 0.15);
+    color: t.$success;
+  }
+
+  &.rev {
+    background: rgba(t.$warning, 0.15);
+    color: t.$warning;
+  }
+
+  &.pen {
+    background: rgba(t.$error, 0.15);
+    color: t.$error;
+  }
+
+  &.ok {
+    background: rgba(t.$success, 0.15);
+    color: t.$success;
+  }
+}
+
+.loading-text,
+.empty-text {
+  font-size: 12px;
+  color: t.$text-light;
+  padding: t.$space-8 0;
+}
+
+.confirm-btn {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: t.$radius-sm;
+  background: t.$primary-blue;
+  color: t.$white;
+  border: none;
+  margin-left: t.$space-4;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

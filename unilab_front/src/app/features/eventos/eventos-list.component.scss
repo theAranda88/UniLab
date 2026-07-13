@@ -1,59 +1,47 @@
+@use '../../../styles/design-tokens' as t;
+@use '../../../styles/eventos-ui' as ui;
+
 .eventos-list-container {
-  padding: 2rem;
+  @include ui.eventos-page;
   max-width: 1200px;
-  margin: 0 auto;
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: t.$space-24;
 
     h1 {
       margin: 0;
-      font-size: 2rem;
-      color: var(--primary-color, #333);
+      font-size: t.$font-size-2xl;
+      color: t.$primary-blue;
     }
 
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-
-      &.btn-primary {
-        background-color: var(--primary-color, #007bff);
-        color: white;
-
-        &:hover {
-          background-color: var(--primary-dark, #0056b3);
-        }
-      }
+    .btn.btn-primary {
+      @include ui.btn-primary;
     }
   }
 
   .filters {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: t.$space-12;
+    margin-bottom: t.$space-20;
     flex-wrap: wrap;
+    align-items: center;
 
     .filter-input,
     .filter-select {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-      flex: 1;
-      min-width: 200px;
+      @include ui.form-control;
+      width: auto;
+      min-width: 160px;
+      max-width: 220px;
+      padding: t.$space-8 t.$space-12;
+      font-size: t.$font-size-sm;
+      height: 36px;
+    }
 
-      &:focus {
-        outline: none;
-        border-color: var(--primary-color, #007bff);
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-      }
+    .filter-select {
+      cursor: pointer;
     }
   }
 
@@ -61,9 +49,9 @@
   .error,
   .no-data {
     text-align: center;
-    padding: 2rem;
-    font-size: 1.1rem;
-    color: #666;
+    padding: t.$space-32;
+    font-size: t.$font-size-sm;
+    color: t.$text-light;
   }
 
   .error {

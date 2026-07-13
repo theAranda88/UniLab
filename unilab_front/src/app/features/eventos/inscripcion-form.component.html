@@ -1,113 +1,107 @@
-<div class="modal-overlay" (click)="cerrarModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>{{ 'inscripcion.titulo' | translate }}</h2>
-      <button class="close-btn" (click)="cerrarModal()">✕</button>
+<app-modal-shell
+  [open]="true"
+  titleKey="inscripcion.titulo"
+  [loading]="enviando()"
+  [dismissible]="!enviando()"
+  (closed)="cerrarModal()"
+>
+  @if (error()) {
+    <div class="alert-error">{{ error() }}</div>
+  }
+
+  <form [formGroup]="formulario" (ngSubmit)="submit()" class="form">
+    <div class="form-group">
+      <label for="nombre_completo">{{ 'common.nombreCompleto' | translate }} *</label>
+      <input
+        type="text"
+        id="nombre_completo"
+        formControlName="nombre_completo"
+        class="form-control"
+        [class.is-invalid]="formulario.get('nombre_completo')?.invalid && formulario.get('nombre_completo')?.touched"
+      />
     </div>
 
-    @if (error()) {
-      <div class="error-message">{{ error() }}</div>
+    <div class="form-group">
+      <label for="documento_identidad">{{ 'common.documento' | translate }} *</label>
+      <input
+        type="text"
+        id="documento_identidad"
+        formControlName="documento_identidad"
+        class="form-control"
+        [class.is-invalid]="formulario.get('documento_identidad')?.invalid && formulario.get('documento_identidad')?.touched"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">{{ 'common.email' | translate }} *</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form-control"
+        [class.is-invalid]="formulario.get('email')?.invalid && formulario.get('email')?.touched"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="telefono">{{ 'common.telefono' | translate }} *</label>
+      <input
+        type="tel"
+        id="telefono"
+        formControlName="telefono"
+        class="form-control"
+        [class.is-invalid]="formulario.get('telefono')?.invalid && formulario.get('telefono')?.touched"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="tipo_asistente">{{ 'inscripcion.tipoAsistente' | translate }} *</label>
+      <select
+        id="tipo_asistente"
+        formControlName="tipo_asistente"
+        class="form-control"
+        [class.is-invalid]="formulario.get('tipo_asistente')?.invalid && formulario.get('tipo_asistente')?.touched"
+      >
+        <option value="">{{ 'common.seleccionar' | translate }}</option>
+        <option value="estudiante">{{ 'inscripcion.estudiante' | translate }}</option>
+        <option value="profesor">{{ 'inscripcion.profesor' | translate }}</option>
+        <option value="externo">{{ 'inscripcion.externo' | translate }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="institucion">{{ 'inscripcion.institucion' | translate }}</label>
+      <input type="text" id="institucion" formControlName="institucion" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="genero">{{ 'common.genero' | translate }} *</label>
+      <select
+        id="genero"
+        formControlName="genero"
+        class="form-control"
+        [class.is-invalid]="formulario.get('genero')?.invalid && formulario.get('genero')?.touched"
+      >
+        <option value="">{{ 'common.seleccionar' | translate }}</option>
+        <option value="M">{{ 'common.masculino' | translate }}</option>
+        <option value="F">{{ 'common.femenino' | translate }}</option>
+        <option value="O">{{ 'common.otro' | translate }}</option>
+      </select>
+    </div>
+
+    @if (evento.requiere_pago) {
+      <div class="info-box">
+        <p>{{ 'inscripcion.requierePago' | translate }}</p>
+      </div>
     }
 
-    <form [formGroup]="formulario" (ngSubmit)="submit()" class="form">
-      <div class="form-group">
-        <label for="nombre_completo">{{ 'common.nombreCompleto' | translate }} *</label>
-        <input
-          type="text"
-          id="nombre_completo"
-          formControlName="nombre_completo"
-          class="form-control"
-          [class.is-invalid]="formulario.get('nombre_completo')?.invalid && formulario.get('nombre_completo')?.touched"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="documento_identidad">{{ 'common.documento' | translate }} *</label>
-        <input
-          type="text"
-          id="documento_identidad"
-          formControlName="documento_identidad"
-          class="form-control"
-          [class.is-invalid]="formulario.get('documento_identidad')?.invalid && formulario.get('documento_identidad')?.touched"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="email">{{ 'common.email' | translate }} *</label>
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          class="form-control"
-          [class.is-invalid]="formulario.get('email')?.invalid && formulario.get('email')?.touched"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="telefono">{{ 'common.telefono' | translate }} *</label>
-        <input
-          type="tel"
-          id="telefono"
-          formControlName="telefono"
-          class="form-control"
-          [class.is-invalid]="formulario.get('telefono')?.invalid && formulario.get('telefono')?.touched"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="tipo_asistente">{{ 'inscripcion.tipoAsistente' | translate }} *</label>
-        <select
-          id="tipo_asistente"
-          formControlName="tipo_asistente"
-          class="form-control"
-          [class.is-invalid]="formulario.get('tipo_asistente')?.invalid && formulario.get('tipo_asistente')?.touched"
-        >
-          <option value="">{{ 'common.seleccionar' | translate }}</option>
-          <option value="estudiante">{{ 'inscripcion.estudiante' | translate }}</option>
-          <option value="profesor">{{ 'inscripcion.profesor' | translate }}</option>
-          <option value="externo">{{ 'inscripcion.externo' | translate }}</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="institucion">{{ 'inscripcion.institucion' | translate }}</label>
-        <input
-          type="text"
-          id="institucion"
-          formControlName="institucion"
-          class="form-control"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="genero">{{ 'common.genero' | translate }} *</label>
-        <select
-          id="genero"
-          formControlName="genero"
-          class="form-control"
-          [class.is-invalid]="formulario.get('genero')?.invalid && formulario.get('genero')?.touched"
-        >
-          <option value="">{{ 'common.seleccionar' | translate }}</option>
-          <option value="M">{{ 'common.masculino' | translate }}</option>
-          <option value="F">{{ 'common.femenino' | translate }}</option>
-          <option value="O">{{ 'common.otro' | translate }}</option>
-        </select>
-      </div>
-
-      @if (evento.requiere_pago) {
-        <div class="info-box">
-          <p>{{ 'inscripcion.requierePago' | translate }}</p>
-        </div>
-      }
-
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" [disabled]="enviando()">
-          {{ enviando() ? 'Enviando...' : ('inscripcion.btnInscribirse' | translate) }}
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
-          {{ 'common.cancelar' | translate }}
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="modal-actions">
+      <button type="submit" class="btn btn-success" [disabled]="enviando()">
+        {{ enviando() ? ('common.enviando' | translate) : ('inscripcion.btnInscribirse' | translate) }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cerrarModal()" [disabled]="enviando()">
+        {{ 'common.cancelar' | translate }}
+      </button>
+    </div>
+  </form>
+</app-modal-shell>

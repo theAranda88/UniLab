@@ -2,8 +2,10 @@
   @if (cargando()) {
     <p class="loading">{{ 'common.cargando' | translate }}</p>
   } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+    <p class="error">{{ error() | translate }}</p>
   } @else if (evento()) {
+    <app-breadcrumb [items]="breadcrumbItems()" />
+
     <div class="evento-content">
       <div class="evento-header">
         <h1>{{ evento()!.nombre_evento }}</h1>
@@ -38,7 +40,17 @@
       </div>
 
       <div class="acciones">
-        @if (esAdmin()) {
+        @if (puedeEditar()) {
+          <button class="btn btn-secondary" (click)="irAEditar()">
+            {{ 'eventos.editar' | translate }}
+          </button>
+        }
+        @if (puedeEliminar()) {
+          <button class="btn btn-danger" (click)="eliminarEvento()" [disabled]="eliminando()">
+            {{ eliminando() ? ('common.cargando' | translate) : ('eventos.eliminar' | translate) }}
+          </button>
+        }
+        @if (puedeCrear()) {
           <button class="btn btn-primary" (click)="abrirFormularioJornada()">
             {{ 'jornadas.crear' | translate }}
           </button>
@@ -47,12 +59,87 @@
           <button class="btn btn-success" (click)="abrirFormularioInscripcion()">
             {{ 'inscripcion.btnInscribirse' | translate }}
           </button>
+        } @else if (eventoService.puedeInscribirse() && yaInscrito()) {
+          <span class="badge-inscrito">
+            <i class="ti ti-circle-check" aria-hidden="true"></i>
+            {{ 'inscripcion.yaInscrito' | translate }}
+          </span>
+        }
+        @if (puedeAsistenciaManual()) {
+          <button
+            class="btn btn-secondary"
+            (click)="irAAsistencia()"
+            [disabled]="jornadas().length === 0"
+            [attr.title]="jornadas().length === 0 ? ('asistencia.sinJornadas' | translate) : null"
+          >
+            {{ 'asistencia.titulo' | translate }}
+          </button>
+        }
+        @if (eventoService.esAsistenciaSoloQr()) {
+          <button
+            class="btn btn-secondary"
+            (click)="onAsistenciaQrClick()"
+            [disabled]="!!motivoAsistenciaDeshabilitada()"
+            [attr.title]="motivoAsistenciaDeshabilitada() ? (motivoAsistenciaDeshabilitada()! | translate) : null"
+          >
+            {{ 'asistencia.titulo' | translate }}
+          </button>
+        }
+        @if (puedeVerReportes()) {
+          <button class="btn btn-secondary" (click)="irAReporte()">
+            {{ 'reporte.titulo' | translate }}
+          </button>
         }
       </div>
 
+      @if (puedeListarInscripciones()) {
+        <div class="inscripciones-section">
+          <h3>{{ 'eventos.inscripciones.titulo' | translate }} ({{ inscripciones().length }})</h3>
+          @if (cargandoInscripciones()) {
+            <p class="no-data">{{ 'common.cargando' | translate }}</p>
+          } @else if (inscripciones().length === 0) {
+            <p class="no-data">{{ 'eventos.inscripciones.sinInscripciones' | translate }}</p>
+          } @else {
+            <div class="inscripciones-list">
+              @for (insc of inscripciones(); track insc.id_inscripcion) {
+                <div class="inscripcion-card">
+                  <div class="inscripcion-info">
+                    <strong>{{ insc.nombre_completo }}</strong>
+                    <span>{{ insc.email }} · {{ insc.documento_identidad }}</span>
+                    @if (insc.usuario) {
+                      <span class="rol-tag">{{ insc.usuario.rol.nombre_rol }}</span>
+                    }
+                  </div>
+                  <div class="inscripcion-pago">
+                    @if (evento()!.requiere_pago) {
+                      <span class="badge-pago" [class]="'pago-' + (insc.estado_pago || 'sin-procesar')">
+                        {{ 'reporte.pago.' + (insc.estado_pago || 'sin-procesar') | translate }}
+                      </span>
+                      @if (puedeActualizarPago() && insc.estado_pago === 'pendiente') {
+                        <button
+                          class="btn btn-sm btn-primary"
+                          (click)="confirmarPago(insc)"
+                          [disabled]="actualizandoPagoId() === insc.id_inscripcion"
+                        >
+                          {{ 'dashboard.admin.right.confirmar' | translate }}
+                        </button>
+                      }
+                    } @else {
+                      <span class="badge-pago pago-exento">{{ 'reporte.pago.exento' | translate }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
       <div class="jornadas-section">
-        <h3>{{ 'jornadas.titulo' | translate }} ({{ jornadas().length }})</h3>
-        @if (jornadas().length === 0) {
+        <h3>{{ 'jornadas.titulo' | translate }} @if (puedeVerJornadas()) { ({{ jornadas().length }}) }</h3>
+        @if (!puedeVerJornadas()) {
+          <p class="no-data aviso-jornadas">{{ mensajeJornadasOcultas()! | translate }}</p>
+        } @else if (jornadas().length === 0) {
           <p class="no-data">{{ 'jornadas.sinJornadas' | translate }}</p>
         } @else {
           <div class="jornadas-list">
@@ -67,21 +154,23 @@
                     <strong>{{ 'jornadas.hora' | translate }}:</strong>
                     {{ formatearHora(jornada.hora_inicio) }} - {{ formatearHora(jornada.hora_fin) }}
                   </p>
-                  <div class="qr-section">
-                    <strong>{{ 'jornadas.codigoQR' | translate }}:</strong>
-                    <div class="qr-container">
-                      @if (obtenerQRParaJornada(jornada.id_jornada)) {
-                        <img 
-                          [src]="obtenerQRParaJornada(jornada.id_jornada)" 
-                          [alt]="'QR: ' + jornada.codigo_qr"
-                          class="qr-image"
-                        />
-                      } @else {
-                        <div class="qr-loading">{{ 'common.cargando' | translate }} QR...</div>
-                      }
-                      <code class="qr-code-text">{{ jornada.codigo_qr }}</code>
+                  @if (eventoService.puedeListarInscripciones()) {
+                    <div class="qr-section">
+                      <strong>{{ 'jornadas.codigoQR' | translate }}:</strong>
+                      <div class="qr-container">
+                        @if (obtenerQRParaJornada(jornada.id_jornada)) {
+                          <img
+                            [src]="obtenerQRParaJornada(jornada.id_jornada)"
+                            [alt]="'QR: ' + jornada.codigo_qr"
+                            class="qr-image"
+                          />
+                        } @else {
+                          <div class="qr-loading">{{ 'common.cargando' | translate }} QR...</div>
+                        }
+                        <code class="qr-code-text">{{ jornada.codigo_qr }}</code>
+                      </div>
                     </div>
-                  </div>
+                  }
                 </div>
               </div>
             }
@@ -93,15 +182,17 @@
         <app-inscripcion-form
           [evento]="evento()!"
           (cerrar)="cerrarFormularioInscripcion()"
-          (inscripcionExitosa)="cerrarFormularioInscripcion()"
+          (inscripcionExitosa)="onInscripcionExitosa()"
         ></app-inscripcion-form>
       }
 
       @if (mostrarFormularioJornada()) {
         <app-jornada-form
           [idEvento]="evento()!.id_evento"
+          [fechaMin]="toDateInput(evento()!.fecha_inicio)"
+          [fechaMax]="toDateInput(evento()!.fecha_fin)"
           (cerrar)="cerrarFormularioJornada()"
-          (jornadaCreada)="cargarJornadas(evento()!.id_evento)"
+          (jornadaCreada)="onJornadaCreada()"
         ></app-jornada-form>
       }
     </div>

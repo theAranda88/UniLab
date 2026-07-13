@@ -1,0 +1,77 @@
+<div class="dashboard-page">
+  <div class="stats-row">
+    @for (stat of mock.stats; track stat.labelKey) {
+      <div class="stat-card">
+        <div class="stat-label">{{ stat.labelKey | translate }}</div>
+        <div class="stat-num" [class.accent]="stat.accent">{{ stat.num }}</div>
+        <div class="stat-sub">{{ stat.subKey | translate }}</div>
+      </div>
+    }
+  </div>
+
+  <div class="bottom-row">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">{{ mock.left.titleKey | translate }}</span>
+        <button class="card-link" type="button" disabled>
+          {{ mock.left.linkKey | translate }} →
+        </button>
+      </div>
+      @for (item of mock.left.items; track item.titleKey) {
+        <div class="list-item">
+          <div class="li-icon {{ item.iconVariant }}">
+            <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+          </div>
+          <div class="li-main">
+            <div class="li-title">{{ item.titleKey | translate }}</div>
+            <div class="li-sub">{{ item.subKey | translate }}</div>
+          </div>
+          <span class="pill {{ item.pillVariant }}">{{ item.pillKey | translate }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">{{ 'dashboard.admin.right.title' | translate }}</span>
+        <button
+          class="card-link"
+          type="button"
+          (click)="irAEvento(pendingPayments()[0].id_evento)"
+          [disabled]="pendingPayments().length === 0"
+        >
+          {{ 'dashboard.admin.right.link' | translate }} →
+        </button>
+      </div>
+
+      @if (cargandoPagos()) {
+        <p class="loading-text">{{ 'common.cargando' | translate }}</p>
+      } @else if (pendingPayments().length === 0) {
+        <p class="empty-text">{{ 'dashboard.admin.right.empty' | translate }}</p>
+      } @else {
+        @for (item of pendingPayments(); track item.inscripcion.id_inscripcion) {
+          <div class="list-item">
+            <div class="li-icon danger">
+              <i class="ti ti-user" aria-hidden="true"></i>
+            </div>
+            <div class="li-main">
+              <div class="li-title">{{ item.nombre_evento }}</div>
+              <div class="li-sub">
+                {{ item.inscripcion.nombre_completo }} · {{ 'dashboard.admin.right.pagoPendiente' | translate }}
+              </div>
+            </div>
+            <span class="pill pen">{{ 'reporte.pago.pendiente' | translate }}</span>
+            <button
+              class="confirm-btn"
+              type="button"
+              (click)="confirmarPago(item)"
+              [disabled]="actualizandoId() === item.inscripcion.id_inscripcion"
+            >
+              {{ 'dashboard.admin.right.confirmar' | translate }}
+            </button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

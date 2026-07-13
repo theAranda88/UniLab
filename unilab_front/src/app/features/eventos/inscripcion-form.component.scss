@@ -1,146 +1,61 @@
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+@use '../../../styles/design-tokens' as t;
+@use '../../../styles/eventos-ui' as ui;
 
-  .modal-content {
-    background-color: white;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+.alert-error {
+  background: #ffebee;
+  color: t.$error;
+  padding: t.$space-12;
+  border-radius: t.$radius-md;
+  border-left: 4px solid t.$error;
+  margin-bottom: t.$space-16;
+  font-size: t.$font-size-sm;
+}
 
-    .modal-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid #f0f0f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+.info-box {
+  background: rgba(28, 157, 216, 0.08);
+  border: 1px solid rgba(28, 157, 216, 0.2);
+  border-radius: t.$radius-md;
+  padding: t.$space-12;
+  margin-bottom: t.$space-16;
 
-      h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        color: var(--primary-color, #333);
-      }
+  p {
+    margin: 0;
+    font-size: t.$font-size-sm;
+    color: t.$primary-blue;
+  }
+}
 
-      .close-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #999;
-        transition: color 0.3s ease;
+.form {
+  .form-group {
+    margin-bottom: t.$space-16;
 
-        &:hover {
-          color: #333;
-        }
-      }
+    label {
+      display: block;
+      margin-bottom: t.$space-4;
+      font-weight: t.$font-weight-semibold;
+      font-size: t.$font-size-sm;
+      color: t.$text-dark;
     }
 
-    .error-message {
-      background-color: #f8d7da;
-      color: #721c24;
-      padding: 1rem;
-      margin: 1rem;
-      border-radius: 4px;
-      border: 1px solid #f5c6cb;
+    .form-control {
+      @include ui.form-control;
     }
+  }
 
-    .form {
-      padding: 1.5rem;
+  .modal-actions {
+    display: flex;
+    gap: t.$space-12;
+    margin-top: t.$space-20;
 
-      .form-group {
-        margin-bottom: 1rem;
+    .btn {
+      flex: 1;
 
-        label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 600;
-          color: #333;
-          font-size: 0.95rem;
-        }
-
-        .form-control {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-
-          &:focus {
-            outline: none;
-            border-color: var(--primary-color, #007bff);
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-          }
-
-          &.is-invalid {
-            border-color: #dc3545;
-            background-color: #fff5f5;
-          }
-        }
+      &.btn-success {
+        @include ui.btn-success;
       }
 
-      .info-box {
-        background-color: #e7f3ff;
-        border-left: 4px solid var(--primary-color, #007bff);
-        padding: 0.75rem;
-        margin: 1rem 0;
-        border-radius: 4px;
-
-        p {
-          margin: 0;
-          color: #0056b3;
-          font-size: 0.9rem;
-        }
-      }
-
-      .modal-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
-
-        .btn {
-          padding: 0.75rem 1.5rem;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          flex: 1;
-
-          &.btn-primary {
-            background-color: var(--primary-color, #007bff);
-            color: white;
-
-            &:hover:not(:disabled) {
-              background-color: var(--primary-dark, #0056b3);
-            }
-
-            &:disabled {
-              opacity: 0.6;
-              cursor: not-allowed;
-            }
-          }
-
-          &.btn-secondary {
-            background-color: #6c757d;
-            color: white;
-
-            &:hover {
-              background-color: #5a6268;
-            }
-          }
-        }
+      &.btn-secondary {
+        @include ui.btn-secondary;
       }
     }
   }

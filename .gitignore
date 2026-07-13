@@ -60,16 +60,14 @@ coverage/
 *.bak
 ~*
 
-# SDD - Spec Driven Development session notes (local documentation)
+# SDD / Agent — documentación local (no subir al repositorio)
+AGENTS.md
+.github/
+00-esquema-bd-referencia.md
+01-prompt-maestro-backend.md
 .sdd/
 sdd-notes/
 session-notes/
-
-# GitHub - Ignore all except instructions and copilot-instructions
-.github/
-!.github/copilot-instructions.md
-!.github/instructions/
-!.github/instructions/**
 
 # Prisma
 prisma/.env

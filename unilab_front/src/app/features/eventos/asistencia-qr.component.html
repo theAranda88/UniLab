@@ -1,42 +1,93 @@
-<div class="asistencia-qr-container">
-  <div class="qr-card">
-    <h1>{{ 'asistencia.titulo' | translate }}</h1>
+@if (mobileMode()) {
+  <div class="mobile-asistencia">
+    <img src="assets/images/quime-02.png" alt="Quime" class="quime-img" />
 
-    <div class="qr-input-section">
-      <label for="codigoQr">{{ 'asistencia.ingresaCodigoQR' | translate }}</label>
-      <input
-        type="text"
-        id="codigoQr"
-        [(ngModel)]="codigoQr"
-        (keyup.enter)="registrarAsistencia()"
-        class="qr-input"
-        placeholder="{{ 'asistencia.placeholderQR' | translate }}"
-        [disabled]="registrando()"
-        autofocus
-      />
-    </div>
-
-    @if (mensaje()) {
-      <div class="mensaje" [class]="'mensaje-' + tipoMensaje()">
-        {{ mensaje() }}
+    @if (registrando()) {
+      <div class="mobile-status loading">
+        <i class="ti ti-loader" aria-hidden="true"></i>
+        <p>{{ 'asistencia.mobile.registrando' | translate }}</p>
+      </div>
+    } @else if (registroCompletado()) {
+      <div class="mobile-status success">
+        <i class="ti ti-circle-check" aria-hidden="true"></i>
+        <h1>{{ 'asistencia.mobile.exitoTitulo' | translate }}</h1>
+        <p>{{ 'asistencia.registrada' | translate }}</p>
+      </div>
+    } @else if (mensajeKey() || mensajeCustom()) {
+      <div class="mobile-status error">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <h1>{{ 'asistencia.mobile.errorTitulo' | translate }}</h1>
+        <p>
+          @if (mensajeCustom()) {
+            {{ mensajeCustom() }}
+          } @else {
+            {{ mensajeKey()! | translate }}
+          }
+        </p>
+      </div>
+    } @else if (sinQrParam()) {
+      <div class="mobile-status error">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <h1>{{ 'asistencia.mobile.errorTitulo' | translate }}</h1>
+        <p>{{ 'asistencia.errorSinQr' | translate }}</p>
+        <button class="btn-volver" type="button" (click)="volver()">
+          {{ 'common.volver' | translate }}
+        </button>
+      </div>
+    } @else {
+      <div class="mobile-status loading">
+        <p>{{ 'asistencia.mobile.preparando' | translate }}</p>
       </div>
     }
+  </div>
+} @else {
+  <div class="asistencia-qr-container">
+    <div class="qr-card">
+      <h1>{{ 'asistencia.titulo' | translate }}</h1>
 
-    <div class="actions">
-      <button
-        class="btn btn-primary"
-        (click)="registrarAsistencia()"
-        [disabled]="registrando() || !codigoQr()"
-      >
-        {{ registrando() ? 'Registrando...' : ('asistencia.registrar' | translate) }}
-      </button>
-      <button class="btn btn-secondary" (click)="volver()">
-        {{ 'common.volver' | translate }}
-      </button>
-    </div>
+      <div class="qr-input-section">
+        <label for="codigoQr">{{ 'asistencia.ingresaCodigoQR' | translate }}</label>
+        <input
+          type="text"
+          id="codigoQr"
+          [ngModel]="codigoQr()"
+          (ngModelChange)="codigoQr.set($event)"
+          (keyup.enter)="registrarAsistencia()"
+          class="qr-input"
+          [placeholder]="'asistencia.placeholderQR' | translate"
+          [disabled]="registrando()"
+          autofocus
+        />
+      </div>
 
-    <div class="info-box">
-      <p>{{ 'asistencia.instrucciones' | translate }}</p>
+      @if (mensajeKey() || mensajeCustom()) {
+        <div class="mensaje" [class]="'mensaje-' + tipoMensaje()">
+          @if (mensajeCustom()) {
+            {{ mensajeCustom() }}
+          } @else {
+            {{ mensajeKey()! | translate }}
+          }
+        </div>
+      }
+
+      <div class="actions">
+        <button
+          class="btn btn-primary"
+          (click)="registrarAsistencia()"
+          [disabled]="registrando() || !codigoQr()"
+        >
+          {{ registrando() ? ('asistencia.registrando' | translate) : ('asistencia.registrar' | translate) }}
+        </button>
+        @if (shellMode()) {
+          <button class="btn btn-secondary" (click)="volver()">
+            {{ 'common.volver' | translate }}
+          </button>
+        }
+      </div>
+
+      <div class="info-box">
+        <p>{{ 'asistencia.instrucciones' | translate }}</p>
+      </div>
     </div>
   </div>
-</div>
+}

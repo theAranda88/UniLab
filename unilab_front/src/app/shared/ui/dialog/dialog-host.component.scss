@@ -1,0 +1,98 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: t.$z-index-modal + 10;
+  padding: t.$space-16;
+}
+
+.dialog-card {
+  background: t.$white;
+  border-radius: t.$radius-lg;
+  box-shadow: t.$shadow-lg;
+  width: 100%;
+  max-width: 420px;
+  padding: t.$space-24;
+  text-align: center;
+}
+
+.dialog-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto t.$space-16;
+
+  i {
+    font-size: 24px;
+  }
+}
+
+.dialog-confirm .dialog-icon {
+  background: rgba(36, 59, 142, 0.1);
+  color: t.$primary-blue;
+}
+
+.dialog-success .dialog-icon {
+  background: rgba(56, 142, 60, 0.12);
+  color: t.$success;
+}
+
+.dialog-warning .dialog-icon {
+  background: rgba(245, 124, 0, 0.12);
+  color: t.$warning;
+}
+
+.dialog-error .dialog-icon {
+  background: rgba(211, 47, 47, 0.12);
+  color: t.$error;
+}
+
+.dialog-info .dialog-icon {
+  background: rgba(28, 157, 216, 0.12);
+  color: t.$light-blue;
+}
+
+.dialog-title {
+  margin: 0 0 t.$space-8;
+  font-size: t.$font-size-lg;
+  font-weight: t.$font-weight-semibold;
+  color: t.$text-dark;
+}
+
+.dialog-message {
+  margin: 0 0 t.$space-20;
+  font-size: t.$font-size-sm;
+  color: t.$text-light;
+  line-height: t.$line-height-normal;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: t.$space-8;
+  justify-content: center;
+
+  .btn {
+    min-width: 110px;
+
+    &.btn-primary {
+      @include ui.btn-primary;
+    }
+
+    &.btn-secondary {
+      @include ui.btn-secondary;
+    }
+
+    &.btn-danger {
+      @include ui.btn-danger;
+    }
+  }
+}

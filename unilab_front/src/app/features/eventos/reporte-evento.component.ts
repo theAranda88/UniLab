@@ -1,19 +1,20 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
 import { ReporteEvento } from '../../core/models/evento.model';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-reporte-evento',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, BreadcrumbComponent],
   templateUrl: './reporte-evento.component.html',
   styleUrl: './reporte-evento.component.scss',
 })
 export class ReporteEventoComponent implements OnInit {
-  private eventoService = inject(EventosService);
+  eventoService = inject(EventosService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -21,6 +22,26 @@ export class ReporteEventoComponent implements OnInit {
   cargando = signal(true);
   error = signal<string | null>(null);
   idEvento = signal<number>(0);
+  actualizandoPagoId = signal<number | null>(null);
+
+  puedeActualizarPago = computed(() => this.eventoService.puedeActualizarPago());
+
+  breadcrumbItems = computed<BreadcrumbItem[]>(() => {
+    const rep = this.reporte();
+    const base = this.eventoService.getBasePath();
+    const id = this.idEvento();
+    if (!rep) {
+      return [
+        { labelKey: 'eventos.title', route: base },
+        { labelKey: 'reporte.titulo' },
+      ];
+    }
+    return [
+      { labelKey: 'eventos.title', route: base },
+      { label: rep.nombre_evento, route: [base, String(id)] },
+      { labelKey: 'reporte.titulo' },
+    ];
+  });
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -37,11 +58,21 @@ export class ReporteEventoComponent implements OnInit {
         this.reporte.set(data);
         this.cargando.set(false);
       },
-      error: (err: any) => {
-        console.error('Error:', err);
-        this.error.set('Error al cargar el reporte');
+      error: () => {
+        this.error.set('reporte.errorCargar');
         this.cargando.set(false);
       },
+    });
+  }
+
+  confirmarPago(idInscripcion: number) {
+    this.actualizandoPagoId.set(idInscripcion);
+    this.eventoService.actualizarPago(idInscripcion, 'confirmado').subscribe({
+      next: () => {
+        this.actualizandoPagoId.set(null);
+        this.cargarReporte(this.idEvento());
+      },
+      error: () => this.actualizandoPagoId.set(null),
     });
   }
 
@@ -50,10 +81,6 @@ export class ReporteEventoComponent implements OnInit {
       next: (blob: Blob) => {
         this.descargarArchivo(blob, `reporte_evento_${this.idEvento()}.csv`);
       },
-      error: (err: any) => {
-        console.error('Error:', err);
-        alert('Error al exportar CSV');
-      },
     });
   }
 
@@ -61,10 +88,6 @@ export class ReporteEventoComponent implements OnInit {
     this.eventoService.exportarExcel(this.idEvento()).subscribe({
       next: (blob: Blob) => {
         this.descargarArchivo(blob, `reporte_evento_${this.idEvento()}.xlsx`);
-      },
-      error: (err: any) => {
-        console.error('Error:', err);
-        alert('Error al exportar Excel');
       },
     });
   }
@@ -81,15 +104,13 @@ export class ReporteEventoComponent implements OnInit {
   }
 
   volver() {
-    this.router.navigate(['/eventos', this.idEvento()]);
+    this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
   }
 
-  calcularPorcentajeAsistencia(inscrito: any): string {
-    if (!inscrito.asistencias || inscrito.asistencias.length === 0) {
-      return '0%';
-    }
-    const presentes = inscrito.asistencias.filter((a: any) => a.presente).length;
-    const porcentaje = Math.round((presentes / inscrito.asistencias.length) * 100);
+  calcularPorcentajeAsistencia(inscrito: { total_asistencias: number }): string {
+    const totalJornadas = this.reporte()?.jornadas.length ?? 0;
+    if (totalJornadas === 0) return '0%';
+    const porcentaje = Math.round((inscrito.total_asistencias / totalJornadas) * 100);
     return `${porcentaje}%`;
   }
 }

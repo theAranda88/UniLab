@@ -20,6 +20,29 @@ export const eventoController = {
     res.status(201).json(evento);
   }),
 
+  actualizar: asyncHandler(async (req: Request, res: Response) => {
+    const evento = await eventoService.actualizar(Number(req.params.id), req.body);
+    res.status(200).json(evento);
+  }),
+
+  eliminar: asyncHandler(async (req: Request, res: Response) => {
+    await eventoService.eliminar(Number(req.params.id));
+    res.status(204).send();
+  }),
+
+  listarInscripciones: asyncHandler(async (req: Request, res: Response) => {
+    const inscripciones = await eventoService.listarInscripciones(Number(req.params.id));
+    res.status(200).json(inscripciones);
+  }),
+
+  obtenerMiInscripcion: asyncHandler(async (req: Request, res: Response) => {
+    const resultado = await eventoService.obtenerMiInscripcion(
+      Number(req.params.id),
+      req.user!.id_usuario,
+    );
+    res.status(200).json(resultado);
+  }),
+
   crearJornada: asyncHandler(async (req: Request, res: Response) => {
     const jornada = await eventoService.crearJornada(
       Number(req.params.id),
@@ -60,7 +83,11 @@ export const eventoController = {
   }),
 
   obtenerJornadas: asyncHandler(async (req: Request, res: Response) => {
-    const jornadas = await eventoService.obtenerJornadas(Number(req.params.id));
+    const jornadas = await eventoService.obtenerJornadas(
+      Number(req.params.id),
+      req.user!.id_usuario,
+      req.user!.id_rol,
+    );
     res.status(200).json(jornadas);
   }),
 
