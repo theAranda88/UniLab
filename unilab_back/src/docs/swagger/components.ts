@@ -26,6 +26,15 @@ export const paramIdEstudiante = {
   example: 5,
 };
 
+export const paramIdImagen = {
+  name: 'idImagen',
+  in: 'path' as const,
+  required: true,
+  schema: { type: 'integer', minimum: 1 },
+  description: 'ID de la imagen del proyecto',
+  example: 1,
+};
+
 /** Respuestas de error estándar */
 export const responsesError = {
   400: {
@@ -249,6 +258,12 @@ export const schemas = {
       descripcion: { type: 'string', example: 'Sistema de gestión de proyectos universitarios' },
       tipo_proyecto: { type: 'string', enum: ['web', 'movil', 'podcast', 'otro'], example: 'web' },
       url_aplicativo: { type: 'string', format: 'uri', example: 'https://unilab.example.com' },
+      url_imagen: {
+        type: 'string',
+        format: 'uri',
+        example: 'https://cdn.unilab.example.com/proyectos/portada-unilab.png',
+        description: 'Legacy opcional. Preferir POST /proyectos/:id/imagenes con archivos JPEG/PNG/WebP (máx. 3).',
+      },
       url_apk: { type: 'string', format: 'uri' },
       url_youtube: { type: 'string', format: 'uri' },
       url_spotify: { type: 'string', format: 'uri' },
@@ -262,6 +277,8 @@ export const schemas = {
         type: 'string',
         enum: ['borrador', 'en_revision', 'aprobado', 'publicado', 'rechazado'],
         example: 'en_revision',
+        description:
+          'Al pasar a `en_revision` debe existir al menos 1 imagen activa en `proyecto_imagenes` (o `url_imagen` legacy).',
       },
     },
   },
@@ -420,6 +437,60 @@ export const schemas = {
       fecha_hora_registro: { type: 'string', format: 'date-time', description: 'Fecha y hora exacta del registro de asistencia (ISO 8601)', example: '2026-07-19T10:30:45Z' },
       created_at: { type: 'string', format: 'date-time', description: 'Timestamp de creación del registro', example: '2026-07-12T04:10:32Z' },
       created_by: { type: 'integer', description: 'ID del usuario que registró la asistencia', example: 5 },
+    },
+  },
+  EscuelaPublicaResponse: {
+    type: 'object',
+    properties: {
+      id_escuela: { type: 'integer', example: 31 },
+      nombre_escuela: { type: 'string', example: 'Escuela de Software y Desarrollo Tecnológico' },
+      total_proyectos_publicados: {
+        type: 'integer',
+        minimum: 0,
+        example: 2,
+        description: 'Conteo de proyectos con estado `publicado` asociados a cursos de esta escuela',
+      },
+    },
+    required: ['id_escuela', 'nombre_escuela', 'total_proyectos_publicados'],
+  },
+  ProyectoImagenResponse: {
+    type: 'object',
+    properties: {
+      id_imagen: { type: 'integer', example: 1 },
+      id_proyecto: { type: 'integer', example: 10 },
+      ruta_archivo: { type: 'string', example: 'uploads/proyectos/10/abc123.webp' },
+      url: {
+        type: 'string',
+        format: 'uri',
+        example: 'http://localhost:3000/uploads/proyectos/10/abc123.webp',
+        description: 'URL pública servida por el backend',
+      },
+      nombre_original: { type: 'string', example: 'portada.webp' },
+      mime_type: { type: 'string', enum: ['image/jpeg', 'image/png', 'image/webp'], example: 'image/webp' },
+      orden: { type: 'integer', minimum: 1, maximum: 3, example: 1 },
+    },
+    required: ['id_imagen', 'id_proyecto', 'url', 'orden'],
+  },
+  ProyectoPublicoResponse: {
+    type: 'object',
+    description: 'Proyecto con estado `publicado`. Incluye array `imagenes` ordenado y `url_imagen` como portada (orden 1).',
+    properties: {
+      id_proyecto: { type: 'integer', example: 10 },
+      titulo: { type: 'string', example: 'Plataforma UniLab' },
+      descripcion: { type: 'string' },
+      tipo_proyecto: { type: 'string', enum: ['web', 'movil', 'podcast', 'otro'] },
+      url_aplicativo: { type: 'string', format: 'uri' },
+      url_imagen: { type: 'string', format: 'uri', nullable: true },
+      imagenes: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/ProyectoImagenResponse' },
+      },
+      url_apk: { type: 'string', format: 'uri', nullable: true },
+      url_youtube: { type: 'string', format: 'uri', nullable: true },
+      url_spotify: { type: 'string', format: 'uri', nullable: true },
+      estado_proyecto: { type: 'string', enum: ['publicado'], example: 'publicado' },
+      contador_vistas: { type: 'integer', example: 42 },
+      fecha_publicacion: { type: 'string', format: 'date-time', nullable: true },
     },
   },
 };

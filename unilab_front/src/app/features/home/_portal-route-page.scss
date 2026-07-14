@@ -1,0 +1,57 @@
+@use '../../../styles/design-tokens' as *;
+
+:host.portal-route-page {
+  display: block;
+  flex: 1;
+  opacity: 0;
+  transform: perspective(1400px) rotateY(-20deg) scale(0.88) translateY(48px);
+  filter: blur(8px);
+  transform-origin: center top;
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.7s ease;
+}
+
+:host.portal-route-page--entered {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+:host.portal-route-page--exiting {
+  opacity: 0;
+  transform: perspective(1400px) rotateY(18deg) scale(0.9) translateY(-32px);
+  filter: blur(10px);
+  pointer-events: none;
+  transition:
+    opacity 0.55s cubic-bezier(0.4, 0, 1, 1),
+    transform 0.62s cubic-bezier(0.4, 0, 1, 1),
+    filter 0.5s ease;
+}
+
+.portal-sub__back {
+  display: inline-block;
+  margin-bottom: $space-12;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: ui-monospace, monospace;
+  font-size: $font-size-xs;
+  color: rgba(212, 175, 55, 0.75);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color $transition-base, transform $transition-base, letter-spacing $transition-base;
+
+  &:hover {
+    color: #fcd34d;
+    transform: translateX(-4px);
+    letter-spacing: 0.08em;
+  }
+}
+
+.portal-sub__error {
+  color: rgba(248, 113, 113, 0.9);
+  font-size: $font-size-sm;
+}

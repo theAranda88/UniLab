@@ -83,9 +83,15 @@ export const proyectoSchema = z.object({
   descripcion: z.string().min(1),
   tipo_proyecto: z.enum(['web', 'movil', 'podcast', 'otro']),
   url_aplicativo: z.string().url(),
+  url_imagen: z.string().url().optional(),
   url_apk: z.string().url().optional(),
   url_youtube: z.string().url().optional(),
   url_spotify: z.string().url().optional(),
+});
+
+export const imagenProyectoParamSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  idImagen: z.coerce.number().int().positive(),
 });
 
 export const actualizarProyectoSchema = proyectoSchema.partial();

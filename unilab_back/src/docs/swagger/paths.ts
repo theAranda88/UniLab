@@ -1,4 +1,4 @@
-import { paramId, paramIdEstudiante, paramIdProfesor, responsesError, jsonBody } from './components';
+import { paramId, paramIdEstudiante, paramIdProfesor, paramIdImagen, responsesError, jsonBody } from './components';
 
 const err = responsesError;
 
@@ -291,6 +291,77 @@ export const paths = {
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/CalificacionRequest'),
       responses: { 200: { description: 'Calificación guardada' }, ...err },
+    },
+  },
+  '/proyectos/{id}/imagenes': {
+    get: {
+      tags: ['Proyectos'],
+      summary: 'Listar imágenes del proyecto',
+      description:
+        'Requiere permiso de gestión del proyecto. Devuelve hasta 3 imágenes activas ordenadas por `orden`.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Imágenes del proyecto',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/ProyectoImagenResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+    post: {
+      tags: ['Proyectos'],
+      summary: 'Subir imágenes del proyecto',
+      description:
+        '**Multipart:** campo `imagenes` (1–3 archivos JPEG/PNG/WebP, máx. 5 MB c/u). Requiere permiso de gestión. Sincroniza `url_imagen` con la imagen de `orden=1`.',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['imagenes'],
+              properties: {
+                imagenes: {
+                  type: 'array',
+                  items: { type: 'string', format: 'binary' },
+                  description: 'Archivos de imagen (máx. 3 en total por proyecto)',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Imágenes subidas',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/ProyectoImagenResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
+  '/proyectos/{id}/imagenes/{idImagen}': {
+    delete: {
+      tags: ['Proyectos'],
+      summary: 'Eliminar imagen del proyecto (soft-delete)',
+      description: 'Reordena las imágenes restantes y actualiza la portada (`url_imagen`).',
+      parameters: [paramId, paramIdImagen],
+      responses: { 204: { description: 'Imagen eliminada' }, ...err },
     },
   },
 
@@ -589,6 +660,103 @@ export const paths = {
           content: { 'application/json': { schema: { $ref: '#/components/schemas/AsistenciaResponse' } } },
         },
         ...err,
+      },
+    },
+  },
+
+  // ─── PÚBLICO (sin auth) ─────────────────────────────────────────────────────
+  '/public/escuelas': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar escuelas (portal público)',
+      description:
+        'Sin autenticación. Usado en el home del portal para tarjetas de escuela. Incluye conteo de proyectos publicados por escuela.',
+      security: [],
+      responses: {
+        200: {
+          description: 'Listado de escuelas activas con conteo de proyectos publicados',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/EscuelaPublicaResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/public/cursos': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar cursos (portal público)',
+      description: 'Sin autenticación. Filtro opcional por escuela.',
+      security: [],
+      parameters: [
+        {
+          name: 'id_escuela',
+          in: 'query',
+          schema: { type: 'integer' },
+          required: false,
+          description: 'Filtrar cursos de una escuela',
+          example: 31,
+        },
+      ],
+      responses: {
+        200: { description: 'Listado de cursos activos' },
+        404: err[404],
+      },
+    },
+  },
+  '/public/proyectos': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar proyectos publicados (portal público)',
+      description: 'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.',
+      security: [],
+      parameters: [
+        {
+          name: 'id_escuela',
+          in: 'query',
+          schema: { type: 'integer' },
+          required: false,
+          description: 'Filtrar por escuela del curso',
+          example: 31,
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Proyectos publicados',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/ProyectoPublicoResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/public/proyectos/{id}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Detalle de proyecto publicado',
+      description: 'Sin autenticación. Registra una vista e incrementa `contador_vistas`.',
+      security: [],
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Proyecto publicado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProyectoPublicoResponse' },
+            },
+          },
+        },
+        404: err[404],
       },
     },
   },

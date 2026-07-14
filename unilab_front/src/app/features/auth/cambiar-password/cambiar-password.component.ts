@@ -85,9 +85,7 @@ export class CambiarPasswordComponent implements OnInit, OnDestroy {
           // Actualizar primer_login en el servicio
           const user = this.authService.getCurrentUser();
           if (user) {
-            user.primer_login = false;
-            localStorage.setItem('usuario', JSON.stringify(user));
-            this.authService['userSubject'].next(user);
+            this.authService.updateUser({ primer_login: false });
           }
 
           // Redirigir después de 1.5 segundos

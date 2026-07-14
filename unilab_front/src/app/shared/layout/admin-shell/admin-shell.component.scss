@@ -155,6 +155,8 @@
   border: 1px solid t.$border-gray;
   border-radius: t.$radius-md;
   color: t.$text-light;
+  background: t.$white;
+  cursor: pointer;
   transition: all t.$transition-base;
 
   &:hover {

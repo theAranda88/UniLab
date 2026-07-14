@@ -105,7 +105,34 @@ const eventosProfChildren: Routes = [
 ];
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/home/portal-shell/portal-shell.component').then((m) => m.PortalShellComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/home/home-dashboard/home-dashboard.component').then(
+            (m) => m.HomeDashboardComponent,
+          ),
+      },
+      {
+        path: 'escuelas/:idEscuela',
+        loadComponent: () =>
+          import('./features/home/portal-escuela-proyectos/portal-escuela-proyectos.component').then(
+            (m) => m.PortalEscuelaProyectosComponent,
+          ),
+      },
+      {
+        path: 'proyectos/:idProyecto',
+        loadComponent: () =>
+          import('./features/home/portal-proyecto-detalle/portal-proyecto-detalle.component').then(
+            (m) => m.PortalProyectoDetalleComponent,
+          ),
+      },
+    ],
+  },
   { path: 'login', component: LoginComponent },
   {
     path: 'cambiar-password',
@@ -189,5 +216,5 @@ export const routes: Routes = [
     ],
   },
   { path: 'unauthorized', component: UnauthorizedComponent },
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: '' },
 ];

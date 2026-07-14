@@ -1,0 +1,117 @@
+<div class="auth-modal" role="dialog" aria-modal="true" [attr.aria-label]="'home.authModal.title' | translate">
+  <button type="button" class="auth-modal__overlay" (click)="onOverlayClick()" [attr.aria-label]="'common.close' | translate"></button>
+
+  <div class="auth-modal__panel">
+    <header class="auth-modal__header">
+      <div class="auth-modal__header-brand">
+        <span class="auth-modal__header-tag">{{ 'home.portalTagline' | translate }}</span>
+        <h2>{{ 'home.authModal.title' | translate }}</h2>
+      </div>
+      <button type="button" class="auth-modal__close" (click)="onClose()" [attr.aria-label]="'common.close' | translate">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <div class="auth-modal__tabs">
+      <button
+        type="button"
+        class="auth-modal__tab"
+        [class.auth-modal__tab--active]="tab() === 'login'"
+        (click)="setTab('login')"
+      >
+        {{ 'home.authModal.loginTab' | translate }}
+      </button>
+      <button
+        type="button"
+        class="auth-modal__tab"
+        [class.auth-modal__tab--active]="tab() === 'register'"
+        (click)="setTab('register')"
+      >
+        {{ 'home.authModal.registerTab' | translate }}
+      </button>
+    </div>
+
+    @if (errorMessage() && tab() === 'register') {
+      <p class="auth-modal__error">{{ errorMessage() }}</p>
+    }
+
+    @if (tab() === 'login') {
+      <app-login
+        variant="codex"
+        [embedded]="true"
+        (authenticated)="onLoginSuccess()"
+      />
+    } @else {
+      @if (tempPassword()) {
+        <div class="auth-modal__success">
+          <p>{{ 'home.authModal.tempPasswordHint' | translate }}</p>
+          <code class="auth-modal__password">{{ tempPassword() }}</code>
+          <button type="button" class="auth-modal__submit" (click)="continueAfterRegister()">
+            {{ 'home.authModal.continueLogin' | translate }}
+          </button>
+        </div>
+      } @else {
+        <div class="auth-modal__role-toggle">
+          <button type="button" [class.auth-modal__role--active]="registerRole() === 'Estudiante'" (click)="setRegisterRole('Estudiante')">
+            {{ 'home.authModal.student' | translate }}
+          </button>
+          <button type="button" [class.auth-modal__role--active]="registerRole() === 'Externo'" (click)="setRegisterRole('Externo')">
+            {{ 'home.authModal.external' | translate }}
+          </button>
+        </div>
+
+        <form class="auth-modal__form" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+          <label>
+            {{ 'home.authModal.firstName' | translate }}
+            <input type="text" formControlName="nombres" />
+          </label>
+          <label>
+            {{ 'home.authModal.lastName' | translate }}
+            <input type="text" formControlName="apellidos" />
+          </label>
+          <label>
+            {{ 'auth.login.email' | translate }}
+            <input type="email" formControlName="email" [placeholder]="'auth.login.emailPlaceholder' | translate" />
+          </label>
+          <label>
+            {{ 'home.authModal.document' | translate }}
+            <input type="text" formControlName="documento_identidad" />
+          </label>
+          <label>
+            {{ 'home.authModal.phone' | translate }}
+            <input type="text" formControlName="telefono" />
+          </label>
+
+          @if (registerRole() === 'Estudiante') {
+            <label>
+              {{ 'home.authModal.studentCode' | translate }}
+              <input type="text" formControlName="codigo_estudiantil" />
+            </label>
+            <label>
+              {{ 'home.authModal.school' | translate }}
+              <select formControlName="id_escuela">
+                <option [ngValue]="null">{{ 'home.authModal.selectSchool' | translate }}</option>
+                @for (escuela of escuelas(); track escuela.id_escuela) {
+                  <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+                }
+              </select>
+            </label>
+          } @else {
+            <label>
+              {{ 'home.authModal.institution' | translate }}
+              <input type="text" formControlName="institucion" />
+            </label>
+            <label>
+              {{ 'home.authModal.occupation' | translate }}
+              <input type="text" formControlName="ocupacion" />
+            </label>
+          }
+
+          <button type="submit" class="auth-modal__submit" [disabled]="loading()">
+            {{ loading() ? ('common.loading' | translate) : ('home.authModal.registerSubmit' | translate) }}
+          </button>
+        </form>
+      }
+    }
+  </div>
+</div>

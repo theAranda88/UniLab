@@ -1,0 +1,231 @@
+@use '../../../../styles/design-tokens' as *;
+
+$codex-navy: #0a1628;
+$codex-navy-mid: #152238;
+$codex-blue-muted: #3a5f82;
+$codex-blue-accent: #4a7396;
+$codex-gold: #d4af37;
+$codex-gold-light: #e8c96a;
+$codex-gold-dark: #9a7b1a;
+$codex-text: rgba(254, 243, 199, 0.92);
+
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-index-modal;
+  display: grid;
+  place-items: center;
+  padding: $space-16;
+}
+
+.auth-modal__overlay {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(2, 6, 18, 0.82);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.auth-modal__panel {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  padding: $space-28 $space-28 $space-24;
+  border-radius: $radius-xl;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: linear-gradient(165deg, $codex-navy-mid 0%, $codex-navy 48%, #060d18 100%);
+  box-shadow:
+    0 0 0 1px rgba(58, 95, 130, 0.25),
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(212, 175, 55, 0.08);
+  color: $codex-text;
+}
+
+.auth-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-12;
+  margin-bottom: $space-20;
+  padding-bottom: $space-16;
+  border-bottom: 1px solid rgba(74, 115, 150, 0.35);
+}
+
+.auth-modal__header-brand {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.auth-modal__header-tag {
+  font-size: 0.5625rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: $codex-blue-accent;
+  font-weight: 600;
+}
+
+.auth-modal__header h2 {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: $font-size-lg;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: $codex-gold-light;
+  line-height: 1.35;
+}
+
+.auth-modal__close {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(74, 115, 150, 0.45);
+  border-radius: $radius-lg;
+  background: rgba(21, 34, 56, 0.6);
+  color: $codex-gold;
+  font-size: 18px;
+  cursor: pointer;
+  transition: border-color $transition-base, background $transition-base, color $transition-base;
+
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.55);
+    background: rgba(30, 51, 84, 0.75);
+    color: $codex-gold-light;
+  }
+}
+
+.auth-modal__tabs,
+.auth-modal__role-toggle {
+  display: flex;
+  gap: $space-8;
+  margin-bottom: $space-20;
+  padding: $space-4;
+  border-radius: $radius-full;
+  background: rgba(10, 22, 40, 0.75);
+  border: 1px solid rgba(58, 95, 130, 0.35);
+}
+
+.auth-modal__tab,
+.auth-modal__role-toggle button {
+  flex: 1;
+  border: 1px solid transparent;
+  border-radius: $radius-full;
+  padding: $space-8 $space-12;
+  background: transparent;
+  color: rgba(148, 163, 184, 0.9);
+  font-size: $font-size-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-base;
+}
+
+.auth-modal__tab--active,
+.auth-modal__role-toggle button.auth-modal__role--active {
+  background: linear-gradient(135deg, rgba(58, 95, 130, 0.45), rgba(30, 51, 84, 0.65));
+  border-color: rgba(212, 175, 55, 0.4);
+  color: $codex-gold-light;
+  box-shadow: inset 0 0 12px rgba(212, 175, 55, 0.08);
+}
+
+.auth-modal__form {
+  display: grid;
+  gap: $space-12;
+}
+
+.auth-modal__form label {
+  display: grid;
+  gap: $space-8;
+  font-size: $font-size-xs;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: $codex-gold;
+}
+
+.auth-modal__form input,
+.auth-modal__form select {
+  border: 1px solid rgba(74, 115, 150, 0.45);
+  border-radius: 10px;
+  padding: $space-8 $space-12;
+  background: rgba(21, 34, 56, 0.65);
+  color: $codex-text;
+  font-size: $font-size-sm;
+  transition: border-color $transition-base, box-shadow $transition-base;
+
+  &::placeholder {
+    color: rgba(148, 163, 184, 0.5);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(212, 175, 55, 0.55);
+    box-shadow: 0 0 0 3px rgba(58, 95, 130, 0.35);
+  }
+}
+
+.auth-modal__submit {
+  margin-top: $space-8;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: $radius-full;
+  padding: $space-12 $space-20;
+  background: linear-gradient(135deg, $codex-gold-dark 0%, $codex-gold 55%, $codex-gold-light 100%);
+  color: #0f172a;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.22);
+  transition: box-shadow $transition-base, filter $transition-base;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 22px rgba(212, 175, 55, 0.32);
+    filter: brightness(1.05);
+  }
+}
+
+.auth-modal__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-modal__error {
+  margin: 0 0 $space-12;
+  padding: $space-8 $space-12;
+  border-radius: $radius-md;
+  background: rgba(127, 29, 29, 0.35);
+  border-left: 3px solid #ef4444;
+  color: #fca5a5;
+  font-size: $font-size-sm;
+}
+
+.auth-modal__success {
+  display: grid;
+  gap: $space-12;
+  font-size: $font-size-sm;
+  color: rgba(203, 213, 225, 0.85);
+}
+
+.auth-modal__password {
+  display: block;
+  padding: $space-12;
+  border-radius: $radius-md;
+  background: rgba(21, 34, 56, 0.75);
+  border: 1px dashed rgba(212, 175, 55, 0.45);
+  color: $codex-gold-light;
+  font-size: $font-size-lg;
+  font-family: ui-monospace, monospace;
+  text-align: center;
+  word-break: break-all;
+}
+
+@include respond-to($breakpoint-sm) {
+  .auth-modal__panel {
+    padding: $space-20 $space-16;
+  }
+
+  .auth-modal__header h2 {
+    font-size: $font-size-base;
+  }
+}

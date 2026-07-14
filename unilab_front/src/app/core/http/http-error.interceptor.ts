@@ -11,6 +11,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -70,7 +71,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status === 401) {
         errorMessage = 'No autorizado. Por favor inicia sesión.';
-        router.navigate(['/login']);
+        const authService = inject(AuthService);
+        authService.logout();
+        router.navigateByUrl('/', { replaceUrl: true });
       } else if (error.status === 403) {
         errorMessage = 'No tienes permiso para acceder a este recurso.';
         router.navigate(['/unauthorized']);

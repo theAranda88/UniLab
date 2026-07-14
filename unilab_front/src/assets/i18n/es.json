@@ -355,5 +355,118 @@
     "pago.confirmado": "Confirmado",
     "pago.exento": "Exento",
     "pago.sin-procesar": "Sin Procesar"
+  },
+  "home": {
+    "subtitle": "Portal de proyectos académicos",
+    "portalTagline": "Portal de Proyectos Investigativos",
+    "systemStatus": "SISTEMA:",
+    "systemName": "CÓDICE DE PROYECTOS INTEGRADO",
+    "signIn": "Iniciar sesión",
+    "enterPortal": "Ir a mi panel",
+    "logoAlt": "Logo Oficial Uniautónoma del Cauca",
+    "logoFallback": "COGNITIO ET SCIENTIA",
+    "backToSchools": "← Volver",
+    "carousel": {
+      "prev": "Imagen anterior",
+      "next": "Imagen siguiente"
+    },
+    "backToProjects": "← Volver a proyectos",
+    "projectsListHint": "Proyectos publicados y avalados por la universidad. Selecciona uno para ver el detalle completo.",
+    "publishedAt": "Publicado: {{date}}",
+    "projectTypes": {
+      "web": "Aplicación Web",
+      "movil": "Aplicación Móvil",
+      "podcast": "Podcast",
+      "otro": "Investigación"
+    },
+    "projectOrigin": {
+      "curso": "Materia: {{curso}}",
+      "semillero": "Semillero: {{nombre}}"
+    },
+    "authorRoles": {
+      "principal": "Autor principal",
+      "colaborador": "Colaborador"
+    },
+    "detail": {
+      "description": "Descripción del proyecto",
+      "context": "Contexto académico",
+      "members": "Integrantes",
+      "resources": "Recursos y acciones",
+      "resourcesHint": "Descargar o abrir recursos requiere iniciar sesión.",
+      "school": "Escuela",
+      "course": "Curso",
+      "semillero": "Semillero"
+    },
+    "academicProgram": "PROGRAMA ACADÉMICO",
+    "director": "Director:",
+    "unknownLeader": "Equipo investigador",
+    "exploreDeep": "EXPLORAR A FONDO →",
+    "connectedSystem": "SISTEMA CONECTADO CON EL BANCO DE PROYECTOS UNIAUTÓNOMA",
+    "footer": "© 2026 CORPORACIÓN UNIVERSITARIA AUTÓNOMA DEL CAUCA • EX COLOSSUS AD ARDUA",
+    "mobileMenu": "Seleccionar escuela",
+    "facultyProjects": "Proyectos de {{escuela}}",
+    "coursesTitle": "Cursos",
+    "projectsTitle": "Proyectos publicados",
+    "noCourses": "No hay cursos registrados para esta escuela.",
+    "noProjects": "Aún no hay proyectos publicados en esta escuela.",
+    "loadProjectsError": "No se pudieron cargar los proyectos. Intenta de nuevo en unos momentos.",
+    "loadProjectError": "No se pudo cargar el detalle del proyecto.",
+    "views": "{{count}} vistas",
+    "schoolProjectBadge": "{{count}} PROY.",
+    "openApp": "Abrir aplicativo",
+    "downloadApk": "Descargar APK",
+    "downloadYoutube": "Ver en YouTube",
+    "downloadSpotify": "Escuchar en Spotify",
+    "comment": "Comentar",
+    "rate": "Calificar",
+    "escuelas": {
+      "derecho": "Ciencias Jurídicas",
+      "educacion": "Ciencias de la Educación",
+      "ingenieria": "Ingeniería y Sostenibilidad",
+      "negocios": "Ciencias Administrativas",
+      "software": "Ingeniería de Software"
+    },
+    "cards": {
+      "derecho": {
+        "subtitle": "// JURIDICAL SCIENCES",
+        "cursive": "la Giustizia"
+      },
+      "educacion": {
+        "subtitle": "// ACADEMIC DEVELOPMENT",
+        "cursive": "la Pedagogia"
+      },
+      "ingenieria": {
+        "subtitle": "// INFRASTRUCTURE",
+        "cursive": "l'Architettura"
+      },
+      "negocios": {
+        "subtitle": "// SOCIAL RESEARCH",
+        "cursive": "l'Umanità"
+      },
+      "software": {
+        "subtitle": "// COMPUTE & CORE",
+        "cursive": "l'Ingegneria"
+      }
+    },
+    "authModal": {
+      "title": "Acceso al Templo del Conocimiento",
+      "loginTab": "Iniciar sesión",
+      "registerTab": "Registrarse",
+      "student": "Estudiante",
+      "external": "Externo",
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "document": "Documento de identidad",
+      "phone": "Teléfono",
+      "studentCode": "Código estudiantil",
+      "school": "Escuela",
+      "selectSchool": "Seleccione una escuela",
+      "institution": "Institución",
+      "occupation": "Ocupación",
+      "registerSubmit": "Crear cuenta",
+      "formInvalid": "Complete los campos requeridos.",
+      "tempPasswordHint": "Guarde esta contraseña temporal. Solo se muestra una vez:",
+      "continueLogin": "Continuar al inicio de sesión"
+    }
   }
 }

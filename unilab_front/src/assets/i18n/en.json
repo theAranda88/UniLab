@@ -347,5 +347,118 @@
     "pago.confirmado": "Confirmed",
     "pago.exento": "Exempt",
     "pago.sin-procesar": "Not Processed"
+  },
+  "home": {
+    "subtitle": "Academic projects portal",
+    "portalTagline": "Research Projects Portal",
+    "systemStatus": "SYSTEM:",
+    "systemName": "INTEGRATED PROJECT CODEX",
+    "signIn": "Sign in",
+    "enterPortal": "Go to my dashboard",
+    "logoAlt": "Official Uniautónoma del Cauca logo",
+    "logoFallback": "COGNITIO ET SCIENTIA",
+    "backToSchools": "← Back",
+    "carousel": {
+      "prev": "Previous image",
+      "next": "Next image"
+    },
+    "backToProjects": "← Back to projects",
+    "projectsListHint": "Published and approved university projects. Select one to view full details.",
+    "publishedAt": "Published: {{date}}",
+    "projectTypes": {
+      "web": "Web App",
+      "movil": "Mobile App",
+      "podcast": "Podcast",
+      "otro": "Research"
+    },
+    "projectOrigin": {
+      "curso": "Course: {{curso}}",
+      "semillero": "Research group: {{nombre}}"
+    },
+    "authorRoles": {
+      "principal": "Lead author",
+      "colaborador": "Collaborator"
+    },
+    "detail": {
+      "description": "Project description",
+      "context": "Academic context",
+      "members": "Team members",
+      "resources": "Resources and actions",
+      "resourcesHint": "Downloading or opening resources requires sign-in.",
+      "school": "School",
+      "course": "Course",
+      "semillero": "Research group"
+    },
+    "academicProgram": "ACADEMIC PROGRAM",
+    "director": "Director:",
+    "unknownLeader": "Research team",
+    "exploreDeep": "EXPLORE IN DEPTH →",
+    "connectedSystem": "SYSTEM CONNECTED TO THE UNIAUTÓNOMA PROJECT BANK",
+    "footer": "© 2026 UNIVERSIDAD AUTÓNOMA DEL CAUCA • EX COLOSSUS AD ARDUA",
+    "mobileMenu": "Select school",
+    "facultyProjects": "Projects from {{escuela}}",
+    "coursesTitle": "Courses",
+    "projectsTitle": "Published projects",
+    "noCourses": "No courses registered for this school.",
+    "noProjects": "No published projects in this school yet.",
+    "loadProjectsError": "Could not load projects. Please try again in a moment.",
+    "loadProjectError": "Could not load project details.",
+    "views": "{{count}} views",
+    "schoolProjectBadge": "{{count}} PROJ.",
+    "openApp": "Open app",
+    "downloadApk": "Download APK",
+    "downloadYoutube": "Watch on YouTube",
+    "downloadSpotify": "Listen on Spotify",
+    "comment": "Comment",
+    "rate": "Rate",
+    "escuelas": {
+      "derecho": "Legal Sciences",
+      "educacion": "Education Sciences",
+      "ingenieria": "Engineering and Sustainability",
+      "negocios": "Administrative Sciences",
+      "software": "Software Engineering"
+    },
+    "cards": {
+      "derecho": {
+        "subtitle": "// JURIDICAL SCIENCES",
+        "cursive": "la Giustizia"
+      },
+      "educacion": {
+        "subtitle": "// ACADEMIC DEVELOPMENT",
+        "cursive": "la Pedagogia"
+      },
+      "ingenieria": {
+        "subtitle": "// INFRASTRUCTURE",
+        "cursive": "l'Architettura"
+      },
+      "negocios": {
+        "subtitle": "// SOCIAL RESEARCH",
+        "cursive": "l'Umanità"
+      },
+      "software": {
+        "subtitle": "// COMPUTE & CORE",
+        "cursive": "l'Ingegneria"
+      }
+    },
+    "authModal": {
+      "title": "Access to the Temple of Knowledge",
+      "loginTab": "Sign in",
+      "registerTab": "Register",
+      "student": "Student",
+      "external": "External",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "document": "ID document",
+      "phone": "Phone",
+      "studentCode": "Student code",
+      "school": "School",
+      "selectSchool": "Select a school",
+      "institution": "Institution",
+      "occupation": "Occupation",
+      "registerSubmit": "Create account",
+      "formInvalid": "Please complete the required fields.",
+      "tempPasswordHint": "Save this temporary password. It is shown only once:",
+      "continueLogin": "Continue to sign in"
+    }
   }
 }

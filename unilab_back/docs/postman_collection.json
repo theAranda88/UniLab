@@ -378,7 +378,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id_curso\": 13,\n  \"titulo\": \"App UniLab Demo\",\n  \"descripcion\": \"Proyecto de demostración\",\n  \"tipo_proyecto\": \"web\",\n  \"url_aplicativo\": \"https://example.com\"\n}"
+              "raw": "{\n  \"id_curso\": 13,\n  \"titulo\": \"App UniLab Demo\",\n  \"descripcion\": \"Proyecto de demostración\",\n  \"tipo_proyecto\": \"web\",\n  \"url_aplicativo\": \"https://example.com\",\n  \"url_imagen\": \"https://cdn.example.com/proyectos/portada-demo.png\"\n}"
             },
             "url": "{{base_url}}/proyectos",
             "description": "Usar token de Estudiante autorizado."
@@ -426,8 +426,93 @@
               "mode": "raw",
               "raw": "{\n  \"puntuacion\": 5\n}"
             },
-            "url": "{{base_url}}/proyectos/1/calificacion",
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/calificacion",
             "description": "Upsert — una calificación por usuario y proyecto."
+          }
+        },
+        {
+          "name": "Listar imágenes del proyecto",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/imagenes",
+            "description": "Devuelve hasta 3 imágenes activas ordenadas por `orden`."
+          }
+        },
+        {
+          "name": "Subir imágenes del proyecto",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "imagenes",
+                  "type": "file",
+                  "src": [],
+                  "description": "Seleccionar 1–3 archivos JPEG/PNG/WebP (máx. 5 MB c/u). Repetir la clave `imagenes` por archivo."
+                }
+              ]
+            },
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/imagenes",
+            "description": "Requiere permiso de gestión del proyecto. Obligatorio antes de pasar a `en_revision` si no hay `url_imagen` legacy."
+          }
+        },
+        {
+          "name": "Eliminar imagen del proyecto",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/imagenes/{{id_imagen}}",
+            "description": "Soft-delete. Reordena las imágenes restantes y actualiza la portada."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Público",
+      "description": "Portal público — sin autenticación. Consumido por el frontend en `/`.",
+      "item": [
+        {
+          "name": "Listar escuelas (portal)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/escuelas",
+            "description": "Incluye `total_proyectos_publicados` por escuela (proyectos con estado `publicado`)."
+          }
+        },
+        {
+          "name": "Listar cursos por escuela",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/cursos?id_escuela={{id_escuela}}",
+              "host": ["{{base_url}}"],
+              "path": ["public", "cursos"],
+              "query": [{ "key": "id_escuela", "value": "{{id_escuela}}" }]
+            }
+          }
+        },
+        {
+          "name": "Listar proyectos publicados por escuela",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/proyectos?id_escuela={{id_escuela}}",
+              "host": ["{{base_url}}"],
+              "path": ["public", "proyectos"],
+              "query": [{ "key": "id_escuela", "value": "{{id_escuela}}" }]
+            },
+            "description": "Respuesta incluye array `imagenes[]` con URLs servidas en `/uploads/...`."
+          }
+        },
+        {
+          "name": "Detalle proyecto publicado",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/proyectos/{{id_proyecto}}",
+            "description": "Registra una vista e incrementa `contador_vistas`."
           }
         }
       ]

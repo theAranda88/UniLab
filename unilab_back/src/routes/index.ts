@@ -5,9 +5,11 @@ import escuelaRoutes from './escuela.routes';
 import proyectoRoutes from './proyecto.routes';
 import semilleroRoutes from './semillero.routes';
 import eventoRoutes, { inscripcionRouter, jornadaRouter } from './evento.routes';
+import publicoRoutes from './publico.routes';
 
 const router = Router();
 
+router.use('/public', publicoRoutes);
 router.use('/auth', authRoutes);
 router.use('/usuarios', usuarioRoutes);
 router.use('/', escuelaRoutes);

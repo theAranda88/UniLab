@@ -1,89 +1,111 @@
-<div class="login-container">
+@if (!embedded) {
+  <div class="login-container">
+    <ng-container *ngTemplateOutlet="loginCard" />
+  </div>
+} @else {
+  <ng-container *ngTemplateOutlet="loginCard" />
+}
+
+<ng-template #loginCard>
   <div class="login-card">
-    <div class="login-card-bg" aria-hidden="true"></div>
+    @if (variant === 'default') {
+      <div class="login-card-bg" aria-hidden="true"></div>
+    }
 
     <div class="login-card-content">
-    <div class="logo-area">
-      <img src="assets/images/uniautonoma_cauca.png" alt="Universidad Autónoma del Cauca" class="logo-img" />
-      <div class="logo-text">
-        <h1>{{ 'auth.login.title' | translate }}</h1>
-        <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+      <div class="logo-area">
+        <img
+          [src]="variant === 'codex'
+            ? 'assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png'
+            : 'assets/images/uniautonoma_cauca.png'"
+          [alt]="'home.logoAlt' | translate"
+          class="logo-img"
+        />
+        <div class="logo-text">
+          @if (!(embedded && variant === 'codex')) {
+            <h1>{{ (variant === 'codex' ? 'home.authModal.title' : 'auth.login.title') | translate }}</h1>
+          }
+          <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+        </div>
       </div>
-    </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      @if (errorMessage()) {
-        <div class="alert alert-error">
-          {{ errorMessage() }}
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        @if (errorMessage()) {
+          <div class="alert alert-error">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="email">{{ 'auth.login.email' | translate }}</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
+            formControlName="email"
+            [placeholder]="'auth.login.emailPlaceholder' | translate"
+          />
+          @if (variant === 'default') {
+            <small class="hint-text">{{ 'auth.login.emailHint' | translate }}</small>
+          }
+          @if (email?.invalid && (email?.dirty || email?.touched)) {
+            <span class="error-text">
+              @if (email?.errors?.['required']) {
+                {{ 'auth.login.emailRequired' | translate }}
+              }
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">{{ 'auth.login.password' | translate }}</label>
+          <div class="password-wrapper">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              class="form-control"
+              [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)"
+              formControlName="password"
+              [placeholder]="'auth.login.passwordPlaceholder' | translate"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="showPassword.set(!showPassword())"
+              [attr.aria-label]="'auth.login.showPassword' | translate"
+            >
+              <i class="ti" [class.ti-eye]="!showPassword()" [class.ti-eye-off]="showPassword()" aria-hidden="true"></i>
+            </button>
+          </div>
+          @if (password?.invalid && (password?.dirty || password?.touched)) {
+            <span class="error-text">
+              @if (password?.errors?.['required']) {
+                {{ 'auth.login.passwordRequired' | translate }}
+              }
+              @if (password?.errors?.['minlength']) {
+                {{ 'auth.login.passwordMinLength' | translate }}
+              }
+            </span>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">
+          {{ loading() ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
+        </button>
+      </form>
+
+      @if (variant === 'default') {
+        <div class="support-link">
+          {{ 'auth.login.support' | translate }}
+          <a href="#" (click)="$event.preventDefault()">{{ 'auth.login.supportLink' | translate }}</a>
         </div>
       }
 
-      <div class="form-group">
-        <label for="email">{{ 'auth.login.email' | translate }}</label>
-        <input
-          id="email"
-          type="email"
-          class="form-control"
-          [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
-          formControlName="email"
-          [placeholder]="'auth.login.emailPlaceholder' | translate"
-        />
-        <small class="hint-text">{{ 'auth.login.emailHint' | translate }}</small>
-        @if (email?.invalid && (email?.dirty || email?.touched)) {
-          <span class="error-text">
-            @if (email?.errors?.['required']) {
-              {{ 'auth.login.emailRequired' | translate }}
-            }
-          </span>
-        }
+      <div class="footer-badge">
+        <i class="ti ti-lock" aria-hidden="true"></i>
+        <span>{{ 'auth.login.security' | translate }}</span>
       </div>
-
-      <div class="form-group">
-        <label for="password">{{ 'auth.login.password' | translate }}</label>
-        <div class="password-wrapper">
-          <input
-            id="password"
-            [type]="showPassword() ? 'text' : 'password'"
-            class="form-control"
-            [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)"
-            formControlName="password"
-            [placeholder]="'auth.login.passwordPlaceholder' | translate"
-          />
-          <button
-            type="button"
-            class="toggle-password"
-            (click)="showPassword.set(!showPassword())"
-            [attr.aria-label]="'auth.login.showPassword' | translate"
-          >
-            <i class="ti" [class.ti-eye]="!showPassword()" [class.ti-eye-off]="showPassword()" aria-hidden="true"></i>
-          </button>
-        </div>
-        @if (password?.invalid && (password?.dirty || password?.touched)) {
-          <span class="error-text">
-            @if (password?.errors?.['required']) {
-              {{ 'auth.login.passwordRequired' | translate }}
-            }
-            @if (password?.errors?.['minlength']) {
-              {{ 'auth.login.passwordMinLength' | translate }}
-            }
-          </span>
-        }
-      </div>
-
-      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">
-        {{ loading() ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
-      </button>
-    </form>
-
-    <div class="support-link">
-      {{ 'auth.login.support' | translate }}
-      <a href="#" (click)="$event.preventDefault()">{{ 'auth.login.supportLink' | translate }}</a>
-    </div>
-
-    <div class="footer-badge">
-      <i class="ti ti-lock" aria-hidden="true"></i>
-      <span>{{ 'auth.login.security' | translate }}</span>
-    </div>
     </div>
   </div>
-</div>
+</ng-template>

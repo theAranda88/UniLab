@@ -1,0 +1,132 @@
+@use '../../../../styles/design-tokens' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.codex-portal {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: radial-gradient(circle at center, #010816 0%, #000205 100%);
+  color: rgba(254, 243, 199, 0.9);
+  font-family: 'Plus Jakarta Sans', $font-family-base, sans-serif;
+  perspective: 1200px;
+}
+
+.codex-portal__header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: min(120rem, 96vw);
+  margin: 0 auto;
+  padding: clamp(#{$space-12}, 2vh, #{$space-16}) clamp(#{$space-16}, 3vw, #{$space-32})
+    clamp(#{$space-12}, 2vh, #{$space-16}) clamp(#{$space-8}, 2vw, #{$space-16});
+  gap: clamp(#{$space-12}, 2vw, #{$space-24});
+}
+
+.codex-portal__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: $space-4;
+}
+
+.codex-portal__title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.25rem, 1.5vw + 0.75rem, 2rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  background: linear-gradient(to right, #fde68a, #eab308, #d97706);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.codex-portal__tagline {
+  margin-top: $space-4;
+  font-size: clamp(0.625rem, 0.45vw + 0.5rem, 0.875rem);
+  letter-spacing: 0.12em;
+  text-transform: none;
+  color: rgba(245, 158, 11, 0.75);
+  font-weight: 500;
+}
+
+.codex-portal__header-right { display: flex; align-items: center; gap: $space-16; }
+
+.codex-portal__status {
+  display: flex;
+  align-items: center;
+  gap: $space-8;
+  font-family: ui-monospace, monospace;
+  font-size: 0.625rem;
+  color: rgba(217, 119, 6, 0.6);
+}
+
+.codex-portal__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.codex-portal__status-name { color: #f59e0b; font-weight: 700; }
+
+.codex-portal__auth-btn {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: $radius-lg;
+  padding: clamp(#{$space-8}, 1vh, #{$space-12}) clamp(#{$space-12}, 1.5vw, #{$space-16});
+  background: rgba(212, 175, 55, 0.08);
+  color: #fcd34d;
+  font-size: clamp(#{$font-size-xs}, 0.35vw + 0.65rem, #{$font-size-sm});
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.codex-portal__auth-btn--primary {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+.codex-portal__footer {
+  position: relative;
+  z-index: 20;
+  padding: $space-12 0;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.3em;
+  color: rgba(180, 83, 9, 0.6);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@include respond-to($breakpoint-md) {
+  .codex-portal__header {
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 100%;
+  }
+
+  .codex-portal__status {
+    display: none;
+  }
+}
+
+@media (min-width: 1920px) {
+  .codex-portal__status {
+    font-size: clamp(0.625rem, 0.35vw + 0.5rem, 0.75rem);
+  }
+}

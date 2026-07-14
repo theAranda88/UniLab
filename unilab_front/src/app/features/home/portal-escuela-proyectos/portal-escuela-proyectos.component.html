@@ -1,0 +1,67 @@
+<main class="portal-sub portal-sub--escuela" [class.portal-sub--entered]="entered()">
+  <div class="portal-sub__logo-mini" [class.portal-sub__logo-mini--visible]="entered()">
+    @if (!logoError()) {
+      <img
+        src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
+        [alt]="'home.logoAlt' | translate"
+        (error)="logoError.set(true)"
+      />
+    }
+  </div>
+
+  <div class="portal-sub__content">
+    <header class="portal-sub__header">
+      <button type="button" class="portal-sub__back" (click)="goBack()">{{ 'home.backToSchools' | translate }}</button>
+      @if (escuela(); as esc) {
+        <span class="portal-sub__eyebrow">
+          {{ 'home.cards.' + themeKey() + '.subtitle' | translate }}
+        </span>
+        <h1 class="portal-sub__title">{{ 'home.escuelas.' + themeKey() | translate }}</h1>
+        <p class="portal-sub__subtitle">{{ 'home.projectsListHint' | translate }}</p>
+      }
+    </header>
+
+    @if (loading()) {
+      <p class="portal-sub__loading">{{ 'common.loading' | translate }}</p>
+    } @else if (loadError()) {
+      <p class="portal-sub__error">{{ 'home.loadProjectsError' | translate }}</p>
+    } @else if (proyectos().length === 0) {
+      <p class="portal-sub__empty">{{ 'home.noProjects' | translate }}</p>
+    } @else {
+      <div class="portal-sub__grid">
+        @for (proyecto of proyectos(); track trackByProyectoId($index, proyecto); let i = $index) {
+          <button
+            type="button"
+            class="portal-project-card"
+            [class.portal-project-card--flipping]="flippingProjectId() === proyecto.id_proyecto"
+            [style.--card-delay]="i * 0.06 + 's'"
+            appCardTilt
+            (click)="onProjectClick(proyecto)"
+          >
+            <div class="portal-project-card__inner">
+              <div class="portal-project-card__media">
+                <app-project-image-carousel
+                  [images]="imagenesProyecto(proyecto)"
+                  [alt]="proyecto.titulo"
+                />
+              </div>
+              <div class="portal-project-card__head">
+                <span class="portal-project-card__type">{{ 'home.projectTypes.' + proyecto.tipo_proyecto | translate }}</span>
+                <span class="portal-project-card__views">
+                  {{ 'home.views' | translate: { count: proyecto.contador_vistas } }}
+                </span>
+              </div>
+              <h2 class="portal-project-card__title">{{ proyecto.titulo }}</h2>
+              <p class="portal-project-card__desc">{{ getResumen(proyecto.descripcion) }}</p>
+              <div class="portal-project-card__meta">
+                <span>{{ 'home.director' | translate }} <strong>{{ getCoordinador(proyecto) }}</strong></span>
+                <span class="portal-project-card__origin">{{ getOrigen(proyecto) }}</span>
+              </div>
+              <span class="portal-project-card__cta">{{ 'home.exploreDeep' | translate }}</span>
+            </div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+</main>

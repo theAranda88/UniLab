@@ -162,6 +162,7 @@ No hay servicio de envío de correos. Por eso el diseño reutiliza el mismo meca
 | descripcion | text | |
 | tipo_proyecto | varchar | `web`, `movil`, `podcast`, `otro` |
 | url_aplicativo | varchar | |
+| url_imagen | varchar | nullable — **portada derivada** de la primera imagen en `proyecto_imagenes` (compatibilidad). |
 | url_apk | varchar | nullable |
 | url_youtube | varchar | nullable |
 | url_spotify | varchar | nullable |
@@ -171,6 +172,18 @@ No hay servicio de envío de correos. Por eso el diseño reutiliza el mismo meca
 | fecha_publicacion | timestamp | nullable |
 
 > **REGLA CRÍTICA DE NEGOCIO:** El endpoint `POST /proyectos` SOLO puede ser invocado por un usuario con rol Estudiante, y solo si tiene autorización vigente: fila en `curso_autorizaciones` con `autorizado = true` para ese curso, O `puede_publicar = true` en `semillero_miembros` si trae `id_semillero`. El rol Profesor NUNCA puede invocar este endpoint — el middleware de roles debe bloquearlo explícitamente.
+
+### `proyecto_imagenes` (1:N — máximo 3 activas por proyecto)
+| Campo | Tipo | Notas |
+|---|---|---|
+| id_imagen | PK serial | |
+| id_proyecto | FK -> proyectos | |
+| ruta_archivo | varchar | Ruta pública servida por `/uploads/...` |
+| nombre_original | varchar | Nombre del archivo subido |
+| mime_type | varchar | `image/jpeg`, `image/png` o `image/webp` |
+| orden | integer | 1–3; índice único parcial `(id_proyecto, orden) WHERE deleted_at IS NULL` |
+
+> **Imágenes:** se suben como archivos reales vía `POST /proyectos/:id/imagenes` (multipart, campo `imagenes`, máx. 3, 5 MB c/u). Al pasar a `en_revision` debe existir **al menos 1 imagen activa** (o `url_imagen` legacy). La portada pública usa `orden = 1`.
 
 ### `proyecto_coordinadores` (N:M — permisos de gestión, no de creación)
 | Campo | Tipo | Notas |
@@ -367,7 +380,8 @@ No hay servicio de envío de correos. Por eso el diseño reutiliza el mismo meca
 ```
 RUTA A (curso): Profesor valida presencial → crea fila en curso_autorizaciones
   → Estudiante ve habilitado "Subir proyecto" → Estudiante hace POST /proyectos (borrador)
-  → Estudiante completa datos → POST estado_proyecto = 'en_revision'
+  → Estudiante sube imágenes reales vía POST /proyectos/:id/imagenes (máx. 3, JPEG/PNG/WebP)
+  → Estudiante completa datos (descripcion, recursos por tipo) → PATCH estado_proyecto = 'en_revision' (requiere ≥1 imagen)
   → Profesor (ya en proyecto_coordinadores) aprueba → 'aprobado' → 'publicado'
 
 RUTA B (semillero): Profesor LÍDER valida presencial → activa

@@ -1,0 +1,29 @@
+<div class="codex-portal">
+  <app-spiderweb-canvas />
+
+  <header class="codex-portal__header">
+    <div class="codex-portal__brand">
+      <h1 class="codex-portal__title">{{ 'app.title' | translate }}</h1>
+      <span class="codex-portal__tagline">{{ 'home.portalTagline' | translate }}</span>
+    </div>
+    <div class="codex-portal__header-right">
+      <button
+        type="button"
+        class="codex-portal__auth-btn codex-portal__auth-btn--primary"
+        (click)="onAuthClick()"
+      >
+        {{ 'home.signIn' | translate }}
+      </button>
+    </div>
+  </header>
+
+  <router-outlet />
+
+  <footer class="codex-portal__footer">
+    {{ 'home.footer' | translate }}
+  </footer>
+
+  @if (showAuthModal()) {
+    <app-auth-modal (closed)="authModal.close()" (authenticated)="authModal.completeAuth()" />
+  }
+</div>

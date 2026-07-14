@@ -8,7 +8,7 @@ import { AuthService } from '../auth/auth.service';
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService['tokenSubject']?.value; // Acceder al token actual
+  const token = authService.obtenerToken();
 
   if (token) {
     // Clonar la solicitud y agregar el header Authorization

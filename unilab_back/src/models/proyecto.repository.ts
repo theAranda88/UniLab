@@ -8,8 +8,11 @@ export const proyectoRepository = {
       where: { ...activo, ...where },
       include: {
         curso: { include: { escuela: true } },
+        semillero: true,
         estudiante_creador: { include: { rol: true } },
-        coordinadores: { where: activo },
+        coordinadores: { where: activo, include: { profesor: true } },
+        autores: { where: activo, include: { estudiante: true } },
+        imagenes: { where: activo, orderBy: { orden: 'asc' } },
       },
       orderBy: { id_proyecto: 'desc' },
     });
@@ -23,9 +26,10 @@ export const proyectoRepository = {
         semillero: true,
         estudiante_creador: { include: { rol: true } },
         coordinadores: { where: activo, include: { profesor: true } },
-        autores: { where: activo },
+        autores: { where: activo, include: { estudiante: true } },
         comentarios: { where: activo },
         calificaciones: { where: activo },
+        imagenes: { where: activo, orderBy: { orden: 'asc' } },
       },
     });
   },
@@ -89,5 +93,19 @@ export const proyectoRepository = {
     return prisma.proyecto_coordinadores.create({
       data: { id_proyecto, id_profesor, created_by },
     });
+  },
+
+  async countPublicadosPorEscuela(): Promise<Record<number, number>> {
+    const proyectos = await prisma.proyectos.findMany({
+      where: { ...activo, estado_proyecto: 'publicado' },
+      select: { curso: { select: { id_escuela: true } } },
+    });
+
+    const conteos: Record<number, number> = {};
+    for (const proyecto of proyectos) {
+      const idEscuela = proyecto.curso.id_escuela;
+      conteos[idEscuela] = (conteos[idEscuela] ?? 0) + 1;
+    }
+    return conteos;
   },
 };

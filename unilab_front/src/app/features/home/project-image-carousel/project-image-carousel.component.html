@@ -1,0 +1,47 @@
+<div class="project-carousel" (click)="$event.stopPropagation()">
+  @if (images.length === 0) {
+    <div class="project-carousel__fallback" aria-hidden="true"></div>
+  } @else {
+    <div class="project-carousel__track" [style.--active-index]="activeIndex()">
+      @for (src of images; track src; let i = $index) {
+        <img
+          class="project-carousel__slide"
+          [class.project-carousel__slide--active]="activeIndex() === i"
+          [src]="src"
+          [alt]="alt"
+          loading="lazy"
+        />
+      }
+    </div>
+
+    @if (hasMultiple()) {
+      <button
+        type="button"
+        class="project-carousel__nav project-carousel__nav--prev"
+        (click)="prev($event)"
+        [attr.aria-label]="'home.carousel.prev' | translate"
+      >
+        ‹
+      </button>
+      <button
+        type="button"
+        class="project-carousel__nav project-carousel__nav--next"
+        (click)="next($event)"
+        [attr.aria-label]="'home.carousel.next' | translate"
+      >
+        ›
+      </button>
+      <div class="project-carousel__dots">
+        @for (src of images; track src; let i = $index) {
+          <button
+            type="button"
+            class="project-carousel__dot"
+            [class.project-carousel__dot--active]="activeIndex() === i"
+            (click)="goTo(i, $event)"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        }
+      </div>
+    }
+  }
+</div>

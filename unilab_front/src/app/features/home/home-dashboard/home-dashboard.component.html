@@ -1,0 +1,82 @@
+<main
+  class="codex-portal__main"
+  [class.codex-portal__main--active]="dashboardActive()"
+  [class.codex-portal__main--navigating]="flippingCardId() !== null"
+>
+  <div class="codex-portal__hologram-wrap">
+    <div class="codex-portal__hologram" [style.transform]="hologramTransform()">
+      <div class="codex-portal__layer codex-portal__layer--bg">
+        <div class="codex-portal__ring">
+          <svg class="codex-portal__ring-svg" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="45" stroke="#d4af37" stroke-width="0.3" fill="none" />
+            <circle cx="50" cy="50" r="28" stroke="#d4af37" stroke-width="0.3" fill="none" />
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#d4af37" stroke-width="0.2" />
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#d4af37" stroke-width="0.2" />
+            <polygon points="50,5 95,50 50,95 5,50" stroke="#d4af37" stroke-width="0.15" fill="none" />
+          </svg>
+        </div>
+      </div>
+      <div class="codex-portal__layer codex-portal__layer--sketch" aria-hidden="true">
+        <svg class="codex-portal__sketch-svg" viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+          <path d="M 200 50 C 250 50, 300 100, 300 150 C 300 200, 250 250, 200 250 C 150 250, 100 200, 100 150 Z" stroke-dasharray="3 3" />
+          <path d="M 120 120 L 280 280" stroke-width="0.5" />
+          <path d="M 280 120 L 120 280" stroke-width="0.5" />
+        </svg>
+      </div>
+      <div class="codex-portal__layer codex-portal__layer--logo">
+        @if (!logoError()) {
+          <img
+            class="codex-portal__logo-img"
+            src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
+            [alt]="'home.logoAlt' | translate"
+            (error)="onLogoError()"
+          />
+        } @else {
+          <div class="codex-portal__logo-fallback">
+            <span>{{ 'home.logoFallback' | translate }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="codex-portal__control-area">
+    <div class="codex-portal__grid">
+      @for (card of escuelaCards(); track trackByEscuelaId($index, card)) {
+        <button
+          type="button"
+          class="codex-portal__card dashboard-element"
+          [class.codex-portal__card--flipping]="flippingCardId() === card.escuela.id_escuela"
+          [style.--emerge-delay]="card.emergeDelay + 's'"
+          appCardTilt
+          (click)="onCardClick(card)"
+        >
+          <div class="codex-portal__card-inner">
+            <div class="codex-portal__card-text">
+              <span class="codex-portal__card-sub">
+                {{ 'home.cards.' + card.i18nKey + '.subtitle' | translate }}
+              </span>
+              <div class="codex-portal__card-title-row">
+                <h3 class="codex-portal__card-title">
+                  {{ 'home.escuelas.' + card.i18nKey | translate }}
+                </h3>
+                <span class="codex-portal__card-cursive">
+                  {{ 'home.cards.' + card.i18nKey + '.cursive' | translate }}
+                </span>
+              </div>
+            </div>
+            <span
+              class="codex-portal__card-badge"
+              [class.codex-portal__card-badge--emerald]="(card.escuela.total_proyectos_publicados ?? 0) > 0"
+            >
+              {{
+                'home.schoolProjectBadge'
+                  | translate: { count: card.escuela.total_proyectos_publicados ?? 0 }
+              }}
+            </span>
+          </div>
+        </button>
+      }
+    </div>
+  </div>
+</main>

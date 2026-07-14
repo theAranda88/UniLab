@@ -23,6 +23,12 @@ Usuarios sembrados (contraseña para todos: **Password123!**):
 3. Clic en **Authorize** (arriba) → pegar: \`Bearer <token>\`
 4. Probar los endpoints protegidos
 
+### Portal público (sin JWT)
+- \`GET /public/escuelas\` — escuelas con \`total_proyectos_publicados\`
+- \`GET /public/cursos?id_escuela=\` — cursos por escuela
+- \`GET /public/proyectos?id_escuela=\` — proyectos publicados (incluye \`imagenes[]\`)
+- \`GET /public/proyectos/{id}\` — detalle + registro de vista
+
 ### IDs de referencia (seed)
 - Escuela Software: \`id_escuela=5\`
 - Curso Software: \`id_curso=13\`
@@ -49,6 +55,7 @@ export const swaggerSpec = swaggerJsdoc({
       { name: 'Proyectos', description: 'Proyectos académicos' },
       { name: 'Semilleros', description: 'Semilleros de investigación' },
       { name: 'Eventos', description: 'Eventos, inscripciones y asistencia' },
+      { name: 'Público', description: 'Portal público — escuelas, cursos y proyectos publicados (sin auth)' },
     ],
     components: {
       securitySchemes: {

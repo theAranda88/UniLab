@@ -2,6 +2,7 @@ import { AppError } from '../utils/AppError';
 import { proyectoRepository } from '../models/proyecto.repository';
 import { cursoRepository } from '../models/escuela.repository';
 import { semilleroRepository } from '../models/semillero.repository';
+import { proyectoImagenService } from './proyecto-imagen.service';
 import { prisma } from '../models/prisma.client';
 import { activo } from '../models/base.repository';
 
@@ -52,6 +53,7 @@ export const proyectoService = {
     descripcion: string;
     tipo_proyecto: string;
     url_aplicativo: string;
+    url_imagen?: string;
     url_apk?: string;
     url_youtube?: string;
     url_spotify?: string;
@@ -88,6 +90,7 @@ export const proyectoService = {
           descripcion: data.descripcion,
           tipo_proyecto: data.tipo_proyecto,
           url_aplicativo: data.url_aplicativo,
+          url_imagen: data.url_imagen ?? null,
           url_apk: data.url_apk,
           url_youtube: data.url_youtube,
           url_spotify: data.url_spotify,
@@ -132,6 +135,7 @@ export const proyectoService = {
       descripcion: data.descripcion as string | undefined,
       tipo_proyecto: data.tipo_proyecto as string | undefined,
       url_aplicativo: data.url_aplicativo as string | undefined,
+      url_imagen: data.url_imagen as string | undefined,
       url_apk: data.url_apk as string | undefined,
       url_youtube: data.url_youtube as string | undefined,
       url_spotify: data.url_spotify as string | undefined,
@@ -158,6 +162,13 @@ export const proyectoService = {
     if (nuevoEstado === 'en_revision') {
       if (proyecto.id_estudiante_creador !== id_usuario) {
         throw new AppError('Solo el creador puede enviar a revisión', 403);
+      }
+      const totalImagenes = await proyectoImagenService.contarActivas(id);
+      if (totalImagenes < 1 && !proyecto.url_imagen?.trim()) {
+        throw new AppError(
+          'Debe subir al menos una imagen del proyecto antes de enviar a revisión',
+          422,
+        );
       }
     } else {
       await verificarPermisoGestion(id, rol, id_usuario);

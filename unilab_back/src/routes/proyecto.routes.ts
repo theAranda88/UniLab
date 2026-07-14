@@ -4,8 +4,10 @@ import { verifyToken } from '../middlewares/auth/verifyToken';
 import { checkPrimerLogin } from '../middlewares/auth/checkPrimerLogin';
 import { requireRole } from '../middlewares/roles/requireRole';
 import { validate } from '../middlewares/validation/validate';
+import { subirImagenesProyecto } from '../middlewares/upload/subirImagenesProyecto.middleware';
 import {
   idParamSchema,
+  imagenProyectoParamSchema,
   proyectoSchema,
   actualizarProyectoSchema,
   estadoProyectoSchema,
@@ -54,6 +56,25 @@ router.put(
   validate(idParamSchema, 'params'),
   validate(calificacionSchema),
   proyectoController.calificar,
+);
+router.get(
+  '/:id/imagenes',
+  ...auth,
+  validate(idParamSchema, 'params'),
+  proyectoController.listarImagenes,
+);
+router.post(
+  '/:id/imagenes',
+  ...auth,
+  validate(idParamSchema, 'params'),
+  subirImagenesProyecto,
+  proyectoController.subirImagenes,
+);
+router.delete(
+  '/:id/imagenes/:idImagen',
+  ...auth,
+  validate(imagenProyectoParamSchema, 'params'),
+  proyectoController.eliminarImagen,
 );
 
 export default router;

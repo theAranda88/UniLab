@@ -1,0 +1,124 @@
+<main class="portal-sub portal-sub--detalle" [class.portal-sub--entered]="entered()">
+  <div class="portal-sub__logo-mini portal-sub__logo-mini--detalle" [class.portal-sub__logo-mini--visible]="entered()">
+    @if (!logoError()) {
+      <img
+        src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
+        [alt]="'home.logoAlt' | translate"
+        (error)="logoError.set(true)"
+      />
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="portal-sub__loading">{{ 'common.loading' | translate }}</p>
+  } @else if (loadError()) {
+    <p class="portal-sub__error">{{ 'home.loadProjectError' | translate }}</p>
+  } @else if (proyecto(); as p) {
+    <article class="portal-detail portal-detail--reveal">
+      <header class="portal-detail__header">
+        @if (escuelaId(); as eid) {
+          <button type="button" class="portal-sub__back" (click)="goBack()">{{ 'home.backToProjects' | translate }}</button>
+        }
+        <span class="portal-sub__eyebrow">{{ 'home.projectTypes.' + p.tipo_proyecto | translate }}</span>
+        <h1 class="portal-detail__title">{{ p.titulo }}</h1>
+        <div class="portal-detail__stats">
+          <span>{{ 'home.views' | translate: { count: p.contador_vistas } }}</span>
+          @if (p.fecha_publicacion) {
+            <span>{{ 'home.publishedAt' | translate: { date: (p.fecha_publicacion | date:'mediumDate') } }}</span>
+          }
+        </div>
+      </header>
+
+      @if (imagenes().length > 0) {
+        <figure class="portal-detail__hero">
+          <app-project-image-carousel
+            [images]="imagenes()"
+            [alt]="p.titulo"
+            [autoplayMs]="5500"
+          />
+        </figure>
+      }
+
+      <section class="portal-detail__section">
+        <h2>{{ 'home.detail.description' | translate }}</h2>
+        <p>{{ p.descripcion }}</p>
+      </section>
+
+      <section class="portal-detail__section portal-detail__grid-2">
+        <div>
+          <h2>{{ 'home.detail.context' | translate }}</h2>
+          <ul class="portal-detail__facts">
+            <li>
+              <strong>{{ 'home.detail.school' | translate }}:</strong>
+              {{ p.curso?.escuela?.nombre_escuela }}
+            </li>
+            <li>
+              <strong>{{ 'home.detail.course' | translate }}:</strong>
+              {{ p.curso?.nombre_curso }} · {{ p.curso?.periodo_academico }}
+            </li>
+            @if (p.semillero) {
+              <li>
+                <strong>{{ 'home.detail.semillero' | translate }}:</strong>
+                {{ p.semillero.nombre_semillero }}
+              </li>
+            }
+            <li>
+              <strong>{{ 'home.director' | translate }}</strong>
+              {{ getCoordinador(p) }}
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2>{{ 'home.detail.members' | translate }}</h2>
+          @if (p.autores && p.autores.length > 0) {
+            <ul class="portal-detail__members">
+              @for (autor of p.autores; track autor.estudiante.nombres) {
+                <li>
+                  {{ autorNombre(autor.rol_autor, autor.estudiante.nombres, autor.estudiante.apellidos) }}
+                </li>
+              }
+            </ul>
+          } @else if (p.estudiante_creador) {
+            <ul class="portal-detail__members">
+              <li>
+                {{ p.estudiante_creador.nombres }} {{ p.estudiante_creador.apellidos }}
+                ({{ 'home.authorRoles.principal' | translate }})
+              </li>
+            </ul>
+          }
+        </div>
+      </section>
+
+      <section class="portal-detail__section">
+        <h2>{{ 'home.detail.resources' | translate }}</h2>
+        <p class="portal-detail__resources-hint">{{ 'home.detail.resourcesHint' | translate }}</p>
+        <div class="portal-detail__resources">
+          <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_aplicativo)">
+            {{ 'home.openApp' | translate }}
+          </button>
+          @if (p.url_apk) {
+            <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_apk)">
+              {{ 'home.downloadApk' | translate }}
+            </button>
+          }
+          @if (p.url_youtube) {
+            <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_youtube)">
+              {{ 'home.downloadYoutube' | translate }}
+            </button>
+          }
+          @if (p.url_spotify) {
+            <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_spotify)">
+              {{ 'home.downloadSpotify' | translate }}
+            </button>
+          }
+          <button type="button" class="portal-detail__resource portal-detail__resource--muted" (click)="onRequireAuth()">
+            {{ 'home.comment' | translate }}
+          </button>
+          <button type="button" class="portal-detail__resource portal-detail__resource--muted" (click)="onRequireAuth()">
+            {{ 'home.rate' | translate }}
+          </button>
+        </div>
+      </section>
+    </article>
+  }
+</main>

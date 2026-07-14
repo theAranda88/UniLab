@@ -60,6 +60,7 @@ model usuarios {
   calificaciones_creadas        calificaciones[]        @relation("calificaciones_creador")
   comentarios_creados           comentarios[]           @relation("comentarios_creador")
   proyecto_vistas_creadas       proyecto_vistas[]       @relation("proyecto_vistas_creador")
+  proyecto_imagenes_creadas     proyecto_imagenes[]     @relation("proyecto_imagenes_creador")
   semilleros_creados            semilleros[]            @relation("semilleros_creador")
   semillero_profesores_creados  semillero_profesores[]  @relation("semillero_profesores_creador")
   semillero_miembros_creados    semillero_miembros[]    @relation("semillero_miembros_creador")
@@ -210,6 +211,7 @@ model proyectos {
   descripcion           String    @db.Text
   tipo_proyecto         String    @db.VarChar(50)
   url_aplicativo        String    @db.VarChar(500)
+  url_imagen            String?   @db.VarChar(500)
   url_apk               String?   @db.VarChar(500)
   url_youtube           String?   @db.VarChar(500)
   url_spotify           String?   @db.VarChar(500)
@@ -233,6 +235,25 @@ model proyectos {
   calificaciones calificaciones[]
   comentarios   comentarios[]
   vistas        proyecto_vistas[]
+  imagenes      proyecto_imagenes[]
+}
+
+model proyecto_imagenes {
+  id_imagen       Int       @id @default(autoincrement())
+  id_proyecto     Int
+  ruta_archivo    String    @db.VarChar(500)
+  nombre_original String    @db.VarChar(255)
+  mime_type       String    @db.VarChar(100)
+  orden           Int
+  created_at      DateTime  @default(now()) @db.Timestamp(6)
+  updated_at      DateTime  @updatedAt @db.Timestamp(6)
+  created_by      Int?
+  deleted_at      DateTime? @db.Timestamp(6)
+
+  proyecto proyectos @relation(fields: [id_proyecto], references: [id_proyecto], onDelete: Restrict)
+  creador  usuarios? @relation("proyecto_imagenes_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@unique([id_proyecto, orden], where: { deleted_at: null })
 }
 
 model proyecto_coordinadores {
