@@ -1,0 +1,242 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/portal-codex-theme' as portal;
+@use '../../../../styles/portal-codex-tokens' as p;
+
+.mis-proyectos {
+  max-width: min(72rem, 94vw);
+  margin: 0 auto;
+  padding: t.$space-24 t.$space-16 t.$space-48;
+}
+
+.mis-proyectos__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: t.$space-16;
+  margin-bottom: t.$space-24;
+  flex-wrap: wrap;
+
+  h1 {
+    margin: 0 0 t.$space-8;
+    font-family: p.$portal-font-display;
+    font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+    color: p.$portal-text-primary;
+  }
+}
+
+.mis-proyectos__subtitle {
+  margin: 0;
+  color: p.$portal-text-secondary;
+  font-size: t.$font-size-sm;
+  max-width: 36rem;
+}
+
+.filters {
+  margin-bottom: t.$space-24;
+
+  &__label {
+    display: block;
+    margin-bottom: t.$space-8;
+    font-size: t.$font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: p.$portal-gold-muted;
+  }
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+}
+
+.filter-chip {
+  @include portal.portal-filter-chip;
+}
+
+.btn {
+  @include portal.portal-btn-interactive;
+  border: none;
+  cursor: pointer;
+  font-weight: t.$font-weight-semibold;
+  font-size: t.$font-size-sm;
+
+  &.btn-primary {
+    @include portal.portal-btn-success;
+  }
+
+  &.btn-secondary {
+    @include portal.portal-btn-secondary;
+  }
+
+  &.btn-ghost {
+    background: transparent;
+    color: p.$portal-text-secondary;
+    border: 1px solid rgba(p.$portal-gold, 0.2);
+
+    &:hover {
+      color: p.$portal-text-primary;
+      border-color: rgba(p.$portal-gold, 0.45);
+    }
+  }
+
+  &.btn-sm {
+    padding: t.$space-8 t.$space-12;
+    font-size: t.$font-size-xs;
+  }
+}
+
+.mis-proyectos__status {
+  text-align: center;
+  padding: t.$space-32;
+  color: p.$portal-text-secondary;
+
+  &--error {
+    @include portal.portal-alert-error;
+  }
+}
+
+.mis-proyectos__empty {
+  text-align: center;
+  padding: t.$space-48 t.$space-16;
+  @include portal.portal-card;
+  color: p.$portal-text-secondary;
+
+  p {
+    margin: 0 0 t.$space-16;
+  }
+}
+
+.mis-proyectos__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: t.$space-20;
+}
+
+.proyecto-card {
+  @include portal.portal-card-codex;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: proyecto-card-in 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+
+  &__media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.35);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: p.$portal-gold-muted;
+    font-size: 2rem;
+  }
+
+  &__tipo {
+    position: absolute;
+    top: t.$space-8;
+    right: t.$space-8;
+    padding: t.$space-4 t.$space-8;
+    border-radius: t.$radius-full;
+    background: rgba(0, 0, 0, 0.55);
+    color: p.$portal-text-primary;
+    font-size: t.$font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__estado {
+    position: absolute;
+    left: t.$space-8;
+    bottom: t.$space-8;
+    padding: t.$space-4 t.$space-12;
+    border-radius: t.$radius-full;
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    backdrop-filter: blur(4px);
+  }
+
+  &__body {
+    padding: t.$space-16;
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-8;
+    flex: 1;
+
+    h2 {
+      margin: 0;
+      font-family: p.$portal-font-display;
+      font-size: t.$font-size-lg;
+      color: p.$portal-text-primary;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0;
+      font-size: t.$font-size-sm;
+      color: p.$portal-text-secondary;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: t.$space-8;
+    margin-top: auto;
+    padding-top: t.$space-8;
+    flex-wrap: wrap;
+  }
+}
+
+.estado--borrador {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+.estado--en_revision {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.estado--aprobado {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+.estado--publicado {
+  background: rgba(212, 175, 55, 0.2);
+  color: p.$portal-gold;
+}
+
+.estado--rechazado {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+@keyframes proyecto-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

@@ -37,6 +37,8 @@ export class PortalShellComponent {
     this.auth.hasAnyRole(['Estudiante', 'Externo']),
   );
 
+  readonly isEstudiante = computed(() => this.auth.hasRole('Estudiante'));
+
   readonly staffPanelRoute = computed(() => {
     if (!this.isLoggedIn() || this.isPortalStudent()) return null;
     const prefix = getShellPrefix(this.auth.currentRole() ?? '');
@@ -58,8 +60,8 @@ export class PortalShellComponent {
   );
 
   readonly showHeaderLogo = computed(() => {
-    const path = this.currentPath() ?? '';
-    return /^\/escuelas\/\d+/.test(path) || /^\/proyectos\/\d+/.test(path);
+    const path = this.currentPath() ?? '/';
+    return path !== '/' && path !== '';
   });
 
   constructor() {

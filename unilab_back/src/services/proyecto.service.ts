@@ -8,47 +8,116 @@ import { activo } from '../models/base.repository';
 
 const TRANSICIONES: Record<string, string[]> = {
   borrador: ['en_revision'],
-  en_revision: ['aprobado', 'rechazado'],
+  en_revision: ['aprobado', 'rechazado', 'publicado'],
   aprobado: ['publicado'],
   publicado: [],
   rechazado: [],
 };
 
+type ProyectoConRelaciones = NonNullable<Awaited<ReturnType<typeof proyectoRepository.findById>>>;
+
+function enriquecerProyecto(proyecto: ProyectoConRelaciones) {
+  const imagenes = proyecto.imagenes?.length
+    ? proyectoImagenService.mapImagenes(proyecto.imagenes)
+    : [];
+
+  return {
+    ...proyecto,
+    imagenes,
+    url_imagen: imagenes[0]?.url ?? proyecto.url_imagen ?? null,
+  };
+}
+
+async function obtenerProyectoEnriquecido(id: number) {
+  const proyecto = await proyectoRepository.findById(id);
+  if (!proyecto) throw new AppError('Proyecto no encontrado', 404);
+  return enriquecerProyecto(proyecto);
+}
+
+async function resolverProfesorCoordinador(
+  id_curso: number,
+  id_estudiante: number,
+  id_semillero?: number,
+  id_profesor_elegido?: number,
+): Promise<number> {
+  const autorizadoCurso = await cursoRepository.buscarAutorizacionVigente(
+    id_curso,
+    id_estudiante,
+  );
+  if (autorizadoCurso) return autorizadoCurso.id_profesor_autorizador;
+
+  if (id_semillero) {
+    const membresia = await semilleroRepository.membresiaConPublicacion(
+      id_semillero,
+      id_estudiante,
+    );
+    if (membresia?.id_profesor_autorizador) return membresia.id_profesor_autorizador;
+
+    const semillero = await semilleroRepository.findById(id_semillero);
+    if (!semillero) throw new AppError('Semillero no encontrado', 404);
+    return semillero.id_profesor_lider;
+  }
+
+  if (!id_profesor_elegido) {
+    throw new AppError('Debe seleccionar un profesor coordinador', 422);
+  }
+
+  const valido = await cursoRepository.profesorPerteneceEscuelaCurso(
+    id_profesor_elegido,
+    id_curso,
+  );
+  if (!valido) {
+    throw new AppError('El profesor seleccionado no pertenece a la escuela del curso', 422);
+  }
+
+  return id_profesor_elegido;
+}
+
 export const proyectoService = {
   async listar(rol: string, id_usuario: number) {
+    let proyectos;
+
     if (rol === 'Administrador' || rol === 'Coordinador') {
-      return proyectoRepository.findMany();
-    }
-    if (rol === 'Profesor') {
-      return proyectoRepository.findMany({
+      proyectos = await proyectoRepository.findMany();
+    } else if (rol === 'Profesor') {
+      proyectos = await proyectoRepository.findMany({
         OR: [
           { coordinadores: { some: { id_profesor: id_usuario, ...activo } } },
+          {
+            semillero: {
+              id_profesor_lider: id_usuario,
+              ...activo,
+            },
+          },
           { estado_proyecto: 'publicado' },
         ],
       });
-    }
-    if (rol === 'Estudiante') {
-      return proyectoRepository.findMany({
+    } else if (rol === 'Estudiante') {
+      proyectos = await proyectoRepository.findMany({
         OR: [
           { id_estudiante_creador: id_usuario },
           { estado_proyecto: 'publicado' },
         ],
       });
+    } else {
+      proyectos = await proyectoRepository.findMany({ estado_proyecto: 'publicado' });
     }
-    return proyectoRepository.findMany({ estado_proyecto: 'publicado' });
+
+    return proyectos.map(enriquecerProyecto);
   },
 
   async obtener(id: number, id_usuario?: number) {
     const proyecto = await proyectoRepository.findById(id);
     if (!proyecto) throw new AppError('Proyecto no encontrado', 404);
     await proyectoRepository.registrarVista(id, id_usuario ?? null);
-    return proyectoRepository.findById(id);
+    return obtenerProyectoEnriquecido(id);
   },
 
   async crear(data: {
     id_estudiante: number;
     id_curso: number;
     id_semillero?: number;
+    id_profesor_coordinador?: number;
     titulo: string;
     descripcion: string;
     tipo_proyecto: string;
@@ -58,30 +127,12 @@ export const proyectoService = {
     url_youtube?: string;
     url_spotify?: string;
   }) {
-    const autorizadoCurso = await cursoRepository.buscarAutorizacionVigente(
+    const id_profesor_autorizador = await resolverProfesorCoordinador(
       data.id_curso,
       data.id_estudiante,
+      data.id_semillero,
+      data.id_profesor_coordinador,
     );
-
-    let autorizadoSemillero = false;
-    let id_profesor_autorizador: number | undefined;
-
-    if (data.id_semillero) {
-      const membresia = await semilleroRepository.membresiaConPublicacion(
-        data.id_semillero,
-        data.id_estudiante,
-      );
-      autorizadoSemillero = !!membresia;
-      id_profesor_autorizador = membresia?.id_profesor_autorizador ?? undefined;
-    }
-
-    if (!autorizadoCurso && !autorizadoSemillero) {
-      throw new AppError('No tiene autorización vigente para crear proyectos', 422);
-    }
-
-    if (autorizadoCurso) {
-      id_profesor_autorizador = autorizadoCurso.id_profesor_autorizador;
-    }
 
     const proyecto = await prisma.$transaction(async (tx) => {
       const creado = await tx.proyectos.create({
@@ -112,25 +163,23 @@ export const proyectoService = {
         },
       });
 
-      if (id_profesor_autorizador) {
-        await tx.proyecto_coordinadores.create({
-          data: {
-            id_proyecto: creado.id_proyecto,
-            id_profesor: id_profesor_autorizador,
-            created_by: id_profesor_autorizador,
-          },
-        });
-      }
+      await tx.proyecto_coordinadores.create({
+        data: {
+          id_proyecto: creado.id_proyecto,
+          id_profesor: id_profesor_autorizador,
+          created_by: id_profesor_autorizador,
+        },
+      });
 
       return creado;
     });
 
-    return proyecto;
+    return obtenerProyectoEnriquecido(proyecto.id_proyecto);
   },
 
   async actualizar(id: number, rol: string, id_usuario: number, data: Record<string, unknown>) {
     await verificarPermisoGestion(id, rol, id_usuario);
-    return proyectoRepository.update(id, {
+    await proyectoRepository.update(id, {
       titulo: data.titulo as string | undefined,
       descripcion: data.descripcion as string | undefined,
       tipo_proyecto: data.tipo_proyecto as string | undefined,
@@ -140,6 +189,7 @@ export const proyectoService = {
       url_youtube: data.url_youtube as string | undefined,
       url_spotify: data.url_spotify as string | undefined,
     });
+    return obtenerProyectoEnriquecido(id);
   },
 
   async eliminar(id: number, rol: string, id_usuario: number) {
@@ -174,12 +224,15 @@ export const proyectoService = {
       await verificarPermisoGestion(id, rol, id_usuario);
     }
 
-    return proyectoRepository.update(id, {
+    await proyectoRepository.update(id, {
       estado_proyecto: nuevoEstado,
-      ...(nuevoEstado === 'publicado'
-        ? { fecha_publicacion: new Date(), id_aprobador: id_usuario }
+      ...(nuevoEstado === 'publicado' || nuevoEstado === 'aprobado'
+        ? { id_aprobador: id_usuario }
         : {}),
+      ...(nuevoEstado === 'publicado' ? { fecha_publicacion: new Date() } : {}),
     });
+
+    return obtenerProyectoEnriquecido(id);
   },
 
   async comentar(id_proyecto: number, id_usuario: number, contenido: string, id_padre?: number) {
@@ -248,6 +301,11 @@ async function verificarPermisoGestion(id_proyecto: number, rol: string, id_usua
   if (rol === 'Profesor') {
     const esCoord = await proyectoRepository.esCoordinador(id_proyecto, id_usuario);
     if (esCoord) return;
+
+    if (proyecto.id_semillero) {
+      const semillero = await semilleroRepository.findById(proyecto.id_semillero);
+      if (semillero?.id_profesor_lider === id_usuario) return;
+    }
   }
 
   throw new AppError('Sin permiso para gestionar este proyecto', 403);

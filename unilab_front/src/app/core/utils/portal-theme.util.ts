@@ -50,6 +50,7 @@ export function shouldUsePortalUi(router: Router, role?: string | null): boolean
   return (
     path === '/' ||
     path.startsWith('/eventos') ||
+    path.startsWith('/mis-proyectos') ||
     path.startsWith('/escuelas') ||
     path.startsWith('/proyectos')
   );

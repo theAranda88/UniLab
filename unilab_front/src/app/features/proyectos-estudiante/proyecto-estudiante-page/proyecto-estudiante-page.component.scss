@@ -1,0 +1,241 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/portal-codex-theme' as portal;
+@use '../../../../styles/portal-codex-tokens' as p;
+
+.proyecto-page {
+  max-width: min(48rem, 94vw);
+  margin: 0 auto;
+  padding: t.$space-24 t.$space-16 t.$space-48;
+}
+
+.proyecto-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-12;
+  margin-bottom: t.$space-24;
+
+  h1 {
+    margin: t.$space-8 0 0;
+    font-family: p.$portal-font-display;
+    color: p.$portal-text-primary;
+    font-size: clamp(1.35rem, 1.5vw + 1rem, 1.85rem);
+  }
+}
+
+.proyecto-page__estado {
+  display: inline-block;
+  margin-top: t.$space-8;
+  padding: t.$space-4 t.$space-12;
+  border-radius: t.$radius-full;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  text-transform: uppercase;
+}
+
+.estado--borrador {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+.estado--en_revision {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.estado--aprobado {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+.estado--publicado {
+  background: rgba(212, 175, 55, 0.2);
+  color: p.$portal-gold;
+}
+
+.estado--rechazado {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.proyecto-page__status {
+  text-align: center;
+  padding: t.$space-24;
+  color: p.$portal-text-secondary;
+
+  &--error {
+    @include portal.portal-alert-error;
+  }
+}
+
+.proyecto-form__section {
+  @include portal.portal-card;
+  padding: t.$space-20;
+  margin-bottom: t.$space-20;
+
+  h2 {
+    margin: 0 0 t.$space-16;
+    font-family: p.$portal-font-display;
+    color: p.$portal-text-primary;
+    font-size: t.$font-size-lg;
+  }
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: t.$space-12;
+  flex-wrap: wrap;
+  margin-bottom: t.$space-16;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.section-hint {
+  font-size: t.$font-size-xs;
+  color: p.$portal-text-secondary;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: t.$space-16;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-8;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    @include portal.portal-label;
+  }
+
+  input,
+  select,
+  textarea {
+    @include portal.portal-form-control;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+}
+
+.form-hint {
+  margin: 0;
+  font-size: t.$font-size-xs;
+  color: p.$portal-text-secondary;
+
+  &--info {
+    padding: t.$space-12;
+    border-radius: t.$radius-md;
+    background: rgba(59, 130, 246, 0.12);
+    color: #93c5fd;
+  }
+}
+
+.imagenes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: t.$space-12;
+}
+
+.imagen-item {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: t.$radius-md;
+  overflow: hidden;
+  border: 1px solid rgba(p.$portal-gold, 0.2);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__remove {
+    position: absolute;
+    top: t.$space-8;
+    right: t.$space-8;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: t.$radius-full;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.imagen-upload {
+  @include portal.portal-btn-secondary;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: t.$space-12;
+  cursor: pointer;
+  font-size: t.$font-size-xs;
+  color: p.$portal-text-secondary;
+
+  input {
+    display: none;
+  }
+}
+
+.proyecto-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-12;
+}
+
+.btn {
+  @include portal.portal-btn-interactive;
+  border: none;
+  cursor: pointer;
+  font-weight: t.$font-weight-semibold;
+  font-size: t.$font-size-sm;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    @include portal.portal-btn-success;
+  }
+
+  &.btn-secondary {
+    @include portal.portal-btn-secondary;
+  }
+
+  &.btn-ghost {
+    background: transparent;
+    color: p.$portal-text-secondary;
+    border: 1px solid rgba(p.$portal-gold, 0.2);
+  }
+
+  &.btn-danger {
+    @include portal.portal-btn-secondary;
+    background: rgba(127, 29, 29, 0.35);
+    color: #fecaca;
+    border: 1px solid rgba(248, 113, 113, 0.35);
+  }
+}

@@ -21,6 +21,7 @@ export interface SemilleroResumen {
   id_semillero: number;
   nombre_semillero: string;
   descripcion?: string;
+  id_profesor_lider?: number;
 }
 
 export interface ProyectoAutor {
@@ -61,9 +62,17 @@ export function urlsImagenesProyecto(proyecto: Pick<ProyectoPublico, 'imagenes' 
   if (proyecto.imagenes?.length) {
     return [...proyecto.imagenes]
       .sort((a, b) => a.orden - b.orden)
-      .map((img) => img.url);
+      .map((img) => img.url || resolverUrlImagen((img as { ruta_archivo?: string }).ruta_archivo))
+      .filter(Boolean);
   }
   return proyecto.url_imagen ? [proyecto.url_imagen] : [];
+}
+
+function resolverUrlImagen(ruta?: string | null): string {
+  if (!ruta) return '';
+  if (ruta.startsWith('http')) return ruta;
+  const base = 'http://localhost:3000';
+  return `${base}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
 }
 
 export type EscuelaThemeKey =

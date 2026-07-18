@@ -1,0 +1,158 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+
+.proyectos-prof-list {
+  @include ui.eventos-page;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: t.$space-16;
+    margin-bottom: t.$space-24;
+    flex-wrap: wrap;
+
+    h1 {
+      margin: 0 0 t.$space-8;
+      font-size: t.$font-size-2xl;
+      color: t.$primary-blue;
+    }
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: t.$text-light;
+    font-size: t.$font-size-sm;
+    max-width: 40rem;
+  }
+
+  &__filters {
+    margin-bottom: t.$space-20;
+  }
+
+  &__filters-label {
+    display: block;
+    margin-bottom: t.$space-8;
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-semibold;
+    color: t.$text-light;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-8;
+  }
+
+  .filter-chip {
+    border: 1px solid t.$border-gray;
+    border-radius: t.$radius-full;
+    padding: t.$space-8 t.$space-12;
+    background: t.$white;
+    color: t.$text-light;
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-semibold;
+    cursor: pointer;
+
+    &--active {
+      border-color: t.$primary-blue;
+      background: rgba(t.$primary-blue, 0.08);
+      color: t.$primary-blue;
+    }
+  }
+
+  &__status {
+    color: t.$text-light;
+
+    &--error {
+      color: t.$error;
+    }
+  }
+
+  &__table-wrap {
+    @include ui.eventos-card;
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+
+    th,
+    td {
+      padding: t.$space-12 t.$space-16;
+      text-align: left;
+      border-bottom: 1px solid t.$border-gray;
+      vertical-align: middle;
+    }
+
+    th {
+      font-size: t.$font-size-sm;
+      font-weight: t.$font-weight-semibold;
+      color: t.$text-light;
+      background: t.$light-gray;
+    }
+
+    tbody tr:hover {
+      background: rgba(t.$primary-blue, 0.03);
+    }
+  }
+
+  .btn-secondary {
+    @include ui.btn-secondary;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .btn-link {
+    border: none;
+    background: transparent;
+    color: t.$primary-blue;
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-semibold;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: t.$space-4 t.$space-12;
+  border-radius: t.$radius-full;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  text-transform: uppercase;
+
+  &--borrador {
+    background: rgba(148, 163, 184, 0.15);
+    color: #64748b;
+  }
+
+  &--en_revision {
+    background: rgba(59, 130, 246, 0.12);
+    color: t.$primary-blue;
+  }
+
+  &--aprobado {
+    background: rgba(16, 185, 129, 0.12);
+    color: t.$success;
+  }
+
+  &--publicado {
+    background: rgba(t.$light-blue, 0.15);
+    color: t.$primary-blue;
+  }
+
+  &--rechazado {
+    background: rgba(t.$error, 0.12);
+    color: t.$error;
+  }
+}

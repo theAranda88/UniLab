@@ -12,6 +12,10 @@ import { AsistenciaQrComponent } from './features/eventos/asistencia-qr.componen
 import { ReporteEventoComponent } from './features/eventos/reporte-evento.component';
 import { EscuelasListComponent } from './features/escuelas/escuelas-list/escuelas-list.component';
 import { EscuelasFormComponent } from './features/escuelas/escuelas-form/escuelas-form.component';
+import { MisProyectosListComponent } from './features/proyectos-estudiante/mis-proyectos-list/mis-proyectos-list.component';
+import { ProyectoEstudiantePageComponent } from './features/proyectos-estudiante/proyecto-estudiante-page/proyecto-estudiante-page.component';
+import { ProyectosProfListComponent } from './features/proyectos-profesor/proyectos-prof-list/proyectos-prof-list.component';
+import { ProyectosProfDetalleComponent } from './features/proyectos-profesor/proyectos-prof-detalle/proyectos-prof-detalle.component';
 import { AdminShellComponent } from './shared/layout/admin-shell/admin-shell.component';
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { CoordDashboardComponent } from './features/coordinador/dashboard/coord-dashboard.component';
@@ -86,6 +90,12 @@ const escuelasShellChildren: Routes = [
   },
 ];
 
+const proyectosEstudianteChildren: Routes = [
+  { path: '', component: MisProyectosListComponent, data: { portalTheme: true } },
+  { path: 'nuevo', component: ProyectoEstudiantePageComponent, data: { portalTheme: true } },
+  { path: ':id', component: ProyectoEstudiantePageComponent, data: { portalTheme: true } },
+];
+
 const eventosPortalChildren: Routes = [
   { path: '', component: EventosListComponent, data: { portalTheme: true } },
   { path: ':id', component: EventoDetalleComponent, data: { portalTheme: true } },
@@ -126,6 +136,16 @@ const eventosShellChildren: Routes = [
   },
 ];
 
+const proyectosProfChildren: Routes = [
+  { path: 'proyectos', component: ProyectosProfListComponent },
+  { path: 'proyectos/:id', component: ProyectosProfDetalleComponent },
+  {
+    path: 'pendientes',
+    component: ProyectosProfListComponent,
+    data: { filtroInicial: 'en_revision' },
+  },
+];
+
 const eventosProfChildren: Routes = [
   { path: 'eventos', component: EventosListComponent },
   { path: 'eventos/:id', component: EventoDetalleComponent },
@@ -163,6 +183,12 @@ export const routes: Routes = [
         path: 'eventos',
         canActivate: [authGuard, primerLoginGuard],
         children: eventosPortalChildren,
+      },
+      {
+        path: 'mis-proyectos',
+        canActivate: [authGuard, primerLoginGuard, roleGuard],
+        data: { roles: ['Estudiante'] },
+        children: proyectosEstudianteChildren,
       },
     ],
   },
@@ -209,6 +235,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: ProfDashboardComponent },
+      ...proyectosProfChildren,
       ...eventosProfChildren,
     ],
   },

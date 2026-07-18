@@ -23,6 +23,11 @@
     </div>
     <div class="codex-portal__header-right">
       @if (showStudentNav()) {
+        @if (isEstudiante()) {
+          <a routerLink="/mis-proyectos" class="codex-portal__auth-btn codex-portal__auth-btn--projects">
+            {{ 'home.projectsNav' | translate }}
+          </a>
+        }
         <a routerLink="/eventos" class="codex-portal__auth-btn codex-portal__auth-btn--events">
           {{ 'home.eventsNav' | translate }}
         </a>

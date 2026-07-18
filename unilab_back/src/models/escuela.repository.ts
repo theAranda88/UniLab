@@ -83,4 +83,48 @@ export const cursoRepository = {
       },
     });
   },
+
+  async profesorPerteneceEscuelaCurso(id_profesor: number, id_curso: number) {
+    const curso = await this.findById(id_curso);
+    if (!curso) return false;
+
+    const perfil = await prisma.perfiles_profesor.findFirst({
+      where: { id_usuario: id_profesor, id_escuela: curso.id_escuela, ...activo },
+      include: { usuario: { include: { rol: true } } },
+    });
+
+    return (
+      !!perfil &&
+      perfil.usuario.activo &&
+      perfil.usuario.rol.nombre_rol === 'Profesor' &&
+      !perfil.usuario.deleted_at
+    );
+  },
+
+  listarProfesoresCoordinadores(id_curso: number) {
+    return prisma.cursos.findFirst({
+      where: { id_curso, ...activo },
+      select: {
+        escuela: {
+          select: {
+            perfiles_profesor: {
+              where: { ...activo, usuario: { activo: true, deleted_at: null, rol: { nombre_rol: 'Profesor' } } },
+              select: {
+                id_usuario: true,
+                codigo_docente: true,
+                usuario: {
+                  select: {
+                    nombres: true,
+                    apellidos: true,
+                    email: true,
+                  },
+                },
+              },
+              orderBy: { usuario: { apellidos: 'asc' } },
+            },
+          },
+        },
+      },
+    });
+  },
 };

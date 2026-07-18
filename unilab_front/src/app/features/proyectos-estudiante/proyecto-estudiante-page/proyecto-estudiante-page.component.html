@@ -1,0 +1,233 @@
+<div class="proyecto-page">
+  <header class="proyecto-page__header">
+    <button type="button" class="btn btn-ghost" (click)="volver()">
+      {{ 'proyectosEstudiante.volver' | translate }}
+    </button>
+    <div>
+      <h1>{{ tituloPagina() | translate }}</h1>
+      @if (proyecto(); as p) {
+        <span class="proyecto-page__estado estado--{{ p.estado_proyecto }}">
+          {{ 'proyectosEstudiante.estados.' + p.estado_proyecto | translate }}
+        </span>
+      }
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <p class="proyecto-page__status">{{ 'common.cargando' | translate }}</p>
+  } @else {
+    @if (error()) {
+      <p class="proyecto-page__status proyecto-page__status--error">{{ error()! | translate }}</p>
+    }
+
+    <form class="proyecto-form" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <section class="proyecto-form__section">
+        <h2>{{ 'proyectosEstudiante.seccionDatos' | translate }}</h2>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="id_curso">{{ 'proyectosEstudiante.curso' | translate }}</label>
+            <select id="id_curso" formControlName="id_curso">
+              <option [ngValue]="0" disabled>{{ 'proyectosEstudiante.seleccioneCurso' | translate }}</option>
+              @for (curso of cursos(); track curso.id_curso) {
+                <option [ngValue]="curso.id_curso">
+                  {{ curso.nombre_curso }} — {{ curso.escuela?.nombre_escuela }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="id_semillero">{{ 'proyectosEstudiante.semilleroOpcional' | translate }}</label>
+            <select id="id_semillero" formControlName="id_semillero">
+              <option [ngValue]="0">{{ 'proyectosEstudiante.sinSemillero' | translate }}</option>
+              @for (s of semilleros(); track s.id_semillero) {
+                <option [ngValue]="s.id_semillero">{{ s.nombre_semillero }}</option>
+              }
+            </select>
+          </div>
+
+          @if (modoCrear() && idSemilleroForm() > 0 && liderSemilleroSeleccionado()) {
+            <div class="form-field form-field--full">
+              <p class="form-hint form-hint--info">
+                {{ 'proyectosEstudiante.aprobadorSemillero' | translate: { nombre: liderSemilleroSeleccionado() } }}
+              </p>
+            </div>
+          }
+
+          @if (requiereSeleccionProfesor()) {
+            <div class="form-field form-field--full">
+              <label for="id_profesor_coordinador">{{ 'proyectosEstudiante.profesorCoordinador' | translate }}</label>
+              <select id="id_profesor_coordinador" formControlName="id_profesor_coordinador">
+                <option [ngValue]="0" disabled>
+                  {{
+                    cargandoProfesores()
+                      ? ('common.cargando' | translate)
+                      : ('proyectosEstudiante.seleccioneProfesor' | translate)
+                  }}
+                </option>
+                @for (prof of profesoresCoordinadores(); track prof.id_profesor) {
+                  <option [ngValue]="prof.id_profesor">
+                    {{ prof.nombres }} {{ prof.apellidos }} — {{ prof.codigo_docente }}
+                  </option>
+                }
+              </select>
+              <p class="form-hint">{{ 'proyectosEstudiante.profesorCoordinadorHint' | translate }}</p>
+            </div>
+          }
+
+          <div class="form-field form-field--full">
+            <label for="titulo">{{ 'proyectosEstudiante.campoTitulo' | translate }}</label>
+            <input id="titulo" type="text" formControlName="titulo" />
+          </div>
+
+          <div class="form-field form-field--full">
+            <label for="descripcion">{{ 'proyectosEstudiante.descripcion' | translate }}</label>
+            <textarea id="descripcion" rows="5" formControlName="descripcion"></textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="tipo_proyecto">{{ 'proyectosEstudiante.tipo' | translate }}</label>
+            <select id="tipo_proyecto" formControlName="tipo_proyecto">
+              @for (tipo of tipos; track tipo) {
+                <option [value]="tipo">{{ 'home.projectTypes.' + tipo | translate }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-field form-field--full">
+            <label for="url_aplicativo">{{ 'proyectosEstudiante.urlAplicativo' | translate }}</label>
+            <input id="url_aplicativo" type="url" formControlName="url_aplicativo" />
+          </div>
+
+          @if (mostrarCampo('apk')) {
+            <div class="form-field form-field--full">
+              <label for="url_apk">{{ 'proyectosEstudiante.urlApk' | translate }}</label>
+              <input id="url_apk" type="url" formControlName="url_apk" />
+            </div>
+          }
+
+          @if (mostrarCampo('youtube')) {
+            <div class="form-field form-field--full">
+              <label for="url_youtube">{{ 'proyectosEstudiante.urlYoutube' | translate }}</label>
+              <input id="url_youtube" type="url" formControlName="url_youtube" />
+            </div>
+          }
+
+          @if (mostrarCampo('spotify')) {
+            <div class="form-field form-field--full">
+              <label for="url_spotify">{{ 'proyectosEstudiante.urlSpotify' | translate }}</label>
+              <input id="url_spotify" type="url" formControlName="url_spotify" />
+            </div>
+          }
+        </div>
+      </section>
+
+      @if (mostrarSeccionImagenes()) {
+        <section class="proyecto-form__section">
+          <div class="section-head">
+            <h2>{{ 'proyectosEstudiante.seccionImagenes' | translate }}</h2>
+            <span class="section-hint">
+              {{ 'proyectosEstudiante.imagenesHint' | translate: { max: maxImagenes } }}
+            </span>
+          </div>
+
+          <div class="imagenes-grid">
+            @if (modoCrear()) {
+              @for (preview of previewsPendientes(); track preview; let i = $index) {
+                <figure class="imagen-item">
+                  <img [src]="preview" [alt]="'proyectosEstudiante.imagenProyecto' | translate" />
+                  <button
+                    type="button"
+                    class="imagen-item__remove"
+                    (click)="quitarImagenPendiente(i)"
+                    [attr.aria-label]="'proyectosEstudiante.eliminarImagen' | translate"
+                  >
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                </figure>
+              }
+            } @else {
+              @for (img of imagenes(); track img.id_imagen) {
+                <figure class="imagen-item">
+                  <img [src]="img.url" [alt]="'proyectosEstudiante.imagenProyecto' | translate" />
+                  @if (puedeGestionarImagenes() && img.id_imagen > 0) {
+                    <button
+                      type="button"
+                      class="imagen-item__remove"
+                      (click)="quitarImagen(img.id_imagen)"
+                      [attr.aria-label]="'proyectosEstudiante.eliminarImagen' | translate"
+                    >
+                      <i class="ti ti-x" aria-hidden="true"></i>
+                    </button>
+                  }
+                </figure>
+              }
+            }
+
+            @if (slotsImagenesRestantes() > 0) {
+              <label class="imagen-upload">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  [disabled]="subiendoImagenes() || enviando()"
+                  (change)="onSeleccionarImagenes($event)"
+                />
+                <span>
+                  @if (subiendoImagenes()) {
+                    {{ 'proyectosEstudiante.subiendoImagenes' | translate }}
+                  } @else {
+                    {{ 'proyectosEstudiante.agregarImagenes' | translate }}
+                  }
+                </span>
+              </label>
+            }
+          </div>
+        </section>
+      }
+
+      <div class="proyecto-form__actions">
+        @if (puedeEditar()) {
+          <button type="submit" class="btn btn-primary" [disabled]="enviando() || subiendoImagenes()">
+            {{
+              enviando() || subiendoImagenes()
+                ? ('common.guardando' | translate)
+                : (modoCrear()
+                    ? ('proyectosEstudiante.crearYEnviar' | translate)
+                    : ('common.guardar' | translate))
+            }}
+          </button>
+        }
+
+        @if (puedeEnviarRevision()) {
+          <button
+            type="button"
+            class="btn btn-secondary"
+            [disabled]="enviando()"
+            (click)="enviarRevision()"
+          >
+            {{ 'proyectosEstudiante.enviarRevision' | translate }}
+          </button>
+        }
+
+        @if (proyecto()?.estado_proyecto === 'publicado') {
+          <button type="button" class="btn btn-ghost" (click)="verPublico()">
+            {{ 'proyectosEstudiante.verPublico' | translate }}
+          </button>
+        }
+
+        @if (proyecto() && proyectosService.puedeEliminar(proyecto()!)) {
+          <button
+            type="button"
+            class="btn btn-danger"
+            [disabled]="enviando()"
+            (click)="eliminar()"
+          >
+            {{ 'common.eliminar' | translate }}
+          </button>
+        }
+      </div>
+    </form>
+  }
+</div>

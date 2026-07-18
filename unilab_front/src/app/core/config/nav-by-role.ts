@@ -85,8 +85,8 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
     {
       sectionKey: 'shell.nav.sections.proyectos',
       items: [
-        { labelKey: 'shell.nav.proyectosAsignados', icon: 'ti-folders', route: 'proyectos', enabled: false },
-        { labelKey: 'shell.nav.pendientesAprobar', icon: 'ti-clock-check', route: 'pendientes', enabled: false, badge: 2 },
+        { labelKey: 'shell.nav.proyectosAsignados', icon: 'ti-folders', route: 'proyectos', enabled: true },
+        { labelKey: 'shell.nav.pendientesAprobar', icon: 'ti-clock-check', route: 'pendientes', enabled: true },
       ],
     },
     {

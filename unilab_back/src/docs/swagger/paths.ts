@@ -222,31 +222,89 @@ export const paths = {
       responses: { 201: { description: 'Autorización creada' }, ...err },
     },
   },
+  '/cursos/{id}/coordinadores-disponibles': {
+    get: {
+      tags: ['Cursos'],
+      summary: 'Listar profesores coordinadores disponibles',
+      description:
+        'Profesores activos de la escuela del curso (`perfiles_profesor.id_escuela`). Usado en el formulario de creación de proyecto **sin semillero** para que el estudiante elija quién aprobará. Requiere autenticación.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Lista de profesores disponibles',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/ProfesorCoordinadorDisponible' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
 
   // ─── PROYECTOS ────────────────────────────────────────────────────────────
   '/proyectos': {
     get: {
       tags: ['Proyectos'],
       summary: 'Listar proyectos',
-      description: 'Filtrado según rol del usuario autenticado.',
-      responses: { 200: { description: 'Lista de proyectos' }, ...err },
+      description:
+        'Filtrado según rol: **Estudiante** — propios + publicados; **Profesor** — asignados como coordinador, líder del semillero del proyecto o publicados; **Admin/Coord** — todos. Cada proyecto incluye `imagenes[]` con `url` pública (`/uploads/...`).',
+      responses: {
+        200: {
+          description: 'Lista de proyectos',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/ProyectoResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
     },
     post: {
       tags: ['Proyectos'],
       summary: 'Crear proyecto (borrador)',
       description:
-        '**Rol requerido:** Estudiante. Requiere autorización vigente en curso o `puede_publicar` en semillero. El Profesor NUNCA puede usar este endpoint.',
+        '**Rol requerido:** Estudiante. Cualquier estudiante autenticado puede crear un borrador.\n\n**Asignación del coordinador:**\n1. Si hay autorización de curso vigente → profesor autorizador.\n2. Si hay `id_semillero` → líder del semillero (o autorizador de membresía).\n3. Sin semillero → obligatorio `id_profesor_coordinador` de la escuela del curso.\n\nTras crear, subir imágenes (`POST /proyectos/:id/imagenes`) y enviar a revisión.',
       requestBody: jsonBody('#/components/schemas/ProyectoRequest'),
-      responses: { 201: { description: 'Proyecto creado en estado borrador' }, ...err },
+      responses: {
+        201: {
+          description: 'Proyecto creado en estado borrador',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProyectoResponse' },
+            },
+          },
+        },
+        ...err,
+      },
     },
   },
   '/proyectos/{id}': {
     get: {
       tags: ['Proyectos'],
       summary: 'Obtener proyecto (registra vista)',
-      description: 'Cada llamada inserta en `proyecto_vistas` e incrementa `contador_vistas`.',
+      description:
+        'Cada llamada inserta en `proyecto_vistas` e incrementa `contador_vistas`. Incluye `imagenes[]` con URLs públicas.',
       parameters: [paramId],
-      responses: { 200: { description: 'Detalle del proyecto' }, ...err },
+      responses: {
+        200: {
+          description: 'Detalle del proyecto',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProyectoResponse' },
+            },
+          },
+        },
+        ...err,
+      },
     },
     patch: {
       tags: ['Proyectos'],
@@ -254,7 +312,17 @@ export const paths = {
       description: 'Requiere permiso de gestión (coordinador, admin, creador estudiante si no publicado).',
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/ProyectoRequest', 'Todos los campos son opcionales'),
-      responses: { 200: { description: 'Proyecto actualizado' }, ...err },
+      responses: {
+        200: {
+          description: 'Proyecto actualizado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProyectoResponse' },
+            },
+          },
+        },
+        ...err,
+      },
     },
     delete: {
       tags: ['Proyectos'],
@@ -267,10 +335,21 @@ export const paths = {
     patch: {
       tags: ['Proyectos'],
       summary: 'Cambiar estado del proyecto',
-      description: 'Transiciones: borrador→en_revision→aprobado→publicado, o →rechazado.',
+      description:
+        '**Transiciones:**\n- `borrador` → `en_revision`: solo el creador; requiere ≥1 imagen activa.\n- `en_revision` → `aprobado` | `rechazado` | `publicado`: coordinador asignado o líder del semillero. Usar `publicado` para aprobar y publicar en el portal en un solo paso.\n- `aprobado` → `publicado`: publicar proyectos aprobados antes del flujo unificado.\n\nAl pasar a `publicado` se registra `fecha_publicacion` e `id_aprobador`.',
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/EstadoProyectoRequest'),
-      responses: { 200: { description: 'Estado actualizado' }, ...err },
+      responses: {
+        200: {
+          description: 'Estado actualizado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ProyectoResponse' },
+            },
+          },
+        },
+        ...err,
+      },
     },
   },
   '/proyectos/{id}/comentarios': {
@@ -505,6 +584,27 @@ export const paths = {
     },
   },
   '/eventos/{id}/jornadas': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Listar jornadas del evento',
+      description:
+        '**Rol requerido:** autenticado. Devuelve jornadas con `codigo_qr`. Usado en el portal estudiante para mostrar horarios y habilitar asistencia por QR.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Lista de jornadas del evento',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/JornadaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
     post: {
       tags: ['Eventos'],
       summary: 'Crear jornada',
@@ -512,6 +612,26 @@ export const paths = {
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/JornadaRequest'),
       responses: { 201: { description: 'Jornada creada con codigo_qr' }, ...err },
+    },
+  },
+  '/eventos/{id}/mi-inscripcion': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Consultar mi inscripción al evento',
+      description:
+        '**Rol requerido:** autenticado. Devuelve `{ inscrito, inscripcion }`. Consumido por el portal estudiante en `/eventos/:id` para saber si ya está inscrito y el estado de pago antes de registrar asistencia.',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Estado de inscripción del usuario autenticado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/MiInscripcionResponse' },
+            },
+          },
+        },
+        ...err,
+      },
     },
   },
   '/eventos/{id}/inscripciones': {

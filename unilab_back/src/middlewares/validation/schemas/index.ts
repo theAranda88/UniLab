@@ -79,6 +79,7 @@ export const autorizacionCursoSchema = z.object({
 export const proyectoSchema = z.object({
   id_curso: z.number().int().positive(),
   id_semillero: z.number().int().positive().optional(),
+  id_profesor_coordinador: z.number().int().positive().optional(),
   titulo: z.string().min(1),
   descripcion: z.string().min(1),
   tipo_proyecto: z.enum(['web', 'movil', 'podcast', 'otro']),

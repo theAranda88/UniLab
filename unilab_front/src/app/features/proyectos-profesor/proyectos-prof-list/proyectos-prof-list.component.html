@@ -1,0 +1,90 @@
+<div class="proyectos-prof-list">
+  <div class="proyectos-prof-list__header">
+    <div>
+      <h1>
+        {{
+          soloPendientes()
+            ? ('proyectosProfesor.pendientesTitulo' | translate)
+            : ('proyectosProfesor.titulo' | translate)
+        }}
+      </h1>
+      <p class="proyectos-prof-list__subtitle">
+        {{ 'proyectosProfesor.subtitulo' | translate }}
+      </p>
+    </div>
+    @if (pendientesCount() > 0 && !soloPendientes()) {
+      <a routerLink="/prof/pendientes" class="btn btn-secondary">
+        {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
+      </a>
+    }
+  </div>
+
+  <div class="proyectos-prof-list__filters">
+    <span class="proyectos-prof-list__filters-label">
+      {{ 'proyectosProfesor.filtroEstado' | translate }}
+    </span>
+    <div class="filter-chips">
+      @for (estado of estadosFiltro; track estado) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.filter-chip--active]="filtroEstado() === estado"
+          (click)="setFiltroEstado(estado)"
+        >
+          {{
+            estado
+              ? ('proyectosEstudiante.estados.' + estado | translate)
+              : ('proyectosProfesor.filtroTodos' | translate)
+          }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="proyectos-prof-list__status">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="proyectos-prof-list__status proyectos-prof-list__status--error">
+      {{ error()! | translate }}
+    </p>
+  } @else if (proyectosAsignados().length === 0) {
+    <p class="proyectos-prof-list__status">{{ 'proyectosProfesor.sinAsignados' | translate }}</p>
+  } @else {
+    <div class="proyectos-prof-list__table-wrap">
+      <table class="proyectos-prof-list__table">
+        <thead>
+          <tr>
+            <th>{{ 'proyectosProfesor.columnaTitulo' | translate }}</th>
+            <th>{{ 'proyectosProfesor.columnaEstudiante' | translate }}</th>
+            <th>{{ 'proyectosProfesor.columnaCurso' | translate }}</th>
+            <th>{{ 'proyectosProfesor.columnaEstado' | translate }}</th>
+            <th>{{ 'common.acciones' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (proyecto of proyectosAsignados(); track trackById($index, proyecto)) {
+            <tr>
+              <td>{{ proyecto.titulo }}</td>
+              <td>{{ nombreEstudiante(proyecto) }}</td>
+              <td>{{ proyecto.curso?.nombre_curso ?? '—' }}</td>
+              <td>
+                <span class="estado-badge estado-badge--{{ proyecto.estado_proyecto }}">
+                  {{ 'proyectosEstudiante.estados.' + proyecto.estado_proyecto | translate }}
+                </span>
+              </td>
+              <td>
+                <button type="button" class="btn btn-link" (click)="verDetalle(proyecto.id_proyecto)">
+                  {{
+                    proyecto.estado_proyecto === 'en_revision'
+                      ? ('proyectosProfesor.revisar' | translate)
+                      : ('common.verDetalles' | translate)
+                  }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

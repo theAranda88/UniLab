@@ -1,0 +1,88 @@
+<div class="mis-proyectos">
+  <header class="mis-proyectos__header">
+    <div>
+      <h1>{{ 'proyectosEstudiante.titulo' | translate }}</h1>
+      <p class="mis-proyectos__subtitle">{{ 'proyectosEstudiante.subtitulo' | translate }}</p>
+    </div>
+    @if (puedeCrear()) {
+      <button type="button" class="btn btn-primary" (click)="crear()">
+        {{ 'proyectosEstudiante.crear' | translate }}
+      </button>
+    }
+  </header>
+
+  <div class="filters filters--portal" role="group" [attr.aria-label]="'proyectosEstudiante.filtroEstado' | translate">
+    <span class="filters__label">{{ 'proyectosEstudiante.filtroEstado' | translate }}</span>
+    <div class="filter-chips">
+      @for (estado of estadosFiltro; track estado) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.filter-chip--active]="filtroEstado() === estado"
+          (click)="setFiltroEstado(estado)"
+        >
+          {{
+            estado
+              ? ('proyectosEstudiante.estados.' + estado | translate)
+              : ('proyectosEstudiante.filtroTodos' | translate)
+          }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="mis-proyectos__status">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="mis-proyectos__status mis-proyectos__status--error">{{ error()! | translate }}</p>
+  } @else if (misProyectos().length === 0) {
+    <div class="mis-proyectos__empty">
+      <p>{{ 'proyectosEstudiante.sinProyectos' | translate }}</p>
+      @if (puedeCrear()) {
+        <button type="button" class="btn btn-secondary" (click)="crear()">
+          {{ 'proyectosEstudiante.crearPrimero' | translate }}
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="mis-proyectos__grid">
+      @for (proyecto of misProyectos(); track proyecto.id_proyecto; let i = $index) {
+        <article
+          class="proyecto-card"
+          [style.animation-delay.ms]="i * 80"
+          (click)="gestionar(proyecto.id_proyecto)"
+        >
+          <div class="proyecto-card__media">
+            @if (portada(proyecto); as img) {
+              <img [src]="img" [alt]="proyecto.titulo" loading="lazy" />
+            } @else {
+              <div class="proyecto-card__placeholder">
+                <i class="ti ti-photo" aria-hidden="true"></i>
+              </div>
+            }
+            <span class="proyecto-card__estado estado--{{ proyecto.estado_proyecto }}">
+              {{ 'proyectosEstudiante.estados.' + proyecto.estado_proyecto | translate }}
+            </span>
+            <span class="proyecto-card__tipo">
+              {{ 'home.projectTypes.' + proyecto.tipo_proyecto | translate }}
+            </span>
+          </div>
+          <div class="proyecto-card__body">
+            <h2>{{ proyecto.titulo }}</h2>
+            <p>{{ proyecto.descripcion }}</p>
+            <div class="proyecto-card__actions" (click)="$event.stopPropagation()">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="gestionar(proyecto.id_proyecto)">
+                {{ 'proyectosEstudiante.gestionar' | translate }}
+              </button>
+              @if (proyecto.estado_proyecto === 'publicado') {
+                <button type="button" class="btn btn-ghost btn-sm" (click)="verPublico(proyecto.id_proyecto)">
+                  {{ 'proyectosEstudiante.verPublico' | translate }}
+                </button>
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

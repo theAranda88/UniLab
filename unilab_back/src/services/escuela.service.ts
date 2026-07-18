@@ -108,4 +108,20 @@ export const cursoService = {
       creador: { connect: { id_usuario: id_profesor } },
     });
   },
+
+  async listarCoordinadoresDisponibles(id_curso: number) {
+    const curso = await cursoRepository.findById(id_curso);
+    if (!curso) throw new AppError('Curso no encontrado', 404);
+
+    const resultado = await cursoRepository.listarProfesoresCoordinadores(id_curso);
+    const perfiles = resultado?.escuela?.perfiles_profesor ?? [];
+
+    return perfiles.map((perfil) => ({
+      id_profesor: perfil.id_usuario,
+      nombres: perfil.usuario.nombres,
+      apellidos: perfil.usuario.apellidos,
+      email: perfil.usuario.email,
+      codigo_docente: perfil.codigo_docente,
+    }));
+  },
 };

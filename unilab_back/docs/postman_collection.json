@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "API UniLab",
-    "description": "Colección Postman de la plataforma universitaria UniLab.\n\n**Contraseña de prueba (seed):** Password123!\n\n**Uso:**\n1. Importar el entorno `postman_environment.json`\n2. Ejecutar «Iniciar sesión (Administrador)» — guarda el token automáticamente\n3. Probar el resto de solicitudes",
+    "description": "Colección Postman de la plataforma universitaria UniLab.\n\n**Contraseña de prueba (seed):** Password123!\n\n**Uso:**\n1. Importar el entorno `postman_environment.json`\n2. Ejecutar «Iniciar sesión» según el rol necesario — guarda el token automáticamente\n3. Probar el resto de solicitudes\n\n**Flujo eventos — portal estudiante (unilab-prepro):**\n1. Estudiante → `Listar eventos` → `Obtener evento por ID`\n2. `Consultar mi inscripción` → `Inscribirse a evento` (si no está inscrito)\n3. `Listar jornadas del evento` → `Registrar asistencia - Endpoint principal` (QR)\n\n**Flujo proyectos — portal estudiante + profesor (rama actual):**\n1. Estudiante → `Listar coordinadores disponibles` (si no hay semillero)\n2. Estudiante → `Crear proyecto` → `Subir imágenes` → `Enviar a revisión`\n3. Profesor coordinador → `Aprobar y publicar` (`estado_proyecto: publicado`)\n4. Verificar en `Listar proyectos publicados por escuela` (carpeta Público)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -344,19 +344,29 @@
             "url": "{{base_url}}/cursos/13/autorizaciones",
             "description": "Requiere token de Profesor. Habilita al estudiante para crear proyectos."
           }
+        },
+        {
+          "name": "Listar coordinadores disponibles por curso",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/cursos/{{id_curso}}/coordinadores-disponibles",
+            "description": "Profesores de la escuela del curso. Usar al crear proyecto sin semillero. Token de Estudiante."
+          }
         }
       ]
     },
     {
       "name": "Proyectos",
-      "description": "Creación solo Estudiante con autorización vigente.",
+      "description": "Gestión de proyectos académicos.\n\n**Creación (Estudiante):** sin autorización previa obligatoria. Sin semillero → `id_profesor_coordinador` requerido. Con semillero → líder del semillero aprueba.\n\n**Estados:** borrador → en_revision → publicado (aprobar y publicar) | rechazado. Estado `aprobado` es legacy; usar `Publicar proyecto aprobado`.\n\n**Imágenes:** respuestas de proyecto incluyen `imagenes[].url` con URL pública `/uploads/...`.",
       "item": [
         {
           "name": "Listar proyectos",
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": "{{base_url}}/proyectos"
+            "url": "{{base_url}}/proyectos",
+            "description": "Filtrado por rol. Incluye `imagenes[]` con `url` pública."
           }
         },
         {
@@ -364,12 +374,12 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": "{{base_url}}/proyectos/1",
-            "description": "Registra una vista en cada llamada."
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}",
+            "description": "Registra una vista en cada llamada. Incluye imágenes con URL pública."
           }
         },
         {
-          "name": "Crear proyecto",
+          "name": "Crear proyecto (sin semillero)",
           "request": {
             "method": "POST",
             "header": [
@@ -378,14 +388,56 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id_curso\": 13,\n  \"titulo\": \"App UniLab Demo\",\n  \"descripcion\": \"Proyecto de demostración\",\n  \"tipo_proyecto\": \"web\",\n  \"url_aplicativo\": \"https://example.com\",\n  \"url_imagen\": \"https://cdn.example.com/proyectos/portada-demo.png\"\n}"
+              "raw": "{\n  \"id_curso\": {{id_curso}},\n  \"id_profesor_coordinador\": {{id_profesor}},\n  \"titulo\": \"App UniLab Demo\",\n  \"descripcion\": \"Proyecto de demostración con al menos veinte caracteres de descripción.\",\n  \"tipo_proyecto\": \"web\",\n  \"url_aplicativo\": \"https://example.com\"\n}"
             },
             "url": "{{base_url}}/proyectos",
-            "description": "Usar token de Estudiante autorizado."
-          }
+            "description": "Token de Estudiante. Consultar antes `GET /cursos/:id/coordinadores-disponibles` para obtener `id_profesor`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('id_proyecto', pm.response.json().id_proyecto);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
-          "name": "Cambiar estado del proyecto",
+          "name": "Crear proyecto (con semillero)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_curso\": {{id_curso}},\n  \"id_semillero\": {{id_semillero}},\n  \"titulo\": \"Proyecto Semillero Demo\",\n  \"descripcion\": \"Proyecto asociado a semillero; el líder del semillero aprueba automáticamente.\",\n  \"tipo_proyecto\": \"web\",\n  \"url_aplicativo\": \"https://example.com\"\n}"
+            },
+            "url": "{{base_url}}/proyectos",
+            "description": "No enviar `id_profesor_coordinador`. Se asigna el líder del semillero como coordinador."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.environment.set('id_proyecto', pm.response.json().id_proyecto);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enviar proyecto a revisión",
           "request": {
             "method": "PATCH",
             "header": [
@@ -396,7 +448,56 @@
               "mode": "raw",
               "raw": "{\n  \"estado_proyecto\": \"en_revision\"\n}"
             },
-            "url": "{{base_url}}/proyectos/1/estado"
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/estado",
+            "description": "Token de Estudiante (creador). Requiere al menos 1 imagen subida previamente."
+          }
+        },
+        {
+          "name": "Aprobar y publicar proyecto (Profesor)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado_proyecto\": \"publicado\"\n}"
+            },
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/estado",
+            "description": "Token de Profesor coordinador o líder del semillero. Aprueba y publica en el portal en un solo paso."
+          }
+        },
+        {
+          "name": "Publicar proyecto aprobado (Profesor, legacy)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado_proyecto\": \"publicado\"\n}"
+            },
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/estado",
+            "description": "Solo si el proyecto ya está en estado `aprobado` (flujo anterior)."
+          }
+        },
+        {
+          "name": "Rechazar proyecto (Profesor)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado_proyecto\": \"rechazado\"\n}"
+            },
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/estado",
+            "description": "Token de Profesor coordinador. Solo desde estado `en_revision`."
           }
         },
         {
@@ -579,7 +680,7 @@
     },
     {
       "name": "Eventos",
-      "description": "Congresos, foros y control de asistencia por QR.",
+      "description": "Congresos, foros y control de asistencia por QR.\n\n**Portal estudiante (`/eventos`):** listar → detalle → consultar inscripción → inscribirse → listar jornadas → registrar asistencia con QR (`POST /eventos/asistencias/registrar`).\n\n**Admin/Coord:** crear eventos, jornadas, reportes y gestión de pagos.",
       "item": [
         {
           "name": "Listar eventos",
@@ -639,6 +740,15 @@
           }
         },
         {
+          "name": "Listar jornadas del evento",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/{{id_evento}}/jornadas",
+            "description": "Token autenticado. Devuelve jornadas con `codigo_qr`. Usado en portal estudiante antes de registrar asistencia."
+          }
+        },
+        {
           "name": "Crear jornada",
           "request": {
             "method": "POST",
@@ -664,6 +774,15 @@
           }
         },
         {
+          "name": "Consultar mi inscripción al evento",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/{{id_evento}}/mi-inscripcion",
+            "description": "Token de Estudiante/Externo. Devuelve `{ inscrito, inscripcion }`. Consumido por el detalle del evento en el portal."
+          }
+        },
+        {
           "name": "Inscribirse a evento",
           "request": {
             "method": "POST",
@@ -675,7 +794,7 @@
               "mode": "raw",
               "raw": "{\n  \"tipo_asistente\": \"estudiante\",\n  \"nombre_completo\": \"Sofía Estudiante\",\n  \"documento_identidad\": \"1000000005\",\n  \"email\": \"estudiante1@unilab.edu\",\n  \"telefono\": \"3000000005\",\n  \"genero\": \"femenino\"\n}"
             },
-            "url": "{{base_url}}/eventos/1/inscripciones"
+            "url": "{{base_url}}/eventos/{{id_evento}}/inscripciones"
           }
         },
         {

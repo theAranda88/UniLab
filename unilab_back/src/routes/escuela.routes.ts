@@ -39,5 +39,11 @@ router.post(
   validate(autorizacionCursoSchema),
   cursoController.autorizar,
 );
+router.get(
+  '/cursos/:id/coordinadores-disponibles',
+  ...lectura,
+  validate(idParamSchema, 'params'),
+  cursoController.listarCoordinadoresDisponibles,
+);
 
 export default router;

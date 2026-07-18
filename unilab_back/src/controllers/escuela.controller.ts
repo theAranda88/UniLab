@@ -60,4 +60,10 @@ export const cursoController = {
     );
     res.status(201).json(auth);
   }),
+
+  listarCoordinadoresDisponibles: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(
+      await cursoService.listarCoordinadoresDisponibles(Number(req.params.id)),
+    );
+  }),
 };

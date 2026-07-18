@@ -1,0 +1,106 @@
+<div class="proyectos-prof-detalle">
+  <button type="button" class="btn btn-link" (click)="volver()">
+    {{ 'proyectosProfesor.volver' | translate }}
+  </button>
+
+  @if (cargando()) {
+    <p class="proyectos-prof-detalle__status">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="proyectos-prof-detalle__status proyectos-prof-detalle__status--error">
+      {{ error()! | translate }}
+    </p>
+  } @else if (proyecto(); as p) {
+    <header class="proyectos-prof-detalle__header">
+      <div>
+        <span class="estado-badge estado-badge--{{ p.estado_proyecto }}">
+          {{ 'proyectosEstudiante.estados.' + p.estado_proyecto | translate }}
+        </span>
+        <h1>{{ p.titulo }}</h1>
+        <p class="proyectos-prof-detalle__meta">
+          {{ 'proyectosProfesor.estudiante' | translate }}:
+          <strong>{{ nombreEstudiante(p) }}</strong>
+          · {{ p.curso?.nombre_curso }}
+          @if (p.semillero) {
+            · {{ p.semillero.nombre_semillero }}
+          }
+        </p>
+      </div>
+    </header>
+
+    @if (imagenes().length > 0) {
+      <section class="proyectos-prof-detalle__section">
+        <h2>{{ 'proyectosProfesor.imagenes' | translate }}</h2>
+        <app-project-image-carousel [images]="imagenes()" [alt]="p.titulo" />
+      </section>
+    }
+
+    <section class="proyectos-prof-detalle__section">
+      <h2>{{ 'proyectosProfesor.descripcion' | translate }}</h2>
+      <p>{{ p.descripcion }}</p>
+    </section>
+
+    <section class="proyectos-prof-detalle__section proyectos-prof-detalle__links">
+      <h2>{{ 'proyectosProfesor.enlaces' | translate }}</h2>
+      <ul>
+        <li>
+          <a [href]="p.url_aplicativo" target="_blank" rel="noopener noreferrer">
+            {{ 'proyectosProfesor.urlAplicativo' | translate }}
+          </a>
+        </li>
+        @if (p.url_apk) {
+          <li>
+            <a [href]="p.url_apk" target="_blank" rel="noopener noreferrer">APK</a>
+          </li>
+        }
+        @if (p.url_youtube) {
+          <li>
+            <a [href]="p.url_youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
+          </li>
+        }
+        @if (p.url_spotify) {
+          <li>
+            <a [href]="p.url_spotify" target="_blank" rel="noopener noreferrer">Spotify</a>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <div class="proyectos-prof-detalle__actions">
+      @if (puedeRevisar()) {
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="procesando()"
+          (click)="aprobar()"
+        >
+          {{ 'proyectosProfesor.aprobar' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          [disabled]="procesando()"
+          (click)="rechazar()"
+        >
+          {{ 'proyectosProfesor.rechazar' | translate }}
+        </button>
+      }
+
+      @if (puedePublicar()) {
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="procesando()"
+          (click)="publicar()"
+        >
+          {{ 'proyectosProfesor.publicar' | translate }}
+        </button>
+      }
+
+      @if (p.estado_proyecto === 'publicado') {
+        <button type="button" class="btn btn-secondary" (click)="verPublico()">
+          {{ 'proyectosProfesor.verEnPortal' | translate }}
+        </button>
+      }
+    </div>
+  }
+</div>

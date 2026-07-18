@@ -248,12 +248,33 @@ export const schemas = {
       id_estudiante: { type: 'integer', example: 5, description: 'ID del estudiante a autorizar' },
     },
   },
+  ProfesorCoordinadorDisponible: {
+    type: 'object',
+    properties: {
+      id_profesor: { type: 'integer', example: 3 },
+      nombres: { type: 'string', example: 'Carlos' },
+      apellidos: { type: 'string', example: 'García' },
+      email: { type: 'string', format: 'email', example: 'profesor1@unilab.edu' },
+      codigo_docente: { type: 'string', example: 'DOC-001' },
+    },
+  },
   ProyectoRequest: {
     type: 'object',
     required: ['id_curso', 'titulo', 'descripcion', 'tipo_proyecto', 'url_aplicativo'],
     properties: {
       id_curso: { type: 'integer', example: 13 },
-      id_semillero: { type: 'integer', example: 1, description: 'Opcional — ruta semillero' },
+      id_semillero: {
+        type: 'integer',
+        example: 1,
+        description:
+          'Opcional. Si se envía, el líder del semillero queda como coordinador y aprueba el proyecto.',
+      },
+      id_profesor_coordinador: {
+        type: 'integer',
+        example: 3,
+        description:
+          'Obligatorio si no hay `id_semillero`. Debe ser un profesor activo de la escuela del curso.',
+      },
       titulo: { type: 'string', example: 'Plataforma UniLab' },
       descripcion: { type: 'string', example: 'Sistema de gestión de proyectos universitarios' },
       tipo_proyecto: { type: 'string', enum: ['web', 'movil', 'podcast', 'otro'], example: 'web' },
@@ -269,6 +290,51 @@ export const schemas = {
       url_spotify: { type: 'string', format: 'uri' },
     },
   },
+  ProyectoResponse: {
+    type: 'object',
+    description:
+      'Proyecto autenticado con relaciones. Incluye `imagenes[]` con campo `url` público y `url_imagen` como portada (orden 1).',
+    properties: {
+      id_proyecto: { type: 'integer', example: 51 },
+      id_curso: { type: 'integer', example: 13 },
+      id_semillero: { type: 'integer', nullable: true, example: 1 },
+      id_estudiante_creador: { type: 'integer', example: 5 },
+      titulo: { type: 'string', example: 'Pulse grow sensor' },
+      descripcion: { type: 'string' },
+      tipo_proyecto: { type: 'string', enum: ['web', 'movil', 'podcast', 'otro'] },
+      url_aplicativo: { type: 'string', format: 'uri' },
+      url_imagen: { type: 'string', format: 'uri', nullable: true },
+      imagenes: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/ProyectoImagenResponse' },
+      },
+      estado_proyecto: {
+        type: 'string',
+        enum: ['borrador', 'en_revision', 'aprobado', 'publicado', 'rechazado'],
+        example: 'en_revision',
+      },
+      contador_vistas: { type: 'integer', example: 0 },
+      fecha_publicacion: { type: 'string', format: 'date-time', nullable: true },
+      coordinadores: {
+        type: 'array',
+        description: 'Profesores asignados para revisar/aprobar el proyecto',
+        items: {
+          type: 'object',
+          properties: {
+            id_profesor: { type: 'integer', example: 3 },
+            profesor: {
+              type: 'object',
+              properties: {
+                nombres: { type: 'string' },
+                apellidos: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
+    },
+    required: ['id_proyecto', 'titulo', 'estado_proyecto', 'imagenes'],
+  },
   EstadoProyectoRequest: {
     type: 'object',
     required: ['estado_proyecto'],
@@ -278,7 +344,7 @@ export const schemas = {
         enum: ['borrador', 'en_revision', 'aprobado', 'publicado', 'rechazado'],
         example: 'en_revision',
         description:
-          'Al pasar a `en_revision` debe existir al menos 1 imagen activa en `proyecto_imagenes` (o `url_imagen` legacy).',
+          'Transiciones permitidas: `borrador`→`en_revision` (creador, ≥1 imagen); `en_revision`→`aprobado`|`rechazado`|`publicado` (coordinador o líder de semillero; `publicado` aprueba y publica en el portal); `aprobado`→`publicado` (legacy).',
       },
     },
   },
@@ -370,6 +436,24 @@ export const schemas = {
       hora_fin: { type: 'string', example: '12:00:00' },
     },
   },
+  JornadaResponse: {
+    type: 'object',
+    properties: {
+      id_jornada: { type: 'integer', example: 1 },
+      id_evento: { type: 'integer', example: 1 },
+      nombre_jornada: { type: 'string', example: 'Día 1 - Jornada Mañana' },
+      fecha: { type: 'string', format: 'date', example: '2026-06-15' },
+      hora_inicio: { type: 'string', example: '08:00:00' },
+      hora_fin: { type: 'string', example: '12:00:00' },
+      codigo_qr: {
+        type: 'string',
+        format: 'uuid',
+        example: '0998e6b9-b814-450a-a510-83ae222d5757',
+        description: 'Código único para registrar asistencia',
+      },
+    },
+    required: ['id_jornada', 'id_evento', 'nombre_jornada', 'fecha', 'codigo_qr'],
+  },
   InscripcionRequest: {
     type: 'object',
     required: ['tipo_asistente', 'nombre_completo', 'documento_identidad', 'email', 'telefono', 'genero'],
@@ -413,6 +497,19 @@ export const schemas = {
         },
       },
     },
+  },
+  MiInscripcionResponse: {
+    type: 'object',
+    description: 'Estado de inscripción del usuario autenticado en un evento. Usado por el portal estudiante (`/eventos/:id`).',
+    properties: {
+      inscrito: { type: 'boolean', example: true },
+      inscripcion: {
+        allOf: [{ $ref: '#/components/schemas/InscripcionResponse' }],
+        nullable: true,
+        description: 'Null si el usuario no está inscrito',
+      },
+    },
+    required: ['inscrito', 'inscripcion'],
   },
   PagoInscripcionRequest: {
     type: 'object',

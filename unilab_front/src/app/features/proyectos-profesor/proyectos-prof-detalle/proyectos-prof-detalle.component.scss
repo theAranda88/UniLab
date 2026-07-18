@@ -1,0 +1,127 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+
+.proyectos-prof-detalle {
+  @include ui.eventos-page;
+  max-width: 56rem;
+
+  .btn-link {
+    border: none;
+    background: transparent;
+    color: t.$primary-blue;
+    font-weight: t.$font-weight-semibold;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: t.$space-16;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__header {
+    margin-bottom: t.$space-24;
+
+    h1 {
+      margin: t.$space-12 0 t.$space-8;
+      font-size: t.$font-size-2xl;
+      color: t.$primary-blue;
+    }
+  }
+
+  &__meta {
+    margin: 0;
+    color: t.$text-light;
+    font-size: t.$font-size-sm;
+  }
+
+  &__section {
+    @include ui.eventos-card;
+    padding: t.$space-20;
+    margin-bottom: t.$space-20;
+
+    h2 {
+      margin: 0 0 t.$space-12;
+      font-size: t.$font-size-lg;
+      color: t.$primary-blue;
+    }
+
+    p {
+      margin: 0;
+      line-height: t.$line-height-relaxed;
+      color: t.$text-dark;
+    }
+  }
+
+  &__links ul {
+    margin: 0;
+    padding-left: t.$space-20;
+
+    a {
+      color: t.$primary-blue;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-12;
+  }
+
+  &__status {
+    color: t.$text-light;
+
+    &--error {
+      color: t.$error;
+    }
+  }
+
+  .btn-primary {
+    @include ui.btn-primary;
+  }
+
+  .btn-secondary {
+    @include ui.btn-secondary;
+  }
+
+  .btn-danger {
+    @include ui.btn-secondary;
+    background: rgba(t.$error, 0.08);
+    border-color: rgba(t.$error, 0.35);
+    color: t.$error;
+  }
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: t.$space-4 t.$space-12;
+  border-radius: t.$radius-full;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  text-transform: uppercase;
+
+  &--borrador {
+    background: rgba(148, 163, 184, 0.15);
+    color: #64748b;
+  }
+
+  &--en_revision {
+    background: rgba(59, 130, 246, 0.12);
+    color: t.$primary-blue;
+  }
+
+  &--aprobado {
+    background: rgba(16, 185, 129, 0.12);
+    color: t.$success;
+  }
+
+  &--publicado {
+    background: rgba(t.$light-blue, 0.15);
+    color: t.$primary-blue;
+  }
+
+  &--rechazado {
+    background: rgba(t.$error, 0.12);
+    color: t.$error;
+  }
+}
