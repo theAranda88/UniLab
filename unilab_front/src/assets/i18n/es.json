@@ -30,6 +30,7 @@
       "proyectosAsignados": "Proyectos asignados",
       "pendientesAprobar": "Pendientes de aprobar",
       "cursosCarreras": "Cursos y carreras",
+      "portalPublic": "Portal público",
       "sections": {
         "general": "General",
         "academico": "Académico",
@@ -39,13 +40,15 @@
         "seguimiento": "Seguimiento",
         "miGestion": "Mi gestión",
         "proyectos": "Proyectos",
-        "recursos": "Recursos"
+        "recursos": "Recursos",
+        "portal": "UniLab"
       }
     },
     "pages": {
       "dashboard": "Dashboard general",
       "miPanel": "Mi panel",
-      "eventos": "Eventos"
+      "eventos": "Eventos",
+      "escuelas": "Escuelas y carreras"
     },
     "cta": {
       "crearUsuario": "Crear usuario",
@@ -207,8 +210,12 @@
     "cancel": "Cancelar",
     "cancelar": "Cancelar",
     "save": "Guardar",
+    "guardar": "Guardar",
     "delete": "Eliminar",
+    "eliminar": "Eliminar",
     "edit": "Editar",
+    "editar": "Editar",
+    "acciones": "Acciones",
     "close": "Cerrar",
     "volver": "Volver",
     "verDetalles": "Ver Detalles",
@@ -246,6 +253,27 @@
   "validation": {
     "requerido": "Este campo es requerido"
   },
+  "roles": {
+    "Administrador": "Administrador",
+    "Coordinador": "Coordinador",
+    "Profesor": "Profesor",
+    "Estudiante": "Estudiante",
+    "Externo": "Externo"
+  },
+  "escuelas": {
+    "titulo": "Escuelas y carreras",
+    "crear": "Crear escuela",
+    "editar": "Editar escuela",
+    "nombre": "Nombre de la escuela",
+    "id": "ID",
+    "sinEscuelas": "No hay escuelas registradas",
+    "errorCargar": "Error al cargar las escuelas",
+    "errorCrear": "Error al crear la escuela",
+    "errorActualizar": "Error al actualizar la escuela",
+    "errorEliminar": "Error al eliminar la escuela",
+    "eliminarTitulo": "Eliminar escuela",
+    "eliminarMensaje": "¿Eliminar la escuela \"{{nombre}}\"? También se eliminarán sus cursos de forma lógica."
+  },
   "eventos": {
     "title": "Eventos",
     "crear": "Crear Evento",
@@ -265,6 +293,7 @@
     "requierePago": "Requiere Pago",
     "filtroTipo": "Filtrar por tipo...",
     "filtroEstado": "Filtrar por estado",
+    "filtroTodos": "Todos",
     "sinEventos": "No hay eventos disponibles",
     "errorCargar": "Error al cargar los eventos",
     "errorCrear": "Error al crear el evento",
@@ -362,6 +391,13 @@
     "systemStatus": "SISTEMA:",
     "systemName": "CÓDICE DE PROYECTOS INTEGRADO",
     "signIn": "Iniciar sesión",
+    "goToPanel": "Ir al panel",
+    "eventsNav": "Eventos",
+    "profileMenu": {
+      "signedInAs": "Sesión iniciada como",
+      "role": "Rol",
+      "logout": "Cerrar sesión"
+    },
     "enterPortal": "Ir a mi panel",
     "logoAlt": "Logo Oficial Uniautónoma del Cauca",
     "logoFallback": "COGNITIO ET SCIENTIA",
@@ -446,6 +482,9 @@
       "software": {
         "subtitle": "// COMPUTE & CORE",
         "cursive": "l'Ingegneria"
+      },
+      "generic": {
+        "subtitle": "// ACADEMIC UNIT"
       }
     },
     "authModal": {

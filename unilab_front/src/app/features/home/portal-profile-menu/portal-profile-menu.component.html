@@ -1,0 +1,32 @@
+<div class="portal-profile">
+  <button
+    type="button"
+    class="portal-profile__trigger"
+    [attr.aria-expanded]="open()"
+    aria-haspopup="true"
+    (click)="toggle()"
+  >
+    <span class="portal-profile__avatar">{{ iniciales() }}</span>
+  </button>
+
+  @if (open()) {
+    <div class="portal-profile__panel" role="menu">
+      <div class="portal-profile__header">
+        <span class="portal-profile__avatar portal-profile__avatar--large">{{ iniciales() }}</span>
+        <div class="portal-profile__identity">
+          <p class="portal-profile__name">{{ nombreCompleto() }}</p>
+          <p class="portal-profile__email">{{ user()?.email }}</p>
+        </div>
+      </div>
+
+      <div class="portal-profile__meta">
+        <span class="portal-profile__label">{{ 'home.profileMenu.signedInAs' | translate }}</span>
+        <span class="portal-profile__value">{{ rolKey() | translate }}</span>
+      </div>
+
+      <button type="button" class="portal-profile__logout" role="menuitem" (click)="logout()">
+        {{ 'home.profileMenu.logout' | translate }}
+      </button>
+    </div>
+  }
+</div>

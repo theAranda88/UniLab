@@ -86,10 +86,17 @@ export const ESCUELA_CARD_CONFIGS: EscuelaCardConfig[] = [
   { themeKey: 'negocios', nameMatch: 'Negocios' },
 ];
 
-export interface EscuelaCardViewModel extends EscuelaCardConfig {
+export interface EscuelaCardViewModel {
   escuela: Escuela;
-  i18nKey: string;
+  /** Clave i18n para tema conocido; `generic` si no hay match en ESCUELA_CARD_CONFIGS */
+  i18nKey: EscuelaThemeKey | 'generic';
+  /** Si true, el título se muestra desde `nombre_escuela` del API */
+  useApiName: boolean;
   emergeDelay: number;
+}
+
+export function resolveEscuelaCardConfig(nombreEscuela: string): EscuelaCardConfig | null {
+  return ESCUELA_CARD_CONFIGS.find((c) => nombreEscuela.includes(c.nameMatch)) ?? null;
 }
 
 export interface RegisterRequest {

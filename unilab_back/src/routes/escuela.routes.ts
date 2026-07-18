@@ -15,15 +15,16 @@ const router = Router();
 
 const auth = [verifyToken, checkPrimerLogin] as const;
 const admin = [...auth, requireRole(['Administrador'])] as const;
+const adminCoord = [...auth, requireRole(['Administrador', 'Coordinador'])] as const;
 const profesor = [...auth, requireRole(['Profesor'])] as const;
 const lectura = [...auth] as const;
 
 // Escuelas
 router.get('/escuelas', ...lectura, escuelaController.listar);
 router.get('/escuelas/:id', ...lectura, validate(idParamSchema, 'params'), escuelaController.obtener);
-router.post('/escuelas', ...admin, validate(escuelaSchema), escuelaController.crear);
-router.patch('/escuelas/:id', ...admin, validate(idParamSchema, 'params'), validate(escuelaSchema), escuelaController.actualizar);
-router.delete('/escuelas/:id', ...admin, validate(idParamSchema, 'params'), escuelaController.eliminar);
+router.post('/escuelas', ...adminCoord, validate(escuelaSchema), escuelaController.crear);
+router.patch('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), validate(escuelaSchema), escuelaController.actualizar);
+router.delete('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), escuelaController.eliminar);
 
 // Cursos
 router.get('/cursos', ...lectura, cursoController.listar);

@@ -1,5 +1,7 @@
 @use '../../../styles/design-tokens' as t;
 @use '../../../styles/eventos-ui' as ui;
+@use '../../../styles/portal-codex-theme' as portal;
+@use '../../../styles/portal-codex-tokens' as p;
 
 .evento-detalle-container {
   @include ui.eventos-page;
@@ -289,6 +291,155 @@
               word-break: break-all;
             }
           }
+        }
+      }
+    }
+  }
+}
+
+:host.portal-themed {
+  display: block;
+
+  .evento-detalle-container {
+    @include portal.portal-page;
+    max-width: min(56rem, 94vw);
+
+    .loading {
+      @include portal.portal-empty-state;
+    }
+
+    .error {
+      @include portal.portal-alert-error;
+      text-align: center;
+    }
+
+    .evento-content {
+      @include portal.portal-card;
+
+      .evento-header {
+        padding: t.$space-24;
+        border-bottom-color: p.$portal-border-subtle;
+
+        h1 {
+          @include portal.portal-page-title;
+          font-size: clamp(1.25rem, 1.5vw + 0.85rem, t.$font-size-2xl);
+        }
+
+        .estado.estado-planeado {
+          @include portal.portal-status-planeado;
+        }
+
+        .estado.estado-activo {
+          @include portal.portal-status-activo;
+        }
+
+        .estado.estado-finalizado {
+          @include portal.portal-status-finalizado;
+        }
+      }
+
+      .evento-info,
+      .descripcion-section,
+      .acciones,
+      .inscripciones-section {
+        border-bottom-color: p.$portal-border-subtle;
+      }
+
+      .evento-info .info-row {
+        @include portal.portal-info-row;
+      }
+
+      .descripcion-section h3,
+      .inscripciones-section h3,
+      .jornadas-section h3 {
+        @include portal.portal-section-title;
+      }
+
+      .descripcion-section p {
+        color: p.$portal-text-secondary;
+      }
+
+      .acciones {
+        .btn.btn-primary {
+          @include portal.portal-btn-primary;
+        }
+
+        .btn.btn-secondary {
+          @include portal.portal-btn-secondary;
+        }
+
+        .btn.btn-success {
+          @include portal.portal-btn-success;
+        }
+
+        .btn.btn-danger {
+          @include portal.portal-btn-danger;
+        }
+
+        .badge-inscrito {
+          @include portal.portal-status-activo;
+          gap: t.$space-8;
+        }
+      }
+
+      .inscripciones-section,
+      .jornadas-section {
+        .no-data {
+          color: p.$portal-text-muted;
+        }
+
+        .aviso-jornadas {
+          @include portal.portal-alert-warning;
+        }
+      }
+
+      .inscripcion-card {
+        border-color: p.$portal-border-subtle;
+        background: rgba(4, 12, 28, 0.55);
+
+        .inscripcion-info strong {
+          color: p.$portal-text-primary;
+        }
+
+        .inscripcion-info span {
+          color: p.$portal-text-muted;
+        }
+
+        .rol-tag {
+          background: rgba(212, 175, 55, 0.12);
+          color: p.$portal-gold-muted;
+        }
+      }
+
+      .jornada-card {
+        border-color: p.$portal-border-subtle;
+        background: rgba(4, 12, 28, 0.45);
+
+        .jornada-header {
+          background: rgba(212, 175, 55, 0.06);
+          border-bottom-color: p.$portal-border-subtle;
+
+          h4 {
+            color: p.$portal-text-primary;
+            font-family: p.$portal-font-display;
+          }
+        }
+
+        .jornada-info p {
+          color: p.$portal-text-secondary;
+
+          strong {
+            color: p.$portal-text-label;
+          }
+        }
+
+        .qr-section .qr-container {
+          background: rgba(2, 6, 23, 0.8);
+          border: 1px solid p.$portal-border-subtle;
+        }
+
+        .qr-code-text {
+          color: p.$portal-text-muted;
         }
       }
     }

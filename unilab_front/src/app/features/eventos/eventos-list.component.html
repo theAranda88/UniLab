@@ -1,59 +1,199 @@
 <div class="eventos-list-container">
+
   <div class="header">
+
     <h1>{{ 'eventos.listar' | translate }}</h1>
+
     @if (puedeCrear()) {
+
       <button class="btn btn-primary" (click)="crearEvento()">
+
         {{ 'eventos.crear' | translate }}
+
       </button>
+
     }
+
   </div>
 
-  <div class="filters">
-    <input
-      type="text"
-      [placeholder]="'eventos.filtroTipo' | translate"
-      [ngModel]="filtroTipo()"
-      (ngModelChange)="filtroTipo.set($event)"
-      class="filter-input"
-    />
-    <select [ngModel]="filtroEstado()" (ngModelChange)="filtroEstado.set($event)" class="filter-select">
-      <option value="">{{ 'eventos.filtroEstado' | translate }}</option>
-      <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
-      <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
-      <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
-    </select>
-  </div>
+
+
+  @if (portalTheme()) {
+
+    <div class="filters filters--portal">
+
+      <input
+
+        type="text"
+
+        [placeholder]="'eventos.filtroTipo' | translate"
+
+        [ngModel]="filtroTipo()"
+
+        (ngModelChange)="filtroTipo.set($event)"
+
+        class="filter-input"
+
+      />
+
+      <div class="filter-estado" role="group" [attr.aria-label]="'eventos.filtroEstado' | translate">
+
+        <span class="filter-estado__label">{{ 'eventos.filtroEstado' | translate }}</span>
+
+        <div class="filter-chips">
+
+          @for (estado of estadosFiltro; track estado) {
+
+            <button
+
+              type="button"
+
+              class="filter-chip"
+
+              [class.filter-chip--active]="filtroEstado() === estado"
+
+              (click)="setFiltroEstado(estado)"
+
+            >
+
+              @if (estado) {
+
+                {{ 'eventos.estado.' + estado | translate }}
+
+              } @else {
+
+                {{ 'eventos.filtroTodos' | translate }}
+
+              }
+
+            </button>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  } @else {
+
+    <div class="filters">
+
+      <input
+
+        type="text"
+
+        [placeholder]="'eventos.filtroTipo' | translate"
+
+        [ngModel]="filtroTipo()"
+
+        (ngModelChange)="filtroTipo.set($event)"
+
+        class="filter-input"
+
+      />
+
+      <select [ngModel]="filtroEstado()" (ngModelChange)="filtroEstado.set($event)" class="filter-select">
+
+        <option value="">{{ 'eventos.filtroEstado' | translate }}</option>
+
+        <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
+
+        <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
+
+        <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
+
+      </select>
+
+    </div>
+
+  }
+
+
 
   @if (cargando()) {
+
     <p class="loading">{{ 'common.cargando' | translate }}</p>
+
   } @else if (error()) {
+
     <p class="error">{{ error() | translate }}</p>
+
   } @else if (eventosFiltrados().length === 0) {
+
     <p class="no-data">{{ 'eventos.sinEventos' | translate }}</p>
+
   } @else {
+
     <div class="eventos-grid">
-      @for (evento of eventosFiltrados(); track evento.id_evento) {
-        <div class="evento-card" (click)="verDetalle(evento.id_evento)">
+
+      @for (evento of eventosFiltrados(); track evento.id_evento; let i = $index) {
+
+        <div
+
+          class="evento-card"
+
+          [class.evento-card--portal]="portalTheme()"
+
+          [class.evento-card--emerge]="portalTheme()"
+
+          [style.--emerge-delay]="portalTheme() ? i * 0.08 + 's' : null"
+
+          [appCardTilt]="portalTheme()"
+
+          (click)="verDetalle(evento.id_evento)"
+
+        >
+
           <div class="evento-header">
+
             <h3>{{ evento.nombre_evento }}</h3>
+
             <span class="estado" [class]="'estado-' + evento.estado">
+
               {{ 'eventos.estado.' + evento.estado | translate }}
+
             </span>
+
           </div>
+
           <div class="evento-body">
+
             <p><strong>{{ 'eventos.tipo' | translate }}:</strong> {{ evento.tipo_evento }}</p>
+
             <p><strong>{{ 'eventos.lugar' | translate }}:</strong> {{ evento.lugar }}</p>
+
             <p><strong>{{ 'eventos.fecha' | translate }}:</strong> {{ formatearFecha(evento.fecha_inicio) }} - {{ formatearFecha(evento.fecha_fin) }}</p>
+
             <p class="descripcion">{{ evento.descripcion | slice: 0: 100 }}...</p>
+
             @if (evento.requiere_pago) {
+
               <span class="badge badge-info">{{ 'eventos.requierePago' | translate }}</span>
+
             }
+
           </div>
+
           <div class="evento-footer">
-            <button class="btn btn-link">{{ 'common.verDetalles' | translate }}</button>
+
+            <button type="button" class="btn btn-link btn-portal-action" (click)="$event.stopPropagation(); verDetalle(evento.id_evento)">
+
+              {{ 'common.verDetalles' | translate }}
+
+            </button>
+
           </div>
+
         </div>
+
       }
+
     </div>
+
   }
+
 </div>
+
+

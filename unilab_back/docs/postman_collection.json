@@ -236,7 +236,7 @@
     },
     {
       "name": "Escuelas y Cursos",
-      "description": "Lectura: autenticado. Escritura: Administrador. Autorizaciones: Profesor.",
+      "description": "Lectura: autenticado. Escritura escuelas: Administrador, Coordinador. Cursos: Administrador. Autorizaciones: Profesor.",
       "item": [
         {
           "name": "Listar escuelas",

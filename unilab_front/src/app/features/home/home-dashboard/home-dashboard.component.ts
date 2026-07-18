@@ -5,7 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { PublicPortalService } from '../public-portal.service';
 import { CardTiltDirective } from '../directives/card-tilt.directive';
 import {
-  ESCUELA_CARD_CONFIGS,
+  resolveEscuelaCardConfig,
   type Escuela,
   type EscuelaCardViewModel,
 } from '../../../core/models/portal.model';
@@ -65,10 +65,22 @@ export class HomeDashboardComponent implements OnInit {
   }
 
   private mapCards(escuelas: Escuela[]): EscuelaCardViewModel[] {
-    return ESCUELA_CARD_CONFIGS.flatMap((config, index) => {
-      const escuela = escuelas.find((e) => e.nombre_escuela.includes(config.nameMatch));
-      if (!escuela) return [];
-      return [{ ...config, escuela, i18nKey: config.themeKey, emergeDelay: (index + 1) * 0.05 }];
+    return escuelas.map((escuela, index) => {
+      const config = resolveEscuelaCardConfig(escuela.nombre_escuela);
+      if (config) {
+        return {
+          escuela,
+          i18nKey: config.themeKey,
+          useApiName: false,
+          emergeDelay: (index + 1) * 0.05,
+        };
+      }
+      return {
+        escuela,
+        i18nKey: 'generic',
+        useApiName: true,
+        emergeDelay: (index + 1) * 0.05,
+      };
     });
   }
 }

@@ -10,14 +10,6 @@
   min-height: 60vh;
 }
 
-.portal-sub__logo-mini {
-  opacity: 0;
-  transform: scale(1.2) translateY(20vh);
-  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.portal-sub__logo-mini--visible { opacity: 1; transform: scale(1) translateY(0); }
-
 .portal-sub__back {
   display: inline-block;
   margin-bottom: $space-12;

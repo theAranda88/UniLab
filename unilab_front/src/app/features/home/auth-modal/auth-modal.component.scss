@@ -41,6 +41,7 @@ $codex-text: rgba(254, 243, 199, 0.92);
     0 24px 60px rgba(0, 0, 0, 0.55),
     0 0 40px rgba(212, 175, 55, 0.08);
   color: $codex-text;
+  color-scheme: dark;
 }
 
 .auth-modal__header {
@@ -120,7 +121,15 @@ $codex-text: rgba(254, 243, 199, 0.92);
   font-size: $font-size-sm;
   font-weight: 500;
   cursor: pointer;
-  transition: all $transition-base;
+  transition:
+    all 0.25s ease,
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+
+  &:hover:not(.auth-modal__tab--active):not(.auth-modal__role--active) {
+    transform: translateY(-1px);
+    color: $codex-gold-light;
+  }
 }
 
 .auth-modal__tab--active,
@@ -153,16 +162,42 @@ $codex-text: rgba(254, 243, 199, 0.92);
   background: rgba(21, 34, 56, 0.65);
   color: $codex-text;
   font-size: $font-size-sm;
-  transition: border-color $transition-base, box-shadow $transition-base;
+  color-scheme: dark;
+  transition: border-color $transition-base, box-shadow $transition-base, background-color $transition-base;
 
   &::placeholder {
     color: rgba(148, 163, 184, 0.5);
   }
 
-  &:focus {
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+  }
+
+  &:focus,
+  &:focus-visible,
+  &:active {
     outline: none;
     border-color: rgba(212, 175, 55, 0.55);
     box-shadow: 0 0 0 3px rgba(58, 95, 130, 0.35);
+    background: rgba(21, 34, 56, 0.85);
+    color: $codex-text;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #152238 inset !important;
+    box-shadow: 0 0 0 1000px #152238 inset !important;
+    -webkit-text-fill-color: $codex-text !important;
+    caret-color: $codex-text;
+    border-color: rgba(74, 115, 150, 0.45);
+    transition: background-color 600000s ease-in-out 0s;
+  }
+
+  option {
+    background: #0a1628;
+    color: $codex-text;
   }
 }
 
@@ -177,11 +212,20 @@ $codex-text: rgba(254, 243, 199, 0.92);
   letter-spacing: 0.04em;
   cursor: pointer;
   box-shadow: 0 4px 18px rgba(212, 175, 55, 0.22);
-  transition: box-shadow $transition-base, filter $transition-base;
+  transition:
+    box-shadow 0.25s ease,
+    filter 0.25s ease,
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover:not(:disabled) {
-    box-shadow: 0 6px 22px rgba(212, 175, 55, 0.32);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.34);
     filter: brightness(1.05);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.22);
   }
 }
 

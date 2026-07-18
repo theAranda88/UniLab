@@ -1,0 +1,59 @@
+<div class="escuelas-list">
+  <div class="escuelas-list__header">
+    <h1>{{ 'escuelas.titulo' | translate }}</h1>
+    @if (puedeGestionar) {
+      <button type="button" class="btn btn-primary" (click)="crear()">
+        {{ 'escuelas.crear' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="escuelas-list__loading">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="escuelas-list__error">{{ error() | translate }}</p>
+  } @else if (escuelas().length === 0) {
+    <p class="escuelas-list__empty">{{ 'escuelas.sinEscuelas' | translate }}</p>
+  } @else {
+    <div class="escuelas-list__table-wrap">
+      <table class="escuelas-list__table">
+        <thead>
+          <tr>
+            <th>{{ 'escuelas.nombre' | translate }}</th>
+            <th>{{ 'escuelas.id' | translate }}</th>
+            @if (puedeGestionar) {
+              <th>{{ 'common.acciones' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (escuela of escuelas(); track trackById($index, escuela)) {
+            <tr>
+              <td>{{ escuela.nombre_escuela }}</td>
+              <td>{{ escuela.id_escuela }}</td>
+              @if (puedeGestionar) {
+                <td class="escuelas-list__actions">
+                  <button type="button" class="btn btn-link" (click)="editar(escuela.id_escuela)">
+                    {{ 'common.editar' | translate }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-link btn-link--danger"
+                    [disabled]="eliminandoId() === escuela.id_escuela"
+                    (click)="eliminar(escuela)"
+                  >
+                    {{
+                      eliminandoId() === escuela.id_escuela
+                        ? ('common.cargando' | translate)
+                        : ('common.eliminar' | translate)
+                    }}
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -52,19 +52,25 @@
           (click)="onCardClick(card)"
         >
           <div class="codex-portal__card-inner">
-            <div class="codex-portal__card-text">
-              <span class="codex-portal__card-sub">
+            <span class="codex-portal__card-sub">
+              @if (card.i18nKey === 'generic') {
+                {{ 'home.cards.generic.subtitle' | translate }}
+              } @else {
                 {{ 'home.cards.' + card.i18nKey + '.subtitle' | translate }}
+              }
+            </span>
+            <h3 class="codex-portal__card-title">
+              @if (card.useApiName) {
+                {{ card.escuela.nombre_escuela }}
+              } @else {
+                {{ 'home.escuelas.' + card.i18nKey | translate }}
+              }
+            </h3>
+            @if (card.i18nKey !== 'generic') {
+              <span class="codex-portal__card-cursive">
+                {{ 'home.cards.' + card.i18nKey + '.cursive' | translate }}
               </span>
-              <div class="codex-portal__card-title-row">
-                <h3 class="codex-portal__card-title">
-                  {{ 'home.escuelas.' + card.i18nKey | translate }}
-                </h3>
-                <span class="codex-portal__card-cursive">
-                  {{ 'home.cards.' + card.i18nKey + '.cursive' | translate }}
-                </span>
-              </div>
-            </div>
+            }
             <span
               class="codex-portal__card-badge"
               [class.codex-portal__card-badge--emerald]="(card.escuela.total_proyectos_publicados ?? 0) > 0"

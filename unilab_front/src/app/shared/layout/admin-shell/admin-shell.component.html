@@ -34,6 +34,14 @@
       }
     </nav>
 
+    <div class="nav-section nav-section--portal">
+      <div class="nav-label">{{ 'shell.nav.sections.portal' | translate }}</div>
+      <a class="nav-item nav-item--portal" routerLink="/">
+        <i class="ti ti-world" aria-hidden="true"></i>
+        <span>{{ 'shell.nav.portalPublic' | translate }}</span>
+      </a>
+    </div>
+
     <div class="sidebar-footer">
       <div class="user-pill">
         <div class="avatar">{{ iniciales() }}</div>
@@ -52,6 +60,10 @@
     <header class="topbar">
       <span class="page-title">{{ pageTitleKey() | translate }}</span>
       <div class="topbar-actions">
+        <a class="tb-btn tb-btn--portal" routerLink="/" [title]="'shell.nav.portalPublic' | translate">
+          <i class="ti ti-world" aria-hidden="true"></i>
+          <span>{{ 'shell.nav.portalPublic' | translate }}</span>
+        </a>
         <button class="tb-btn" type="button" aria-label="Notificaciones">
           <i class="ti ti-bell" aria-hidden="true"></i>
         </button>

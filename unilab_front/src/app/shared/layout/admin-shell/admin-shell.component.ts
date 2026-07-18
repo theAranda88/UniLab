@@ -44,6 +44,7 @@ export class AdminShellComponent implements OnInit {
 
   pageTitleKey = computed(() => {
     const path = this.currentPath();
+    if (path.includes('/escuelas')) return 'shell.pages.escuelas';
     if (path.includes('/eventos')) return 'shell.pages.eventos';
     if (path.includes('/dashboard')) {
       return this.shellRole() === 'Profesor' ? 'shell.pages.miPanel' : 'shell.pages.dashboard';

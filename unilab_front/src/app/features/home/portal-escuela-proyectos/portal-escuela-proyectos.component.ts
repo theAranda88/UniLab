@@ -6,7 +6,7 @@ import { PublicPortalService } from '../public-portal.service';
 import { CardTiltDirective } from '../directives/card-tilt.directive';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import {
-  ESCUELA_CARD_CONFIGS,
+  resolveEscuelaCardConfig,
   urlsImagenesProyecto,
   type Escuela,
   type ProyectoPublico,
@@ -36,7 +36,6 @@ export class PortalEscuelaProyectosComponent implements OnInit {
   readonly loading = signal(true);
   readonly loadError = signal(false);
   readonly flippingProjectId = signal<number | null>(null);
-  readonly logoError = signal(false);
   readonly entered = signal(false);
   readonly exiting = signal(false);
 
@@ -52,7 +51,7 @@ export class PortalEscuelaProyectosComponent implements OnInit {
           return;
         }
         this.escuela.set(found);
-        const config = ESCUELA_CARD_CONFIGS.find((c) => found.nombre_escuela.includes(c.nameMatch));
+        const config = resolveEscuelaCardConfig(found.nombre_escuela);
         if (config) this.themeKey.set(config.themeKey);
       },
     });

@@ -159,23 +159,25 @@
 .codex-portal__control-area {
   position: relative;
   width: 100%;
-  height: clamp(420px, 48vh, 640px);
   display: flex;
   align-items: center;
   justify-content: center;
 
   @media (min-width: 1024px) {
     width: 52%;
+    flex: 1;
+    min-width: 0;
   }
 }
 
 .codex-portal__grid {
-  position: absolute;
-  inset: 0;
+  position: relative;
   z-index: 10;
   display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(#{$space-12}, 1.5vw, #{$space-16});
+  width: 100%;
   padding: $space-16 0;
   opacity: 1;
   transform: scale(1);
@@ -203,10 +205,13 @@
 }
 
 .codex-portal__card {
-  width: 100%;
+  flex: 0 1 100%;
+  max-width: 100%;
+  min-height: clamp(9.5rem, 22vw, 11.5rem);
+  aspect-ratio: 4 / 5;
   border: 1px solid rgba(212, 175, 55, 0.18);
   border-radius: $radius-xl;
-  padding: $space-12 $space-20;
+  padding: clamp(#{$space-12}, 1.5vw, #{$space-20});
   background: rgba(4, 12, 28, 0.82);
   backdrop-filter: blur(16px);
   cursor: pointer;
@@ -217,51 +222,58 @@
     border-color 0.4s ease,
     box-shadow 0.4s ease,
     background 0.4s ease;
+
+  @media (min-width: 640px) {
+    flex: 0 1 calc(50% - #{$space-12});
+    max-width: calc(50% - #{$space-12});
+  }
+
+  @media (min-width: 1024px) {
+    flex: 0 1 calc(33.333% - #{$space-16});
+    max-width: calc(33.333% - #{$space-16});
+  }
 }
 
 .codex-portal__card-inner {
   transform: translateZ(10px);
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  gap: $space-12;
+  gap: $space-8;
+  height: 100%;
 }
 
 .codex-portal__card-sub {
   font-family: 'Cinzel', serif;
-  font-size: 0.5rem;
-  letter-spacing: 0.2em;
+  font-size: clamp(0.53125rem, 0.32vw + 0.42rem, 0.6875rem);
+  letter-spacing: 0.19em;
   text-transform: uppercase;
-  color: rgba(245, 158, 11, 0.5);
-}
-
-.codex-portal__card-title-row {
-  display: flex;
-  align-items: baseline;
-  gap: $space-8;
-  margin-top: $space-4;
-  flex-wrap: wrap;
+  color: rgba(245, 158, 11, 0.58);
 }
 
 .codex-portal__card-title {
   margin: 0;
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.125rem, 1.2vw + 0.75rem, 1.625rem);
+  font-size: clamp(1.0625rem, 1vw + 0.72rem, 1.5rem);
   font-weight: 700;
   color: rgba(254, 243, 199, 1);
   letter-spacing: 0.04em;
+  line-height: 1.22;
+  flex: 1;
 }
 
 .codex-portal__card-cursive {
   font-family: 'Pinyon Script', cursive;
-  font-size: $font-size-base;
-  color: rgba(245, 158, 11, 0.5);
+  font-size: clamp(0.875rem, 0.45vw + 0.65rem, 1rem);
+  color: rgba(245, 158, 11, 0.55);
 }
 
 .codex-portal__card-badge {
-  flex-shrink: 0;
+  margin-top: auto;
+  align-self: flex-start;
   font-family: ui-monospace, monospace;
-  font-size: 0.625rem;
+  font-size: clamp(0.65625rem, 0.32vw + 0.48rem, 0.75rem);
   font-weight: 700;
   padding: $space-4 $space-8;
   border-radius: $radius-sm;
@@ -276,282 +288,18 @@
   border-color: rgba(16, 185, 129, 0.2);
 }
 
-.codex-portal__detail {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: $space-24;
-  border-radius: $radius-xl;
-  background: rgba(2, 6, 23, 0.96);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  backdrop-filter: blur(32px);
-  box-shadow: 0 25px 50px rgba(212, 175, 55, 0.05);
-  opacity: 0;
-  transform: scale(0.95);
-  pointer-events: none;
-  visibility: hidden;
-  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
-}
-
-.codex-portal__detail--visible {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-  visibility: visible;
-  z-index: 10;
-}
-
-.codex-portal__detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: $space-16;
-  padding-bottom: $space-16;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-}
-
-.codex-portal__detail-sub {
-  font-family: 'Cinzel', serif;
-  font-size: 0.5625rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(245, 158, 11, 0.6);
-}
-
-.codex-portal__detail-title {
-  margin: $space-4 0 0;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: $font-size-2xl;
-  font-weight: 700;
-  color: rgba(254, 243, 199, 1);
-}
-
-.codex-portal__back-btn {
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: $radius-lg;
-  padding: $space-8 $space-12;
-  background: rgba(212, 175, 55, 0.05);
-  color: rgba(245, 158, 11, 0.6);
-  font-family: ui-monospace, monospace;
-  font-size: $font-size-xs;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color $transition-base, border-color $transition-base;
-
-  &:hover {
-    color: #fbbf24;
-    border-color: rgba(212, 175, 55, 0.4);
-  }
-}
-
-.codex-portal__loading,
-.codex-portal__empty {
-  margin: $space-16 0;
-  font-size: $font-size-sm;
-  color: rgba(203, 213, 225, 0.8);
-}
-
-.codex-portal__project-list {
-  display: flex;
-  flex-direction: column;
-  gap: $space-12;
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: $space-16;
-  padding-right: $space-8;
-}
-
-.codex-portal__project {
-  padding: $space-12;
-  border-radius: $radius-lg;
-  background: #030e22;
-  border: 1px solid rgba(212, 175, 55, 0.1);
-  transition: border-color $transition-base;
-
-  &:hover {
-    border-color: rgba(212, 175, 55, 0.3);
-  }
-}
-
-.codex-portal__project-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: $space-8;
-}
-
-.codex-portal__project-title {
-  margin: 0;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.0625rem;
-  font-weight: 600;
-  color: rgba(254, 243, 199, 1);
-}
-
-.codex-portal__project-badge {
-  font-family: ui-monospace, monospace;
-  font-size: 0.5625rem;
-  padding: $space-4 $space-8;
-  border-radius: $radius-sm;
-  background: rgba(245, 158, 11, 0.1);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.codex-portal__project-desc {
-  margin: $space-8 0 0;
-  font-size: $font-size-xs;
-  color: rgba(203, 213, 225, 0.8);
-  line-height: 1.5;
-}
-
-.codex-portal__project-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: $space-12;
-  margin-top: $space-12;
-  font-size: 0.625rem;
-  flex-wrap: wrap;
-}
-
-.codex-portal__project-leader {
-  color: rgba(148, 163, 184, 1);
-
-  strong {
-    color: rgba(251, 191, 36, 0.9);
-    font-weight: 500;
-  }
-}
-
-.codex-portal__explore-btn {
-  border: none;
-  background: transparent;
-  color: #fbbf24;
-  font-weight: 700;
-  font-size: 0.625rem;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-
-  &:hover {
-    color: #fcd34d;
-    text-decoration: underline;
-  }
-}
-
-.codex-portal__project-resources {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-8;
-  margin-top: $space-12;
-}
-
-.codex-portal__resource-btn {
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  border-radius: $radius-full;
-  padding: $space-4 $space-12;
-  background: rgba(212, 175, 55, 0.06);
-  color: #fbbf24;
-  font-size: 0.625rem;
-  cursor: pointer;
-  transition: border-color $transition-base, background $transition-base;
-
-  &:hover {
-    border-color: rgba(212, 175, 55, 0.45);
-    background: rgba(212, 175, 55, 0.12);
-  }
-}
-
-.codex-portal__resource-btn--muted {
-  border-color: rgba(255, 255, 255, 0.12);
-  color: rgba(203, 213, 225, 0.75);
-  background: transparent;
-}
-
-.codex-portal__courses {
-  margin-top: $space-16;
-  padding-top: $space-12;
-  border-top: 1px solid rgba(212, 175, 55, 0.1);
-}
-
-.codex-portal__courses-title {
-  margin: 0 0 $space-8;
-  font-size: $font-size-sm;
-  color: rgba(251, 191, 36, 0.8);
-}
-
-.codex-portal__courses-list {
-  margin: 0;
-  padding-left: $space-20;
-  font-size: $font-size-xs;
-  color: rgba(203, 213, 225, 0.75);
-  display: grid;
-  gap: $space-4;
-}
-
-.codex-portal__detail-foot {
-  margin: $space-16 0 0;
-  padding-top: $space-12;
-  border-top: 1px solid rgba(212, 175, 55, 0.1);
-  text-align: center;
-  font-family: ui-monospace, monospace;
-  font-size: 0.5625rem;
-  letter-spacing: 0.2em;
-  color: rgba(245, 158, 11, 0.4);
-}
-
-.codex-portal__footer {
-  position: relative;
-  z-index: 20;
-  padding: $space-12 0;
-  text-align: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.5rem;
-  letter-spacing: 0.3em;
-  color: rgba(180, 83, 9, 0.6);
-}
-
 @keyframes rotate-cw {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
 @include respond-to($breakpoint-md) {
-  .codex-portal__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .codex-portal__header-right {
-    flex-wrap: wrap;
-  }
-
   .codex-portal__control-area {
-    height: auto;
-    min-height: 420px;
+    min-height: auto;
   }
 
   .codex-portal__grid {
     position: relative;
     inset: auto;
-  }
-
-  .codex-portal__detail {
-    position: relative;
-    inset: auto;
-    min-height: 420px;
-  }
-
-  .codex-portal__detail:not(.codex-portal__detail--visible) {
-    display: none;
   }
 }

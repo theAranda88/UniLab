@@ -10,6 +10,8 @@ import { EventoFormComponent } from './features/eventos/evento-form.component';
 import { JornadaFormComponent } from './features/eventos/jornada-form.component';
 import { AsistenciaQrComponent } from './features/eventos/asistencia-qr.component';
 import { ReporteEventoComponent } from './features/eventos/reporte-evento.component';
+import { EscuelasListComponent } from './features/escuelas/escuelas-list/escuelas-list.component';
+import { EscuelasFormComponent } from './features/escuelas/escuelas-form/escuelas-form.component';
 import { AdminShellComponent } from './shared/layout/admin-shell/admin-shell.component';
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { CoordDashboardComponent } from './features/coordinador/dashboard/coord-dashboard.component';
@@ -67,6 +69,32 @@ export class UnauthorizedComponent {
     this.router.navigate(['/login']);
   }
 }
+
+const escuelasShellChildren: Routes = [
+  { path: 'escuelas', component: EscuelasListComponent },
+  {
+    path: 'escuelas/crear',
+    component: EscuelasFormComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Administrador', 'Coordinador'] },
+  },
+  {
+    path: 'escuelas/:id/editar',
+    component: EscuelasFormComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Administrador', 'Coordinador'] },
+  },
+];
+
+const eventosPortalChildren: Routes = [
+  { path: '', component: EventosListComponent, data: { portalTheme: true } },
+  { path: ':id', component: EventoDetalleComponent, data: { portalTheme: true } },
+  {
+    path: ':id/asistencia',
+    component: AsistenciaQrComponent,
+    data: { portalTheme: true, shellMode: true },
+  },
+];
 
 const eventosShellChildren: Routes = [
   { path: 'eventos', component: EventosListComponent },
@@ -131,6 +159,11 @@ export const routes: Routes = [
             (m) => m.PortalProyectoDetalleComponent,
           ),
       },
+      {
+        path: 'eventos',
+        canActivate: [authGuard, primerLoginGuard],
+        children: eventosPortalChildren,
+      },
     ],
   },
   { path: 'login', component: LoginComponent },
@@ -152,6 +185,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
+      ...escuelasShellChildren,
       ...eventosShellChildren,
     ],
   },
@@ -163,6 +197,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: CoordDashboardComponent },
+      ...escuelasShellChildren,
       ...eventosShellChildren,
     ],
   },
@@ -181,39 +216,7 @@ export const routes: Routes = [
     path: 'eventos/:id/asistencia',
     component: AsistenciaQrComponent,
     canActivate: [authGuard, primerLoginGuard],
-    data: { mobileMode: true },
-  },
-  {
-    path: 'eventos',
-    canActivate: [authGuard, primerLoginGuard],
-    children: [
-      { path: '', component: EventosListComponent },
-      {
-        path: 'crear',
-        component: EventoFormComponent,
-        canActivate: [roleGuard],
-        data: { roles: ['Administrador'] },
-      },
-      {
-        path: ':id/editar',
-        component: EventoFormComponent,
-        canActivate: [roleGuard],
-        data: { roles: ['Administrador'] },
-      },
-      { path: ':id', component: EventoDetalleComponent },
-      {
-        path: ':id/jornadas/crear',
-        component: JornadaFormComponent,
-        canActivate: [roleGuard],
-        data: { roles: ['Administrador'] },
-      },
-      {
-        path: ':id/reporte',
-        component: ReporteEventoComponent,
-        canActivate: [roleGuard],
-        data: { roles: ['Administrador', 'Coordinador'] },
-      },
-    ],
+    data: { mobileMode: true, portalTheme: true },
   },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: '**', redirectTo: '' },

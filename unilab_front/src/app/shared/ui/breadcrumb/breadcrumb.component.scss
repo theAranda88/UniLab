@@ -1,4 +1,5 @@
 @use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/portal-codex-tokens' as p;
 
 .breadcrumb {
   margin-bottom: t.$space-16;
@@ -40,5 +41,28 @@
   .separator {
     font-size: 12px;
     color: t.$gray-400;
+  }
+}
+
+:host.breadcrumb-host--portal .breadcrumb {
+  .breadcrumb-item {
+    color: p.$portal-text-muted;
+
+    a {
+      color: p.$portal-gold-muted;
+
+      &:hover {
+        color: p.$portal-gold-light;
+      }
+    }
+
+    &.active span {
+      color: p.$portal-text-primary;
+      font-weight: t.$font-weight-semibold;
+    }
+  }
+
+  .separator {
+    color: p.$portal-gold-dim;
   }
 }

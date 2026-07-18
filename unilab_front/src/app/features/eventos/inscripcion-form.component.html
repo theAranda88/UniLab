@@ -3,6 +3,7 @@
   titleKey="inscripcion.titulo"
   [loading]="enviando()"
   [dismissible]="!enviando()"
+  [variant]="variant"
   (closed)="cerrarModal()"
 >
   @if (error()) {

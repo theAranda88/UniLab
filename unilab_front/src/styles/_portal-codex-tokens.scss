@@ -1,0 +1,49 @@
+// Tokens visuales del portal estudiante (tema Codex)
+// Usar en mixins y en :host.portal-themed de componentes
+
+$portal-bg-deep: #010816;
+$portal-bg-card: linear-gradient(145deg, rgba(21, 34, 56, 0.92), rgba(10, 22, 40, 0.96));
+$portal-bg-input: rgba(4, 12, 28, 0.85);
+$portal-bg-input-solid: #040c1c;
+$portal-bg-overlay: rgba(0, 0, 0, 0.72);
+
+$portal-gold: #d4af37;
+$portal-gold-light: #fcd34d;
+$portal-gold-muted: #fbbf24;
+$portal-gold-dim: rgba(245, 158, 11, 0.55);
+
+$portal-text-primary: rgba(254, 243, 199, 1);
+$portal-text-secondary: rgba(203, 213, 225, 0.88);
+$portal-text-muted: rgba(148, 163, 184, 0.85);
+$portal-text-label: rgba(251, 191, 36, 0.9);
+
+$portal-border: rgba(212, 175, 55, 0.22);
+$portal-border-subtle: rgba(212, 175, 55, 0.12);
+$portal-border-input: rgba(212, 175, 55, 0.28);
+
+$portal-font-display: 'Cormorant Garamond', serif;
+$portal-font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+$portal-font-mono: ui-monospace, monospace;
+
+$portal-shadow-card: 0 12px 32px rgba(0, 0, 0, 0.35);
+$portal-shadow-modal: 0 24px 48px rgba(0, 0, 0, 0.55);
+
+// Estados (badges)
+$portal-status-planeado-bg: rgba(59, 130, 246, 0.15);
+$portal-status-planeado-text: #93c5fd;
+$portal-status-activo-bg: rgba(16, 185, 129, 0.15);
+$portal-status-activo-text: #6ee7b7;
+$portal-status-finalizado-bg: rgba(168, 85, 247, 0.15);
+$portal-status-finalizado-text: #d8b4fe;
+
+$portal-alert-warning-bg: rgba(245, 158, 11, 0.12);
+$portal-alert-warning-border: rgba(245, 158, 11, 0.35);
+$portal-alert-warning-text: #fcd34d;
+
+$portal-alert-error-bg: rgba(127, 29, 29, 0.35);
+$portal-alert-error-border: rgba(248, 113, 113, 0.35);
+$portal-alert-error-text: #fca5a5;
+
+$portal-alert-info-bg: rgba(59, 130, 246, 0.12);
+$portal-alert-info-border: rgba(96, 165, 250, 0.3);
+$portal-alert-info-text: #93c5fd;

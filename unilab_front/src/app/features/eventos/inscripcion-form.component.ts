@@ -6,6 +6,7 @@ import { EventosService } from './eventos.service';
 import { Evento, CreateInscripcionDto } from '../../core/models/evento.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { ModalShellComponent } from '../../shared/ui/modal/modal-shell.component';
+import type { UiVariant } from '../../shared/ui/ui-variant';
 
 @Component({
   selector: 'app-inscripcion-form',
@@ -13,9 +14,13 @@ import { ModalShellComponent } from '../../shared/ui/modal/modal-shell.component
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, ModalShellComponent],
   templateUrl: './inscripcion-form.component.html',
   styleUrl: './inscripcion-form.component.scss',
+  host: {
+    '[class.inscripcion-form--portal]': 'variant === "portal"',
+  },
 })
 export class InscripcionFormComponent {
   @Input() evento!: Evento;
+  @Input() variant: UiVariant = 'default';
   @Output() cerrar = new EventEmitter<void>();
   @Output() inscripcionExitosa = new EventEmitter<void>();
 

@@ -31,11 +31,57 @@
   gap: clamp(#{$space-12}, 2vw, #{$space-24});
 }
 
+.codex-portal__brand-group {
+  display: flex;
+  align-items: center;
+  gap: clamp(#{$space-12}, 2vw, #{$space-24});
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.codex-portal__header-right {
+  display: flex;
+  align-items: center;
+  gap: $space-16;
+  flex-shrink: 0;
+  margin-left: auto;
+  z-index: 25;
+}
+
 .codex-portal__brand {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding-left: $space-4;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.codex-portal__header-logo {
+  --header-logo-size: clamp(2.75rem, 3.5vw + 1rem, 4.25rem);
+  width: var(--header-logo-size);
+  height: var(--header-logo-size);
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(1.35) translateX(-12px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(212, 175, 55, 0.35));
+  }
+}
+
+.codex-portal__header-logo--visible {
+  opacity: 1;
+  transform: scale(1) translateX(0);
 }
 
 .codex-portal__title {
@@ -58,8 +104,6 @@
   color: rgba(245, 158, 11, 0.75);
   font-weight: 500;
 }
-
-.codex-portal__header-right { display: flex; align-items: center; gap: $space-16; }
 
 .codex-portal__status {
   display: flex;
@@ -90,11 +134,35 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.14);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .codex-portal__auth-btn--primary {
   background: rgba(212, 175, 55, 0.15);
   border-color: rgba(212, 175, 55, 0.45);
+}
+
+.codex-portal__auth-btn--events {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .codex-portal__footer {
@@ -118,6 +186,15 @@
     flex-direction: column;
     align-items: flex-start;
     max-width: 100%;
+  }
+
+  .codex-portal__header-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .codex-portal__header-logo {
+    --header-logo-size: clamp(2.25rem, 12vw, 3rem);
   }
 
   .codex-portal__status {

@@ -12,7 +12,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { PublicPortalService } from '../public-portal.service';
 import { LoginComponent } from '../../auth/login/login.component';
 import type { Escuela } from '../../../core/models/portal.model';
-import { getDefaultRouteForRole } from '../../../core/config/role-redirect';
+import { navigateAfterLogin } from '../../../core/config/role-redirect';
 
 type AuthTab = 'login' | 'register';
 type RegisterRole = 'Estudiante' | 'Externo';
@@ -84,15 +84,14 @@ export class AuthModalComponent {
 
   onLoginSuccess(): void {
     const user = this.auth.getCurrentUser();
-    if (user?.primer_login) {
-      this.router.navigate(['/cambiar-password']);
+    if (!user) {
       this.authenticated.emit();
       return;
     }
-    if (user) {
-      this.router.navigate([getDefaultRouteForRole(user.id_rol)]);
-    }
-    this.authenticated.emit();
+
+    void navigateAfterLogin(this.router, user, { fromPortal: true }).finally(() => {
+      this.authenticated.emit();
+    });
   }
 
   submitRegister(): void {

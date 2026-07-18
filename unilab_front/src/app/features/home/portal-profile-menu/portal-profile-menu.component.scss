@@ -1,0 +1,115 @@
+@use '../../../../styles/design-tokens' as *;
+
+.portal-profile {
+  position: relative;
+}
+
+.portal-profile__trigger {
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: $radius-full;
+}
+
+.portal-profile__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $radius-full;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(217, 119, 6, 0.55));
+  color: #fef3c7;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 2px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.2);
+
+  &--large {
+    width: 3rem;
+    height: 3rem;
+    font-size: $font-size-base;
+  }
+}
+
+.portal-profile__panel {
+  position: absolute;
+  top: calc(100% + #{$space-8});
+  right: 0;
+  z-index: 50;
+  width: min(18rem, 88vw);
+  padding: $space-16;
+  border-radius: $radius-xl;
+  background: rgba(4, 12, 28, 0.98);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
+}
+
+.portal-profile__header {
+  display: flex;
+  align-items: center;
+  gap: $space-12;
+  padding-bottom: $space-12;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.portal-profile__identity {
+  min-width: 0;
+}
+
+.portal-profile__name {
+  margin: 0;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: rgba(254, 243, 199, 1);
+  word-break: break-word;
+}
+
+.portal-profile__email {
+  margin: $space-4 0 0;
+  font-size: $font-size-xs;
+  color: rgba(148, 163, 184, 0.9);
+  word-break: break-all;
+}
+
+.portal-profile__meta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-12 0;
+}
+
+.portal-profile__label {
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 158, 11, 0.55);
+}
+
+.portal-profile__value {
+  font-size: $font-size-sm;
+  color: rgba(203, 213, 225, 0.95);
+}
+
+.portal-profile__logout {
+  width: 100%;
+  margin-top: $space-4;
+  padding: $space-12 $space-12;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: $radius-lg;
+  background: rgba(212, 175, 55, 0.08);
+  color: #fcd34d;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background $transition-base, border-color $transition-base;
+
+  &:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.35);
+  }
+}

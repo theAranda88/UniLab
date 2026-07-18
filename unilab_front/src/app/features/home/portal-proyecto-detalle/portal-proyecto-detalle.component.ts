@@ -33,7 +33,6 @@ export class PortalProyectoDetalleComponent implements OnInit {
   readonly loadError = signal(false);
   readonly entered = signal(false);
   readonly exiting = signal(false);
-  readonly logoError = signal(false);
 
   readonly isLoggedIn = computed(() => this.auth.isAuthenticated());
   readonly escuelaId = computed(() => this.proyecto()?.curso?.id_escuela ?? null);

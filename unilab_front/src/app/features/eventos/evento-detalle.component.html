@@ -4,7 +4,7 @@
   } @else if (error()) {
     <p class="error">{{ error() | translate }}</p>
   } @else if (evento()) {
-    <app-breadcrumb [items]="breadcrumbItems()" />
+    <app-breadcrumb [items]="breadcrumbItems()" [variant]="uiVariant()" />
 
     <div class="evento-content">
       <div class="evento-header">
@@ -181,6 +181,7 @@
       @if (mostrarFormularioInscripcion()) {
         <app-inscripcion-form
           [evento]="evento()!"
+          [variant]="uiVariant()"
           (cerrar)="cerrarFormularioInscripcion()"
           (inscripcionExitosa)="onInscripcionExitosa()"
         ></app-inscripcion-form>

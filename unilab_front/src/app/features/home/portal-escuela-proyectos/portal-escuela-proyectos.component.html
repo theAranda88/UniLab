@@ -1,14 +1,4 @@
 <main class="portal-sub portal-sub--escuela" [class.portal-sub--entered]="entered()">
-  <div class="portal-sub__logo-mini" [class.portal-sub__logo-mini--visible]="entered()">
-    @if (!logoError()) {
-      <img
-        src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
-        [alt]="'home.logoAlt' | translate"
-        (error)="logoError.set(true)"
-      />
-    }
-  </div>
-
   <div class="portal-sub__content">
     <header class="portal-sub__header">
       <button type="button" class="portal-sub__back" (click)="goBack()">{{ 'home.backToSchools' | translate }}</button>

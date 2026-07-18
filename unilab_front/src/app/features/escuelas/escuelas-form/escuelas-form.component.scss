@@ -1,0 +1,69 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+
+.escuelas-form {
+  @include ui.eventos-page;
+  max-width: 640px;
+
+  &__card {
+    @include ui.eventos-card;
+    padding: t.$space-24;
+
+    h1 {
+      margin: 0 0 t.$space-24;
+      font-size: t.$font-size-xl;
+      color: t.$primary-blue;
+    }
+  }
+
+  &__loading {
+    color: t.$text-light;
+  }
+
+  &__error {
+    color: t.$error;
+    margin-bottom: t.$space-16;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-20;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-8;
+
+    label {
+      font-size: t.$font-size-sm;
+      font-weight: t.$font-weight-semibold;
+      color: t.$text-dark;
+    }
+
+    .form-control {
+      @include ui.form-control;
+    }
+
+    .error-text {
+      font-size: t.$font-size-xs;
+      color: t.$error;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: t.$space-12;
+    flex-wrap: wrap;
+
+    .btn-primary {
+      @include ui.btn-primary;
+    }
+
+    .btn-secondary {
+      @include ui.btn-secondary;
+    }
+  }
+}

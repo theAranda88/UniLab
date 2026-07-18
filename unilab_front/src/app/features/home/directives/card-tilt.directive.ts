@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, inject } from '@angular/core';
+import { booleanAttribute, Directive, ElementRef, HostListener, Input, inject } from '@angular/core';
 
 @Directive({
   selector: '[appCardTilt]',
@@ -7,8 +7,11 @@ import { Directive, ElementRef, HostListener, inject } from '@angular/core';
 export class CardTiltDirective {
   private el = inject(ElementRef<HTMLElement>);
 
+  @Input({ transform: booleanAttribute }) appCardTilt = true;
+
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
+    if (!this.appCardTilt) return;
     const host = this.el.nativeElement;
     const rect = host.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -27,10 +30,11 @@ export class CardTiltDirective {
 
   @HostListener('mouseleave')
   onMouseLeave(): void {
+    if (!this.appCardTilt) return;
     const host = this.el.nativeElement;
-    host.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)';
-    host.style.borderColor = 'rgba(212, 175, 55, 0.18)';
-    host.style.background = 'rgba(4, 12, 28, 0.82)';
-    host.style.boxShadow = 'none';
+    host.style.transform = '';
+    host.style.borderColor = '';
+    host.style.background = '';
+    host.style.boxShadow = '';
   }
 }

@@ -1,0 +1,38 @@
+<div class="escuelas-form">
+  <div class="escuelas-form__card">
+    <h1>{{ (modoEdicion() ? 'escuelas.editar' : 'escuelas.crear') | translate }}</h1>
+
+    @if (cargando()) {
+      <p class="escuelas-form__loading">{{ 'common.cargando' | translate }}</p>
+    } @else {
+      @if (error()) {
+        <p class="escuelas-form__error">{{ error() | translate }}</p>
+      }
+
+      <form [formGroup]="formulario" (ngSubmit)="submit()" class="escuelas-form__body">
+        <div class="form-group">
+          <label for="nombre_escuela">{{ 'escuelas.nombre' | translate }} *</label>
+          <input
+            id="nombre_escuela"
+            type="text"
+            formControlName="nombre_escuela"
+            class="form-control"
+            [class.is-invalid]="formulario.controls.nombre_escuela.invalid && formulario.controls.nombre_escuela.touched"
+          />
+          @if (formulario.controls.nombre_escuela.invalid && formulario.controls.nombre_escuela.touched) {
+            <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+          }
+        </div>
+
+        <div class="escuelas-form__actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            {{ 'common.cancelar' | translate }}
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+            {{ enviando() ? ('common.cargando' | translate) : ('common.guardar' | translate) }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

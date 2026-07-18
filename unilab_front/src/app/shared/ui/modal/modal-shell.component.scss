@@ -1,4 +1,5 @@
 @use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/portal-codex-tokens' as p;
 
 .modal-overlay {
   position: fixed;
@@ -74,4 +75,43 @@
 .modal-body {
   padding: t.$space-20;
   overflow-y: auto;
+}
+
+:host.modal-host--portal .modal-overlay {
+  background: p.$portal-bg-overlay;
+  backdrop-filter: blur(6px);
+}
+
+:host.modal-host--portal .modal-content {
+  background: linear-gradient(160deg, rgba(10, 22, 40, 0.98), rgba(4, 12, 28, 0.99));
+  border: 1px solid p.$portal-border;
+  box-shadow: p.$portal-shadow-modal;
+  border-radius: t.$radius-xl;
+}
+
+:host.modal-host--portal .modal-header {
+  border-bottom-color: p.$portal-border-subtle;
+  padding: t.$space-20 t.$space-24 t.$space-16;
+
+  h2 {
+    font-family: p.$portal-font-display;
+    font-size: clamp(1.125rem, 1vw + 0.85rem, 1.375rem);
+    font-weight: 700;
+    color: p.$portal-text-primary;
+  }
+
+  .close-btn {
+    color: p.$portal-text-muted;
+    border: 1px solid p.$portal-border-subtle;
+
+    &:hover:not(:disabled) {
+      background: rgba(212, 175, 55, 0.1);
+      color: p.$portal-gold-light;
+      border-color: p.$portal-border;
+    }
+  }
+}
+
+:host.modal-host--portal .modal-body {
+  padding: t.$space-20 t.$space-24 t.$space-24;
 }

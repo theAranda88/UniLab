@@ -393,6 +393,8 @@ $codex-text-muted: rgba(148, 163, 184, 0.85);
 }
 
 :host.login--codex {
+  color-scheme: dark;
+
   .login-container {
     background: transparent;
     height: auto;
@@ -456,15 +458,35 @@ $codex-text-muted: rgba(148, 163, 184, 0.85);
     color: $codex-text;
     padding: 11px 14px;
     font-size: 14px;
+    color-scheme: dark;
 
     &::placeholder {
       color: rgba(148, 163, 184, 0.55);
     }
 
-    &:focus {
+    &:hover {
+      border-color: rgba(212, 175, 55, 0.35);
+    }
+
+    &:focus,
+    &:focus-visible,
+    &:active {
       border-color: rgba(212, 175, 55, 0.55);
       box-shadow: 0 0 0 3px rgba(58, 95, 130, 0.35);
-      background: rgba(30, 51, 84, 0.75);
+      background: rgba(21, 34, 56, 0.9);
+      color: $codex-text;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px #152238 inset !important;
+      box-shadow: 0 0 0 1000px #152238 inset !important;
+      -webkit-text-fill-color: $codex-text !important;
+      caret-color: $codex-text;
+      border-color: rgba(74, 115, 150, 0.45);
+      transition: background-color 600000s ease-in-out 0s;
     }
 
     &.is-invalid {
@@ -494,10 +516,20 @@ $codex-text-muted: rgba(148, 163, 184, 0.85);
     letter-spacing: 0.04em;
     border: 1px solid rgba(212, 175, 55, 0.45);
     box-shadow: 0 4px 18px rgba(212, 175, 55, 0.22);
+    transition:
+      box-shadow 0.25s ease,
+      filter 0.25s ease,
+      transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
     &:hover:not(:disabled) {
       background: linear-gradient(135deg, $codex-gold-dark 0%, $codex-gold-light 100%);
-      box-shadow: 0 6px 22px rgba(212, 175, 55, 0.32);
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.34);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.22);
     }
   }
 

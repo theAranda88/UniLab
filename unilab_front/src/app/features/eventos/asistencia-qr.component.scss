@@ -1,4 +1,7 @@
 @use '../../../styles/design-tokens' as t;
+@use '../../../styles/eventos-ui' as ui;
+@use '../../../styles/portal-codex-theme' as portal;
+@use '../../../styles/portal-codex-tokens' as p;
 
 .mobile-asistencia {
   min-height: 100vh;
@@ -9,6 +12,15 @@
   padding: t.$space-24;
   background: linear-gradient(180deg, t.$light-gray 0%, t.$white 100%);
   text-align: center;
+  position: relative;
+}
+
+.mobile-asistencia__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .quime-img {
@@ -101,24 +113,9 @@
       }
 
       .qr-input {
-        width: 100%;
-        padding: t.$space-12;
-        font-size: t.$font-size-base;
-        border: 1px solid t.$border-gray;
-        border-radius: t.$radius-md;
+        @include ui.form-control;
         text-align: center;
         font-family: monospace;
-
-        &:focus {
-          outline: none;
-          border-color: t.$light-blue;
-          box-shadow: 0 0 0 3px rgba(t.$light-blue, 0.15);
-        }
-
-        &:disabled {
-          background-color: t.$light-gray;
-          cursor: not-allowed;
-        }
       }
     }
 
@@ -147,30 +144,14 @@
       margin-bottom: t.$space-24;
 
       .btn {
-        padding: t.$space-12 t.$space-20;
-        border: none;
-        border-radius: t.$radius-md;
-        cursor: pointer;
-        font-weight: t.$font-weight-semibold;
         flex: 1;
 
         &.btn-primary {
-          background-color: t.$primary-blue;
-          color: t.$white;
-
-          &:hover:not(:disabled) {
-            background-color: t.$primary-blue-dark;
-          }
-
-          &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
+          @include ui.btn-primary;
         }
 
         &.btn-secondary {
-          background-color: t.$gray-500;
-          color: t.$white;
+          @include ui.btn-secondary;
         }
       }
     }
@@ -188,5 +169,117 @@
         line-height: t.$line-height-relaxed;
       }
     }
+  }
+}
+
+:host.portal-themed {
+  display: block;
+
+  &.asistencia-qr--mobile .mobile-asistencia {
+    min-height: min(70vh, calc(100dvh - 5rem));
+    background: radial-gradient(circle at center, #010816 0%, #000205 100%);
+    color: p.$portal-text-secondary;
+    overflow: hidden;
+
+    .quime-img {
+      filter: drop-shadow(0 8px 24px rgba(212, 175, 55, 0.2));
+    }
+
+    .mobile-status {
+      animation: portal-status-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+      h1 {
+        font-family: p.$portal-font-display;
+        color: p.$portal-text-primary;
+      }
+
+      p {
+        color: p.$portal-text-secondary;
+      }
+
+      &.success i {
+        color: #6ee7b7;
+        filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.35));
+      }
+
+      &.error i {
+        color: #fca5a5;
+      }
+
+      &.loading i {
+        color: p.$portal-gold-muted;
+      }
+
+      .btn-volver {
+        @include portal.portal-btn-secondary;
+        margin-top: t.$space-20;
+      }
+    }
+  }
+
+  .asistencia-qr-container {
+    @include portal.portal-page;
+    max-width: min(36rem, 94vw);
+
+    .qr-card {
+      @include portal.portal-card;
+      padding: t.$space-24;
+
+      h1 {
+        @include portal.portal-page-title;
+        text-align: center;
+        font-size: clamp(1.25rem, 1.5vw + 0.85rem, t.$font-size-2xl);
+        margin-bottom: t.$space-24;
+      }
+
+      .qr-input-section label {
+        @include portal.portal-label;
+      }
+
+      .qr-input {
+        @include portal.portal-form-control;
+        text-align: center;
+        font-family: p.$portal-font-mono;
+      }
+
+      .mensaje-success {
+        @include portal.portal-alert-info;
+        border-left: none;
+      }
+
+      .mensaje-error {
+        @include portal.portal-alert-error;
+        border-left: none;
+      }
+
+      .actions {
+        .btn.btn-primary {
+          @include portal.portal-btn-success;
+        }
+
+        .btn.btn-secondary {
+          @include portal.portal-btn-secondary;
+        }
+      }
+
+      .info-box {
+        @include portal.portal-alert-warning;
+
+        p {
+          color: inherit;
+        }
+      }
+    }
+  }
+}
+
+@keyframes portal-status-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

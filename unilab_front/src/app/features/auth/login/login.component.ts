@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
-import { getDefaultRouteForRole } from '../../../core/config/role-redirect';
+import { navigateAfterLogin } from '../../../core/config/role-redirect';
 
 @Component({
   selector: 'app-login',
@@ -88,14 +88,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private redirectAfterAuth(): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    if (returnUrl) {
-      this.router.navigateByUrl(returnUrl);
-      return;
-    }
     const user = this.authService.getCurrentUser();
-    if (user) {
-      this.router.navigate([getDefaultRouteForRole(user.id_rol)]);
-    }
+    if (!user) return;
+
+    void navigateAfterLogin(this.router, user, {
+      fromPortal: this.embedded,
+      returnUrl,
+    });
   }
 
   get email() {

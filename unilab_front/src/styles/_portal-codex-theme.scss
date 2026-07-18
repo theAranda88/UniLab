@@ -1,0 +1,373 @@
+// Mixins reutilizables del tema portal estudiante (Codex)
+@use './design-tokens' as t;
+@use './portal-codex-tokens' as p;
+
+@mixin portal-page {
+  max-width: min(72rem, 94vw);
+  margin: 0 auto;
+  padding: clamp(t.$space-16, 3vw, t.$space-32);
+  color: p.$portal-text-secondary;
+}
+
+@mixin portal-page-title {
+  margin: 0;
+  font-family: p.$portal-font-display;
+  font-size: clamp(1.5rem, 2vw + 1rem, t.$font-size-2xl);
+  font-weight: 700;
+  color: p.$portal-text-primary;
+  letter-spacing: 0.02em;
+}
+
+@mixin portal-section-title {
+  margin: 0 0 t.$space-12;
+  font-family: p.$portal-font-display;
+  font-size: t.$font-size-lg;
+  font-weight: 600;
+  color: p.$portal-text-label;
+}
+
+@mixin portal-card {
+  background: p.$portal-bg-card;
+  border: 1px solid p.$portal-border;
+  border-radius: t.$radius-xl;
+  box-shadow: p.$portal-shadow-card;
+  overflow: hidden;
+}
+
+@mixin portal-form-autofill {
+  -webkit-box-shadow: 0 0 0 1000px p.$portal-bg-input-solid inset !important;
+  box-shadow: 0 0 0 1000px p.$portal-bg-input-solid inset !important;
+  -webkit-text-fill-color: p.$portal-text-primary !important;
+  caret-color: p.$portal-text-primary;
+  border-color: p.$portal-border-input;
+  transition: background-color 600000s ease-in-out 0s;
+}
+
+@mixin portal-btn-interactive {
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@mixin portal-form-control {
+  width: 100%;
+  padding: t.$space-8 t.$space-12;
+  border: 1px solid p.$portal-border-input;
+  border-radius: t.$radius-md;
+  background: p.$portal-bg-input;
+  color: p.$portal-text-primary;
+  font-size: t.$font-size-sm;
+  font-family: inherit;
+  color-scheme: dark;
+  transition:
+    border-color t.$transition-base,
+    box-shadow t.$transition-base,
+    background-color t.$transition-base;
+
+  &::placeholder {
+    color: p.$portal-text-muted;
+  }
+
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+
+  &:focus,
+  &:focus-visible,
+  &:active {
+    outline: none;
+    border-color: rgba(212, 175, 55, 0.55);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
+    background: p.$portal-bg-input;
+    color: p.$portal-text-primary;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    @include portal-form-autofill;
+  }
+
+  option {
+    background: #0a1628;
+    color: p.$portal-text-primary;
+  }
+}
+
+@mixin portal-filter-control {
+  @include portal-form-control;
+  border-radius: t.$radius-full;
+  padding: t.$space-12 t.$space-16;
+  height: auto;
+  min-height: 2.5rem;
+  backdrop-filter: blur(8px);
+  background: rgba(4, 12, 28, 0.72);
+  appearance: none;
+
+  &:focus,
+  &:focus-visible {
+    box-shadow:
+      0 0 0 2px rgba(212, 175, 55, 0.12),
+      0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+}
+
+@mixin portal-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+  align-items: center;
+}
+
+@mixin portal-filter-chip {
+  @include portal-btn-interactive;
+  border: 1px solid p.$portal-border-subtle;
+  border-radius: t.$radius-full;
+  padding: t.$space-8 t.$space-12;
+  background: rgba(4, 12, 28, 0.65);
+  color: p.$portal-text-muted;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    border-color: rgba(212, 175, 55, 0.35);
+    color: p.$portal-text-secondary;
+  }
+
+  &--active {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.14);
+    color: p.$portal-gold-light;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.12);
+
+    &:hover:not(:disabled) {
+      color: p.$portal-gold-light;
+    }
+  }
+}
+
+@mixin portal-card-codex {
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: t.$radius-xl;
+  background: rgba(4, 12, 28, 0.82);
+  backdrop-filter: blur(16px);
+  transform-style: preserve-3d;
+  transition:
+    transform 0.18s ease-out,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    background 0.4s ease;
+}
+
+@mixin portal-card-emerge-init {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    background 0.4s ease;
+  transition-delay: var(--emerge-delay, 0s);
+}
+
+@mixin portal-card-emerge-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// Alias para compatibilidad con keyframes previos
+@mixin portal-card-emerge {
+  @include portal-card-emerge-init;
+}
+
+@mixin portal-label {
+  display: block;
+  margin-bottom: t.$space-4;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  color: p.$portal-text-label;
+}
+
+@mixin portal-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: t.$space-8;
+  padding: t.$space-8 t.$space-16;
+  border-radius: t.$radius-lg;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  font-family: inherit;
+  cursor: pointer;
+  @include portal-btn-interactive;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+@mixin portal-btn-primary {
+  @include portal-btn-base;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: rgba(212, 175, 55, 0.18);
+  color: p.$portal-gold-light;
+
+  &:hover:not(:disabled) {
+    background: rgba(212, 175, 55, 0.28);
+    border-color: rgba(212, 175, 55, 0.6);
+  }
+}
+
+@mixin portal-btn-secondary {
+  @include portal-btn-base;
+  border: 1px solid p.$portal-border-input;
+  background: rgba(4, 12, 28, 0.6);
+  color: p.$portal-text-secondary;
+
+  &:hover:not(:disabled) {
+    border-color: rgba(212, 175, 55, 0.4);
+    color: p.$portal-text-primary;
+  }
+}
+
+@mixin portal-btn-success {
+  @include portal-btn-base;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+
+  &:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.28);
+    border-color: rgba(16, 185, 129, 0.6);
+  }
+}
+
+@mixin portal-btn-danger {
+  @include portal-btn-base;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(127, 29, 29, 0.35);
+  color: #fca5a5;
+
+  &:hover:not(:disabled) {
+    background: rgba(127, 29, 29, 0.5);
+  }
+}
+
+@mixin portal-btn-link {
+  @include portal-btn-base;
+  border: none;
+  background: transparent;
+  color: p.$portal-gold-muted;
+  padding: t.$space-8 0;
+
+  &:hover:not(:disabled) {
+    color: p.$portal-gold-light;
+    text-decoration: underline;
+  }
+}
+
+@mixin portal-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: t.$space-4 t.$space-12;
+  border-radius: t.$radius-full;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  white-space: nowrap;
+}
+
+@mixin portal-status-planeado {
+  @include portal-badge;
+  background: p.$portal-status-planeado-bg;
+  color: p.$portal-status-planeado-text;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+@mixin portal-status-activo {
+  @include portal-badge;
+  background: p.$portal-status-activo-bg;
+  color: p.$portal-status-activo-text;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+@mixin portal-status-finalizado {
+  @include portal-badge;
+  background: p.$portal-status-finalizado-bg;
+  color: p.$portal-status-finalizado-text;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+@mixin portal-alert-warning {
+  padding: t.$space-12 t.$space-16;
+  border-radius: t.$radius-md;
+  background: p.$portal-alert-warning-bg;
+  border: 1px solid p.$portal-alert-warning-border;
+  color: p.$portal-alert-warning-text;
+  font-size: t.$font-size-sm;
+}
+
+@mixin portal-alert-error {
+  padding: t.$space-12 t.$space-16;
+  border-radius: t.$radius-md;
+  background: p.$portal-alert-error-bg;
+  border: 1px solid p.$portal-alert-error-border;
+  color: p.$portal-alert-error-text;
+  font-size: t.$font-size-sm;
+}
+
+@mixin portal-alert-info {
+  padding: t.$space-12 t.$space-16;
+  border-radius: t.$radius-md;
+  background: p.$portal-alert-info-bg;
+  border: 1px solid p.$portal-alert-info-border;
+  color: p.$portal-alert-info-text;
+  font-size: t.$font-size-sm;
+}
+
+@mixin portal-empty-state {
+  text-align: center;
+  padding: t.$space-32;
+  color: p.$portal-text-muted;
+  font-size: t.$font-size-sm;
+}
+
+@mixin portal-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8 t.$space-12;
+  margin-bottom: t.$space-8;
+  font-size: t.$font-size-sm;
+
+  strong {
+    min-width: 120px;
+    color: p.$portal-text-label;
+    font-weight: t.$font-weight-semibold;
+  }
+
+  span {
+    color: p.$portal-text-secondary;
+    flex: 1;
+  }
+}

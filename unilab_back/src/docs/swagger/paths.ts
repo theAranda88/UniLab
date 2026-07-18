@@ -136,7 +136,7 @@ export const paths = {
     post: {
       tags: ['Escuelas'],
       summary: 'Crear escuela',
-      description: '**Rol requerido:** Administrador',
+      description: '**Rol requerido:** Administrador, Coordinador',
       requestBody: jsonBody('#/components/schemas/EscuelaRequest'),
       responses: { 201: { description: 'Escuela creada' }, ...err },
     },
@@ -151,7 +151,7 @@ export const paths = {
     patch: {
       tags: ['Escuelas'],
       summary: 'Actualizar escuela',
-      description: '**Rol requerido:** Administrador',
+      description: '**Rol requerido:** Administrador, Coordinador',
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/EscuelaRequest'),
       responses: { 200: { description: 'Escuela actualizada' }, ...err },
@@ -159,7 +159,7 @@ export const paths = {
     delete: {
       tags: ['Escuelas'],
       summary: 'Eliminar escuela (soft-delete + cascada lógica a cursos)',
-      description: '**Rol requerido:** Administrador',
+      description: '**Rol requerido:** Administrador, Coordinador',
       parameters: [paramId],
       responses: { 204: { description: 'Eliminada' }, ...err },
     },

@@ -1,14 +1,4 @@
 <main class="portal-sub portal-sub--detalle" [class.portal-sub--entered]="entered()">
-  <div class="portal-sub__logo-mini portal-sub__logo-mini--detalle" [class.portal-sub__logo-mini--visible]="entered()">
-    @if (!logoError()) {
-      <img
-        src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
-        [alt]="'home.logoAlt' | translate"
-        (error)="logoError.set(true)"
-      />
-    }
-  </div>
-
   @if (loading()) {
     <p class="portal-sub__loading">{{ 'common.loading' | translate }}</p>
   } @else if (loadError()) {

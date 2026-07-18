@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService, CambiarPasswordResponse } from '../../../core/auth/auth.service';
+import { getDefaultRouteForRole } from '../../../core/config/role-redirect';
 
 @Component({
   selector: 'app-cambiar-password',
@@ -35,7 +36,8 @@ export class CambiarPasswordComponent implements OnInit, OnDestroy {
     // Si no está autenticado O no tiene primer_login=true, no puede estar aquí
     const user = this.authService.getCurrentUser();
     if (!user || !user.primer_login) {
-      this.router.navigate(['/dashboard']);
+      const rol = user?.id_rol ?? '';
+      this.router.navigateByUrl(user ? getDefaultRouteForRole(rol) : '/login');
     }
   }
 
@@ -90,7 +92,12 @@ export class CambiarPasswordComponent implements OnInit, OnDestroy {
 
           // Redirigir después de 1.5 segundos
           setTimeout(() => {
-            this.router.navigate(['/dashboard']);
+            const updatedUser = this.authService.getCurrentUser();
+            if (updatedUser) {
+              this.router.navigateByUrl(getDefaultRouteForRole(updatedUser.id_rol));
+            } else {
+              this.router.navigateByUrl('/login');
+            }
           }, 1500);
         },
         error: (err: any) => {

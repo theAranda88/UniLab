@@ -30,6 +30,7 @@
       "proyectosAsignados": "Assigned projects",
       "pendientesAprobar": "Pending approval",
       "cursosCarreras": "Courses and programs",
+      "portalPublic": "Public portal",
       "sections": {
         "general": "General",
         "academico": "Academic",
@@ -39,13 +40,15 @@
         "seguimiento": "Tracking",
         "miGestion": "My management",
         "proyectos": "Projects",
-        "recursos": "Resources"
+        "recursos": "Resources",
+        "portal": "UniLab"
       }
     },
     "pages": {
       "dashboard": "General dashboard",
       "miPanel": "My panel",
-      "eventos": "Events"
+      "eventos": "Events",
+      "escuelas": "Schools and programs"
     },
     "cta": {
       "crearUsuario": "Create user",
@@ -207,8 +210,12 @@
     "cancel": "Cancel",
     "cancelar": "Cancel",
     "save": "Save",
+    "guardar": "Save",
     "delete": "Delete",
+    "eliminar": "Delete",
     "edit": "Edit",
+    "editar": "Edit",
+    "acciones": "Actions",
     "close": "Close",
     "volver": "Back",
     "verDetalles": "View Details",
@@ -238,6 +245,27 @@
   "validation": {
     "requerido": "This field is required"
   },
+  "roles": {
+    "Administrador": "Administrator",
+    "Coordinador": "Coordinator",
+    "Profesor": "Professor",
+    "Estudiante": "Student",
+    "Externo": "External"
+  },
+  "escuelas": {
+    "titulo": "Schools and programs",
+    "crear": "Create school",
+    "editar": "Edit school",
+    "nombre": "School name",
+    "id": "ID",
+    "sinEscuelas": "No schools registered",
+    "errorCargar": "Error loading schools",
+    "errorCrear": "Error creating school",
+    "errorActualizar": "Error updating school",
+    "errorEliminar": "Error deleting school",
+    "eliminarTitulo": "Delete school",
+    "eliminarMensaje": "Delete school \"{{nombre}}\"? Its courses will also be soft-deleted."
+  },
   "eventos": {
     "title": "Events",
     "crear": "Create Event",
@@ -257,6 +285,7 @@
     "requierePago": "Requires Payment",
     "filtroTipo": "Filter by type...",
     "filtroEstado": "Filter by status",
+    "filtroTodos": "All",
     "sinEventos": "No events available",
     "errorCargar": "Error loading events",
     "errorCrear": "Error creating event",
@@ -354,6 +383,13 @@
     "systemStatus": "SYSTEM:",
     "systemName": "INTEGRATED PROJECT CODEX",
     "signIn": "Sign in",
+    "goToPanel": "Go to panel",
+    "eventsNav": "Events",
+    "profileMenu": {
+      "signedInAs": "Signed in as",
+      "role": "Role",
+      "logout": "Sign out"
+    },
     "enterPortal": "Go to my dashboard",
     "logoAlt": "Official Uniautónoma del Cauca logo",
     "logoFallback": "COGNITIO ET SCIENTIA",
@@ -438,6 +474,9 @@
       "software": {
         "subtitle": "// COMPUTE & CORE",
         "cursive": "l'Ingegneria"
+      },
+      "generic": {
+        "subtitle": "// ACADEMIC UNIT"
       }
     },
     "authModal": {

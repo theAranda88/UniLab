@@ -20,7 +20,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       items: [
         { labelKey: 'shell.nav.dashboard', icon: 'ti-layout-dashboard', route: 'dashboard', enabled: true },
         { labelKey: 'shell.nav.usuarios', icon: 'ti-users', route: 'usuarios', enabled: false, badge: 3 },
-        { labelKey: 'shell.nav.escuelas', icon: 'ti-school', route: 'escuelas', enabled: false },
+        { labelKey: 'shell.nav.escuelas', icon: 'ti-school', route: 'escuelas', enabled: true },
         { labelKey: 'shell.nav.cursos', icon: 'ti-book', route: 'cursos', enabled: false },
       ],
     },
@@ -51,6 +51,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       sectionKey: 'shell.nav.sections.analisis',
       items: [
         { labelKey: 'shell.nav.dashboard', icon: 'ti-layout-dashboard', route: 'dashboard', enabled: true },
+        { labelKey: 'shell.nav.escuelas', icon: 'ti-school', route: 'escuelas', enabled: true },
         { labelKey: 'shell.nav.estadisticas', icon: 'ti-chart-pie', route: 'estadisticas', enabled: false },
         { labelKey: 'shell.nav.exportar', icon: 'ti-file-export', route: 'exportar', enabled: false },
       ],

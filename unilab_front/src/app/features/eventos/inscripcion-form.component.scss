@@ -1,5 +1,6 @@
 @use '../../../styles/design-tokens' as t;
 @use '../../../styles/eventos-ui' as ui;
+@use '../../../styles/portal-codex-theme' as portal;
 
 .alert-error {
   background: #ffebee;
@@ -57,6 +58,43 @@
       &.btn-secondary {
         @include ui.btn-secondary;
       }
+    }
+  }
+}
+
+:host.inscripcion-form--portal {
+  .alert-error {
+    @include portal.portal-alert-error;
+    border-left: none;
+  }
+
+  .info-box {
+    @include portal.portal-alert-info;
+
+    p {
+      color: inherit;
+    }
+  }
+
+  .form {
+    .form-group label {
+      @include portal.portal-label;
+    }
+
+    .form-control {
+      @include portal.portal-form-control;
+    }
+  }
+
+  .modal-actions {
+    .btn.btn-success {
+      @include portal.portal-btn-success;
+      flex: 1;
+    }
+
+    .btn.btn-secondary {
+      @include portal.portal-btn-secondary;
+      flex: 1;
     }
   }
 }

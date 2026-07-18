@@ -11,6 +11,8 @@ import { JornadaFormComponent } from './jornada-form.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
 import { formatearFechaLocal, toDateInputValue } from '../../core/utils/date.util';
+import { hasPortalTheme } from '../../core/utils/portal-theme.util';
+import type { UiVariant } from '../../shared/ui/ui-variant';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -26,6 +28,9 @@ import { formatearFechaLocal, toDateInputValue } from '../../core/utils/date.uti
   ],
   templateUrl: './evento-detalle.component.html',
   styleUrl: './evento-detalle.component.scss',
+  host: {
+    '[class.portal-themed]': 'portalTheme()',
+  },
 })
 export class EventoDetalleComponent implements OnInit {
   eventoService = inject(EventosService);
@@ -33,6 +38,9 @@ export class EventoDetalleComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
+
+  readonly portalTheme = signal(false);
+  readonly uiVariant = computed<UiVariant>(() => (this.portalTheme() ? 'portal' : 'default'));
 
   evento = signal<Evento | null>(null);
   jornadas = signal<EventoJornada[]>([]);
@@ -93,6 +101,7 @@ export class EventoDetalleComponent implements OnInit {
   qrUrls = signal<Record<number, string>>({});
 
   ngOnInit() {
+    this.portalTheme.set(hasPortalTheme(this.route));
     this.cargarEvento();
   }
 

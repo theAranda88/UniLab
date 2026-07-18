@@ -1,0 +1,91 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+
+.escuelas-list {
+  @include ui.eventos-page;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: t.$space-16;
+    margin-bottom: t.$space-24;
+    flex-wrap: wrap;
+
+    h1 {
+      margin: 0;
+      font-size: t.$font-size-2xl;
+      color: t.$primary-blue;
+    }
+
+    .btn-primary {
+      @include ui.btn-primary;
+    }
+  }
+
+  &__loading,
+  &__empty {
+    color: t.$text-light;
+  }
+
+  &__error {
+    color: t.$error;
+  }
+
+  &__table-wrap {
+    @include ui.eventos-card;
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: t.$space-12 t.$space-16;
+      text-align: left;
+      border-bottom: 1px solid t.$border-gray;
+    }
+
+    th {
+      font-size: t.$font-size-sm;
+      font-weight: t.$font-weight-semibold;
+      color: t.$text-light;
+      background: t.$light-gray;
+    }
+
+    tbody tr:hover {
+      background: rgba(t.$primary-blue, 0.03);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: t.$space-8;
+    flex-wrap: wrap;
+  }
+
+  .btn-link {
+    border: none;
+    background: transparent;
+    color: t.$primary-blue;
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-semibold;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover:not(:disabled) {
+      text-decoration: underline;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &--danger {
+      color: t.$error;
+    }
+  }
+}
