@@ -1,6 +1,6 @@
 import multer from 'multer';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import {
   IMAGEN_EXTENSION_POR_MIME,
   IMAGEN_MIME_PERMITIDOS,
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
   },
   filename: (_req, file, cb) => {
     const ext = IMAGEN_EXTENSION_POR_MIME[file.mimetype] ?? path.extname(file.originalname).toLowerCase();
-    cb(null, `${uuidv4()}${ext}`);
+    cb(null, `${randomUUID()}${ext}`);
   },
 });
 

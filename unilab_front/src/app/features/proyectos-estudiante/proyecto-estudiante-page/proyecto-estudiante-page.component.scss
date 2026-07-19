@@ -8,10 +8,27 @@
   padding: t.$space-24 t.$space-16 t.$space-48;
 }
 
+.proyecto-page__back {
+  display: inline-block;
+  margin-bottom: t.$space-12;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: ui-monospace, monospace;
+  font-size: t.$font-size-xs;
+  color: rgba(p.$portal-gold, 0.75);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color t.$transition-base, transform t.$transition-base, letter-spacing t.$transition-base;
+
+  &:hover {
+    color: p.$portal-gold-light;
+    transform: translateX(-4px);
+    letter-spacing: 0.08em;
+  }
+}
+
 .proyecto-page__header {
-  display: flex;
-  flex-direction: column;
-  gap: t.$space-12;
   margin-bottom: t.$space-24;
 
   h1 {

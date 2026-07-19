@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "API UniLab",
-    "description": "Colección Postman de la plataforma universitaria UniLab.\n\n**Contraseña de prueba (seed):** Password123!\n\n**Uso:**\n1. Importar el entorno `postman_environment.json`\n2. Ejecutar «Iniciar sesión» según el rol necesario — guarda el token automáticamente\n3. Probar el resto de solicitudes\n\n**Flujo eventos — portal estudiante (unilab-prepro):**\n1. Estudiante → `Listar eventos` → `Obtener evento por ID`\n2. `Consultar mi inscripción` → `Inscribirse a evento` (si no está inscrito)\n3. `Listar jornadas del evento` → `Registrar asistencia - Endpoint principal` (QR)\n\n**Flujo proyectos — portal estudiante + profesor (rama actual):**\n1. Estudiante → `Listar coordinadores disponibles` (si no hay semillero)\n2. Estudiante → `Crear proyecto` → `Subir imágenes` → `Enviar a revisión`\n3. Profesor coordinador → `Aprobar y publicar` (`estado_proyecto: publicado`)\n4. Verificar en `Listar proyectos publicados por escuela` (carpeta Público)",
+    "description": "Colección Postman de la plataforma universitaria UniLab.\n\n**Contraseña de prueba (seed):** Password123!\n\n**Entornos (importar uno o todos):**\n| Archivo | Cuándo usar |\n|---------|-------------|\n| `postman_environment.json` | Backend local con `npm run dev` |\n| `postman_environment.docker.json` | Stack Docker Compose (`docker compose up`) |\n| `postman_environment.production.json` | Plantilla para API en producción (editar URLs) |\n\n**Variables clave:** `base_url` (API con `/api`), `api_root` (host sin `/api`), `swagger_url`, `front_url`, `token`.\n\n**Uso:**\n1. Importar la colección y el entorno que corresponda\n2. Seleccionar el entorno en Postman (esquina superior derecha)\n3. Ejecutar «Iniciar sesión» según el rol — guarda el token en `token`\n4. Probar el resto de solicitudes (mismos endpoints, distinto host/puerto según entorno)\n\n**Flujo eventos — portal estudiante:**\n1. Estudiante → `Listar eventos` → `Obtener evento por ID`\n2. `Consultar mi inscripción` → `Inscribirse a evento` (si no está inscrito)\n3. `Listar jornadas del evento` → `Registrar asistencia - Endpoint principal` (QR)\n\n**Flujo proyectos — portal estudiante + profesor:**\n1. Estudiante → `Listar coordinadores disponibles` (si no hay semillero)\n2. Estudiante → `Crear proyecto` → `Subir imágenes` → `Enviar a revisión`\n3. Profesor coordinador → `Aprobar y publicar` (`estado_proyecto: publicado`)\n4. Verificar en `Listar proyectos publicados por escuela` (carpeta Público)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -875,6 +875,28 @@
           }
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "api_root",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "swagger_url",
+      "value": "http://localhost:3000/api-docs",
+      "type": "string"
+    },
+    {
+      "key": "front_url",
+      "value": "http://localhost:4200",
+      "type": "string"
     }
   ]
 }

@@ -30,7 +30,9 @@
     @if (imagenes().length > 0) {
       <section class="proyectos-prof-detalle__section">
         <h2>{{ 'proyectosProfesor.imagenes' | translate }}</h2>
-        <app-project-image-carousel [images]="imagenes()" [alt]="p.titulo" />
+        <div class="proyectos-prof-detalle__media">
+          <app-project-image-carousel [images]="imagenes()" [alt]="p.titulo" />
+        </div>
       </section>
     }
 

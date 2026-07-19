@@ -233,6 +233,7 @@ export const eventoService = {
       nombre_completo: i.nombre_completo,
       documento_identidad: i.documento_identidad,
       email: i.email,
+      genero: i.genero,
       tipo_asistente: i.tipo_asistente,
       estado_pago: i.estado_pago,
       total_asistencias: asistenciasPorInscripcion[i.id_inscripcion] || 0,
@@ -273,13 +274,14 @@ export const eventoService = {
 
   async exportarCSV(id_evento: number) {
     const reporte = await eventoService.reportes(id_evento);
-    let csv = 'Nombre,Documento,Email,Tipo Asistente,Estado Pago,Total Asistencias\n';
+    let csv = 'Nombre,Documento,Email,Género,Tipo Asistente,Estado Pago,Total Asistencias\n';
     
     reporte.inscritos.forEach((inscrito) => {
       const row = [
         `"${inscrito.nombre_completo}"`,
         `"${inscrito.documento_identidad}"`,
         `"${inscrito.email}"`,
+        inscrito.genero,
         inscrito.tipo_asistente,
         inscrito.estado_pago || 'N/A',
         inscrito.total_asistencias,
@@ -300,6 +302,7 @@ export const eventoService = {
       { header: 'Nombre', key: 'nombre_completo', width: 20 },
       { header: 'Documento', key: 'documento_identidad', width: 15 },
       { header: 'Email', key: 'email', width: 25 },
+      { header: 'Género', key: 'genero', width: 12 },
       { header: 'Tipo Asistente', key: 'tipo_asistente', width: 15 },
       { header: 'Estado Pago', key: 'estado_pago', width: 15 },
       { header: 'Asistencias', key: 'total_asistencias', width: 12 },

@@ -53,6 +53,22 @@
     }
   }
 
+  &__media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: clamp(220px, 40vh, 480px);
+    border-radius: t.$radius-lg;
+    overflow: hidden;
+    border: 1px solid rgba(t.$primary-blue, 0.12);
+    background: rgba(t.$primary-blue, 0.04);
+
+    app-project-image-carousel {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   &__links ul {
     margin: 0;
     padding-left: t.$space-20;

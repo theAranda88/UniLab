@@ -76,18 +76,61 @@ export const autorizacionCursoSchema = z.object({
   id_estudiante: z.number().int().positive(),
 });
 
-export const proyectoSchema = z.object({
-  id_curso: z.number().int().positive(),
-  id_semillero: z.number().int().positive().optional(),
-  id_profesor_coordinador: z.number().int().positive().optional(),
-  titulo: z.string().min(1),
-  descripcion: z.string().min(1),
-  tipo_proyecto: z.enum(['web', 'movil', 'podcast', 'otro']),
-  url_aplicativo: z.string().url(),
+const proyectoUrlsSchema = z.object({
+  url_aplicativo: z.string().url().optional(),
   url_imagen: z.string().url().optional(),
   url_apk: z.string().url().optional(),
   url_youtube: z.string().url().optional(),
   url_spotify: z.string().url().optional(),
+});
+
+function validarUrlsPorTipoProyecto(
+  tipo: 'web' | 'movil' | 'podcast' | 'otro',
+  urls: z.infer<typeof proyectoUrlsSchema>,
+  ctx: z.RefinementCtx,
+): void {
+  if (!urls.url_youtube) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'La URL de YouTube es obligatoria',
+      path: ['url_youtube'],
+    });
+  }
+
+  if (tipo === 'podcast') {
+    return;
+  }
+
+  if (!urls.url_aplicativo) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'La URL del aplicativo es obligatoria',
+      path: ['url_aplicativo'],
+    });
+  }
+
+  if (tipo === 'movil' && !urls.url_apk) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'La URL del APK es obligatoria para aplicaciones móviles',
+      path: ['url_apk'],
+    });
+  }
+}
+
+const proyectoBaseSchema = z
+  .object({
+    id_curso: z.number().int().positive(),
+    id_semillero: z.number().int().positive().optional(),
+    id_profesor_coordinador: z.number().int().positive().optional(),
+    titulo: z.string().min(1),
+    descripcion: z.string().min(1),
+    tipo_proyecto: z.enum(['web', 'movil', 'podcast', 'otro']),
+  })
+  .merge(proyectoUrlsSchema);
+
+export const proyectoSchema = proyectoBaseSchema.superRefine((data, ctx) => {
+  validarUrlsPorTipoProyecto(data.tipo_proyecto, data, ctx);
 });
 
 export const imagenProyectoParamSchema = z.object({
@@ -95,7 +138,10 @@ export const imagenProyectoParamSchema = z.object({
   idImagen: z.coerce.number().int().positive(),
 });
 
-export const actualizarProyectoSchema = proyectoSchema.partial();
+export const actualizarProyectoSchema = proyectoBaseSchema.partial().superRefine((data, ctx) => {
+  if (!data.tipo_proyecto) return;
+  validarUrlsPorTipoProyecto(data.tipo_proyecto, data, ctx);
+});
 
 export const estadoProyectoSchema = z.object({
   estado_proyecto: z.enum(['borrador', 'en_revision', 'aprobado', 'publicado', 'rechazado']),

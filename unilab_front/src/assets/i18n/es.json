@@ -557,6 +557,7 @@
     "profesorCoordinador": "Profesor que aprobará el proyecto",
     "seleccioneProfesor": "Seleccione un profesor",
     "profesorCoordinadorHint": "El profesor elegido revisará y aprobará tu proyecto.",
+    "sinProfesoresDisponibles": "No hay profesores registrados en la escuela de este curso. Un administrador debe crear profesores para esa escuela, o puedes asociar tu proyecto a un semillero con líder asignado.",
     "aprobadorSemillero": "Aprobará el proyecto: {{nombre}} (líder del semillero)",
     "errorProfesorRequerido": "Debes seleccionar un profesor coordinador.",
     "campoTitulo": "Título",

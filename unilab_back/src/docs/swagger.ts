@@ -23,6 +23,18 @@ Usuarios sembrados (contraseña para todos: **Password123!**):
 3. Clic en **Authorize** (arriba) → pegar: \`Bearer <token>\`
 4. Probar los endpoints protegidos
 
+### Entornos de ejecución
+
+| Entorno | API | Swagger UI | Cómo levantar |
+|---------|-----|------------|---------------|
+| **Local (npm)** | \`http://localhost:3000/api\` | \`http://localhost:3000/api-docs\` | \`npm run dev\` en \`unilab_back/\` |
+| **Docker Compose** | \`http://localhost:3000/api\` | \`http://localhost:3000/api-docs\` | \`docker compose up\` en la raíz del monorepo |
+| **Producción** | \`API_PUBLIC_URL/api\` | \`{API_PUBLIC_URL}/api-docs\` | Backend desplegado (Railway, Render, VPS, etc.) |
+
+En Docker, el front se sirve en \`http://localhost:8080\` (variable \`FRONT_PORT\`). Postman solo consume la API; usa el selector de **servers** arriba para cambiar de entorno.
+
+**Seed en Docker:** \`docker compose exec api npx prisma db seed\`
+
 ### Portal público (sin JWT)
 - \`GET /public/escuelas\` — escuelas con \`total_proyectos_publicados\`
 - \`GET /public/cursos?id_escuela=\` — cursos por escuela
@@ -46,7 +58,16 @@ export const swaggerSpec = swaggerJsdoc({
       version: '1.0.0',
       description,
     },
-    servers: [{ url: 'http://localhost:3000/api', description: 'Desarrollo local' }],
+    servers: [
+      {
+        url: 'http://localhost:3000/api',
+        description: 'Local (npm run dev) o Docker Compose — puerto API_PORT por defecto 3000',
+      },
+      {
+        url: 'https://TU_API_EN_PRODUCCION/api',
+        description: 'Producción — reemplazar por API_PUBLIC_URL del despliegue',
+      },
+    ],
     tags: [
       { name: 'Auth', description: 'Autenticación y contraseñas' },
       { name: 'Usuarios', description: 'Gestión de usuarios (Admin)' },

@@ -265,10 +265,46 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
 
 1. Importa en Postman:
    - `docs/postman_collection.json`
-   - `docs/postman_environment.json`
-2. Selecciona el entorno **UniLab — Entorno local**.
-3. Ejecuta **Iniciar sesión (Administrador)** — el token se guarda solo en la variable `token`.
-4. Prueba el resto de solicitudes de la colección.
+   - Uno o más entornos:
+     - `docs/postman_environment.json` — backend local (`npm run dev`)
+     - `docs/postman_environment.docker.json` — stack Docker (`docker compose up`)
+     - `docs/postman_environment.production.json` — plantilla para producción (editar URLs)
+2. Selecciona el entorno en Postman (esquina superior derecha).
+3. Ejecuta **Iniciar sesión (Administrador)** — el token se guarda en la variable `token`.
+4. Prueba el resto de solicitudes. Los endpoints son los mismos; cambia solo `base_url` / `api_root` según el entorno.
+
+### Variables de entorno Postman
+
+| Variable | Descripción |
+|----------|-------------|
+| `base_url` | Raíz de la API con `/api` (ej. `http://localhost:3000/api`) |
+| `api_root` | Host del backend sin `/api` (health, uploads, Swagger) |
+| `swagger_url` | URL de Swagger UI |
+| `front_url` | URL del frontend (4200 local, 8080 Docker) |
+| `token` | JWT — se llena al iniciar sesión |
+
+Si cambias `API_PORT` en Docker, actualiza `base_url` y `api_root` en el entorno **Docker Compose**.
+
+---
+
+## 10b. Probar con Docker Compose
+
+Desde la raíz del monorepo (`unilab/`):
+
+```bash
+cp .env.example .env
+docker compose up -d --build
+docker compose exec api npx prisma db seed   # primera vez o BD vacía
+```
+
+| Servicio | URL por defecto |
+|----------|----------------|
+| API | http://localhost:3000/api |
+| Swagger | http://localhost:3000/api-docs |
+| Frontend | http://localhost:8080 |
+| PostgreSQL | `localhost:5432` (usuario/contraseña: `postgres`) |
+
+En Postman, usa el entorno **UniLab — Docker Compose**.
 
 ---
 
@@ -339,7 +375,9 @@ Solo vuelve a sembrar si te lo indica el equipo o si necesitas resetear datos lo
 | `00-esquema-bd-referencia.md` | Modelo de datos (22 tablas) — fuente de verdad |
 | `01-prompt-maestro-backend.md` | Plan de construcción del backend |
 | `postman_collection.json` | Colección de endpoints en español |
-| `postman_environment.json` | Variables `base_url` y `token` |
+| `postman_environment.json` | Entorno local (`npm run dev`) |
+| `postman_environment.docker.json` | Entorno Docker Compose |
+| `postman_environment.production.json` | Plantilla de entorno producción |
 
 ---
 

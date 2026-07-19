@@ -36,10 +36,11 @@
               <th>{{ 'common.nombre' | translate }}</th>
               <th>{{ 'common.documento' | translate }}</th>
               <th>{{ 'common.email' | translate }}</th>
+              <th>{{ 'common.genero' | translate }}</th>
               <th>{{ 'inscripcion.tipoAsistente' | translate }}</th>
               <th>{{ 'reporte.estadoPago' | translate }}</th>
               <th>{{ 'reporte.asistencia' | translate }}</th>
-              @if (puedeActualizarPago()) {
+              @if (mostrarColumnaAcciones()) {
                 <th>{{ 'reporte.acciones' | translate }}</th>
               }
             </tr>
@@ -50,6 +51,7 @@
                 <td>{{ inscrito.nombre_completo }}</td>
                 <td>{{ inscrito.documento_identidad }}</td>
                 <td>{{ inscrito.email }}</td>
+                <td>{{ etiquetaGenero(inscrito.genero) | translate }}</td>
                 <td>
                   <span class="badge" [class]="'tipo-' + inscrito.tipo_asistente">
                     {{ 'inscripcion.' + inscrito.tipo_asistente | translate }}
@@ -63,7 +65,7 @@
                 <td>
                   <span class="porcentaje">{{ calcularPorcentajeAsistencia(inscrito) }}</span>
                 </td>
-                @if (puedeActualizarPago()) {
+                @if (mostrarColumnaAcciones()) {
                   <td>
                     @if (inscrito.estado_pago === 'pendiente') {
                       <button

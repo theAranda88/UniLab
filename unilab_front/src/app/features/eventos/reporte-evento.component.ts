@@ -26,6 +26,15 @@ export class ReporteEventoComponent implements OnInit {
 
   puedeActualizarPago = computed(() => this.eventoService.puedeActualizarPago());
 
+  tienePagosPendientes = computed(() => {
+    const inscritos = this.reporte()?.inscritos ?? [];
+    return inscritos.some((inscrito) => inscrito.estado_pago === 'pendiente');
+  });
+
+  mostrarColumnaAcciones = computed(
+    () => this.puedeActualizarPago() && this.tienePagosPendientes(),
+  );
+
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const rep = this.reporte();
     const base = this.eventoService.getBasePath();
@@ -112,5 +121,14 @@ export class ReporteEventoComponent implements OnInit {
     if (totalJornadas === 0) return '0%';
     const porcentaje = Math.round((inscrito.total_asistencias / totalJornadas) * 100);
     return `${porcentaje}%`;
+  }
+
+  etiquetaGenero(genero: string): string {
+    const mapa: Record<string, string> = {
+      M: 'common.masculino',
+      F: 'common.femenino',
+      O: 'common.otro',
+    };
+    return mapa[genero] ?? 'common.otro';
   }
 }

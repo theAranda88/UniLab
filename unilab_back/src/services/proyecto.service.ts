@@ -15,8 +15,20 @@ const TRANSICIONES: Record<string, string[]> = {
 };
 
 type ProyectoConRelaciones = NonNullable<Awaited<ReturnType<typeof proyectoRepository.findById>>>;
+type ProyectoListado = Awaited<ReturnType<typeof proyectoRepository.findMany>>[number];
 
-function enriquecerProyecto(proyecto: ProyectoConRelaciones) {
+function resolverUrlAplicativo(data: {
+  tipo_proyecto?: string;
+  url_aplicativo?: string;
+  url_youtube?: string;
+}): string | undefined {
+  if (data.tipo_proyecto === 'podcast') {
+    return data.url_youtube ?? data.url_aplicativo;
+  }
+  return data.url_aplicativo;
+}
+
+function enriquecerProyecto(proyecto: ProyectoConRelaciones | ProyectoListado) {
   const imagenes = proyecto.imagenes?.length
     ? proyectoImagenService.mapImagenes(proyecto.imagenes)
     : [];
@@ -140,7 +152,7 @@ export const proyectoService = {
           titulo: data.titulo,
           descripcion: data.descripcion,
           tipo_proyecto: data.tipo_proyecto,
-          url_aplicativo: data.url_aplicativo,
+          url_aplicativo: resolverUrlAplicativo(data) ?? '',
           url_imagen: data.url_imagen ?? null,
           url_apk: data.url_apk,
           url_youtube: data.url_youtube,
@@ -179,11 +191,17 @@ export const proyectoService = {
 
   async actualizar(id: number, rol: string, id_usuario: number, data: Record<string, unknown>) {
     await verificarPermisoGestion(id, rol, id_usuario);
+    const tipo = data.tipo_proyecto as string | undefined;
+    const urlAplicativo = resolverUrlAplicativo({
+      tipo_proyecto: tipo,
+      url_aplicativo: data.url_aplicativo as string | undefined,
+      url_youtube: data.url_youtube as string | undefined,
+    });
     await proyectoRepository.update(id, {
       titulo: data.titulo as string | undefined,
       descripcion: data.descripcion as string | undefined,
-      tipo_proyecto: data.tipo_proyecto as string | undefined,
-      url_aplicativo: data.url_aplicativo as string | undefined,
+      tipo_proyecto: tipo,
+      ...(urlAplicativo !== undefined ? { url_aplicativo: urlAplicativo } : {}),
       url_imagen: data.url_imagen as string | undefined,
       url_apk: data.url_apk as string | undefined,
       url_youtube: data.url_youtube as string | undefined,

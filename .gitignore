@@ -93,3 +93,7 @@ prisma/.env
 /tmp/
 /temp/
 /local/
+uploads/
+
+# Docker local env
+.env

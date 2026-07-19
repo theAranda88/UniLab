@@ -6,11 +6,12 @@ import routes from './routes';
 import { swaggerSpec } from './docs/swagger';
 import { errorHandler } from './middlewares/errorHandler';
 import { UPLOADS_ROOT } from './utils/uploadPaths';
+import { buildCorsOptions } from './config/cors';
 
 const app = express();
-const port = process.env.PORT ?? 3000;
+const port = Number(process.env.PORT ?? 3000);
 
-app.use(cors());
+app.use(cors(buildCorsOptions()));
 app.use(express.json());
 app.use('/uploads', express.static(UPLOADS_ROOT));
 

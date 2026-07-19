@@ -549,6 +549,7 @@
     "profesorCoordinador": "Professor who will approve the project",
     "seleccioneProfesor": "Select a professor",
     "profesorCoordinadorHint": "The selected professor will review and approve your project.",
+    "sinProfesoresDisponibles": "There are no professors registered for this course's school. An administrator must create professors for that school, or you can link your project to a research group with an assigned leader.",
     "aprobadorSemillero": "Will approve the project: {{nombre}} (research group leader)",
     "errorProfesorRequerido": "You must select a coordinating professor.",
     "campoTitulo": "Title",

@@ -71,9 +71,9 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     titulo: ['', [Validators.required, Validators.minLength(3)]],
     descripcion: ['', [Validators.required, Validators.minLength(20)]],
     tipo_proyecto: ['web' as TipoProyecto, Validators.required],
-    url_aplicativo: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
+    url_aplicativo: [''],
     url_apk: [''],
-    url_youtube: [''],
+    url_youtube: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
     url_spotify: [''],
   });
 
@@ -146,8 +146,13 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
       this.actualizarValidacionProfesor();
     });
 
+    this.formulario.controls.tipo_proyecto.valueChanges.subscribe(() => {
+      this.actualizarValidacionUrls();
+    });
+
     if (isNuevo) {
       this.actualizarValidacionProfesor();
+      this.actualizarValidacionUrls();
     }
   }
 
@@ -201,6 +206,29 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     control.updateValueAndValidity({ emitEvent: false });
   }
 
+  private actualizarValidacionUrls(): void {
+    const tipo = this.formulario.controls.tipo_proyecto.value;
+    const urlPattern = Validators.pattern(/^https?:\/\/.+/);
+    const aplicativo = this.formulario.controls.url_aplicativo;
+    const apk = this.formulario.controls.url_apk;
+
+    aplicativo.clearValidators();
+    apk.clearValidators();
+
+    if (tipo !== 'podcast') {
+      aplicativo.setValidators([Validators.required, urlPattern]);
+    }
+
+    if (tipo === 'movil') {
+      apk.setValidators([Validators.required, urlPattern]);
+    } else {
+      apk.setValue('', { emitEvent: false });
+    }
+
+    aplicativo.updateValueAndValidity({ emitEvent: false });
+    apk.updateValueAndValidity({ emitEvent: false });
+  }
+
   private cargarCatalogos(): void {
     this.proyectosService.listarCursos().subscribe({
       next: (data) => this.cursos.set(data),
@@ -244,6 +272,8 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     if (!this.puedeEditar()) {
       this.formulario.disable();
     }
+
+    this.actualizarValidacionUrls();
   }
 
   private syncImagenes(p: Proyecto): void {
@@ -284,6 +314,8 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     this.error.set(null);
 
     const raw = this.formulario.getRawValue();
+    const tipo = raw.tipo_proyecto;
+    const urlYoutube = raw.url_youtube.trim();
     const payload = {
       id_curso: raw.id_curso,
       id_semillero: raw.id_semillero > 0 ? raw.id_semillero : undefined,
@@ -293,10 +325,10 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
           : undefined,
       titulo: raw.titulo.trim(),
       descripcion: raw.descripcion.trim(),
-      tipo_proyecto: raw.tipo_proyecto,
-      url_aplicativo: raw.url_aplicativo.trim(),
+      tipo_proyecto: tipo,
+      url_aplicativo: tipo === 'podcast' ? urlYoutube : raw.url_aplicativo.trim(),
       url_apk: raw.url_apk?.trim() || undefined,
-      url_youtube: raw.url_youtube?.trim() || undefined,
+      url_youtube: urlYoutube,
       url_spotify: raw.url_spotify?.trim() || undefined,
     };
 
@@ -507,10 +539,11 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     if (id) this.router.navigate(['/proyectos', id]);
   }
 
-  mostrarCampo(tipo: 'apk' | 'youtube' | 'spotify'): boolean {
+  mostrarCampo(tipo: 'aplicativo' | 'apk' | 'youtube' | 'spotify'): boolean {
     const t = this.formulario.controls.tipo_proyecto.value;
+    if (tipo === 'youtube') return true;
+    if (tipo === 'aplicativo') return t !== 'podcast';
     if (tipo === 'apk') return t === 'movil';
-    if (tipo === 'youtube') return t === 'podcast' || t === 'web';
     if (tipo === 'spotify') return t === 'podcast';
     return false;
   }

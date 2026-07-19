@@ -122,6 +122,7 @@ export interface ReporteEventoRow {
   nombre_completo: string;
   documento_identidad: string;
   email: string;
+  genero: string;
   tipo_asistente: string;
   estado_pago?: string;
   asistencias: { [jornadaId: number]: boolean };
