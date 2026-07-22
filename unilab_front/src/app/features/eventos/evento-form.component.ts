@@ -30,6 +30,10 @@ export class EventoFormComponent implements OnInit {
   modoEdicion = signal(false);
   idEvento = signal<number | null>(null);
   nombreEvento = signal('');
+  urlFlyerActual = signal<string | null>(null);
+  flyerPendiente = signal<File | null>(null);
+  flyerPreview = signal<string | null>(null);
+  subiendoFlyer = signal(false);
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const base = this.eventoService.getBasePath();
@@ -88,6 +92,7 @@ export class EventoFormComponent implements OnInit {
           estado: evento.estado,
           requiere_pago: evento.requiere_pago,
         });
+        this.urlFlyerActual.set(evento.url_flyer ?? null);
         this.cargando.set(false);
       },
       error: () => {
@@ -99,6 +104,58 @@ export class EventoFormComponent implements OnInit {
 
   private toDateInput(fecha: string): string {
     return fecha.split('T')[0];
+  }
+
+  onFlyerSeleccionado(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.flyerPendiente.set(file);
+    this.flyerPreview.set(URL.createObjectURL(file));
+  }
+
+  quitarFlyerPendiente(): void {
+    this.flyerPendiente.set(null);
+    this.flyerPreview.set(null);
+  }
+
+  eliminarFlyerActual(): void {
+    const id = this.idEvento();
+    if (!id) return;
+    this.subiendoFlyer.set(true);
+    this.eventoService.eliminarFlyer(id).subscribe({
+      next: () => {
+        this.urlFlyerActual.set(null);
+        this.subiendoFlyer.set(false);
+      },
+      error: () => {
+        this.error.set('eventos.flyerError');
+        this.subiendoFlyer.set(false);
+      },
+    });
+  }
+
+  private subirFlyerSiHay(idEvento: number, alTerminar: () => void): void {
+    const file = this.flyerPendiente();
+    if (!file) {
+      alTerminar();
+      return;
+    }
+    this.subiendoFlyer.set(true);
+    this.eventoService.subirFlyer(idEvento, file).subscribe({
+      next: (res) => {
+        this.urlFlyerActual.set(res.url_flyer);
+        this.flyerPendiente.set(null);
+        this.flyerPreview.set(null);
+        this.subiendoFlyer.set(false);
+        alTerminar();
+      },
+      error: () => {
+        this.error.set('eventos.flyerError');
+        this.subiendoFlyer.set(false);
+        alTerminar();
+      },
+    });
   }
 
   submit() {
@@ -114,12 +171,14 @@ export class EventoFormComponent implements OnInit {
       const data: UpdateEventoDto = this.formulario.value;
       this.eventoService.actualizar(this.idEvento()!, data).subscribe({
         next: async () => {
-          this.enviando.set(false);
-          await this.dialog.success({
-            titleKey: 'dialog.success.title',
-            messageKey: 'eventos.exitoActualizar',
+          this.subirFlyerSiHay(this.idEvento()!, async () => {
+            this.enviando.set(false);
+            await this.dialog.success({
+              titleKey: 'dialog.success.title',
+              messageKey: 'eventos.exitoActualizar',
+            });
+            this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
           });
-          this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
         },
         error: async (err: { message?: string }) => {
           this.error.set(err.message ?? 'eventos.errorActualizar');
@@ -130,12 +189,14 @@ export class EventoFormComponent implements OnInit {
       const eventoData: CreateEventoDto = this.formulario.value;
       this.eventoService.crear(eventoData).subscribe({
         next: async (evento) => {
-          this.enviando.set(false);
-          await this.dialog.success({
-            titleKey: 'dialog.success.title',
-            messageKey: 'eventos.exitoCrear',
+          this.subirFlyerSiHay(evento.id_evento, async () => {
+            this.enviando.set(false);
+            await this.dialog.success({
+              titleKey: 'dialog.success.title',
+              messageKey: 'eventos.exitoCrear',
+            });
+            this.router.navigate([this.eventoService.getBasePath(), evento.id_evento]);
           });
-          this.router.navigate([this.eventoService.getBasePath(), evento.id_evento]);
         },
         error: async (err: { message?: string }) => {
           this.error.set(err.message ?? 'eventos.errorCrear');

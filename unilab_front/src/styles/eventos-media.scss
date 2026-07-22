@@ -1,0 +1,69 @@
+@use './design-tokens' as t;
+@use './eventos-ui' as ui;
+
+.evidencias-section {
+  margin-top: t.$space-16;
+  padding-top: t.$space-16;
+  border-top: 1px solid t.$border-gray;
+
+  .evidencias-title {
+    margin: 0 0 t.$space-4;
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-semibold;
+    color: t.$primary-blue;
+  }
+
+  .form-hint {
+    @include ui.form-hint;
+    margin-bottom: t.$space-12;
+  }
+
+  .evidencias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: t.$space-12;
+  }
+
+  .evidencia-item {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: t.$radius-md;
+    overflow: hidden;
+    border: 1px solid t.$border-gray;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    &__remove {
+      position: absolute;
+      top: t.$space-8;
+      right: t.$space-8;
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: t.$radius-full;
+      background: rgba(0, 0, 0, 0.65);
+      color: t.$white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: t.$error;
+      }
+    }
+  }
+
+  .evidencia-upload {
+    @include ui.image-upload-zone;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+    font-size: t.$font-size-xs;
+  }
+}

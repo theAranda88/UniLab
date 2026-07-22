@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import QRCode from 'qrcode';
 import { EventosService } from './eventos.service';
-import { Evento, EventoJornada, Inscripcion } from '../../core/models/evento.model';
+import { Evento, EventoJornada, Inscripcion, JornadaEvidencia } from '../../core/models/evento.model';
 import { FormsModule } from '@angular/forms';
 import { InscripcionFormComponent } from './inscripcion-form.component';
 import { JornadaFormComponent } from './jornada-form.component';
@@ -74,6 +74,7 @@ export class EventoDetalleComponent implements OnInit {
   });
   puedeVerReportes = computed(() => this.eventoService.puedeVerReportes());
   puedeListarInscripciones = computed(() => this.eventoService.puedeListarInscripciones());
+  puedeGestionarEvidencias = computed(() => this.eventoService.puedeGestionarEvidencias());
   puedeActualizarPago = computed(() => this.eventoService.puedeActualizarPago());
   puedeVerJornadas = computed(
     () =>
@@ -99,6 +100,8 @@ export class EventoDetalleComponent implements OnInit {
   mostrarFormularioInscripcion = signal(false);
   mostrarFormularioJornada = signal(false);
   qrUrls = signal<Record<number, string>>({});
+  evidenciasPorJornada = signal<Record<number, JornadaEvidencia[]>>({});
+  subiendoEvidenciasJornada = signal<number | null>(null);
 
   ngOnInit() {
     this.portalTheme.set(hasPortalTheme(this.route));
@@ -176,6 +179,9 @@ export class EventoDetalleComponent implements OnInit {
         if (this.eventoService.puedeListarInscripciones()) {
           this.generarQRsParaJornadas(data);
         }
+        if (this.puedeGestionarEvidencias()) {
+          this.cargarEvidenciasJornadas(data);
+        }
       },
       error: (err: { status?: number }) => {
         this.jornadas.set([]);
@@ -234,6 +240,72 @@ export class EventoDetalleComponent implements OnInit {
 
   cerrarFormularioJornada() {
     this.mostrarFormularioJornada.set(false);
+  }
+
+  evidenciasDeJornada(idJornada: number): JornadaEvidencia[] {
+    return this.evidenciasPorJornada()[idJornada] ?? [];
+  }
+
+  maxEvidenciasRestantes(idJornada: number): number {
+    return Math.max(0, 3 - this.evidenciasDeJornada(idJornada).length);
+  }
+
+  private cargarEvidenciasJornadas(jornadas: EventoJornada[]): void {
+    for (const jornada of jornadas) {
+      this.eventoService.listarEvidenciasJornada(jornada.id_jornada).subscribe({
+        next: (evidencias) => {
+          this.evidenciasPorJornada.update((prev) => ({
+            ...prev,
+            [jornada.id_jornada]: evidencias,
+          }));
+        },
+      });
+    }
+  }
+
+  onEvidenciasSeleccionadas(idJornada: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files ? Array.from(input.files) : [];
+    input.value = '';
+    if (!files.length) return;
+
+    const max = this.maxEvidenciasRestantes(idJornada);
+    if (files.length > max) {
+      void this.dialog.error({
+        titleKey: 'dialog.error.title',
+        messageKey: 'jornadas.evidenciasError',
+      });
+      return;
+    }
+
+    this.subiendoEvidenciasJornada.set(idJornada);
+    this.eventoService.subirEvidenciasJornada(idJornada, files).subscribe({
+      next: (evidencias) => {
+        this.evidenciasPorJornada.update((prev) => ({
+          ...prev,
+          [idJornada]: evidencias,
+        }));
+        this.subiendoEvidenciasJornada.set(null);
+      },
+      error: () => {
+        this.subiendoEvidenciasJornada.set(null);
+        void this.dialog.error({
+          titleKey: 'dialog.error.title',
+          messageKey: 'jornadas.evidenciasError',
+        });
+      },
+    });
+  }
+
+  eliminarEvidencia(idJornada: number, idEvidencia: number): void {
+    this.eventoService.eliminarEvidenciaJornada(idJornada, idEvidencia).subscribe({
+      next: () => {
+        this.evidenciasPorJornada.update((prev) => ({
+          ...prev,
+          [idJornada]: (prev[idJornada] ?? []).filter((e) => e.id_evidencia !== idEvidencia),
+        }));
+      },
+    });
   }
 
   async onJornadaCreada() {

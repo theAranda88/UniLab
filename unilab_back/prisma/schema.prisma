@@ -66,6 +66,7 @@ model usuarios {
   semillero_miembros_creados    semillero_miembros[]    @relation("semillero_miembros_creador")
   eventos_creados               eventos[]               @relation("eventos_creador")
   evento_jornadas_creadas       evento_jornadas[]       @relation("evento_jornadas_creador")
+  evento_jornada_evidencias_creadas evento_jornada_evidencias[] @relation("evento_jornada_evidencias_creador")
   inscripciones_creadas         inscripciones[]         @relation("inscripciones_creador")
   asistencias_creadas           asistencias[]           @relation("asistencias_creador")
 
@@ -417,6 +418,8 @@ model eventos {
   id_organizador Int
   estado         String   @db.VarChar(50)
   requiere_pago  Boolean  @default(false)
+  flyer_ruta_archivo String? @db.VarChar(500)
+  url_flyer          String? @db.VarChar(500)
   created_at     DateTime @default(now()) @db.Timestamp(6)
   updated_at     DateTime @updatedAt @db.Timestamp(6)
   created_by     Int?
@@ -445,6 +448,23 @@ model evento_jornadas {
   evento      eventos       @relation(fields: [id_evento], references: [id_evento], onDelete: Restrict)
   creador     usuarios?     @relation("evento_jornadas_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
   asistencias asistencias[]
+  evidencias  evento_jornada_evidencias[]
+}
+
+model evento_jornada_evidencias {
+  id_evidencia    Int       @id @default(autoincrement())
+  id_jornada      Int
+  ruta_archivo    String    @db.VarChar(500)
+  nombre_original String    @db.VarChar(255)
+  mime_type       String    @db.VarChar(100)
+  orden           Int
+  created_at      DateTime  @default(now()) @db.Timestamp(6)
+  updated_at      DateTime  @updatedAt @db.Timestamp(6)
+  created_by      Int?
+  deleted_at      DateTime? @db.Timestamp(6)
+
+  jornada evento_jornadas @relation(fields: [id_jornada], references: [id_jornada], onDelete: Restrict)
+  creador usuarios?       @relation("evento_jornada_evidencias_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
 }
 
 model inscripciones {

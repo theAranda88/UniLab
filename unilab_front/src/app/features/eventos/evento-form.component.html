@@ -112,6 +112,45 @@
         <label for="requiere_pago">{{ 'eventos.requierePago' | translate }}</label>
       </div>
 
+      <div class="form-group flyer-group">
+        <label for="flyer">{{ 'eventos.flyer' | translate }}</label>
+        <p class="form-hint">{{ 'eventos.flyerHint' | translate }}</p>
+        @if (urlFlyerActual()) {
+          <div class="image-preview-card">
+            <img [src]="urlFlyerActual()!" [alt]="'eventos.flyer' | translate" />
+            @if (modoEdicion()) {
+              <div class="image-preview-actions">
+                <button type="button" class="btn btn-secondary btn-sm" (click)="eliminarFlyerActual()" [disabled]="subiendoFlyer()">
+                  {{ 'eventos.flyerEliminar' | translate }}
+                </button>
+              </div>
+            }
+          </div>
+        }
+        @if (flyerPreview()) {
+          <div class="image-preview-card">
+            <img [src]="flyerPreview()!" [alt]="'eventos.flyer' | translate" />
+            <div class="image-preview-actions">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="quitarFlyerPendiente()">
+                {{ 'common.cancelar' | translate }}
+              </button>
+            </div>
+          </div>
+        }
+        @if (!flyerPreview()) {
+          <label class="image-upload-zone" for="flyer">
+            <i class="ti ti-photo-up" aria-hidden="true"></i>
+            <span>{{ 'eventos.flyerSeleccionar' | translate }}</span>
+            <input
+              type="file"
+              id="flyer"
+              accept="image/jpeg,image/png,image/webp"
+              (change)="onFlyerSeleccionado($event)"
+            />
+          </label>
+        }
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" [disabled]="enviando()">
           @if (enviando()) {

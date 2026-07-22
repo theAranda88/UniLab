@@ -715,6 +715,36 @@
           }
         },
         {
+          "name": "Subir flyer del evento",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "flyer", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/eventos/{{id_evento}}/flyer",
+            "description": "Multipart campo `flyer`. Opcional. JPEG/PNG/WebP, máx. 5 MB."
+          }
+        },
+        {
+          "name": "Eliminar flyer del evento",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/{{id_evento}}/flyer"
+          }
+        },
+        {
+          "name": "Listar evidencias de jornada (staff)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{api_root}}/api/jornadas/1/evidencias",
+            "description": "Admin/Coord. Usar id de jornada en la URL."
+          }
+        },
+        {
           "name": "Actualizar evento",
           "request": {
             "method": "PATCH",

@@ -3,6 +3,7 @@ import fs from 'fs';
 
 export const UPLOADS_ROOT = path.join(process.cwd(), 'uploads');
 export const PROYECTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'proyectos');
+export const EVENTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'eventos');
 
 export const IMAGEN_MIME_PERMITIDOS = new Set([
   'image/jpeg',
@@ -17,6 +18,7 @@ export const IMAGEN_EXTENSION_POR_MIME: Record<string, string> = {
 };
 
 export const MAX_IMAGENES_POR_PROYECTO = 3;
+export const MAX_EVIDENCIAS_POR_JORNADA = 3;
 export const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
 
 export function carpetaProyecto(id_proyecto: number): string {
@@ -25,6 +27,22 @@ export function carpetaProyecto(id_proyecto: number): string {
 
 export function rutaPublicaProyecto(id_proyecto: number, nombreArchivo: string): string {
   return `/uploads/proyectos/${id_proyecto}/${nombreArchivo}`;
+}
+
+export function carpetaEvento(id_evento: number): string {
+  return path.join(EVENTO_IMAGENES_DIR, String(id_evento));
+}
+
+export function carpetaJornadaEvidencias(id_jornada: number): string {
+  return path.join(EVENTO_IMAGENES_DIR, 'jornadas', String(id_jornada));
+}
+
+export function rutaPublicaEvento(id_evento: number, nombreArchivo: string): string {
+  return `/uploads/eventos/${id_evento}/${nombreArchivo}`;
+}
+
+export function rutaPublicaJornadaEvidencia(id_jornada: number, nombreArchivo: string): string {
+  return `/uploads/eventos/jornadas/${id_jornada}/${nombreArchivo}`;
 }
 
 export function asegurarDirectorio(dir: string): void {

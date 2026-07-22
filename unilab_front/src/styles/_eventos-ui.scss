@@ -116,3 +116,77 @@
   font-weight: t.$font-weight-semibold;
   white-space: nowrap;
 }
+
+@mixin form-hint {
+  margin: 0 0 t.$space-8;
+  font-size: t.$font-size-xs;
+  color: t.$text-light;
+  line-height: t.$line-height-relaxed;
+}
+
+@mixin image-upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: t.$space-8;
+  width: 100%;
+  min-height: 112px;
+  padding: t.$space-16;
+  border: 2px dashed t.$border-gray;
+  border-radius: t.$radius-md;
+  background: t.$light-gray;
+  color: t.$text-light;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color t.$transition-base,
+    background t.$transition-base,
+    color t.$transition-base;
+
+  &:hover:not(:has(input:disabled)) {
+    border-color: t.$light-blue;
+    background: rgba(28, 157, 216, 0.06);
+    color: t.$primary-blue;
+  }
+
+  &:has(input:disabled) {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+
+  .ti {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+}
+
+@mixin image-preview-card {
+  position: relative;
+  margin-bottom: t.$space-12;
+  border-radius: t.$radius-md;
+  overflow: hidden;
+  border: 1px solid t.$border-gray;
+  background: t.$white;
+
+  img {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+  }
+
+  .image-preview-actions {
+    display: flex;
+    gap: t.$space-8;
+    padding: t.$space-8 t.$space-12;
+    border-top: 1px solid t.$border-gray;
+    background: t.$light-gray;
+  }
+}

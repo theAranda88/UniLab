@@ -12,6 +12,7 @@ import {
   CreateInscripcionDto,
   MiInscripcionResponse,
   ReporteEvento,
+  JornadaEvidencia,
 } from '../../core/models/evento.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getEventosBasePath } from '../../core/config/eventos-paths';
@@ -23,6 +24,7 @@ export class EventosService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private apiUrl = 'http://localhost:3000/api/eventos';
+  private jornadasUrl = 'http://localhost:3000/api/jornadas';
   private inscripcionesUrl = 'http://localhost:3000/api/inscripciones';
 
   getBasePath(): string {
@@ -42,6 +44,10 @@ export class EventosService {
   }
 
   puedeVerReportes(): boolean {
+    return this.authService.hasAnyRole(['Administrador', 'Coordinador']);
+  }
+
+  puedeGestionarEvidencias(): boolean {
     return this.authService.hasAnyRole(['Administrador', 'Coordinador']);
   }
 
@@ -132,5 +138,36 @@ export class EventosService {
     return this.http.get(`${this.apiUrl}/${idEvento}/reportes/export/excel`, {
       responseType: 'blob',
     });
+  }
+
+  subirFlyer(idEvento: number, file: File): Observable<{ url_flyer: string }> {
+    const formData = new FormData();
+    formData.append('flyer', file);
+    return this.http.post<{ url_flyer: string }>(`${this.apiUrl}/${idEvento}/flyer`, formData);
+  }
+
+  eliminarFlyer(idEvento: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${idEvento}/flyer`);
+  }
+
+  listarEvidenciasJornada(idJornada: number): Observable<JornadaEvidencia[]> {
+    return this.http.get<JornadaEvidencia[]>(`${this.jornadasUrl}/${idJornada}/evidencias`);
+  }
+
+  subirEvidenciasJornada(idJornada: number, files: File[]): Observable<JornadaEvidencia[]> {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('evidencias', file);
+    }
+    return this.http.post<JornadaEvidencia[]>(
+      `${this.jornadasUrl}/${idJornada}/evidencias`,
+      formData,
+    );
+  }
+
+  eliminarEvidenciaJornada(idJornada: number, idEvidencia: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.jornadasUrl}/${idJornada}/evidencias/${idEvidencia}`,
+    );
   }
 }

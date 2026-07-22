@@ -10,9 +10,21 @@ export interface Evento {
   id_organizador: number;
   estado: 'planeado' | 'activo' | 'finalizado';
   requiere_pago: boolean;
+  url_flyer?: string | null;
+  flyer_ruta_archivo?: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+}
+
+export interface JornadaEvidencia {
+  id_evidencia: number;
+  id_jornada: number;
+  ruta_archivo: string;
+  url: string;
+  nombre_original: string;
+  mime_type: string;
+  orden: number;
 }
 
 // Jornada

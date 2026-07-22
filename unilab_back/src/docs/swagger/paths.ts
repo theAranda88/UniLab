@@ -583,6 +583,88 @@ export const paths = {
       responses: { 204: { description: 'Evento eliminado' }, ...err },
     },
   },
+  '/eventos/{id}/flyer': {
+    post: {
+      tags: ['Eventos'],
+      summary: 'Subir o reemplazar flyer del evento',
+      description:
+        '**Rol requerido:** Administrador. Multipart campo `flyer` (JPEG/PNG/WebP, máx. 5 MB). Opcional. Actualiza `url_flyer` en el evento.',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['flyer'],
+              properties: {
+                flyer: { type: 'string', format: 'binary' },
+              },
+            },
+          },
+        },
+      },
+      responses: { 200: { description: 'URL pública del flyer' }, ...err },
+    },
+    delete: {
+      tags: ['Eventos'],
+      summary: 'Eliminar flyer del evento',
+      description: '**Rol requerido:** Administrador.',
+      parameters: [paramId],
+      responses: { 204: { description: 'Flyer eliminado' }, ...err },
+    },
+  },
+  '/jornadas/{id}/evidencias': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Listar evidencias fotográficas de una jornada',
+      description: '**Rol requerido:** Administrador o Coordinador. Máximo 3 evidencias por jornada.',
+      parameters: [paramId],
+      responses: { 200: { description: 'Lista de evidencias con URL pública' }, ...err },
+    },
+    post: {
+      tags: ['Eventos'],
+      summary: 'Subir evidencias de jornada',
+      description:
+        '**Rol requerido:** Administrador o Coordinador. Multipart campo `evidencias` (1–3 archivos, máx. 5 MB c/u).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['evidencias'],
+              properties: {
+                evidencias: {
+                  type: 'array',
+                  items: { type: 'string', format: 'binary' },
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: { 201: { description: 'Evidencias creadas' }, ...err },
+    },
+  },
+  '/jornadas/{id}/evidencias/{idEvidencia}': {
+    delete: {
+      tags: ['Eventos'],
+      summary: 'Eliminar evidencia de jornada',
+      description: '**Rol requerido:** Administrador o Coordinador.',
+      parameters: [
+        paramId,
+        {
+          name: 'idEvidencia',
+          in: 'path',
+          required: true,
+          schema: { type: 'integer' },
+        },
+      ],
+      responses: { 204: { description: 'Evidencia eliminada' }, ...err },
+    },
+  },
   '/eventos/{id}/jornadas': {
     get: {
       tags: ['Eventos'],

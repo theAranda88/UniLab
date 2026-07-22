@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { eventoService } from '../services/evento.service';
+import { eventoFlyerService } from '../services/evento-flyer.service';
+import { eventoJornadaEvidenciaService } from '../services/evento-jornada-evidencia.service';
 
 export const eventoController = {
   listar: asyncHandler(async (_req: Request, res: Response) => {
@@ -118,5 +120,46 @@ export const eventoController = {
       res.header('Content-Type', 'image/svg+xml');
       res.send(qr);
     }
+  }),
+
+  subirFlyer: asyncHandler(async (req: Request, res: Response) => {
+    const resultado = await eventoFlyerService.subir(
+      Number(req.params.id),
+      req.user!.id_rol,
+      req.file as Express.Multer.File,
+    );
+    res.status(200).json(resultado);
+  }),
+
+  eliminarFlyer: asyncHandler(async (req: Request, res: Response) => {
+    await eventoFlyerService.eliminar(Number(req.params.id), req.user!.id_rol);
+    res.status(204).send();
+  }),
+
+  listarEvidenciasJornada: asyncHandler(async (req: Request, res: Response) => {
+    const evidencias = await eventoJornadaEvidenciaService.listar(
+      Number(req.params.id),
+      req.user!.id_rol,
+    );
+    res.status(200).json(evidencias);
+  }),
+
+  subirEvidenciasJornada: asyncHandler(async (req: Request, res: Response) => {
+    const evidencias = await eventoJornadaEvidenciaService.subir(
+      Number(req.params.id),
+      req.user!.id_rol,
+      req.user!.id_usuario,
+      (req.files as Express.Multer.File[]) ?? [],
+    );
+    res.status(201).json(evidencias);
+  }),
+
+  eliminarEvidenciaJornada: asyncHandler(async (req: Request, res: Response) => {
+    await eventoJornadaEvidenciaService.eliminar(
+      Number(req.params.id),
+      Number(req.params.idEvidencia),
+      req.user!.id_rol,
+    );
+    res.status(204).send();
   }),
 };

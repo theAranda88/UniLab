@@ -12,7 +12,10 @@ import {
   inscripcionSchema,
   pagoInscripcionSchema,
   asistenciaSchema,
+  evidenciaJornadaParamSchema,
 } from '../middlewares/validation/schemas';
+import { subirFlyerEvento } from '../middlewares/upload/subirFlyerEvento.middleware';
+import { subirEvidenciasJornada } from '../middlewares/upload/subirEvidenciasJornada.middleware';
 
 const router = Router();
 
@@ -36,6 +39,19 @@ router.post(
 router.get('/qr/:codigo_qr', ...autenticado, eventoController.generarQR);
 
 router.get('/:id', ...autenticado, validate(idParamSchema, 'params'), eventoController.obtener);
+router.post(
+  '/:id/flyer',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  subirFlyerEvento,
+  eventoController.subirFlyer,
+);
+router.delete(
+  '/:id/flyer',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  eventoController.eliminarFlyer,
+);
 router.patch(
   '/:id',
   ...admin,
@@ -113,6 +129,25 @@ inscripcionRouter.patch(
 );
 
 export const jornadaRouter = Router();
+jornadaRouter.get(
+  '/:id/evidencias',
+  ...adminCoord,
+  validate(idParamSchema, 'params'),
+  eventoController.listarEvidenciasJornada,
+);
+jornadaRouter.post(
+  '/:id/evidencias',
+  ...adminCoord,
+  validate(idParamSchema, 'params'),
+  subirEvidenciasJornada,
+  eventoController.subirEvidenciasJornada,
+);
+jornadaRouter.delete(
+  '/:id/evidencias/:idEvidencia',
+  ...adminCoord,
+  validate(evidenciaJornadaParamSchema, 'params'),
+  eventoController.eliminarEvidenciaJornada,
+);
 jornadaRouter.post(
   '/:id/asistencia',
   ...autenticado,

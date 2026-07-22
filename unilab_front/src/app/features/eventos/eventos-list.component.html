@@ -146,6 +146,12 @@
 
         >
 
+          @if (evento.url_flyer) {
+            <div class="evento-flyer">
+              <img [src]="evento.url_flyer" [alt]="evento.nombre_evento" />
+            </div>
+          }
+
           <div class="evento-header">
 
             <h3>{{ evento.nombre_evento }}</h3>

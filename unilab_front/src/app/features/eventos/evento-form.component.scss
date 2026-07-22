@@ -1,76 +1,71 @@
+@use '../../../styles/design-tokens' as t;
+@use '../../../styles/eventos-ui' as ui;
+
 .evento-form-container {
+  @include ui.eventos-page;
   max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem;
 
   .form-card {
-    background-color: white;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    @include ui.eventos-card;
+    padding: t.$space-24;
 
     h1 {
-      margin: 0 0 2rem 0;
-      font-size: 2rem;
-      color: var(--primary-color, #333);
+      margin: 0 0 t.$space-24;
+      font-size: t.$font-size-2xl;
+      color: t.$primary-blue;
+    }
+
+    .loading {
+      text-align: center;
+      color: t.$text-light;
+      font-size: t.$font-size-sm;
     }
 
     .error-message {
-      background-color: #f8d7da;
-      color: #721c24;
-      padding: 0.75rem;
-      border-radius: 4px;
-      margin-bottom: 1.5rem;
-      border: 1px solid #f5c6cb;
+      background: #ffebee;
+      color: t.$error;
+      padding: t.$space-12;
+      border-radius: t.$radius-md;
+      margin-bottom: t.$space-16;
+      border-left: 4px solid t.$error;
+      font-size: t.$font-size-sm;
     }
 
     .form {
       .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: t.$space-16;
 
         label {
           display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 600;
-          color: #333;
+          margin-bottom: t.$space-4;
+          font-weight: t.$font-weight-semibold;
+          font-size: t.$font-size-sm;
+          color: t.$text-dark;
+        }
+
+        .form-hint {
+          @include ui.form-hint;
         }
 
         .form-control {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-
-          &:focus {
-            outline: none;
-            border-color: var(--primary-color, #007bff);
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-          }
-
-          &.is-invalid {
-            border-color: #dc3545;
-            background-color: #fff5f5;
-          }
+          @include ui.form-control;
         }
 
         textarea.form-control {
           resize: vertical;
-          font-family: inherit;
         }
 
         .error-text {
           display: block;
-          color: #dc3545;
-          font-size: 0.85rem;
-          margin-top: 0.25rem;
+          color: t.$error;
+          font-size: t.$font-size-xs;
+          margin-top: t.$space-4;
         }
 
         &.checkbox {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: t.$space-8;
 
           input[type='checkbox'] {
             margin: 0;
@@ -80,6 +75,7 @@
           label {
             margin: 0;
             cursor: pointer;
+            font-weight: t.$font-weight-normal;
           }
         }
       }
@@ -87,7 +83,7 @@
       .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: t.$space-12;
 
         @media (max-width: 600px) {
           grid-template-columns: 1fr;
@@ -96,42 +92,36 @@
 
       .form-actions {
         display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
+        gap: t.$space-12;
+        margin-top: t.$space-24;
 
         .btn {
-          padding: 0.75rem 1.5rem;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-          transition: all 0.3s ease;
           flex: 1;
 
           &.btn-primary {
-            background-color: var(--primary-color, #007bff);
-            color: white;
-
-            &:hover:not(:disabled) {
-              background-color: var(--primary-dark, #0056b3);
-            }
-
-            &:disabled {
-              opacity: 0.6;
-              cursor: not-allowed;
-            }
+            @include ui.btn-primary;
           }
 
           &.btn-secondary {
-            background-color: #6c757d;
-            color: white;
+            @include ui.btn-secondary;
+          }
 
-            &:hover {
-              background-color: #5a6268;
-            }
+          &.btn-sm {
+            @include ui.btn-sm;
+            flex: 0 1 auto;
           }
         }
       }
     }
+  }
+}
+
+.flyer-group {
+  .image-preview-card {
+    @include ui.image-preview-card;
+  }
+
+  .image-upload-zone {
+    @include ui.image-upload-zone;
   }
 }

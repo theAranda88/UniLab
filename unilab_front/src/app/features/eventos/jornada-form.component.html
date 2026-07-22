@@ -47,6 +47,7 @@
           formControlName="hora_inicio"
           class="form-control"
           [class.is-invalid]="formulario.get('hora_inicio')?.invalid && formulario.get('hora_inicio')?.touched"
+          (change)="cerrarSelectorHora($event)"
         />
       </div>
 
@@ -58,6 +59,7 @@
           formControlName="hora_fin"
           class="form-control"
           [class.is-invalid]="formulario.get('hora_fin')?.invalid && formulario.get('hora_fin')?.touched"
+          (change)="cerrarSelectorHora($event)"
         />
       </div>
     </div>

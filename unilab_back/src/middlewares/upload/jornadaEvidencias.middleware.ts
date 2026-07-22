@@ -1,0 +1,43 @@
+import multer from 'multer';
+import path from 'path';
+import { randomUUID } from 'crypto';
+import {
+  IMAGEN_EXTENSION_POR_MIME,
+  IMAGEN_MIME_PERMITIDOS,
+  MAX_EVIDENCIAS_POR_JORNADA,
+  MAX_IMAGEN_BYTES,
+  asegurarDirectorio,
+  carpetaJornadaEvidencias,
+} from '../../utils/uploadPaths';
+
+const storage = multer.diskStorage({
+  destination: (req, _file, cb) => {
+    const id_jornada = Number(req.params.id);
+    const dir = carpetaJornadaEvidencias(id_jornada);
+    asegurarDirectorio(dir);
+    cb(null, dir);
+  },
+  filename: (_req, file, cb) => {
+    const ext =
+      IMAGEN_EXTENSION_POR_MIME[file.mimetype] ?? path.extname(file.originalname).toLowerCase();
+    cb(null, `${randomUUID()}${ext}`);
+  },
+});
+
+function filtroImagen(
+  _req: import('express').Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback,
+): void {
+  if (!IMAGEN_MIME_PERMITIDOS.has(file.mimetype)) {
+    cb(new Error('Solo se permiten imágenes JPEG, PNG o WebP'));
+    return;
+  }
+  cb(null, true);
+}
+
+export const jornadaEvidenciasUpload = multer({
+  storage,
+  limits: { fileSize: MAX_IMAGEN_BYTES, files: MAX_EVIDENCIAS_POR_JORNADA },
+  fileFilter: filtroImagen,
+});

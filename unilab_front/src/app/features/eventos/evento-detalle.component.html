@@ -14,6 +14,12 @@
         </span>
       </div>
 
+      @if (evento()!.url_flyer) {
+        <div class="evento-flyer-hero">
+          <img [src]="evento()!.url_flyer!" [alt]="evento()!.nombre_evento" />
+        </div>
+      }
+
       <div class="evento-info">
         <div class="info-row">
           <strong>{{ 'eventos.tipo' | translate }}:</strong>
@@ -168,6 +174,45 @@
                           <div class="qr-loading">{{ 'common.cargando' | translate }} QR...</div>
                         }
                         <code class="qr-code-text">{{ jornada.codigo_qr }}</code>
+                      </div>
+                    </div>
+                  }
+                  @if (puedeGestionarEvidencias()) {
+                    <div class="evidencias-section">
+                      <h4 class="evidencias-title">{{ 'jornadas.evidencias' | translate }}</h4>
+                      <p class="form-hint">{{ 'jornadas.evidenciasHint' | translate }}</p>
+                      <div class="evidencias-grid">
+                        @for (ev of evidenciasDeJornada(jornada.id_jornada); track ev.id_evidencia) {
+                          <figure class="evidencia-item">
+                            <img [src]="ev.url" [alt]="ev.nombre_original" />
+                            <button
+                              type="button"
+                              class="evidencia-item__remove"
+                              (click)="eliminarEvidencia(jornada.id_jornada, ev.id_evidencia)"
+                              [attr.aria-label]="'jornadas.eliminarEvidencia' | translate"
+                            >
+                              <i class="ti ti-trash" aria-hidden="true"></i>
+                            </button>
+                          </figure>
+                        }
+                        @if (maxEvidenciasRestantes(jornada.id_jornada) > 0) {
+                          <label class="evidencia-upload">
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              multiple
+                              (change)="onEvidenciasSeleccionadas(jornada.id_jornada, $event)"
+                              [disabled]="subiendoEvidenciasJornada() === jornada.id_jornada"
+                            />
+                            @if (subiendoEvidenciasJornada() === jornada.id_jornada) {
+                              <i class="ti ti-loader" aria-hidden="true"></i>
+                              <span>{{ 'common.cargando' | translate }}</span>
+                            } @else {
+                              <i class="ti ti-photo-up" aria-hidden="true"></i>
+                              <span>{{ 'jornadas.subirEvidencias' | translate }}</span>
+                            }
+                          </label>
+                        }
                       </div>
                     </div>
                   }

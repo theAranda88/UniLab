@@ -138,6 +138,11 @@ export const imagenProyectoParamSchema = z.object({
   idImagen: z.coerce.number().int().positive(),
 });
 
+export const evidenciaJornadaParamSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  idEvidencia: z.coerce.number().int().positive(),
+});
+
 export const actualizarProyectoSchema = proyectoBaseSchema.partial().superRefine((data, ctx) => {
   if (!data.tipo_proyecto) return;
   validarUrlsPorTipoProyecto(data.tipo_proyecto, data, ctx);

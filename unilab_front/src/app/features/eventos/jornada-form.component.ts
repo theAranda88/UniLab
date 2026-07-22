@@ -79,4 +79,11 @@ export class JornadaFormComponent implements OnChanges {
     if (this.enviando()) return;
     this.cerrar.emit();
   }
+
+  /** Cierra el selector nativo de hora (p. ej. AM/PM en Chrome) al completar el valor. */
+  cerrarSelectorHora(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.value || input.value.length < 5) return;
+    setTimeout(() => input.blur(), 0);
+  }
 }
