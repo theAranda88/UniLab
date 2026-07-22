@@ -54,6 +54,16 @@ export const eventoController = {
     res.status(201).json(jornada);
   }),
 
+  actualizarJornada: asyncHandler(async (req: Request, res: Response) => {
+    const jornada = await eventoService.actualizarJornada(Number(req.params.id), req.body);
+    res.status(200).json(jornada);
+  }),
+
+  eliminarJornada: asyncHandler(async (req: Request, res: Response) => {
+    await eventoService.eliminarJornada(Number(req.params.id));
+    res.status(204).send();
+  }),
+
   inscribir: asyncHandler(async (req: Request, res: Response) => {
     const inscripcion = await eventoService.inscribir(
       Number(req.params.id),

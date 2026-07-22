@@ -795,6 +795,31 @@
           }
         },
         {
+          "name": "Actualizar jornada",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_jornada\": \"Día 1 - Tarde\",\n  \"fecha\": \"2026-09-01\",\n  \"hora_inicio\": \"14:00:00\",\n  \"hora_fin\": \"18:00:00\"\n}"
+            },
+            "url": "{{base_url}}/jornadas/1",
+            "description": "Solo Administrador. No cambia el código QR."
+          }
+        },
+        {
+          "name": "Eliminar jornada",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/jornadas/1",
+            "description": "Solo Administrador. Soft-delete de la jornada y evidencias activas."
+          }
+        },
+        {
           "name": "Listar inscripciones del evento",
           "request": {
             "method": "GET",

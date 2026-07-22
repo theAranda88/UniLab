@@ -99,6 +99,8 @@ export class EventoDetalleComponent implements OnInit {
 
   mostrarFormularioInscripcion = signal(false);
   mostrarFormularioJornada = signal(false);
+  jornadaEnEdicion = signal<EventoJornada | null>(null);
+  eliminandoJornadaId = signal<number | null>(null);
   qrUrls = signal<Record<number, string>>({});
   evidenciasPorJornada = signal<Record<number, JornadaEvidencia[]>>({});
   subiendoEvidenciasJornada = signal<number | null>(null);
@@ -235,11 +237,18 @@ export class EventoDetalleComponent implements OnInit {
   }
 
   abrirFormularioJornada() {
+    this.jornadaEnEdicion.set(null);
+    this.mostrarFormularioJornada.set(true);
+  }
+
+  editarJornada(jornada: EventoJornada) {
+    this.jornadaEnEdicion.set(jornada);
     this.mostrarFormularioJornada.set(true);
   }
 
   cerrarFormularioJornada() {
     this.mostrarFormularioJornada.set(false);
+    this.jornadaEnEdicion.set(null);
   }
 
   evidenciasDeJornada(idJornada: number): JornadaEvidencia[] {
@@ -315,6 +324,56 @@ export class EventoDetalleComponent implements OnInit {
     await this.dialog.success({
       titleKey: 'dialog.success.title',
       messageKey: 'jornadas.exitoCrear',
+    });
+  }
+
+  async onJornadaActualizada() {
+    const id = this.evento()?.id_evento;
+    if (id) this.cargarJornadas(id);
+    this.cerrarFormularioJornada();
+    await this.dialog.success({
+      titleKey: 'dialog.success.title',
+      messageKey: 'jornadas.exitoActualizar',
+    });
+  }
+
+  async eliminarJornada(jornada: EventoJornada) {
+    const confirmar = await this.dialog.confirm({
+      titleKey: 'dialog.confirm.deleteTitle',
+      messageKey: 'jornadas.confirmarEliminar',
+      confirmKey: 'common.delete',
+      cancelKey: 'common.cancelar',
+    });
+    if (!confirmar) return;
+
+    this.eliminandoJornadaId.set(jornada.id_jornada);
+    this.eventoService.eliminarJornada(jornada.id_jornada).subscribe({
+      next: async () => {
+        this.eliminandoJornadaId.set(null);
+        const id = this.evento()?.id_evento;
+        if (id) this.cargarJornadas(id);
+        this.qrUrls.update((prev) => {
+          const next = { ...prev };
+          delete next[jornada.id_jornada];
+          return next;
+        });
+        this.evidenciasPorJornada.update((prev) => {
+          const next = { ...prev };
+          delete next[jornada.id_jornada];
+          return next;
+        });
+        await this.dialog.success({
+          titleKey: 'dialog.success.title',
+          messageKey: 'jornadas.exitoEliminar',
+        });
+      },
+      error: async (err: { message?: string }) => {
+        this.eliminandoJornadaId.set(null);
+        await this.dialog.error({
+          titleKey: 'dialog.error.title',
+          message: err.message ?? this.translate.instant('jornadas.errorEliminar'),
+        });
+      },
     });
   }
 

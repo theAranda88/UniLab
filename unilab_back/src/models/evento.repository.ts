@@ -76,6 +76,24 @@ export const eventoRepository = {
     });
   },
 
+  updateJornada(id: number, data: Prisma.evento_jornadasUpdateInput) {
+    return prisma.evento_jornadas.update({ where: { id_jornada: id }, data });
+  },
+
+  softDeleteJornada(id: number, deleted_at: Date) {
+    return prisma.evento_jornadas.update({
+      where: { id_jornada: id },
+      data: { deleted_at },
+    });
+  },
+
+  softDeleteEvidenciasPorJornada(id_jornada: number, deleted_at: Date) {
+    return prisma.evento_jornada_evidencias.updateMany({
+      where: { id_jornada, ...activo },
+      data: { deleted_at },
+    });
+  },
+
   crearInscripcion(data: Prisma.inscripcionesCreateInput) {
     return prisma.inscripciones.create({ data });
   },

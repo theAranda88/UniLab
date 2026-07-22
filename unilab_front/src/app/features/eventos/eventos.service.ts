@@ -107,6 +107,14 @@ export class EventosService {
     return this.http.get<EventoJornada[]>(`${this.apiUrl}/${idEvento}/jornadas`);
   }
 
+  actualizarJornada(idJornada: number, data: CreateJornadaDto): Observable<EventoJornada> {
+    return this.http.patch<EventoJornada>(`${this.jornadasUrl}/${idJornada}`, data);
+  }
+
+  eliminarJornada(idJornada: number): Observable<void> {
+    return this.http.delete<void>(`${this.jornadasUrl}/${idJornada}`);
+  }
+
   inscribirse(idEvento: number, data: CreateInscripcionDto): Observable<Inscripcion> {
     return this.http.post<Inscripcion>(`${this.apiUrl}/${idEvento}/inscripciones`, data);
   }

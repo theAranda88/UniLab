@@ -71,14 +71,15 @@ cp .env.example .env
 2. Edita `.env` con tus credenciales locales de PostgreSQL:
 
 ```env
-DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@localhost:5432/unilab?schema=public"
+# Si la BD corre con Docker Compose en la raíz del monorepo, el puerto en el host es POSTGRES_PORT (por defecto 5433).
+DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@localhost:5433/unilab?schema=public"
 JWT_SECRET="un-secreto-largo-y-unico-para-desarrollo-local"
 PORT=3000
 ```
 
 | Variable | Descripción |
 |----------|-------------|
-| `DATABASE_URL` | Conexión a PostgreSQL. Cambia `USUARIO`, `CONTRASEÑA` y el puerto si no usas los valores por defecto. |
+| `DATABASE_URL` | Conexión a PostgreSQL. Cambia `USUARIO`, `CONTRASEÑA` y el **puerto del host** (`5433` con Docker Compose y `POSTGRES_PORT=5433` en el `.env` raíz; `5432` si PostgreSQL está instalado directamente en tu máquina). El servicio `api` dentro de Docker siempre usa el host `db` y el puerto interno `5432`. |
 | `JWT_SECRET` | Secreto para firmar tokens JWT. Debe ser distinto en producción. |
 | `PORT` | Puerto del API (por defecto `3000`). |
 
@@ -99,6 +100,10 @@ El backend espera una base de datos llamada **`unilab`**. Prisma **no crea la ba
 ### Opción B — Línea de comandos (`psql`)
 
 ```bash
+# Con Docker Compose (POSTGRES_PORT=5433 en el .env raíz):
+psql -U postgres -h localhost -p 5433
+
+# PostgreSQL nativo en el host (puerto 5432):
 psql -U postgres -h localhost
 ```
 
@@ -302,7 +307,7 @@ docker compose exec api npx prisma db seed   # primera vez o BD vacía
 | API | http://localhost:3000/api |
 | Swagger | http://localhost:3000/api-docs |
 | Frontend | http://localhost:8080 |
-| PostgreSQL | `localhost:5432` (usuario/contraseña: `postgres`) |
+| PostgreSQL (desde el host) | `localhost:5433` por defecto (`POSTGRES_PORT` en `.env` raíz; usuario/contraseña: `postgres`) |
 
 En Postman, usa el entorno **UniLab — Docker Compose**.
 

@@ -25,6 +25,23 @@ function parseTime(hora: string): Date {
   return new Date(`1970-01-01T${hora}`);
 }
 
+function assertFechaJornadaEnRangoEvento(
+  fecha: string,
+  evento: { fecha_inicio: Date; fecha_fin: Date },
+): void {
+  const fechaJornada = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/)?.[0];
+  if (!fechaJornada) throw new AppError('Fecha de jornada inválida', 400);
+
+  const inicio = toDateKey(evento.fecha_inicio);
+  const fin = toDateKey(evento.fecha_fin);
+  if (fechaJornada < inicio || fechaJornada > fin) {
+    throw new AppError(
+      'La fecha de la jornada debe estar dentro del rango del evento',
+      422,
+    );
+  }
+}
+
 export const eventoService = {
   listar() {
     return eventoRepository.findMany();
@@ -118,17 +135,7 @@ export const eventoService = {
     created_by: number,
   ) {
     const evento = await eventoService.obtener(id_evento);
-    const fechaJornada = data.fecha.match(/^(\d{4})-(\d{2})-(\d{2})/)?.[0];
-    if (!fechaJornada) throw new AppError('Fecha de jornada inválida', 400);
-
-    const inicio = toDateKey(evento.fecha_inicio);
-    const fin = toDateKey(evento.fecha_fin);
-    if (fechaJornada < inicio || fechaJornada > fin) {
-      throw new AppError(
-        'La fecha de la jornada debe estar dentro del rango del evento',
-        422,
-      );
-    }
+    assertFechaJornadaEnRangoEvento(data.fecha, evento);
 
     return eventoRepository.crearJornada({
       nombre_jornada: data.nombre_jornada,
@@ -139,6 +146,34 @@ export const eventoService = {
       evento: { connect: { id_evento } },
       creador: { connect: { id_usuario: created_by } },
     });
+  },
+
+  async actualizarJornada(
+    id_jornada: number,
+    data: { nombre_jornada: string; fecha: string; hora_inicio: string; hora_fin: string },
+  ) {
+    const jornada = await eventoRepository.findJornadaById(id_jornada);
+    if (!jornada) throw new AppError('Jornada no encontrada', 404);
+
+    assertFechaJornadaEnRangoEvento(data.fecha, jornada.evento);
+
+    return eventoRepository.updateJornada(id_jornada, {
+      nombre_jornada: data.nombre_jornada,
+      fecha: parseDate(data.fecha),
+      hora_inicio: parseTime(data.hora_inicio),
+      hora_fin: parseTime(data.hora_fin),
+    });
+  },
+
+  async eliminarJornada(id_jornada: number) {
+    const jornada = await eventoRepository.findJornadaById(id_jornada);
+    if (!jornada) throw new AppError('Jornada no encontrada', 404);
+
+    const ahora = new Date();
+    await prisma.$transaction([
+      eventoRepository.softDeleteEvidenciasPorJornada(id_jornada, ahora),
+      eventoRepository.softDeleteJornada(id_jornada, ahora),
+    ]);
   },
 
   async inscribir(id_evento: number, id_usuario: number, data: {

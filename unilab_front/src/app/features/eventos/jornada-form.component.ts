@@ -1,10 +1,20 @@
-import { Component, Input, Output, EventEmitter, inject, signal, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  signal,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
-import { CreateJornadaDto } from '../../core/models/evento.model';
+import { CreateJornadaDto, EventoJornada } from '../../core/models/evento.model';
 import { ModalShellComponent } from '../../shared/ui/modal/modal-shell.component';
+import { toDateInputValue } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-jornada-form',
@@ -17,8 +27,10 @@ export class JornadaFormComponent implements OnChanges {
   @Input() idEvento!: number;
   @Input() fechaMin = '';
   @Input() fechaMax = '';
+  @Input() jornadaEditar: EventoJornada | null = null;
   @Output() cerrar = new EventEmitter<void>();
   @Output() jornadaCreada = new EventEmitter<void>();
+  @Output() jornadaActualizada = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
   private eventoService = inject(EventosService);
@@ -27,6 +39,7 @@ export class JornadaFormComponent implements OnChanges {
   formulario!: FormGroup;
   enviando = signal(false);
   error = signal<string | null>(null);
+  modoEdicion = signal(false);
 
   constructor() {
     this.formulario = this.fb.group({
@@ -37,10 +50,38 @@ export class JornadaFormComponent implements OnChanges {
     });
   }
 
-  ngOnChanges(): void {
-    if (this.fechaMin) {
-      this.formulario.patchValue({ fecha: this.fechaMin });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['jornadaEditar'] || changes['fechaMin']) {
+      this.aplicarModoFormulario();
     }
+  }
+
+  private aplicarModoFormulario(): void {
+    const jornada = this.jornadaEditar;
+    this.modoEdicion.set(!!jornada);
+    if (jornada) {
+      this.formulario.patchValue({
+        nombre_jornada: jornada.nombre_jornada,
+        fecha: toDateInputValue(jornada.fecha),
+        hora_inicio: this.horaParaInput(jornada.hora_inicio),
+        hora_fin: this.horaParaInput(jornada.hora_fin),
+      });
+    } else if (this.fechaMin) {
+      this.formulario.reset({
+        nombre_jornada: '',
+        fecha: this.fechaMin,
+        hora_inicio: '',
+        hora_fin: '',
+      });
+    }
+  }
+
+  private horaParaInput(hora: string): string {
+    if (!hora) return '';
+    const match = hora.match(/T(\d{2}:\d{2})/);
+    if (match) return match[1];
+    if (hora.length >= 5 && hora.includes(':')) return hora.substring(0, 5);
+    return hora;
   }
 
   submit() {
@@ -63,6 +104,22 @@ export class JornadaFormComponent implements OnChanges {
     this.error.set(null);
 
     const jornadaData: CreateJornadaDto = this.formulario.value;
+    const jornada = this.jornadaEditar;
+
+    if (jornada) {
+      this.eventoService.actualizarJornada(jornada.id_jornada, jornadaData).subscribe({
+        next: () => {
+          this.enviando.set(false);
+          this.jornadaActualizada.emit();
+        },
+        error: (err: { message?: string }) => {
+          this.error.set(err.message ?? this.translate.instant('jornadas.errorActualizar'));
+          this.enviando.set(false);
+        },
+      });
+      return;
+    }
+
     this.eventoService.crearJornada(this.idEvento, jornadaData).subscribe({
       next: () => {
         this.enviando.set(false);

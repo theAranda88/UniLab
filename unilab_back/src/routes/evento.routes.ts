@@ -129,6 +129,19 @@ inscripcionRouter.patch(
 );
 
 export const jornadaRouter = Router();
+jornadaRouter.patch(
+  '/:id',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  validate(jornadaSchema),
+  eventoController.actualizarJornada,
+);
+jornadaRouter.delete(
+  '/:id',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  eventoController.eliminarJornada,
+);
 jornadaRouter.get(
   '/:id/evidencias',
   ...adminCoord,

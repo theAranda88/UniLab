@@ -153,6 +153,27 @@
               <div class="jornada-card">
                 <div class="jornada-header">
                   <h4>{{ jornada.nombre_jornada }}</h4>
+                  @if (puedeCrear()) {
+                    <div class="jornada-actions">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-secondary"
+                        (click)="editarJornada(jornada)"
+                        [attr.aria-label]="'jornadas.editar' | translate"
+                      >
+                        <i class="ti ti-pencil" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        (click)="eliminarJornada(jornada)"
+                        [disabled]="eliminandoJornadaId() === jornada.id_jornada"
+                        [attr.aria-label]="'jornadas.eliminar' | translate"
+                      >
+                        <i class="ti ti-trash" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  }
                 </div>
                 <div class="jornada-info">
                   <p><strong>{{ 'jornadas.fecha' | translate }}:</strong> {{ formatearFecha(jornada.fecha) }}</p>
@@ -237,8 +258,10 @@
           [idEvento]="evento()!.id_evento"
           [fechaMin]="toDateInput(evento()!.fecha_inicio)"
           [fechaMax]="toDateInput(evento()!.fecha_fin)"
+          [jornadaEditar]="jornadaEnEdicion()"
           (cerrar)="cerrarFormularioJornada()"
           (jornadaCreada)="onJornadaCreada()"
+          (jornadaActualizada)="onJornadaActualizada()"
         ></app-jornada-form>
       }
     </div>

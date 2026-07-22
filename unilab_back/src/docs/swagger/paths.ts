@@ -614,6 +614,25 @@ export const paths = {
       responses: { 204: { description: 'Flyer eliminado' }, ...err },
     },
   },
+  '/jornadas/{id}': {
+    patch: {
+      tags: ['Eventos'],
+      summary: 'Actualizar jornada',
+      description:
+        '**Rol requerido:** Administrador. No modifica `codigo_qr`. La fecha debe estar dentro del rango del evento.',
+      parameters: [paramId],
+      requestBody: jsonBody('#/components/schemas/JornadaRequest'),
+      responses: { 200: { description: 'Jornada actualizada' }, ...err },
+    },
+    delete: {
+      tags: ['Eventos'],
+      summary: 'Eliminar jornada',
+      description:
+        '**Rol requerido:** Administrador. Soft-delete de la jornada y sus evidencias activas.',
+      parameters: [paramId],
+      responses: { 204: { description: 'Jornada eliminada' }, ...err },
+    },
+  },
   '/jornadas/{id}/evidencias': {
     get: {
       tags: ['Eventos'],

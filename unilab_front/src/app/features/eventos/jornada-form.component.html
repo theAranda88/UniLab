@@ -1,6 +1,6 @@
 <app-modal-shell
   [open]="true"
-  titleKey="jornadas.crear"
+  [titleKey]="modoEdicion() ? 'jornadas.editar' : 'jornadas.crear'"
   [loading]="enviando()"
   [dismissible]="!enviando()"
   (closed)="cerrarModal()"
@@ -66,7 +66,11 @@
 
     <div class="modal-actions">
       <button type="submit" class="btn btn-primary" [disabled]="enviando()">
-        {{ enviando() ? ('common.creando' | translate) : ('jornadas.crear' | translate) }}
+        @if (modoEdicion()) {
+          {{ enviando() ? ('common.guardando' | translate) : ('common.guardar' | translate) }}
+        } @else {
+          {{ enviando() ? ('common.creando' | translate) : ('jornadas.crear' | translate) }}
+        }
       </button>
       <button type="button" class="btn btn-secondary" (click)="cerrarModal()" [disabled]="enviando()">
         {{ 'common.cancelar' | translate }}

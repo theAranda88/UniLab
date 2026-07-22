@@ -20,7 +20,7 @@ Copia `.env.example` a `.env` y configura:
 
 | Variable | Descripción |
 |----------|-------------|
-| `DATABASE_URL` | URL de conexión PostgreSQL |
+| `DATABASE_URL` | URL de conexión PostgreSQL (con Docker Compose en la raíz: `localhost:5433`; ver `unilab_back/docs/README.md`) |
 | `JWT_SECRET` | Secreto para firmar tokens JWT |
 | `PORT` | Puerto HTTP (default: 3000) |
 

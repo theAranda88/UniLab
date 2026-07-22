@@ -248,11 +248,23 @@
         padding: t.$space-12 t.$space-16;
         background: t.$light-gray;
         border-bottom: 1px solid t.$border-gray;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: t.$space-12;
 
         h4 {
           margin: 0;
           font-size: t.$font-size-sm;
           color: t.$primary-blue;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .jornada-actions {
+          display: flex;
+          gap: t.$space-8;
+          flex-shrink: 0;
         }
       }
 
