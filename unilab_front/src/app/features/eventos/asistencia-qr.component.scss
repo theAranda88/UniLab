@@ -74,6 +74,79 @@
     font-weight: t.$font-weight-semibold;
     cursor: pointer;
   }
+
+  &__alert {
+    margin-bottom: t.$space-12;
+    padding: t.$space-8 t.$space-12;
+    border-radius: t.$radius-md;
+    font-size: t.$font-size-sm;
+    line-height: t.$line-height-relaxed;
+
+    &--error {
+      background: rgba(t.$error, 0.12);
+      color: t.$error;
+      border: 1px solid rgba(t.$error, 0.35);
+    }
+  }
+
+  &.documento-step {
+    max-width: min(100%, 22rem);
+    width: 100%;
+  }
+}
+
+.documento-card {
+  width: 100%;
+  padding: t.$space-20 t.$space-16;
+  border-radius: t.$radius-xl;
+  border: 1px solid t.$border-gray;
+  background: t.$white;
+  box-shadow: t.$shadow-md;
+  text-align: left;
+
+  h1 {
+    text-align: center;
+    margin-bottom: t.$space-8;
+  }
+
+  &__hint {
+    text-align: center;
+    margin-bottom: t.$space-16;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: t.$space-8;
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-semibold;
+    color: t.$text-dark;
+  }
+
+  &__alert {
+    margin-bottom: t.$space-12;
+    padding: t.$space-8 t.$space-12;
+    border-radius: t.$radius-md;
+    font-size: t.$font-size-sm;
+    background: rgba(t.$error, 0.1);
+    color: t.$error;
+    border: 1px solid rgba(t.$error, 0.25);
+    text-align: center;
+  }
+
+  .documento-input {
+    @include ui.form-control;
+    width: 100%;
+    margin-bottom: t.$space-16;
+    text-align: center;
+    font-size: t.$font-size-base;
+  }
+
+  .btn-confirmar {
+    width: 100%;
+    @include ui.btn-primary;
+    padding: t.$space-12 t.$space-16;
+    font-size: t.$font-size-sm;
+  }
 }
 
 @keyframes spin {
@@ -213,6 +286,61 @@
       .btn-volver {
         @include portal.portal-btn-secondary;
         margin-top: t.$space-20;
+      }
+
+      &.documento-step {
+        max-width: min(94vw, 24rem);
+        width: 100%;
+      }
+
+      .documento-card {
+        @include portal.portal-card;
+        width: 100%;
+        padding: t.$space-24 t.$space-20;
+        text-align: left;
+        animation: portal-status-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        h1 {
+          text-align: center;
+          margin-bottom: t.$space-8;
+        }
+
+        &__hint {
+          text-align: center;
+          margin-bottom: t.$space-20;
+          color: p.$portal-text-secondary;
+          font-size: t.$font-size-sm;
+          line-height: t.$line-height-relaxed;
+        }
+
+        &__label {
+          @include portal.portal-label;
+          margin-bottom: t.$space-8;
+        }
+
+        &__alert {
+          @include portal.portal-alert-error;
+          margin-bottom: t.$space-16;
+          text-align: center;
+          border-left: none;
+        }
+
+        .documento-input {
+          @include portal.portal-form-control;
+          width: 100%;
+          margin-bottom: t.$space-20;
+          text-align: center;
+          font-size: t.$font-size-base;
+          letter-spacing: 0.02em;
+        }
+
+        .btn-confirmar {
+          @include portal.portal-btn-success;
+          width: 100%;
+          padding: t.$space-12 t.$space-16;
+          font-size: t.$font-size-sm;
+          font-weight: t.$font-weight-semibold;
+        }
       }
     }
   }

@@ -2,6 +2,7 @@ import { AppError } from '../utils/AppError';
 import { escuelaRepository, cursoRepository } from '../models/escuela.repository';
 import { proyectoRepository } from '../models/proyecto.repository';
 import { proyectoImagenService } from './proyecto-imagen.service';
+import { eventoService } from './evento.service';
 
 type ProyectoConImagenes = Awaited<ReturnType<typeof proyectoRepository.findMany>>[number];
 
@@ -62,5 +63,35 @@ export const publicoService = {
     const actualizado = await proyectoRepository.findById(id);
     if (!actualizado) throw new AppError('Proyecto no encontrado', 404);
     return enriquecerProyectoPublico(actualizado);
+  },
+
+  listarEventosActivos() {
+    return eventoService.listarPublicos();
+  },
+
+  obtenerEventoActivo(id: number) {
+    return eventoService.obtenerPublico(id);
+  },
+
+  inscribirEvento(
+    id_evento: number,
+    data: {
+      nombre_completo: string;
+      documento_identidad: string;
+      email: string;
+      telefono: string;
+      institucion?: string;
+      genero: string;
+    },
+  ) {
+    return eventoService.inscribirPublico(id_evento, data);
+  },
+
+  consultarInscripcionEvento(id_evento: number, documento_identidad: string) {
+    return eventoService.obtenerInscripcionPorDocumento(id_evento, documento_identidad);
+  },
+
+  registrarAsistenciaEvento(codigo_qr: string, documento_identidad: string) {
+    return eventoService.registrarAsistenciaPublica(codigo_qr, documento_identidad);
   },
 };

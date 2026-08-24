@@ -181,7 +181,6 @@ export const routes: Routes = [
       },
       {
         path: 'eventos',
-        canActivate: [authGuard, primerLoginGuard],
         children: eventosPortalChildren,
       },
       {
@@ -242,7 +241,6 @@ export const routes: Routes = [
   {
     path: 'eventos/:id/asistencia',
     component: AsistenciaQrComponent,
-    canActivate: [authGuard, primerLoginGuard],
     data: { mobileMode: true, portalTheme: true },
   },
   { path: 'unauthorized', component: UnauthorizedComponent },

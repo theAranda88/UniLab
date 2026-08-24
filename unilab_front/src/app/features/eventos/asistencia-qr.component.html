@@ -12,6 +12,42 @@
           <i class="ti ti-loader" aria-hidden="true"></i>
           <p>{{ 'asistencia.mobile.registrando' | translate }}</p>
         </div>
+      } @else if (requiereDocumento()) {
+        <div class="mobile-status documento-step">
+          <div class="documento-card">
+            <h1>{{ 'asistencia.documentoTitulo' | translate }}</h1>
+            <p class="documento-card__hint">{{ 'asistencia.documentoInstrucciones' | translate }}</p>
+            @if (mensajeKey() || mensajeCustom()) {
+              <div class="documento-card__alert" role="alert">
+                @if (mensajeCustom()) {
+                  {{ mensajeCustom() }}
+                } @else {
+                  {{ mensajeKey()! | translate }}
+                }
+              </div>
+            }
+            <label class="documento-card__label" for="documentoAsistencia">
+              {{ 'common.documento' | translate }}
+            </label>
+            <input
+              type="text"
+              id="documentoAsistencia"
+              class="documento-input"
+              [(ngModel)]="documentoIdentidad"
+              [placeholder]="'asistencia.documentoPlaceholder' | translate"
+              (keyup.enter)="confirmarDocumento()"
+              autocomplete="off"
+            />
+            <button
+              class="btn-confirmar"
+              type="button"
+              (click)="confirmarDocumento()"
+              [disabled]="registrando()"
+            >
+              {{ 'asistencia.confirmarDocumento' | translate }}
+            </button>
+          </div>
+        </div>
       } @else if (registroCompletado()) {
         <div class="mobile-status success">
           <i class="ti ti-circle-check" aria-hidden="true"></i>

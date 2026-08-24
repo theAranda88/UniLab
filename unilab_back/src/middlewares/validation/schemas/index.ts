@@ -222,6 +222,24 @@ export const asistenciaSchema = z.object({
   codigo_qr: z.string().min(1),
 });
 
+export const asistenciaPublicaSchema = z.object({
+  codigo_qr: z.string().min(1),
+  documento_identidad: z.string().min(1),
+});
+
+export const inscripcionPublicaSchema = z.object({
+  nombre_completo: z.string().min(1),
+  documento_identidad: z.string().min(1),
+  email: z.string().email(),
+  telefono: z.string().min(1),
+  institucion: z.string().optional(),
+  genero: z.string().min(1),
+});
+
+export const inscripcionDocumentoQuerySchema = z.object({
+  documento_identidad: z.string().min(1),
+});
+
 export const idEstudianteParamSchema = z.object({
   id: z.coerce.number().int().positive(),
   idEstudiante: z.coerce.number().int().positive(),

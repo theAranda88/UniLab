@@ -4,6 +4,8 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
+import { PublicPortalService } from '../home/public-portal.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { Evento } from '../../core/models/evento.model';
 import { formatearFechaLocal } from '../../core/utils/date.util';
 import { hasPortalTheme } from '../../core/utils/portal-theme.util';
@@ -22,6 +24,8 @@ import type { UiVariant } from '../../shared/ui/ui-variant';
 })
 export class EventosListComponent implements OnInit {
   eventoService = inject(EventosService);
+  private portal = inject(PublicPortalService);
+  private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -69,7 +73,11 @@ export class EventosListComponent implements OnInit {
     this.cargando.set(true);
     this.error.set(null);
 
-    this.eventoService.listar().subscribe({
+    const request = this.auth.isAuthenticated()
+      ? this.eventoService.listar()
+      : this.portal.listarEventosActivos();
+
+    request.subscribe({
       next: (data: Evento[]) => {
         this.eventos.set(data);
         this.cargando.set(false);

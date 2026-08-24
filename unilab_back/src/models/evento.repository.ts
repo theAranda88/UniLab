@@ -3,6 +3,19 @@ import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
 export const eventoRepository = {
+  findManyActivos() {
+    return prisma.eventos.findMany({
+      where: { ...activo, estado: 'activo' },
+      orderBy: { id_evento: 'desc' },
+    });
+  },
+
+  findByIdActivo(id: number) {
+    return prisma.eventos.findFirst({
+      where: { id_evento: id, estado: 'activo', ...activo },
+    });
+  },
+
   findMany() {
     return prisma.eventos.findMany({
       where: activo,
@@ -108,6 +121,12 @@ export const eventoRepository = {
   findInscripcionEventoUsuario(id_evento: number, id_usuario: number) {
     return prisma.inscripciones.findFirst({
       where: { id_evento, id_usuario, ...activo },
+    });
+  },
+
+  findInscripcionEventoDocumento(id_evento: number, documento_identidad: string) {
+    return prisma.inscripciones.findFirst({
+      where: { id_evento, documento_identidad, ...activo },
     });
   },
 

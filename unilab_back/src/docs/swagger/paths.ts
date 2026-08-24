@@ -981,5 +981,131 @@ export const paths = {
       },
     },
   },
+  '/public/eventos': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar eventos activos (portal público)',
+      description: 'Sin autenticación. Solo eventos con `estado = activo`.',
+      security: [],
+      responses: {
+        200: {
+          description: 'Listado de eventos activos',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/EventoResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/public/eventos/{id}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Detalle de evento activo',
+      security: [],
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Evento activo',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/EventoResponse' },
+            },
+          },
+        },
+        404: err[404],
+      },
+    },
+  },
+  '/public/eventos/{id}/inscripcion': {
+    get: {
+      tags: ['Público'],
+      summary: 'Consultar inscripción por documento',
+      security: [],
+      parameters: [
+        paramId,
+        {
+          in: 'query',
+          name: 'documento_identidad',
+          required: true,
+          schema: { type: 'string' },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Estado de inscripción del visitante',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/MiInscripcionResponse' },
+            },
+          },
+        },
+        404: err[404],
+      },
+    },
+  },
+  '/public/eventos/{id}/inscripciones': {
+    post: {
+      tags: ['Público'],
+      summary: 'Inscribir visitante sin cuenta',
+      description:
+        'Sin autenticación. `tipo_asistente` se asigna como `externo`. Requiere evento activo.',
+      security: [],
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/InscripcionPublicaRequest' },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Inscripción creada',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/InscripcionResponse' },
+            },
+          },
+        },
+        409: err[409],
+        404: err[404],
+      },
+    },
+  },
+  '/public/asistencias/registrar': {
+    post: {
+      tags: ['Público'],
+      summary: 'Registrar asistencia sin cuenta',
+      description:
+        'Sin autenticación. Identifica al inscrito por `documento_identidad` + `codigo_qr` de la jornada.',
+      security: [],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/AsistenciaPublicaRequest' },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Asistencia registrada',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/AsistenciaResponse' },
+            },
+          },
+        },
+        409: err[409],
+        422: err[422],
+      },
+    },
+  },
 };
 

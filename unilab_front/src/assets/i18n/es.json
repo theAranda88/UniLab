@@ -366,7 +366,8 @@
     "requierePago": "Este evento requiere pago",
     "exito": "¡Te has inscrito correctamente al evento!",
     "yaInscrito": "Ya estás inscrito",
-    "errorRegistrar": "No se pudo completar la inscripción."
+    "errorRegistrar": "No se pudo completar la inscripción.",
+    "sinCuenta": "No necesitas cuenta UniLab para inscribirte a este evento."
   },
   "asistencia": {
     "titulo": "Registrar Asistencia",
@@ -384,6 +385,11 @@
     "pagoPendiente": "Tu pago debe estar confirmado por un administrador antes de registrar asistencia.",
     "errorSinQr": "Debes escanear el código QR de una jornada para registrar asistencia.",
     "instruccionesQr": "Para registrar tu asistencia, escanea el código QR que el organizador comparte en cada jornada del evento.",
+    "documentoTitulo": "Confirma tu identidad",
+    "documentoInstrucciones": "Ingresa el mismo documento que usaste al inscribirte al evento.",
+    "documentoPlaceholder": "Número de documento",
+    "documentoRequerido": "Debes ingresar tu documento de identidad.",
+    "confirmarDocumento": "Confirmar y registrar",
     "mobile": {
       "registrando": "Registrando tu asistencia...",
       "exitoTitulo": "¡Registro exitoso!",

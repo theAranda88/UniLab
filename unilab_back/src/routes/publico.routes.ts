@@ -2,6 +2,11 @@ import { Router } from 'express';
 import { publicoController } from '../controllers/publico.controller';
 import { validate } from '../middlewares/validation/validate';
 import { idParamSchema } from '../middlewares/validation/schemas';
+import {
+  inscripcionPublicaSchema,
+  inscripcionDocumentoQuerySchema,
+  asistenciaPublicaSchema,
+} from '../middlewares/validation/schemas';
 import { z } from 'zod';
 
 const router = Router();
@@ -25,6 +30,30 @@ router.get(
   '/proyectos/:id',
   validate(idParamSchema, 'params'),
   publicoController.obtenerProyecto,
+);
+
+router.get('/eventos', publicoController.listarEventos);
+router.get(
+  '/eventos/:id',
+  validate(idParamSchema, 'params'),
+  publicoController.obtenerEvento,
+);
+router.get(
+  '/eventos/:id/inscripcion',
+  validate(idParamSchema, 'params'),
+  validate(inscripcionDocumentoQuerySchema, 'query'),
+  publicoController.consultarInscripcionEvento,
+);
+router.post(
+  '/eventos/:id/inscripciones',
+  validate(idParamSchema, 'params'),
+  validate(inscripcionPublicaSchema),
+  publicoController.inscribirEvento,
+);
+router.post(
+  '/asistencias/registrar',
+  validate(asistenciaPublicaSchema),
+  publicoController.registrarAsistenciaEvento,
 );
 
 export default router;

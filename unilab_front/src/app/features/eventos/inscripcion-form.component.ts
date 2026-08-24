@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
+import { PublicPortalService } from '../home/public-portal.service';
 import { Evento, CreateInscripcionDto } from '../../core/models/evento.model';
 import { AuthService } from '../../core/auth/auth.service';
+import { guardarDocumentoInscripcion } from '../../core/utils/inscripcion-documento.util';
 import { ModalShellComponent } from '../../shared/ui/modal/modal-shell.component';
 import type { UiVariant } from '../../shared/ui/ui-variant';
 
@@ -21,11 +23,13 @@ import type { UiVariant } from '../../shared/ui/ui-variant';
 export class InscripcionFormComponent {
   @Input() evento!: Evento;
   @Input() variant: UiVariant = 'default';
+  @Input() modoPublico = false;
   @Output() cerrar = new EventEmitter<void>();
-  @Output() inscripcionExitosa = new EventEmitter<void>();
+  @Output() inscripcionExitosa = new EventEmitter<string | void>();
 
   private fb = inject(FormBuilder);
   private eventoService = inject(EventosService);
+  private portal = inject(PublicPortalService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
 
@@ -36,7 +40,7 @@ export class InscripcionFormComponent {
 
   constructor() {
     this.formulario = this.fb.group({
-      tipo_asistente: ['', Validators.required],
+      tipo_asistente: ['externo', Validators.required],
       nombre_completo: ['', [Validators.required, Validators.minLength(3)]],
       documento_identidad: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -46,7 +50,7 @@ export class InscripcionFormComponent {
     });
 
     this.authService.user$.subscribe((user) => {
-      if (user) {
+      if (user && !this.modoPublico) {
         this.usuarioRol.set(user.id_rol);
         this.formulario.patchValue({
           tipo_asistente: this.mapearRolATipoAsistente(user.id_rol),
@@ -75,10 +79,26 @@ export class InscripcionFormComponent {
     this.error.set(null);
 
     const inscripcionData: CreateInscripcionDto = this.formulario.value;
-    this.eventoService.inscribirse(this.evento.id_evento, inscripcionData).subscribe({
+    const documento = inscripcionData.documento_identidad;
+
+    const request = this.modoPublico
+      ? this.portal.inscribirEvento(this.evento.id_evento, {
+          nombre_completo: inscripcionData.nombre_completo,
+          documento_identidad: documento,
+          email: inscripcionData.email,
+          telefono: inscripcionData.telefono,
+          institucion: inscripcionData.institucion,
+          genero: inscripcionData.genero,
+        })
+      : this.eventoService.inscribirse(this.evento.id_evento, inscripcionData);
+
+    request.subscribe({
       next: () => {
         this.enviando.set(false);
-        this.inscripcionExitosa.emit();
+        if (this.modoPublico) {
+          guardarDocumentoInscripcion(documento);
+        }
+        this.inscripcionExitosa.emit(this.modoPublico ? documento : undefined);
       },
       error: (err: { message?: string }) => {
         this.error.set(err.message ?? this.translate.instant('inscripcion.errorRegistrar'));

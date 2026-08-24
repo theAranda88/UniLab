@@ -57,17 +57,21 @@
 
     <div class="form-group">
       <label for="tipo_asistente">{{ 'inscripcion.tipoAsistente' | translate }} *</label>
-      <select
-        id="tipo_asistente"
-        formControlName="tipo_asistente"
-        class="form-control"
-        [class.is-invalid]="formulario.get('tipo_asistente')?.invalid && formulario.get('tipo_asistente')?.touched"
-      >
-        <option value="">{{ 'common.seleccionar' | translate }}</option>
-        <option value="estudiante">{{ 'inscripcion.estudiante' | translate }}</option>
-        <option value="profesor">{{ 'inscripcion.profesor' | translate }}</option>
-        <option value="externo">{{ 'inscripcion.externo' | translate }}</option>
-      </select>
+      @if (modoPublico) {
+        <p class="tipo-fijo">{{ 'inscripcion.externo' | translate }}</p>
+      } @else {
+        <select
+          id="tipo_asistente"
+          formControlName="tipo_asistente"
+          class="form-control"
+          [class.is-invalid]="formulario.get('tipo_asistente')?.invalid && formulario.get('tipo_asistente')?.touched"
+        >
+          <option value="">{{ 'common.seleccionar' | translate }}</option>
+          <option value="estudiante">{{ 'inscripcion.estudiante' | translate }}</option>
+          <option value="profesor">{{ 'inscripcion.profesor' | translate }}</option>
+          <option value="externo">{{ 'inscripcion.externo' | translate }}</option>
+        </select>
+      }
     </div>
 
     <div class="form-group">

@@ -64,12 +64,13 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 // Versión standalone para Angular 15+
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const isPublicApi = req.url.includes('/api/public/');
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'Ocurrió un error';
 
-      if (error.status === 401) {
+      if (error.status === 401 && !isPublicApi) {
         errorMessage = 'No autorizado. Por favor inicia sesión.';
         const authService = inject(AuthService);
         authService.logout();

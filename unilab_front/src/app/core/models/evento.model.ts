@@ -53,7 +53,7 @@ export interface InscripcionUsuario {
 export interface Inscripcion {
   id_inscripcion: number;
   id_evento: number;
-  id_usuario: number;
+  id_usuario: number | null;
   tipo_asistente: 'externo' | 'estudiante' | 'profesor';
   nombre_completo: string;
   documento_identidad: string;
@@ -126,6 +126,11 @@ export interface CreateInscripcionDto {
 
 export interface RegistrarAsistenciaDto {
   codigo_qr: string;
+}
+
+export interface RegistrarAsistenciaPublicaDto {
+  codigo_qr: string;
+  documento_identidad: string;
 }
 
 // Reporte

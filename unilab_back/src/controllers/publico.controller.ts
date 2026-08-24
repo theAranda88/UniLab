@@ -20,4 +20,36 @@ export const publicoController = {
   obtenerProyecto: asyncHandler(async (req: Request, res: Response) => {
     res.status(200).json(await publicoService.obtenerProyectoPublico(Number(req.params.id)));
   }),
+
+  listarEventos: asyncHandler(async (_req: Request, res: Response) => {
+    res.status(200).json(await publicoService.listarEventosActivos());
+  }),
+
+  obtenerEvento: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await publicoService.obtenerEventoActivo(Number(req.params.id)));
+  }),
+
+  inscribirEvento: asyncHandler(async (req: Request, res: Response) => {
+    const inscripcion = await publicoService.inscribirEvento(
+      Number(req.params.id),
+      req.body,
+    );
+    res.status(201).json(inscripcion);
+  }),
+
+  consultarInscripcionEvento: asyncHandler(async (req: Request, res: Response) => {
+    const resultado = await publicoService.consultarInscripcionEvento(
+      Number(req.params.id),
+      String(req.query.documento_identidad),
+    );
+    res.status(200).json(resultado);
+  }),
+
+  registrarAsistenciaEvento: asyncHandler(async (req: Request, res: Response) => {
+    const asistencia = await publicoService.registrarAsistenciaEvento(
+      req.body.codigo_qr,
+      req.body.documento_identidad,
+    );
+    res.status(201).json(asistencia);
+  }),
 };

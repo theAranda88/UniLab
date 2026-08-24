@@ -42,6 +42,33 @@ function assertFechaJornadaEnRangoEvento(
   }
 }
 
+async function validarYRegistrarAsistencia(
+  inscripcion: { id_inscripcion: number; estado_pago: string | null },
+  jornada: { id_jornada: number; id_evento: number },
+  evento: { requiere_pago: boolean },
+  created_by?: number,
+) {
+  if (evento.requiere_pago && inscripcion.estado_pago !== 'confirmado') {
+    throw new AppError(
+      'El pago de la inscripción debe estar confirmado para registrar asistencia',
+      422,
+    );
+  }
+
+  const yaRegistrada = await eventoRepository.buscarAsistencia(
+    inscripcion.id_inscripcion,
+    jornada.id_jornada,
+  );
+  if (yaRegistrada) throw new AppError('Asistencia ya registrada', 409);
+
+  return eventoRepository.registrarAsistencia({
+    inscripcion: { connect: { id_inscripcion: inscripcion.id_inscripcion } },
+    jornada: { connect: { id_jornada: jornada.id_jornada } },
+    fecha_hora_registro: new Date(),
+    ...(created_by ? { creador: { connect: { id_usuario: created_by } } } : {}),
+  });
+}
+
 export const eventoService = {
   listar() {
     return eventoRepository.findMany();
@@ -49,6 +76,16 @@ export const eventoService = {
 
   async obtener(id: number) {
     const evento = await eventoRepository.findById(id);
+    if (!evento) throw new AppError('Evento no encontrado', 404);
+    return evento;
+  },
+
+  listarPublicos() {
+    return eventoRepository.findManyActivos();
+  },
+
+  async obtenerPublico(id: number) {
+    const evento = await eventoRepository.findByIdActivo(id);
     if (!evento) throw new AppError('Evento no encontrado', 404);
     return evento;
   },
@@ -205,6 +242,44 @@ export const eventoService = {
     });
   },
 
+  async inscribirPublico(id_evento: number, data: {
+    nombre_completo: string;
+    documento_identidad: string;
+    email: string;
+    telefono: string;
+    institucion?: string;
+    genero: string;
+  }) {
+    const evento = await eventoService.obtenerPublico(id_evento);
+
+    const existente = await eventoRepository.findInscripcionEventoDocumento(
+      id_evento,
+      data.documento_identidad,
+    );
+    if (existente) throw new AppError('Ya está inscrito en este evento', 409);
+
+    return eventoRepository.crearInscripcion({
+      tipo_asistente: 'externo',
+      nombre_completo: data.nombre_completo,
+      documento_identidad: data.documento_identidad,
+      email: data.email,
+      telefono: data.telefono,
+      institucion: data.institucion,
+      genero: data.genero,
+      estado_pago: evento.requiere_pago ? 'pendiente' : null,
+      evento: { connect: { id_evento } },
+    });
+  },
+
+  async obtenerInscripcionPorDocumento(id_evento: number, documento_identidad: string) {
+    await eventoService.obtenerPublico(id_evento);
+    const inscripcion = await eventoRepository.findInscripcionEventoDocumento(
+      id_evento,
+      documento_identidad,
+    );
+    return { inscrito: !!inscripcion, inscripcion };
+  },
+
   async actualizarPago(id_inscripcion: number, estado_pago: string) {
     const inscripcion = await eventoRepository.findInscripcionById(id_inscripcion);
     if (!inscripcion) throw new AppError('Inscripción no encontrada', 404);
@@ -227,25 +302,24 @@ export const eventoService = {
     }
 
     const evento = await eventoService.obtener(jornada.id_evento);
-    if (evento.requiere_pago && inscripcion.estado_pago !== 'confirmado') {
-      throw new AppError(
-        'El pago de la inscripción debe estar confirmado para registrar asistencia',
-        422,
-      );
+    return validarYRegistrarAsistencia(inscripcion, jornada, evento, id_usuario);
+  },
+
+  async registrarAsistenciaPublica(codigo_qr: string, documento_identidad: string) {
+    const jornada = await eventoRepository.findJornadaByQr(codigo_qr);
+    if (!jornada) throw new AppError('Código QR inválido', 422);
+
+    const evento = await eventoService.obtenerPublico(jornada.id_evento);
+
+    const inscripcion = await eventoRepository.findInscripcionEventoDocumento(
+      jornada.id_evento,
+      documento_identidad,
+    );
+    if (!inscripcion) {
+      throw new AppError('Debe estar inscrito en el evento', 422);
     }
 
-    const yaRegistrada = await eventoRepository.buscarAsistencia(
-      inscripcion.id_inscripcion,
-      jornada.id_jornada,
-    );
-    if (yaRegistrada) throw new AppError('Asistencia ya registrada', 409);
-
-    return eventoRepository.registrarAsistencia({
-      inscripcion: { connect: { id_inscripcion: inscripcion.id_inscripcion } },
-      jornada: { connect: { id_jornada: jornada.id_jornada } },
-      fecha_hora_registro: new Date(),
-      creador: { connect: { id_usuario } },
-    });
+    return validarYRegistrarAsistencia(inscripcion, jornada, evento);
   },
 
   async reportes(id_evento: number) {

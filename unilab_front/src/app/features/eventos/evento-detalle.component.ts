@@ -4,7 +4,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import QRCode from 'qrcode';
 import { EventosService } from './eventos.service';
+import { PublicPortalService } from '../home/public-portal.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { Evento, EventoJornada, Inscripcion, JornadaEvidencia } from '../../core/models/evento.model';
+import {
+  guardarDocumentoInscripcion,
+  obtenerDocumentoInscripcion,
+} from '../../core/utils/inscripcion-documento.util';
 import { FormsModule } from '@angular/forms';
 import { InscripcionFormComponent } from './inscripcion-form.component';
 import { JornadaFormComponent } from './jornada-form.component';
@@ -34,6 +40,8 @@ import type { UiVariant } from '../../shared/ui/ui-variant';
 })
 export class EventoDetalleComponent implements OnInit {
   eventoService = inject(EventosService);
+  private portal = inject(PublicPortalService);
+  private auth = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -56,9 +64,12 @@ export class EventoDetalleComponent implements OnInit {
   puedeCrear = computed(() => this.eventoService.puedeCrear());
   puedeEditar = computed(() => this.eventoService.puedeEditar());
   puedeEliminar = computed(() => this.eventoService.puedeEliminar());
-  puedeInscribirse = computed(
-    () => this.eventoService.puedeInscribirse() && !this.yaInscrito(),
-  );
+  puedeInscribirse = computed(() => {
+    if (this.yaInscrito()) return false;
+    if (!this.auth.isAuthenticated()) return true;
+    return this.eventoService.puedeInscribirse();
+  });
+  esModoPublico = computed(() => !this.auth.isAuthenticated());
   puedeAsistenciaManual = computed(() => this.eventoService.puedeAsistenciaManual());
   pagoConfirmado = computed(() => {
     const ev = this.evento();
@@ -137,18 +148,47 @@ export class EventoDetalleComponent implements OnInit {
     this.cargando.set(true);
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.eventoService.obtener(id).subscribe({
+    const request = this.auth.isAuthenticated()
+      ? this.eventoService.obtener(id)
+      : this.portal.obtenerEventoActivo(id);
+
+    request.subscribe({
       next: (data: Evento) => {
         this.evento.set(data);
         if (this.eventoService.puedeListarInscripciones()) {
           this.cargarInscripciones(id);
           this.cargarJornadas(id);
-        } else {
+        } else if (this.auth.isAuthenticated()) {
           this.verificarMiInscripcion(id);
+        } else {
+          this.verificarInscripcionPublica(id);
         }
       },
       error: () => {
         this.error.set('eventos.errorCargar');
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  verificarInscripcionPublica(id: number) {
+    const documento = obtenerDocumentoInscripcion();
+    if (!documento) {
+      this.yaInscrito.set(false);
+      this.miInscripcion.set(null);
+      this.cargando.set(false);
+      return;
+    }
+
+    this.portal.consultarInscripcionEvento(id, documento).subscribe({
+      next: (res) => {
+        this.yaInscrito.set(res.inscrito);
+        this.miInscripcion.set(res.inscripcion);
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.yaInscrito.set(false);
+        this.miInscripcion.set(null);
         this.cargando.set(false);
       },
     });
@@ -215,20 +255,28 @@ export class EventoDetalleComponent implements OnInit {
     this.mostrarFormularioInscripcion.set(false);
   }
 
-  async onInscripcionExitosa() {
+  async onInscripcionExitosa(documento?: string | void) {
     this.cerrarFormularioInscripcion();
     const id = this.evento()?.id_evento;
     if (!id) return;
 
-    this.eventoService.obtenerMiInscripcion(id).subscribe({
-      next: (res) => {
-        this.yaInscrito.set(res.inscrito);
-        this.miInscripcion.set(res.inscripcion);
-        if (res.inscrito && this.pagoConfirmado()) {
-          this.cargarJornadas(id);
-        }
-      },
-    });
+    if (documento && typeof documento === 'string') {
+      guardarDocumentoInscripcion(documento);
+    }
+
+    if (this.auth.isAuthenticated()) {
+      this.eventoService.obtenerMiInscripcion(id).subscribe({
+        next: (res) => {
+          this.yaInscrito.set(res.inscrito);
+          this.miInscripcion.set(res.inscripcion);
+          if (res.inscrito && this.pagoConfirmado()) {
+            this.cargarJornadas(id);
+          }
+        },
+      });
+    } else {
+      this.verificarInscripcionPublica(id);
+    }
 
     await this.dialog.success({
       titleKey: 'dialog.success.title',

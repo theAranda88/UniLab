@@ -470,7 +470,7 @@ model evento_jornada_evidencias {
 model inscripciones {
   id_inscripcion      Int      @id @default(autoincrement())
   id_evento           Int
-  id_usuario          Int
+  id_usuario          Int?
   tipo_asistente      String   @db.VarChar(50)
   nombre_completo     String   @db.VarChar(255)
   documento_identidad String   @db.VarChar(255)
@@ -485,11 +485,12 @@ model inscripciones {
   deleted_at          DateTime? @db.Timestamp(6)
 
   evento      eventos       @relation(fields: [id_evento], references: [id_evento], onDelete: Restrict)
-  usuario     usuarios      @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  usuario     usuarios?     @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
   creador     usuarios?     @relation("inscripciones_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
   asistencias asistencias[]
 
   @@unique([id_evento, id_usuario], where: { deleted_at: null })
+  @@unique([id_evento, documento_identidad], where: { deleted_at: null })
 }
 
 model asistencias {

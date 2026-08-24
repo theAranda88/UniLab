@@ -65,11 +65,14 @@
           <button class="btn btn-success" (click)="abrirFormularioInscripcion()">
             {{ 'inscripcion.btnInscribirse' | translate }}
           </button>
-        } @else if (eventoService.puedeInscribirse() && yaInscrito()) {
+        } @else if (yaInscrito()) {
           <span class="badge-inscrito">
             <i class="ti ti-circle-check" aria-hidden="true"></i>
             {{ 'inscripcion.yaInscrito' | translate }}
           </span>
+        }
+        @if (esModoPublico()) {
+          <p class="info-publica">{{ 'inscripcion.sinCuenta' | translate }}</p>
         }
         @if (puedeAsistenciaManual()) {
           <button
@@ -248,8 +251,9 @@
         <app-inscripcion-form
           [evento]="evento()!"
           [variant]="uiVariant()"
+          [modoPublico]="esModoPublico()"
           (cerrar)="cerrarFormularioInscripcion()"
-          (inscripcionExitosa)="onInscripcionExitosa()"
+          (inscripcionExitosa)="onInscripcionExitosa($event)"
         ></app-inscripcion-form>
       }
 

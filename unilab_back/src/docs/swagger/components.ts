@@ -454,6 +454,18 @@ export const schemas = {
     },
     required: ['id_jornada', 'id_evento', 'nombre_jornada', 'fecha', 'codigo_qr'],
   },
+  InscripcionPublicaRequest: {
+    type: 'object',
+    required: ['nombre_completo', 'documento_identidad', 'email', 'telefono', 'genero'],
+    properties: {
+      nombre_completo: { type: 'string', example: 'Juan Pérez' },
+      documento_identidad: { type: 'string', example: '1098765432' },
+      email: { type: 'string', format: 'email', example: 'juan@example.com' },
+      telefono: { type: 'string', example: '3001234567' },
+      institucion: { type: 'string', example: 'Empresa externa' },
+      genero: { type: 'string', example: 'masculino' },
+    },
+  },
   InscripcionRequest: {
     type: 'object',
     required: ['tipo_asistente', 'nombre_completo', 'documento_identidad', 'email', 'telefono', 'genero'],
@@ -472,7 +484,7 @@ export const schemas = {
     properties: {
       id_inscripcion: { type: 'integer', example: 10 },
       id_evento: { type: 'integer', example: 1 },
-      id_usuario: { type: 'integer', example: 5 },
+      id_usuario: { type: 'integer', nullable: true, example: 5 },
       tipo_asistente: { type: 'string', example: 'estudiante' },
       nombre_completo: { type: 'string', example: 'Sofía Estudiante' },
       documento_identidad: { type: 'string', example: '1000000005' },
@@ -523,6 +535,14 @@ export const schemas = {
     required: ['codigo_qr'],
     properties: {
       codigo_qr: { type: 'string', description: 'UUID único de la jornada', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    },
+  },
+  AsistenciaPublicaRequest: {
+    type: 'object',
+    required: ['codigo_qr', 'documento_identidad'],
+    properties: {
+      codigo_qr: { type: 'string', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+      documento_identidad: { type: 'string', example: '1098765432' },
     },
   },
   AsistenciaResponse: {

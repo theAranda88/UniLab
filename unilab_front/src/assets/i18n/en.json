@@ -358,7 +358,8 @@
     "requierePago": "This event requires payment",
     "exito": "You have successfully registered for the event!",
     "yaInscrito": "Already registered",
-    "errorRegistrar": "Could not complete registration."
+    "errorRegistrar": "Could not complete registration.",
+    "sinCuenta": "You do not need a UniLab account to register for this event."
   },
   "asistencia": {
     "titulo": "Register Attendance",
@@ -376,6 +377,11 @@
     "pagoPendiente": "Your payment must be confirmed by an administrator before recording attendance.",
     "errorSinQr": "You must scan a session QR code to register attendance.",
     "instruccionesQr": "To register your attendance, scan the QR code shared by the organizer at each event session.",
+    "documentoTitulo": "Confirm your identity",
+    "documentoInstrucciones": "Enter the same document number you used when registering for the event.",
+    "documentoPlaceholder": "Document number",
+    "documentoRequerido": "You must enter your identity document.",
+    "confirmarDocumento": "Confirm and register",
     "mobile": {
       "registrando": "Registering your attendance...",
       "exitoTitulo": "Registration successful!",

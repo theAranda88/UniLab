@@ -4,7 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
+import { PublicPortalService } from '../home/public-portal.service';
 import { AuthService } from '../../core/auth/auth.service';
+import {
+  guardarDocumentoInscripcion,
+  obtenerDocumentoInscripcion,
+} from '../../core/utils/inscripcion-documento.util';
 import { hasPortalTheme, shouldUsePortalUi } from '../../core/utils/portal-theme.util';
 import { SpiderwebCanvasComponent } from '../home/spiderweb-canvas/spiderweb-canvas.component';
 
@@ -21,6 +26,7 @@ import { SpiderwebCanvasComponent } from '../home/spiderweb-canvas/spiderweb-can
 })
 export class AsistenciaQrComponent implements OnInit {
   private eventoService = inject(EventosService);
+  private portal = inject(PublicPortalService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -30,6 +36,9 @@ export class AsistenciaQrComponent implements OnInit {
 
   idEvento = signal<number>(0);
   codigoQr = signal('');
+  /** Campo de documento (propiedad simple para ngModel fiable). */
+  documentoIdentidad = '';
+  requiereDocumento = signal(false);
   registrando = signal(false);
   mensajeKey = signal<string | null>(null);
   tipoMensaje = signal<'success' | 'error'>('success');
@@ -64,8 +73,18 @@ export class AsistenciaQrComponent implements OnInit {
     });
   }
 
+  /**
+   * API pública solo para visitantes sin cuenta o staff (admin) que escanea QR
+   * sin inscripción vinculada a su usuario. Estudiante, Externo y Profesor usan JWT.
+   */
+  private usarAsistenciaPublica(): boolean {
+    if (!this.auth.isAuthenticated()) return true;
+    return !this.auth.hasAnyRole(['Estudiante', 'Externo', 'Profesor']);
+  }
+
   private aplicarQrDesdeUrl(qr: string) {
-    this.codigoQr.set(qr);
+    const normalizado = decodeURIComponent(qr).trim();
+    this.codigoQr.set(normalizado);
     this.esAutomatico.set(true);
     this.sinQrParam.set(false);
     this.iniciarRegistroAutomatico();
@@ -73,8 +92,36 @@ export class AsistenciaQrComponent implements OnInit {
 
   private iniciarRegistroAutomatico() {
     if (this.autoRegistroIniciado || !this.codigoQr()) return;
+
+    if (this.usarAsistenciaPublica()) {
+      const documento = obtenerDocumentoInscripcion();
+      if (documento) {
+        this.documentoIdentidad = documento;
+        this.autoRegistroIniciado = true;
+        setTimeout(() => this.registrarAsistencia(), 400);
+      } else {
+        this.autoRegistroIniciado = true;
+        this.requiereDocumento.set(true);
+      }
+      return;
+    }
+
     this.autoRegistroIniciado = true;
     setTimeout(() => this.registrarAsistencia(), 400);
+  }
+
+  confirmarDocumento() {
+    const documento = this.documentoIdentidad.trim();
+    if (!documento) {
+      this.mensajeKey.set('asistencia.documentoRequerido');
+      this.tipoMensaje.set('error');
+      return;
+    }
+    guardarDocumentoInscripcion(documento);
+    this.documentoIdentidad = documento;
+    this.mensajeKey.set(null);
+    this.mensajeCustom.set(null);
+    this.registrarAsistencia();
   }
 
   registrarAsistencia() {
@@ -84,16 +131,31 @@ export class AsistenciaQrComponent implements OnInit {
       return;
     }
 
+    if (this.usarAsistenciaPublica()) {
+      const documento = this.documentoIdentidad.trim() || obtenerDocumentoInscripcion();
+      if (!documento) {
+        this.requiereDocumento.set(true);
+        return;
+      }
+      this.documentoIdentidad = documento;
+      this.requiereDocumento.set(false);
+    }
+
     this.registrando.set(true);
     this.mensajeKey.set(null);
     this.mensajeCustom.set(null);
 
-    this.eventoService.registrarAsistencia(this.codigoQr()).subscribe({
+    const request = this.usarAsistenciaPublica()
+      ? this.portal.registrarAsistenciaPublica(this.codigoQr(), this.documentoIdentidad.trim())
+      : this.eventoService.registrarAsistencia(this.codigoQr());
+
+    request.subscribe({
       next: () => {
         this.mensajeKey.set('asistencia.registrada');
         this.tipoMensaje.set('success');
         this.registroCompletado.set(true);
         this.registrando.set(false);
+        this.requiereDocumento.set(false);
       },
       error: (err: { message?: string }) => {
         const msg = err.message ?? null;
@@ -106,6 +168,9 @@ export class AsistenciaQrComponent implements OnInit {
         }
         this.tipoMensaje.set('error');
         this.registrando.set(false);
+        if (this.usarAsistenciaPublica()) {
+          this.requiereDocumento.set(true);
+        }
       },
     });
   }
@@ -113,6 +178,9 @@ export class AsistenciaQrComponent implements OnInit {
   mensajeCustom = signal<string | null>(null);
 
   volver() {
-    this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
+    const destino = this.usarAsistenciaPublica()
+      ? ['/eventos', this.idEvento()]
+      : [this.eventoService.getBasePath(), this.idEvento()];
+    this.router.navigate(destino);
   }
 }
