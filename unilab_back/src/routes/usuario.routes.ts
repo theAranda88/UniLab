@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { usuarioController } from '../controllers/usuario.controller';
 import { verifyToken } from '../middlewares/auth/verifyToken';
-import { checkPrimerLogin } from '../middlewares/auth/checkPrimerLogin';
+import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
 import { requireRole } from '../middlewares/roles/requireRole';
 import { validate } from '../middlewares/validation/validate';
 import {
@@ -13,7 +13,9 @@ import {
 
 const router = Router();
 
-router.use(verifyToken, checkPrimerLogin, requireRole(['Administrador']));
+router.use(verifyToken, checkPrimerLogin, checkPerfilPendiente, requireRole(['Administrador']));
+
+router.get('/roles', usuarioController.listarRoles);
 
 router.get('/', validate(filtroUsuariosSchema, 'query'), usuarioController.listar);
 router.get('/:id', validate(idParamSchema, 'params'), usuarioController.obtener);

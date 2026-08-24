@@ -20,7 +20,10 @@ import { AdminShellComponent } from './shared/layout/admin-shell/admin-shell.com
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { CoordDashboardComponent } from './features/coordinador/dashboard/coord-dashboard.component';
 import { ProfDashboardComponent } from './features/profesor/dashboard/prof-dashboard.component';
-import { authGuard, roleGuard, primerLoginGuard, roleRedirectGuard } from './core/auth/auth.guard';
+import { authGuard, roleGuard, primerLoginGuard, roleRedirectGuard, perfilPendienteGuard, completarPerfilGuard } from './core/auth/auth.guard';
+import { CompletarPerfilComponent } from './features/auth/completar-perfil/completar-perfil.component';
+import { UsuariosListComponent } from './features/usuarios/usuarios-list/usuarios-list.component';
+import { UsuariosFormComponent } from './features/usuarios/usuarios-form/usuarios-form.component';
 
 @Component({
   selector: 'app-unauthorized',
@@ -152,6 +155,12 @@ const eventosProfChildren: Routes = [
   { path: 'eventos/:id/asistencia', component: AsistenciaQrComponent, data: { shellMode: true } },
 ];
 
+const usuariosShellChildren: Routes = [
+  { path: 'usuarios', component: UsuariosListComponent },
+  { path: 'usuarios/crear', component: UsuariosFormComponent },
+  { path: 'usuarios/:id/editar', component: UsuariosFormComponent },
+];
+
 export const routes: Routes = [
   {
     path: '',
@@ -185,7 +194,7 @@ export const routes: Routes = [
       },
       {
         path: 'mis-proyectos',
-        canActivate: [authGuard, primerLoginGuard, roleGuard],
+        canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleGuard],
         data: { roles: ['Estudiante'] },
         children: proyectosEstudianteChildren,
       },
@@ -198,18 +207,24 @@ export const routes: Routes = [
     canActivate: [CambiarPasswordGuard],
   },
   {
+    path: 'completar-perfil',
+    component: CompletarPerfilComponent,
+    canActivate: [authGuard, completarPerfilGuard],
+  },
+  {
     path: 'dashboard',
-    canActivate: [authGuard, primerLoginGuard, roleRedirectGuard],
+    canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleRedirectGuard],
     children: [],
   },
   {
     path: 'admin',
     component: AdminShellComponent,
-    canActivate: [authGuard, primerLoginGuard, roleGuard],
+    canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleGuard],
     data: { roles: ['Administrador'], shellRole: 'Administrador', shellPrefix: '/admin' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
+      ...usuariosShellChildren,
       ...escuelasShellChildren,
       ...eventosShellChildren,
     ],
@@ -217,7 +232,7 @@ export const routes: Routes = [
   {
     path: 'coord',
     component: AdminShellComponent,
-    canActivate: [authGuard, primerLoginGuard, roleGuard],
+    canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleGuard],
     data: { roles: ['Coordinador'], shellRole: 'Coordinador', shellPrefix: '/coord' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -229,7 +244,7 @@ export const routes: Routes = [
   {
     path: 'prof',
     component: AdminShellComponent,
-    canActivate: [authGuard, primerLoginGuard, roleGuard],
+    canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleGuard],
     data: { roles: ['Profesor'], shellRole: 'Profesor', shellPrefix: '/prof' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

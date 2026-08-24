@@ -55,8 +55,52 @@ export const paths = {
       },
     },
   },
+  '/auth/google': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Iniciar sesión con Google',
+      description:
+        'Verifica el ID token de Google Identity Services. Si el correo no existe, auto-registra: `@uniautonoma.edu.co` → Estudiante; otros → Externo.',
+      security: [],
+      requestBody: jsonBody('#/components/schemas/GoogleLoginRequest'),
+      responses: {
+        200: {
+          description: 'JWT UniLab emitido',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/GoogleLoginResponse' } } },
+        },
+        400: err[400],
+        401: err[401],
+        409: err[409],
+        422: err[422],
+      },
+    },
+  },
+  '/auth/completar-perfil': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Completar perfil tras registro con Google',
+      description: 'Requiere Bearer. Solo usuarios con `perfil_pendiente=true`.',
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonBody('#/components/schemas/CompletarPerfilRequest'),
+      responses: {
+        200: { description: 'Perfil completado' },
+        400: err[400],
+        401: err[401],
+        404: err[404],
+        422: err[422],
+      },
+    },
+  },
 
   // ─── USUARIOS ───────────────────────────────────────────────────────────────
+  '/usuarios/roles': {
+    get: {
+      tags: ['Usuarios'],
+      summary: 'Listar roles disponibles',
+      description: '**Rol requerido:** Administrador',
+      responses: { 200: { description: 'Lista de roles' }, ...err },
+    },
+  },
   '/usuarios': {
     get: {
       tags: ['Usuarios'],

@@ -93,6 +93,17 @@
         <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">
           {{ loading() ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
         </button>
+
+        <div class="login-divider">
+          <span>{{ 'auth.login.orContinueWith' | translate }}</span>
+        </div>
+
+        <app-google-sign-in
+          [variant]="variant"
+          [ariaLabel]="'auth.login.googleButton' | translate"
+          [label]="'auth.login.googleButton' | translate"
+          (credential)="onGoogleCredential($event)"
+        />
       </form>
 
       @if (variant === 'default') {

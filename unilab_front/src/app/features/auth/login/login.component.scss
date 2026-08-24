@@ -548,3 +548,49 @@ $codex-text-muted: rgba(148, 163, 184, 0.85);
   }
 }
 
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 12px;
+  color: $text-light;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $border-gray, transparent);
+  }
+
+  span {
+    white-space: nowrap;
+  }
+}
+
+:host.login--codex {
+  .login-divider {
+    color: $codex-blue-accent;
+    margin: 18px 0 14px;
+
+    &::before,
+    &::after {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(212, 175, 55, 0.35),
+        transparent
+      );
+    }
+  }
+
+  app-google-sign-in {
+    display: block;
+    margin-top: 2px;
+  }
+}
+

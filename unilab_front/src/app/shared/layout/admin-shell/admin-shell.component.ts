@@ -44,6 +44,7 @@ export class AdminShellComponent implements OnInit {
 
   pageTitleKey = computed(() => {
     const path = this.currentPath();
+    if (path.includes('/usuarios')) return 'shell.pages.usuarios';
     if (path.includes('/escuelas')) return 'shell.pages.escuelas';
     if (path.includes('/eventos')) return 'shell.pages.eventos';
     if (path.includes('/dashboard')) {
@@ -84,6 +85,11 @@ export class AdminShellComponent implements OnInit {
   navTo(route: string, enabled: boolean): void {
     if (!enabled) return;
     this.router.navigate([this.shellPrefix(), route]);
+  }
+
+  crearUsuario(): void {
+    if (this.shellRole() !== 'Administrador') return;
+    this.router.navigate([this.shellPrefix(), 'usuarios', 'crear']);
   }
 
   logout(): void {

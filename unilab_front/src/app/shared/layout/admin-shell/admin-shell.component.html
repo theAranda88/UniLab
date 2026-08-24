@@ -74,7 +74,13 @@
         <button class="tb-btn" type="button" aria-label="Configuración">
           <i class="ti ti-settings" aria-hidden="true"></i>
         </button>
-        <button class="tb-btn primary" type="button" disabled [title]="'shell.nav.comingSoon' | translate">
+        <button
+          class="tb-btn primary"
+          type="button"
+          [disabled]="shellRole() !== 'Administrador'"
+          [title]="shellRole() !== 'Administrador' ? ('shell.nav.comingSoon' | translate) : null"
+          (click)="crearUsuario()"
+        >
           <i class="ti ti-plus" aria-hidden="true"></i>
           <span>{{ ctaKey() | translate }}</span>
         </button>

@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import type { RegisterRequest, RegisterResponse } from '../models/portal.model';
+import type { CompletarPerfilDto } from '../models/usuario.model';
 
 export interface User {
   id_usuario: number;
   email: string;
   id_rol: string;
   primer_login: boolean;
+  perfil_pendiente?: boolean;
   nombres?: string;
   apellidos?: string;
 }
@@ -21,6 +23,7 @@ export interface LoginRequest {
 export interface AuthResponse {
   token: string;
   usuario: User;
+  cuenta_nueva?: boolean;
 }
 
 export interface CambiarPasswordResponse {
@@ -51,6 +54,25 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap((response) => this.setAuth(response.token, response.usuario)),
     );
+  }
+
+  loginWithGoogle(credential: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { credential }).pipe(
+      tap((response) => this.setAuth(response.token, response.usuario)),
+    );
+  }
+
+  completarPerfil(data: CompletarPerfilDto): Observable<{ mensaje: string; usuario: User }> {
+    return this.http
+      .post<{ mensaje: string; usuario: User }>(`${this.apiUrl}/completar-perfil`, data)
+      .pipe(
+        tap((response) => {
+          const current = this.userSignal();
+          if (current) {
+            this.updateUser({ ...response.usuario, perfil_pendiente: false });
+          }
+        }),
+      );
   }
 
   register(data: RegisterRequest): Observable<RegisterResponse> {

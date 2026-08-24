@@ -1,0 +1,130 @@
+<div class="usuarios-form">
+  <div class="usuarios-form__card">
+    <h1>{{ (modoEdicion() ? 'usuarios.editar' : 'usuarios.crear') | translate }}</h1>
+
+    @if (cargando()) {
+      <p class="usuarios-form__loading">{{ 'common.cargando' | translate }}</p>
+    } @else if (tempPassword()) {
+      <div class="usuarios-form__success">
+        <p>{{ 'usuarios.tempPasswordHint' | translate }}</p>
+        <code>{{ tempPassword() }}</code>
+        <button type="button" class="btn btn-primary" (click)="continuarTrasCrear()">
+          {{ 'usuarios.continueList' | translate }}
+        </button>
+      </div>
+    } @else {
+      @if (error()) {
+        <p class="usuarios-form__error">{{ error() | translate }}</p>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="usuarios-form__body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombres">{{ 'usuarios.nombres' | translate }} *</label>
+            <input id="nombres" type="text" formControlName="nombres" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="apellidos">{{ 'usuarios.apellidos' | translate }} *</label>
+            <input id="apellidos" type="text" formControlName="apellidos" class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">{{ 'usuarios.email' | translate }} *</label>
+          <input id="email" type="email" formControlName="email" class="form-control" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="documento">{{ 'usuarios.documento' | translate }} *</label>
+            <input id="documento" type="text" formControlName="documento_identidad" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="telefono">{{ 'usuarios.telefono' | translate }} *</label>
+            <input id="telefono" type="text" formControlName="telefono" class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rol">{{ 'usuarios.rol' | translate }} *</label>
+          <select id="rol" formControlName="rol" class="form-control">
+            @for (rol of roles; track rol) {
+              <option [value]="rol">{{ 'usuarios.roles.' + rol | translate }}</option>
+            }
+          </select>
+        </div>
+
+        @if (rolActual() === 'Profesor') {
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'usuarios.codigoDocente' | translate }} *</label>
+              <input type="text" formControlName="codigo_docente" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'usuarios.escuela' | translate }} *</label>
+              <select formControlName="id_escuela" class="form-control">
+                <option [ngValue]="null">{{ 'usuarios.selectSchool' | translate }}</option>
+                @for (escuela of escuelas(); track escuela.id_escuela) {
+                  <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+
+        @if (rolActual() === 'Estudiante') {
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'usuarios.codigoEstudiantil' | translate }} *</label>
+              <input type="text" formControlName="codigo_estudiantil" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'usuarios.escuela' | translate }} *</label>
+              <select formControlName="id_escuela" class="form-control">
+                <option [ngValue]="null">{{ 'usuarios.selectSchool' | translate }}</option>
+                @for (escuela of escuelas(); track escuela.id_escuela) {
+                  <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+
+        @if (rolActual() === 'Coordinador') {
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'usuarios.cargo' | translate }} *</label>
+              <input type="text" formControlName="cargo" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'usuarios.dependencia' | translate }} *</label>
+              <input type="text" formControlName="dependencia" class="form-control" />
+            </div>
+          </div>
+        }
+
+        @if (rolActual() === 'Externo') {
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'usuarios.institucion' | translate }} *</label>
+              <input type="text" formControlName="institucion" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'usuarios.ocupacion' | translate }} *</label>
+              <input type="text" formControlName="ocupacion" class="form-control" />
+            </div>
+          </div>
+        }
+
+        <div class="usuarios-form__actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            {{ 'common.cancelar' | translate }}
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+            {{ enviando() ? ('common.cargando' | translate) : ('common.guardar' | translate) }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

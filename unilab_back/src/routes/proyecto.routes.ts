@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { proyectoController } from '../controllers/proyecto.controller';
 import { verifyToken } from '../middlewares/auth/verifyToken';
-import { checkPrimerLogin } from '../middlewares/auth/checkPrimerLogin';
+import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
 import { requireRole } from '../middlewares/roles/requireRole';
 import { validate } from '../middlewares/validation/validate';
 import { subirImagenesProyecto } from '../middlewares/upload/subirImagenesProyecto.middleware';
@@ -17,7 +17,7 @@ import {
 
 const router = Router();
 
-const auth = [verifyToken, checkPrimerLogin] as const;
+const auth = [verifyToken, checkPrimerLogin, checkPerfilPendiente] as const;
 
 router.get('/', ...auth, proyectoController.listar);
 router.get('/:id', ...auth, validate(idParamSchema, 'params'), proyectoController.obtener);

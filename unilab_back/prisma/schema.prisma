@@ -33,10 +33,12 @@ model usuarios {
   apellidos           String   @db.VarChar(255)
   email               String   @db.VarChar(255)
   password_hash       String   @db.VarChar(255)
+  google_sub          String?  @db.VarChar(255)
   documento_identidad String   @db.VarChar(255)
   telefono            String   @db.VarChar(255)
   activo              Boolean  @default(true)
   primer_login        Boolean  @default(true)
+  perfil_pendiente    Boolean  @default(false)
   created_at          DateTime @default(now()) @db.Timestamp(6)
   updated_at          DateTime @updatedAt @db.Timestamp(6)
   created_by          Int?
@@ -92,6 +94,7 @@ model usuarios {
   inscripciones                   inscripciones[]
 
   @@unique([email], where: { deleted_at: null })
+  @@unique([google_sub], where: { deleted_at: null })
 }
 
 model perfiles_coordinador {

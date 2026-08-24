@@ -6,6 +6,10 @@ import { prisma } from '../models/prisma.client';
 const ROLES_CON_PERFIL = ['Coordinador', 'Profesor', 'Estudiante', 'Externo'] as const;
 
 export const usuarioService = {
+  async listarRoles() {
+    return usuarioRepository.findAllRoles();
+  },
+
   async listar(filtroRol?: string) {
     let id_rol: number | undefined;
     if (filtroRol) {
@@ -74,15 +78,33 @@ export const usuarioService = {
       if (dup) throw new AppError('El email ya está en uso', 409);
     }
 
+    const rolNuevo = data.rol as string | undefined;
+    if (rolNuevo && rolNuevo !== usuario.rol.nombre_rol) {
+      await cambiarRolUsuario(id, usuario.rol.nombre_rol, rolNuevo, data, usuario.created_by ?? id);
+    }
+
+    const rolConnect =
+      rolNuevo && rolNuevo !== usuario.rol.nombre_rol
+        ? await usuarioRepository.findRolByNombre(rolNuevo)
+        : null;
+    if (rolNuevo && rolNuevo !== usuario.rol.nombre_rol && !rolConnect) {
+      throw new AppError('Rol no válido', 422);
+    }
+
     const actualizado = await usuarioRepository.update(id, {
       nombres: data.nombres as string | undefined,
       apellidos: data.apellidos as string | undefined,
       email: data.email as string | undefined,
       documento_identidad: data.documento_identidad as string | undefined,
       telefono: data.telefono as string | undefined,
+      ...(rolConnect ? { rol: { connect: { id_rol: rolConnect.id_rol } } } : {}),
     });
 
-    await actualizarPerfilExtendido(usuario.rol.nombre_rol, id, data);
+    await actualizarPerfilExtendido(
+      rolNuevo ?? usuario.rol.nombre_rol,
+      id,
+      data,
+    );
     return usuarioRepository.findById(id) ?? actualizado;
   },
 
@@ -98,6 +120,118 @@ export const usuarioService = {
     await usuarioRepository.softDelete(id);
   },
 };
+
+async function softDeletePerfil(rol: string, id_usuario: number) {
+  const now = new Date();
+  switch (rol) {
+    case 'Coordinador':
+      await prisma.perfiles_coordinador.updateMany({
+        where: { id_usuario, deleted_at: null },
+        data: { deleted_at: now },
+      });
+      break;
+    case 'Profesor':
+      await prisma.perfiles_profesor.updateMany({
+        where: { id_usuario, deleted_at: null },
+        data: { deleted_at: now },
+      });
+      break;
+    case 'Estudiante':
+      await prisma.perfiles_estudiante.updateMany({
+        where: { id_usuario, deleted_at: null },
+        data: { deleted_at: now },
+      });
+      break;
+    case 'Externo':
+      await prisma.perfiles_externo.updateMany({
+        where: { id_usuario, deleted_at: null },
+        data: { deleted_at: now },
+      });
+      break;
+  }
+}
+
+async function cambiarRolUsuario(
+  id_usuario: number,
+  rolAnterior: string,
+  rolNuevo: string,
+  data: Record<string, unknown>,
+  created_by: number,
+) {
+  const rol = await usuarioRepository.findRolByNombre(rolNuevo);
+  if (!rol) throw new AppError('Rol no válido', 422);
+
+  validarPerfilObligatorio(rolNuevo, {
+    codigo_docente: data.codigo_docente as string | undefined,
+    codigo_estudiantil: data.codigo_estudiantil as string | undefined,
+    id_escuela: data.id_escuela as number | undefined,
+    cargo: data.cargo as string | undefined,
+    dependencia: data.dependencia as string | undefined,
+    institucion: data.institucion as string | undefined,
+    ocupacion: data.ocupacion as string | undefined,
+  });
+
+  if (ROLES_CON_PERFIL.includes(rolAnterior as (typeof ROLES_CON_PERFIL)[number])) {
+    await softDeletePerfil(rolAnterior, id_usuario);
+  }
+
+  if (ROLES_CON_PERFIL.includes(rolNuevo as (typeof ROLES_CON_PERFIL)[number])) {
+    const perfilData = {
+      rol: rolNuevo,
+      codigo_docente: data.codigo_docente as string | undefined,
+      codigo_estudiantil: data.codigo_estudiantil as string | undefined,
+      id_escuela: data.id_escuela as number | undefined,
+      cargo: data.cargo as string | undefined,
+      dependencia: data.dependencia as string | undefined,
+      institucion: data.institucion as string | undefined,
+      ocupacion: data.ocupacion as string | undefined,
+      created_by,
+    };
+
+    switch (rolNuevo) {
+      case 'Coordinador':
+        await prisma.perfiles_coordinador.create({
+          data: {
+            usuario: { connect: { id_usuario } },
+            cargo: perfilData.cargo!,
+            dependencia: perfilData.dependencia!,
+            creador: { connect: { id_usuario: created_by } },
+          },
+        });
+        break;
+      case 'Profesor':
+        await prisma.perfiles_profesor.create({
+          data: {
+            usuario: { connect: { id_usuario } },
+            codigo_docente: perfilData.codigo_docente!,
+            escuela: { connect: { id_escuela: perfilData.id_escuela! } },
+            creador: { connect: { id_usuario: created_by } },
+          },
+        });
+        break;
+      case 'Estudiante':
+        await prisma.perfiles_estudiante.create({
+          data: {
+            usuario: { connect: { id_usuario } },
+            codigo_estudiantil: perfilData.codigo_estudiantil!,
+            escuela: { connect: { id_escuela: perfilData.id_escuela! } },
+            creador: { connect: { id_usuario: created_by } },
+          },
+        });
+        break;
+      case 'Externo':
+        await prisma.perfiles_externo.create({
+          data: {
+            usuario: { connect: { id_usuario } },
+            institucion: perfilData.institucion!,
+            ocupacion: perfilData.ocupacion!,
+            creador: { connect: { id_usuario: created_by } },
+          },
+        });
+        break;
+    }
+  }
+}
 
 function validarPerfilObligatorio(
   rol: string,

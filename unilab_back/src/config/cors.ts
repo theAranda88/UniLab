@@ -1,6 +1,6 @@
 import type { CorsOptions } from 'cors';
 
-const DEFAULT_ORIGINS = ['http://localhost:4200', 'http://localhost:8080'];
+const DEFAULT_ORIGINS = ['http://localhost:8080'];
 
 function parseOrigins(raw: string | undefined): string[] {
   if (!raw?.trim()) return DEFAULT_ORIGINS;

@@ -8,6 +8,16 @@ export const authController = {
     res.status(200).json(result);
   }),
 
+  loginGoogle: asyncHandler(async (req: Request, res: Response) => {
+    const result = await authService.loginGoogle(req.body.credential);
+    res.status(200).json(result);
+  }),
+
+  completarPerfil: asyncHandler(async (req: Request, res: Response) => {
+    const result = await authService.completarPerfil(req.user!.id_usuario, req.body);
+    res.status(200).json(result);
+  }),
+
   register: asyncHandler(async (req: Request, res: Response) => {
     const result = await authService.register(req.body);
     res.status(201).json(result);

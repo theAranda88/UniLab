@@ -48,7 +48,8 @@
       "dashboard": "General dashboard",
       "miPanel": "My panel",
       "eventos": "Events",
-      "escuelas": "Schools and programs"
+      "escuelas": "Schools and programs",
+      "usuarios": "Users"
     },
     "cta": {
       "crearUsuario": "Create user",
@@ -79,7 +80,23 @@
       "invalidCredentials": "Invalid credentials. Please try again.",
       "emailRequired": "Email is required",
       "passwordRequired": "Password is required",
-      "passwordMinLength": "Minimum 6 characters"
+      "passwordMinLength": "Minimum 6 characters",
+      "orContinueWith": "or continue with",
+      "googleButton": "Continue with Google",
+      "googleError": "Could not sign in with Google"
+    },
+    "completarPerfil": {
+      "title": "Complete your profile",
+      "subtitle": "We need a few more details to activate your account.",
+      "document": "Identity document",
+      "phone": "Phone",
+      "studentCode": "Student code",
+      "school": "School / program",
+      "selectSchool": "Select a school",
+      "institution": "Institution",
+      "occupation": "Occupation",
+      "submit": "Save and continue",
+      "error": "Could not complete profile"
     },
     "cambiarPassword": {
       "title": "Change Password",
@@ -266,6 +283,52 @@
     "errorEliminar": "Error deleting school",
     "eliminarTitulo": "Delete school",
     "eliminarMensaje": "Delete school \"{{nombre}}\"? Its courses will also be soft-deleted."
+  },
+  "usuarios": {
+    "titulo": "Users",
+    "crear": "Create user",
+    "editar": "Edit user",
+    "nombre": "Name",
+    "nombres": "First name",
+    "apellidos": "Last name",
+    "email": "Email",
+    "documento": "Document",
+    "telefono": "Phone",
+    "rol": "Role",
+    "estado": "Status",
+    "activo": "Active",
+    "inactivo": "Inactive",
+    "suspender": "Suspend",
+    "reactivar": "Reactivate",
+    "suspenderTitulo": "Suspend user",
+    "reactivarTitulo": "Reactivate user",
+    "suspenderMensaje": "Suspend {{nombre}}?",
+    "reactivarMensaje": "Reactivate {{nombre}}?",
+    "eliminarTitulo": "Delete user",
+    "eliminarMensaje": "Delete {{nombre}}? This is a soft delete.",
+    "sinUsuarios": "No users registered",
+    "errorCargar": "Error loading users",
+    "errorCrear": "Error creating user",
+    "errorActualizar": "Error updating user",
+    "errorEliminar": "Error deleting user",
+    "errorSuspender": "Error changing user status",
+    "tempPasswordHint": "Temporary password (shown once):",
+    "continueList": "Go to list",
+    "codigoDocente": "Teacher code",
+    "codigoEstudiantil": "Student code",
+    "escuela": "School",
+    "selectSchool": "Select school",
+    "cargo": "Position",
+    "dependencia": "Department",
+    "institucion": "Institution",
+    "ocupacion": "Occupation",
+    "roles": {
+      "Administrador": "Administrator",
+      "Coordinador": "Coordinator",
+      "Profesor": "Professor",
+      "Estudiante": "Student",
+      "Externo": "External"
+    }
   },
   "eventos": {
     "title": "Events",

@@ -5,6 +5,19 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const googleLoginSchema = z.object({
+  credential: z.string().min(1),
+});
+
+export const completarPerfilSchema = z.object({
+  documento_identidad: z.string().min(1),
+  telefono: z.string().min(1),
+  codigo_estudiantil: z.string().optional(),
+  id_escuela: z.number().int().positive().optional(),
+  institucion: z.string().optional(),
+  ocupacion: z.string().optional(),
+});
+
 export const registerSchema = z.object({
   nombres: z.string().min(1),
   apellidos: z.string().min(1),
@@ -49,6 +62,7 @@ export const actualizarUsuarioSchema = z.object({
   email: z.string().email().optional(),
   documento_identidad: z.string().optional(),
   telefono: z.string().optional(),
+  rol: z.enum(['Administrador', 'Coordinador', 'Profesor', 'Estudiante', 'Externo']).optional(),
   id_escuela: z.number().int().positive().optional(),
   codigo_docente: z.string().optional(),
   codigo_estudiantil: z.string().optional(),

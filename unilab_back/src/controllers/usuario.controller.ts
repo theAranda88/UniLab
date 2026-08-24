@@ -3,6 +3,11 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { usuarioService } from '../services/usuario.service';
 
 export const usuarioController = {
+  listarRoles: asyncHandler(async (_req: Request, res: Response) => {
+    const roles = await usuarioService.listarRoles();
+    res.status(200).json(roles);
+  }),
+
   listar: asyncHandler(async (req: Request, res: Response) => {
     const usuarios = await usuarioService.listar(req.query.rol as string | undefined);
     res.status(200).json(usuarios);

@@ -141,8 +141,45 @@ export const schemas = {
           email: { type: 'string', example: 'admin@unilab.edu' },
           id_rol: { type: 'string', example: 'Administrador' },
           primer_login: { type: 'boolean', example: false },
+          perfil_pendiente: { type: 'boolean', example: false },
         },
       },
+    },
+  },
+  GoogleLoginRequest: {
+    type: 'object',
+    required: ['credential'],
+    properties: {
+      credential: { type: 'string', description: 'ID token JWT devuelto por Google Identity Services' },
+    },
+  },
+  GoogleLoginResponse: {
+    type: 'object',
+    properties: {
+      token: { type: 'string' },
+      cuenta_nueva: { type: 'boolean', example: true },
+      usuario: {
+        type: 'object',
+        properties: {
+          id_usuario: { type: 'integer' },
+          email: { type: 'string' },
+          id_rol: { type: 'string' },
+          primer_login: { type: 'boolean' },
+          perfil_pendiente: { type: 'boolean' },
+        },
+      },
+    },
+  },
+  CompletarPerfilRequest: {
+    type: 'object',
+    required: ['documento_identidad', 'telefono'],
+    properties: {
+      documento_identidad: { type: 'string', example: '1098765432' },
+      telefono: { type: 'string', example: '3001234567' },
+      codigo_estudiantil: { type: 'string', description: 'Requerido si rol=Estudiante' },
+      id_escuela: { type: 'integer', description: 'Requerido si rol=Estudiante' },
+      institucion: { type: 'string', description: 'Requerido si rol=Externo' },
+      ocupacion: { type: 'string', description: 'Requerido si rol=Externo' },
     },
   },
   RegisterRequest: {
@@ -216,6 +253,11 @@ export const schemas = {
       email: { type: 'string', format: 'email' },
       documento_identidad: { type: 'string' },
       telefono: { type: 'string' },
+      rol: {
+        type: 'string',
+        enum: ['Administrador', 'Coordinador', 'Profesor', 'Estudiante', 'Externo'],
+        description: 'Cambio de rol: incluir campos de perfil del nuevo rol',
+      },
       id_escuela: { type: 'integer', example: 5 },
       codigo_docente: { type: 'string' },
       codigo_estudiantil: { type: 'string' },

@@ -1,0 +1,53 @@
+<div class="completar-perfil">
+  <div class="completar-perfil__card">
+    <h1>{{ 'auth.completarPerfil.title' | translate }}</h1>
+    <p class="completar-perfil__hint">{{ 'auth.completarPerfil.subtitle' | translate }}</p>
+
+    @if (error()) {
+      <p class="completar-perfil__error">{{ error() | translate }}</p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="completar-perfil__form">
+      <label>
+        {{ 'auth.completarPerfil.document' | translate }}
+        <input type="text" formControlName="documento_identidad" />
+      </label>
+
+      <label>
+        {{ 'auth.completarPerfil.phone' | translate }}
+        <input type="text" formControlName="telefono" />
+      </label>
+
+      @if (rol() === 'Estudiante') {
+        <label>
+          {{ 'auth.completarPerfil.studentCode' | translate }}
+          <input type="text" formControlName="codigo_estudiantil" />
+        </label>
+        <label>
+          {{ 'auth.completarPerfil.school' | translate }}
+          <select formControlName="id_escuela">
+            <option [ngValue]="null">{{ 'auth.completarPerfil.selectSchool' | translate }}</option>
+            @for (escuela of escuelas(); track escuela.id_escuela) {
+              <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      @if (rol() === 'Externo') {
+        <label>
+          {{ 'auth.completarPerfil.institution' | translate }}
+          <input type="text" formControlName="institucion" />
+        </label>
+        <label>
+          {{ 'auth.completarPerfil.occupation' | translate }}
+          <input type="text" formControlName="ocupacion" />
+        </label>
+      }
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading() || form.invalid">
+        {{ loading() ? ('common.loading' | translate) : ('auth.completarPerfil.submit' | translate) }}
+      </button>
+    </form>
+  </div>
+</div>

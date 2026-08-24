@@ -29,6 +29,7 @@ export async function verifyToken(req: Request, _res: Response, next: NextFuncti
       id_rol: usuario.rol.nombre_rol,
       email: usuario.email,
       primer_login: usuario.primer_login,
+      perfil_pendiente: usuario.perfil_pendiente,
     };
 
     next();

@@ -18,6 +18,13 @@ export const escuelaRepository = {
     });
   },
 
+  findFirst() {
+    return prisma.escuelas.findFirst({
+      where: activo,
+      orderBy: { id_escuela: 'asc' },
+    });
+  },
+
   create(data: Prisma.escuelasCreateInput) {
     return prisma.escuelas.create({ data });
   },

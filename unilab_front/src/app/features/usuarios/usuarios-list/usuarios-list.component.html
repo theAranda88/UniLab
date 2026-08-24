@@ -1,0 +1,66 @@
+<div class="usuarios-list">
+  <div class="usuarios-list__header">
+    <h1>{{ 'usuarios.titulo' | translate }}</h1>
+    <button type="button" class="btn btn-primary" (click)="crear()">
+      {{ 'usuarios.crear' | translate }}
+    </button>
+  </div>
+
+  @if (cargando()) {
+    <p class="usuarios-list__loading">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="usuarios-list__error">{{ error() | translate }}</p>
+  } @else if (usuarios().length === 0) {
+    <p class="usuarios-list__empty">{{ 'usuarios.sinUsuarios' | translate }}</p>
+  } @else {
+    <div class="usuarios-list__table-wrap">
+      <table class="usuarios-list__table">
+        <thead>
+          <tr>
+            <th>{{ 'usuarios.nombre' | translate }}</th>
+            <th>{{ 'usuarios.email' | translate }}</th>
+            <th>{{ 'usuarios.rol' | translate }}</th>
+            <th>{{ 'usuarios.estado' | translate }}</th>
+            <th>{{ 'common.acciones' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios(); track trackById($index, usuario)) {
+            <tr [class.usuarios-list__row--inactive]="!usuario.activo">
+              <td>{{ usuario.nombres }} {{ usuario.apellidos }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>{{ usuario.rol.nombre_rol }}</td>
+              <td>
+                @if (usuario.activo) {
+                  {{ 'usuarios.activo' | translate }}
+                } @else {
+                  {{ 'usuarios.inactivo' | translate }}
+                }
+              </td>
+              <td class="usuarios-list__actions">
+                <button type="button" class="btn btn-link" (click)="editar(usuario.id_usuario)">
+                  {{ 'common.editar' | translate }}
+                </button>
+                <button type="button" class="btn btn-link" (click)="suspender(usuario)">
+                  {{ usuario.activo ? ('usuarios.suspender' | translate) : ('usuarios.reactivar' | translate) }}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-link btn-link--danger"
+                  [disabled]="eliminandoId() === usuario.id_usuario"
+                  (click)="eliminar(usuario)"
+                >
+                  {{
+                    eliminandoId() === usuario.id_usuario
+                      ? ('common.cargando' | translate)
+                      : ('common.eliminar' | translate)
+                  }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

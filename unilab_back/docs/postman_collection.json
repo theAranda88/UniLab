@@ -90,6 +90,48 @@
           ]
         },
         {
+          "name": "Iniciar sesión con Google",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"credential\": \"<ID_TOKEN_GOOGLE>\"\n}"
+            },
+            "url": "{{base_url}}/auth/google",
+            "description": "Verifica ID token GIS. Auto-registra: @uniautonoma.edu.co → Estudiante; otros → Externo."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('token', pm.response.json().token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Completar perfil (Google)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documento_identidad\": \"1098765432\",\n  \"telefono\": \"3001234567\",\n  \"codigo_estudiantil\": \"EST-100\",\n  \"id_escuela\": 5\n}"
+            },
+            "url": "{{base_url}}/auth/completar-perfil",
+            "description": "Tras registro Google con perfil_pendiente=true."
+          }
+        },
+        {
           "name": "Registrar estudiante",
           "request": {
             "method": "POST",

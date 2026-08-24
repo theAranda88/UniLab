@@ -10,6 +10,13 @@ export const usuarioRepository = {
     });
   },
 
+  findByGoogleSub(google_sub: string) {
+    return prisma.usuarios.findFirst({
+      where: { google_sub, ...activo },
+      include: { rol: true },
+    });
+  },
+
   findById(id: number) {
     return prisma.usuarios.findFirst({
       where: { id_usuario: id, ...activo },
@@ -56,5 +63,28 @@ export const usuarioRepository = {
 
   findAllRoles() {
     return prisma.roles.findMany({ where: activo });
+  },
+
+  updatePerfilEstudiante(
+    id_usuario: number,
+    data: { codigo_estudiantil: string; id_escuela: number },
+  ) {
+    return prisma.perfiles_estudiante.update({
+      where: { id_usuario },
+      data: {
+        codigo_estudiantil: data.codigo_estudiantil,
+        id_escuela: data.id_escuela,
+      },
+    });
+  },
+
+  updatePerfilExterno(id_usuario: number, data: { institucion: string; ocupacion: string }) {
+    return prisma.perfiles_externo.update({
+      where: { id_usuario },
+      data: {
+        institucion: data.institucion,
+        ocupacion: data.ocupacion,
+      },
+    });
   },
 };

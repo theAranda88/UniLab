@@ -48,7 +48,8 @@
       "dashboard": "Dashboard general",
       "miPanel": "Mi panel",
       "eventos": "Eventos",
-      "escuelas": "Escuelas y carreras"
+      "escuelas": "Escuelas y carreras",
+      "usuarios": "Usuarios"
     },
     "cta": {
       "crearUsuario": "Crear usuario",
@@ -79,7 +80,23 @@
       "invalidCredentials": "Credenciales inválidas. Por favor intenta de nuevo.",
       "emailRequired": "El correo electrónico es requerido",
       "passwordRequired": "La contraseña es requerida",
-      "passwordMinLength": "Mínimo 6 caracteres"
+      "passwordMinLength": "Mínimo 6 caracteres",
+      "orContinueWith": "o continúa con",
+      "googleButton": "Continuar con Google",
+      "googleError": "No se pudo iniciar sesión con Google"
+    },
+    "completarPerfil": {
+      "title": "Completa tu perfil",
+      "subtitle": "Necesitamos algunos datos adicionales para activar tu cuenta.",
+      "document": "Documento de identidad",
+      "phone": "Teléfono",
+      "studentCode": "Código estudiantil",
+      "school": "Escuela / carrera",
+      "selectSchool": "Selecciona una escuela",
+      "institution": "Institución",
+      "occupation": "Ocupación",
+      "submit": "Guardar y continuar",
+      "error": "No se pudo completar el perfil"
     },
     "cambiarPassword": {
       "title": "Cambiar Contraseña",
@@ -274,6 +291,52 @@
     "errorEliminar": "Error al eliminar la escuela",
     "eliminarTitulo": "Eliminar escuela",
     "eliminarMensaje": "¿Eliminar la escuela \"{{nombre}}\"? También se eliminarán sus cursos de forma lógica."
+  },
+  "usuarios": {
+    "titulo": "Usuarios",
+    "crear": "Crear usuario",
+    "editar": "Editar usuario",
+    "nombre": "Nombre",
+    "nombres": "Nombres",
+    "apellidos": "Apellidos",
+    "email": "Correo",
+    "documento": "Documento",
+    "telefono": "Teléfono",
+    "rol": "Rol",
+    "estado": "Estado",
+    "activo": "Activo",
+    "inactivo": "Inactivo",
+    "suspender": "Suspender",
+    "reactivar": "Reactivar",
+    "suspenderTitulo": "Suspender usuario",
+    "reactivarTitulo": "Reactivar usuario",
+    "suspenderMensaje": "¿Suspender a {{nombre}}?",
+    "reactivarMensaje": "¿Reactivar a {{nombre}}?",
+    "eliminarTitulo": "Eliminar usuario",
+    "eliminarMensaje": "¿Eliminar a {{nombre}}? Se aplicará eliminación lógica.",
+    "sinUsuarios": "No hay usuarios registrados",
+    "errorCargar": "Error al cargar usuarios",
+    "errorCrear": "Error al crear el usuario",
+    "errorActualizar": "Error al actualizar el usuario",
+    "errorEliminar": "Error al eliminar el usuario",
+    "errorSuspender": "Error al cambiar el estado del usuario",
+    "tempPasswordHint": "Contraseña temporal (solo se muestra una vez):",
+    "continueList": "Ir al listado",
+    "codigoDocente": "Código docente",
+    "codigoEstudiantil": "Código estudiantil",
+    "escuela": "Escuela",
+    "selectSchool": "Selecciona escuela",
+    "cargo": "Cargo",
+    "dependencia": "Dependencia",
+    "institucion": "Institución",
+    "ocupacion": "Ocupación",
+    "roles": {
+      "Administrador": "Administrador",
+      "Coordinador": "Coordinador",
+      "Profesor": "Profesor",
+      "Estudiante": "Estudiante",
+      "Externo": "Externo"
+    }
   },
   "eventos": {
     "title": "Eventos",

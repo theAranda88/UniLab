@@ -85,6 +85,50 @@ export const primerLoginGuard: CanActivateFn = (
 };
 
 /**
+ * Redirige a completar perfil si el usuario tiene perfil_pendiente.
+ */
+export const perfilPendienteGuard: CanActivateFn = (
+  _route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const user = authService.getCurrentUser();
+
+  if (!user) {
+    router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+    return false;
+  }
+
+  if (user.perfil_pendiente) {
+    router.navigate(['/completar-perfil']);
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * Solo permite acceso a completar-perfil cuando perfil_pendiente=true.
+ */
+export const completarPerfilGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const user = authService.getCurrentUser();
+
+  if (!user) {
+    router.navigate(['/login']);
+    return false;
+  }
+
+  if (!user.perfil_pendiente) {
+    return createDefaultRouteTree(router, user.id_rol);
+  }
+
+  return true;
+};
+
+/**
  * Redirige a la ruta por defecto según el rol del usuario autenticado.
  */
 export const roleRedirectGuard: CanActivateFn = (): UrlTree => {

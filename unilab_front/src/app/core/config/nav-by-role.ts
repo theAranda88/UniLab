@@ -19,7 +19,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       sectionKey: 'shell.nav.sections.general',
       items: [
         { labelKey: 'shell.nav.dashboard', icon: 'ti-layout-dashboard', route: 'dashboard', enabled: true },
-        { labelKey: 'shell.nav.usuarios', icon: 'ti-users', route: 'usuarios', enabled: false, badge: 3 },
+        { labelKey: 'shell.nav.usuarios', icon: 'ti-users', route: 'usuarios', enabled: true },
         { labelKey: 'shell.nav.escuelas', icon: 'ti-school', route: 'escuelas', enabled: true },
         { labelKey: 'shell.nav.cursos', icon: 'ti-book', route: 'cursos', enabled: false },
       ],

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { escuelaController, cursoController } from '../controllers/escuela.controller';
 import { verifyToken } from '../middlewares/auth/verifyToken';
-import { checkPrimerLogin } from '../middlewares/auth/checkPrimerLogin';
+import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
 import { requireRole } from '../middlewares/roles/requireRole';
 import { validate } from '../middlewares/validation/validate';
 import {
@@ -13,7 +13,7 @@ import {
 
 const router = Router();
 
-const auth = [verifyToken, checkPrimerLogin] as const;
+const auth = [verifyToken, checkPrimerLogin, checkPerfilPendiente] as const;
 const admin = [...auth, requireRole(['Administrador'])] as const;
 const adminCoord = [...auth, requireRole(['Administrador', 'Coordinador'])] as const;
 const profesor = [...auth, requireRole(['Profesor'])] as const;

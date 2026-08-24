@@ -7,11 +7,12 @@ import { takeUntil } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { navigateAfterLogin } from '../../../core/config/role-redirect';
+import { GoogleSignInButtonComponent } from '../../../shared/ui/google-sign-in/google-sign-in-button.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, GoogleSignInButtonComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   host: {
@@ -52,6 +53,43 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  onGoogleCredential(credential: string): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+
+    this.authService
+      .loginWithGoogle(credential)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.loading.set(false);
+          if (this.embedded) {
+            this.authenticated.emit();
+            return;
+          }
+          this.handleAuthSuccess(response.usuario);
+        },
+        error: (err: { error?: { error?: string } }) => {
+          this.loading.set(false);
+          this.errorMessage.set(
+            err.error?.error ?? this.translate.instant('auth.login.googleError'),
+          );
+        },
+      });
+  }
+
+  private handleAuthSuccess(usuario: { primer_login: boolean; perfil_pendiente?: boolean }): void {
+    if (usuario.primer_login) {
+      this.router.navigate(['/cambiar-password']);
+      return;
+    }
+    if (usuario.perfil_pendiente) {
+      this.router.navigate(['/completar-perfil']);
+      return;
+    }
+    this.redirectAfterAuth();
+  }
+
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.errorMessage.set(this.translate.instant('auth.login.formInvalid'));
@@ -71,11 +109,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.authenticated.emit();
             return;
           }
-          if (response.usuario.primer_login) {
-            this.router.navigate(['/cambiar-password']);
-          } else {
-            this.redirectAfterAuth();
-          }
+          this.handleAuthSuccess(response.usuario);
         },
         error: (err: { error?: { error?: string } }) => {
           this.loading.set(false);

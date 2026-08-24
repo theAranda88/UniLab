@@ -3,6 +3,7 @@ import type { Router, UrlTree } from '@angular/router';
 export interface PostLoginUser {
   id_rol: string;
   primer_login: boolean;
+  perfil_pendiente?: boolean;
 }
 
 export function getDefaultRouteForRole(rol: string): string {
@@ -52,6 +53,10 @@ export function resolvePostLoginRoute(
 
   if (user.primer_login) {
     return '/cambiar-password';
+  }
+
+  if (user.perfil_pendiente) {
+    return '/completar-perfil';
   }
 
   if (options?.fromPortal && isPortalStudentRole(user.id_rol)) {

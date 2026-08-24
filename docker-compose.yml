@@ -26,8 +26,10 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-unilab}?schema=public
       JWT_SECRET: ${JWT_SECRET:-cambiar-este-secreto-en-produccion}
       PORT: 3000
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200,http://localhost:8080}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
       API_PUBLIC_URL: ${API_PUBLIC_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      UNIVERSITY_EMAIL_DOMAIN: ${UNIVERSITY_EMAIL_DOMAIN:-uniautonoma.edu.co}
     ports:
       - "${API_PORT:-3000}:3000"
     volumes:
