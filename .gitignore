@@ -19,7 +19,6 @@ out/
 # IDE & Editor (VSCode, IntelliJ IDEA, Cursor, WebStorm, etc.)
 .vscode/
 .idea/
-.cursor/
 .cursor-ai/
 .cursorignore
 *.code-workspace

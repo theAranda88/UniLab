@@ -1,0 +1,58 @@
+---
+description: Contexto global del proyecto UniLab — dominio, SDD, reglas no negociables
+alwaysApply: true
+---
+
+# UniLab — Instrucciones Globales
+
+## Proyecto
+
+Plataforma universitaria para gestión de proyectos académicos, semilleros y eventos.
+Monorepo: `unilab_back/` (Node/Express/Prisma) y `unilab_front/` (Angular 17+).
+
+- Modelo de datos canónico: `00-esquema-bd-referencia.md` en la raíz. PREGUNTA antes de tocar `schema.prisma` si falta un campo/tabla.
+- Sistema SDD: ver `.cursor/docs/INDEX.md` y `.cursor/docs/ROUTER.md`.
+
+## Modo SDD (Spec Driven Development)
+
+1. **SPEC** — input → proceso → output, entidades, reglas, endpoints, casos límite.
+2. **CONFIRMACIÓN** — presenta spec en un párrafo, espera OK. Una pregunta si hay ambigüedad.
+3. **IMPLEMENTACIÓN** — backend completo primero, luego frontend.
+4. **Una funcionalidad a la vez** — no mezclar módulos.
+
+## Reglas no negociables
+
+- Sin archivos `.md` de análisis o reportes en el chat. Comunicación conversacional.
+- Sin git salvo que el usuario lo pida explícitamente.
+- Sin sobre-ingeniería — la solución más simple correcta es la correcta.
+- Sin parches sobre parches — propón refactor mínimo y espera confirmación.
+- Sin suposiciones silenciosas — pregunta si no puedes inferir del código.
+- Consistencia — busca patrones existentes antes de crear nuevos.
+
+## Roles fijos
+
+`Administrador`, `Coordinador`, `Profesor`, `Estudiante`, `Externo`.
+
+`primer_login = true` → solo `POST /api/auth/cambiar-password`. Resto → 403 (`checkPrimerLogin`).
+
+## Códigos HTTP
+
+| Código | Cuándo |
+|--------|--------|
+| 200 | Éxito con cuerpo |
+| 201 | Recurso creado |
+| 204 | Éxito sin cuerpo |
+| 400 | Validación Zod fallida |
+| 401 | Sin token o inválido |
+| 403 | Sin permiso o primer_login |
+| 404 | No encontrado o soft-deleted |
+| 409 | Conflicto unicidad |
+| 422 | Regla de negocio |
+| 500 | Error no controlado |
+
+## Bugs
+
+1. Diagnostica por qué falla antes de proponer solución.
+2. Corrección de raíz, no parche cosmético.
+3. Menciona alcance multi-archivo antes de ejecutar.
+4. Ejecuta tras confirmación.

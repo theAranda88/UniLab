@@ -1,0 +1,43 @@
+---
+description: Sistema SDD UniLab — invocación de skills y flujos de trabajo coordinados
+alwaysApply: true
+---
+
+# Sistema SDD UniLab
+
+## Invocación de skills
+
+Cuando el usuario escribe `Necesito: [skill]` o describe una tarea que encaja con un skill:
+
+1. Lee `.cursor/skills/[skill]/SKILL.md` y sigue su proceso completo.
+2. Si no estás seguro del skill, consulta `.cursor/docs/ROUTER.md`.
+3. Presenta SPEC → espera confirmación → implementa.
+
+## Skills disponibles
+
+| Skill | Cuándo |
+|-------|--------|
+| `backend-crud` | Tabla nueva + CRUD backend |
+| `frontend-crud` | UI para CRUD existente |
+| `backend-to-frontend-integration` | Backend listo → frontend con permisos por rol |
+| `auth-flow` | Login, JWT, roles, primer_login |
+| `backend-feature` | Cambio de reglas de negocio / lógica compleja en backend existente |
+| `frontend-feature` | Flujos UI complejos (público, multi-paso, dual auth/visitante) |
+
+Skills planeados: `i18n-feature`, `debug-fix`, `refactor`.
+
+## Documentación de referencia
+
+- `.cursor/docs/INDEX.md` — índice central
+- `.cursor/docs/QUICK_START.md` — guía rápida
+- `.cursor/docs/ROUTER.md` — selector de skills
+- `.cursor/docs/DOCUMENTACION.md` — Swagger + Postman obligatorio en backend
+
+## Reglas transversales (todos los skills)
+
+- Soft-delete obligatorio en backend (nunca DELETE físico).
+- i18n obligatorio en frontend (sin textos hardcodeados).
+- Validación Zod antes de controller.
+- Permisos por rol en rutas (`requireRole`).
+- Swagger + Postman al crear/modificar endpoints backend.
+- Backend completo ANTES que frontend.
