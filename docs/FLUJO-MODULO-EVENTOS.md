@@ -132,7 +132,7 @@ Base por defecto con Docker: **`http://localhost:8080`**. Con `ng serve`: **`htt
 
 **Entorno de las capturas:** frontend en `http://localhost:8080` (Docker Compose, `FRONT_PORT=8080`). El API suele estar en `http://localhost:3000`.
 
-**Ver las capturas (Parte A):** en el editor solo verá código; las figuras aparecen en la **vista previa** → `Ctrl+K V` (al lado) o `Ctrl+Shift+V`. Archivos en [`docs/flujo-eventos/`](docs/flujo-eventos/).
+**Ver las capturas (Parte A):** en el editor solo verá código; las figuras aparecen en la **vista previa** → `Ctrl+K V` (al lado) o `Ctrl+Shift+V`. Archivos en [`flujo-eventos/`](flujo-eventos/) (junto a esta guía, dentro de `docs/`).
 
 ---
 
@@ -153,7 +153,7 @@ Base por defecto con Docker: **`http://localhost:8080`**. Con `ng serve`: **`htt
 
 ### Paso 1 — Inicio de sesión como Administrador
 
-<p align="center"><img src="./docs/flujo-eventos/01-login-admin.png" alt="Paso 1 — Login administrador en /login" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/01-login-admin.png" alt="Paso 1 — Login administrador en /login" width="860"/></p>
 
 *Figura 1 — Credenciales de administrador (`admin@unilab.edu`) y botón «Ingresar al Portal».*
 
@@ -165,7 +165,7 @@ Base por defecto con Docker: **`http://localhost:8080`**. Con `ng serve`: **`htt
 
 ### Paso 2 — Módulo Eventos en el menú lateral
 
-<p align="center"><img src="./docs/flujo-eventos/02-listado-eventos.png" alt="Paso 2 — Listado de eventos en el panel admin" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/02-listado-eventos.png" alt="Paso 2 — Listado de eventos en el panel admin" width="860"/></p>
 
 *Figura 2 — Menú izquierdo **EVENTOS → Eventos** y botón **Crear Evento**.*
 
@@ -177,7 +177,7 @@ Base por defecto con Docker: **`http://localhost:8080`**. Con `ng serve`: **`htt
 
 ### Paso 3 — Crear evento (formulario)
 
-<p align="center"><img src="./docs/flujo-eventos/03-crear-evento.png" alt="Paso 3 — Formulario Crear Evento con flyer" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/03-crear-evento.png" alt="Paso 3 — Formulario Crear Evento con flyer" width="860"/></p>
 
 *Figura 3 — Ejemplo «Congreso IOT con IA», fechas, lugar, estado Activo y flyer cargado.*
 
@@ -203,7 +203,7 @@ Base por defecto con Docker: **`http://localhost:8080`**. Con `ng serve`: **`htt
 
 ### Paso 4 — Detalle del evento recién creado
 
-<p align="center"><img src="./docs/flujo-eventos/04-detalle-evento-admin.png" alt="Paso 4 — Detalle del evento en admin" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/04-detalle-evento-admin.png" alt="Paso 4 — Detalle del evento en admin" width="860"/></p>
 
 *Figura 4 — Evento creado; botones Editar, Eliminar, **Crear Jornada**, Reporte; inscripciones en cero.*
 
@@ -220,7 +220,7 @@ Desde aquí puede:
 
 ### Paso 5 — Crear una jornada (horario de la sesión)
 
-<p align="center"><img src="./docs/flujo-eventos/05-crear-jornada.png" alt="Paso 5 — Modal Crear / editar jornada" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/05-crear-jornada.png" alt="Paso 5 — Modal Crear / editar jornada" width="860"/></p>
 
 *Figura 5 — Nombre, fecha dentro del rango del evento y horario de la jornada.*
 
@@ -239,7 +239,7 @@ Desde aquí puede:
 
 ### Paso 6 — Código QR y URL de asistencia automática
 
-<p align="center"><img src="./docs/flujo-eventos/06-jornada-qr.png" alt="Paso 6 — Jornada con código QR y UUID" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/06-jornada-qr.png" alt="Paso 6 — Jornada con código QR y UUID" width="860"/></p>
 
 *Figura 6 — QR de la jornada, UUID copiable y sección de evidencias fotográficas.*
 
@@ -269,7 +269,7 @@ Para **probar sin escáner físico:** copie ese UUID, arme la URL y ábrala **de
 
 ### Paso 7 — Estudiante: login en ventana de incógnito
 
-<p align="center"><img src="./docs/flujo-eventos/07-login-estudiante.png" alt="Paso 7 — Login estudiante en el portal" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/07-login-estudiante.png" alt="Paso 7 — Login estudiante en el portal" width="860"/></p>
 
 *Figura 7 — Ventana de incógnito; acceso con `estudiante1@unilab.edu`.*
 
@@ -283,7 +283,7 @@ Para **probar sin escáner físico:** copie ese UUID, arme la URL y ábrala **de
 
 ### Paso 8 — Ir al módulo Eventos del portal
 
-<p align="center"><img src="./docs/flujo-eventos/08-portal-eventos.png" alt="Paso 8 — Portal con botón Eventos" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/08-portal-eventos.png" alt="Paso 8 — Portal con botón Eventos" width="860"/></p>
 
 *Figura 8 — Tras el login, en la barra superior pulse **Eventos**.*
 
@@ -293,7 +293,7 @@ En la barra superior del portal, pulse **Eventos** (junto a «Mis proyectos»). 
 
 ### Paso 9 — Abrir el evento (antes de inscribirse)
 
-<p align="center"><img src="./docs/flujo-eventos/09-detalle-evento-estudiante.png" alt="Paso 9 — Detalle del evento para el estudiante" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/09-detalle-evento-estudiante.png" alt="Paso 9 — Detalle del evento para el estudiante" width="860"/></p>
 
 *Figura 9 — Botón **Inscribirse**; asistencia deshabilitada; aviso de que debe inscribirse para ver jornadas.*
 
@@ -307,7 +307,7 @@ Pulse la tarjeta o **Ver detalles** → `http://localhost:8080/eventos/8`.
 
 ### Paso 10 — Inscripción al evento
 
-<p align="center"><img src="./docs/flujo-eventos/10-inscripcion.png" alt="Paso 10 — Modal Inscribirse al evento" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/10-inscripcion.png" alt="Paso 10 — Modal Inscribirse al evento" width="860"/></p>
 
 *Figura 10 — Formulario de inscripción completado antes de confirmar.*
 
@@ -345,7 +345,7 @@ Tras confirmar, el detalle muestra al usuario como inscrito y permite ver jornad
 2. La ruta `/eventos/:id/asistencia` exige login: al estar el estudiante autenticado, carga `AsistenciaQrComponent`, lee `qr` del query string y llama a `POST /api/eventos/asistencias/registrar`.
 3. Debe aparecer la pantalla de confirmación **«¡Registro exitoso!» / «Asistencia registrada correctamente»** (figura 12). Si se repite el mismo QR en la misma jornada, el backend responde 409 (asistencia ya registrada).
 
-<p align="center"><img src="./docs/flujo-eventos/12-asistencia-exitosa.png" alt="Paso 11 — Confirmación de asistencia registrada" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/12-asistencia-exitosa.png" alt="Paso 11 — Confirmación de asistencia registrada" width="860"/></p>
 
 *Figura 12 — URL de asistencia con `id` y `qr` en la barra de direcciones; mensaje de éxito en el portal del estudiante.*
 
@@ -355,7 +355,7 @@ Tras confirmar, el detalle muestra al usuario como inscrito y permite ver jornad
 
 ### Paso 12 — Verificación en Administrador (inscritos y evidencias en jornada)
 
-<p align="center"><img src="./docs/flujo-eventos/11-admin-inscritos-evidencias.png" alt="Paso 12 — Admin: inscrito, jornada, QR y evidencia fotográfica" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/11-admin-inscritos-evidencias.png" alt="Paso 12 — Admin: inscrito, jornada, QR y evidencia fotográfica" width="860"/></p>
 
 *Figura 13 — Inscripción del estudiante, jornada con QR y evidencia subida en la jornada.*
 
@@ -369,7 +369,7 @@ Vuelva a la ventana del **Administrador** (`/admin/eventos/8`):
 
 ### Paso 13 — Reporte del evento (porcentaje de asistencia)
 
-<p align="center"><img src="./docs/flujo-eventos/13-reporte-evento.png" alt="Paso 13 — Reporte del evento con porcentaje de asistencia" width="860"/></p>
+<p align="center"><img src="./flujo-eventos/13-reporte-evento.png" alt="Paso 13 — Reporte del evento con porcentaje de asistencia" width="860"/></p>
 
 *Figura 14 — Reporte en `/admin/eventos/8/reporte`: total de inscritos y columna **Asistencia** con el porcentaje (ej. 100 % con una jornada y una asistencia registrada).*
 
@@ -434,18 +434,18 @@ Generado en `unilab_front/src/app/features/eventos/evento-detalle.component.ts`:
 
 ### Mapa de archivos de imagen
 
-| Paso | Archivo |
+| Paso | Archivo (relativo a esta guía) |
 |------|---------|
-| 1 | `docs/flujo-eventos/01-login-admin.png` |
-| 2 | `docs/flujo-eventos/02-listado-eventos.png` |
-| 3 | `docs/flujo-eventos/03-crear-evento.png` |
-| 4 | `docs/flujo-eventos/04-detalle-evento-admin.png` |
-| 5 | `docs/flujo-eventos/05-crear-jornada.png` |
-| 6 y 11 (referencia QR) | `docs/flujo-eventos/06-jornada-qr.png` |
-| 7 | `docs/flujo-eventos/07-login-estudiante.png` |
-| 8 | `docs/flujo-eventos/08-portal-eventos.png` |
-| 9 | `docs/flujo-eventos/09-detalle-evento-estudiante.png` |
-| 10 | `docs/flujo-eventos/10-inscripcion.png` |
-| 11–12 (confirmación asistencia) | `docs/flujo-eventos/12-asistencia-exitosa.png` |
-| 13 (detalle admin) | `docs/flujo-eventos/11-admin-inscritos-evidencias.png` |
-| 14 (reporte) | `docs/flujo-eventos/13-reporte-evento.png` |
+| 1 | `flujo-eventos/01-login-admin.png` |
+| 2 | `flujo-eventos/02-listado-eventos.png` |
+| 3 | `flujo-eventos/03-crear-evento.png` |
+| 4 | `flujo-eventos/04-detalle-evento-admin.png` |
+| 5 | `flujo-eventos/05-crear-jornada.png` |
+| 6 y 11 (referencia QR) | `flujo-eventos/06-jornada-qr.png` |
+| 7 | `flujo-eventos/07-login-estudiante.png` |
+| 8 | `flujo-eventos/08-portal-eventos.png` |
+| 9 | `flujo-eventos/09-detalle-evento-estudiante.png` |
+| 10 | `flujo-eventos/10-inscripcion.png` |
+| 11–12 (confirmación asistencia) | `flujo-eventos/12-asistencia-exitosa.png` |
+| 13 (detalle admin) | `flujo-eventos/11-admin-inscritos-evidencias.png` |
+| 14 (reporte) | `flujo-eventos/13-reporte-evento.png` |

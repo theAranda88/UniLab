@@ -1,51 +1,42 @@
 # UniLab — Backend API
 
-Backend modular de la plataforma universitaria UniLab (proyectos, semilleros y eventos).
+API REST de UniLab (proyectos, semilleros y eventos). Node.js, Express, Prisma y PostgreSQL.
 
-## Requisitos
+**Se trabaja con Docker** desde la raíz del monorepo (`unilab/`). Este README cubre ese flujo; el detalle largo está en [docs/README.md](docs/README.md).
 
-- Node.js 18+
-- PostgreSQL 14+
-- npm
+## Arranque (Docker)
 
-## Instalación
+En la **raíz del monorepo**, no en esta carpeta:
 
 ```bash
+cp .env.example .env
+docker compose up -d --build
+docker compose exec api npx prisma db seed
+```
+
+| Servicio | URL |
+|----------|-----|
+| API | http://localhost:3000/api |
+| Swagger | http://localhost:3000/api-docs |
+| Health | http://localhost:3000/health |
+| PostgreSQL (host) | `localhost:5433` |
+
+El contenedor `api` habla con `db` en el puerto interno **5432**. En el host el mapeo por defecto es **5433**.
+
+## Desarrollo local (opcional)
+
+Si corre Node en el host (PostgreSQL puede seguir en Docker):
+
+```bash
+cp .env.example .env
 npm install
-```
-
-## Variables de entorno
-
-Copia `.env.example` a `.env` y configura:
-
-| Variable | Descripción |
-|----------|-------------|
-| `DATABASE_URL` | URL de conexión PostgreSQL (con Docker Compose en la raíz: `localhost:5433`; ver `unilab_back/docs/README.md`) |
-| `JWT_SECRET` | Secreto para firmar tokens JWT |
-| `PORT` | Puerto HTTP (default: 3000) |
-
-## Base de datos
-
-```bash
-# Aplicar migraciones
-npm run prisma:migrate
-
-# Generar cliente Prisma
-npm run prisma:generate
-
-# Sembrar datos de prueba
+npx prisma migrate deploy
+npx prisma generate
 npm run prisma:seed
-```
-
-## Desarrollo
-
-```bash
 npm run dev
 ```
 
-- API: `http://localhost:3000/api`
-- Swagger: `http://localhost:3000/api-docs`
-- Health: `http://localhost:3000/health`
+Ajuste `DATABASE_URL` al puerto del host (`5433` con Compose, `5432` si PostgreSQL es nativo).
 
 ## Usuarios de prueba (seed)
 
@@ -59,18 +50,14 @@ Contraseña para todos: `Password123!`
 | Estudiante | estudiante1@unilab.edu |
 | Externo | externo@unilab.edu |
 
-## Documentación
-
-Guía completa para colaboradores (clonación, BD, migraciones, seed y consumo desde frontend): **[docs/README.md](docs/README.md)**
-
 ## Postman
 
-Importa `docs/postman_collection.json` y `docs/postman_environment.json`. Ejecuta **Iniciar sesión (Administrador)** para guardar el token automáticamente.
+Importa `docs/postman_collection.json` y `docs/postman_environment.json`. Ejecuta **Iniciar sesión (Administrador)** para guardar el token.
 
 ## Arquitectura
 
-```
+```text
 route → validate → auth → rol → controller → service → repository → Prisma
 ```
 
-Ver `src/services/README.md` para más detalle.
+Guía del monorepo: [../README.md](../README.md).
