@@ -8,6 +8,7 @@ import { ProjectImageCarouselComponent } from '../../home/project-image-carousel
 import type { Proyecto } from '../../../core/models/proyecto.model';
 import { urlsImagenesProyecto } from '../../../core/models/portal.model';
 
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-proyectos-prof-detalle',
   standalone: true,
@@ -17,6 +18,7 @@ import { urlsImagenesProyecto } from '../../../core/models/portal.model';
 })
 export class ProyectosProfDetalleComponent implements OnInit {
   readonly proyectosService = inject(ProyectosService);
+  private toast = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dialog = inject(DialogService);
@@ -130,7 +132,7 @@ export class ProyectosProfDetalleComponent implements OnInit {
       next: (actualizado) => {
         this.proyecto.set(actualizado);
         this.procesando.set(false);
-        void this.dialog.success({ messageKey: mensajeExitoKey });
+        this.toast.success(mensajeExitoKey);
       },
       error: (err: { message?: string }) => {
         this.procesando.set(false);

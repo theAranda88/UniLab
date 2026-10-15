@@ -1,40 +1,44 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
+import { Component, ElementRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-  type FormGroup,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators, type FormGroup } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
-import { PublicPortalService } from '../public-portal.service';
-import { LoginComponent } from '../../auth/login/login.component';
+import { PublicPortalService } from '../../home/public-portal.service';
+import { AuthBrandComponent } from '../auth-brand/auth-brand.component';
 import type { Escuela } from '../../../core/models/portal.model';
-import { navigateAfterLogin } from '../../../core/config/role-redirect';
 
-type AuthTab = 'login' | 'register';
 type RegisterRole = 'Estudiante' | 'Externo';
 
-@Component({
-  selector: 'app-auth-modal',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, LoginComponent],
-  templateUrl: './auth-modal.component.html',
-  styleUrl: './auth-modal.component.scss',
-})
-export class AuthModalComponent {
-  @Output() closed = new EventEmitter<void>();
-  @Output() authenticated = new EventEmitter<void>();
+/** Clave i18n de la etiqueta de cada campo (para listar los que tienen error). */
+const FIELD_LABELS: Record<string, string> = {
+  nombres: 'auth.registro.firstName',
+  apellidos: 'auth.registro.lastName',
+  email: 'auth.registro.email',
+  documento_identidad: 'auth.registro.document',
+  telefono: 'auth.registro.phone',
+  codigo_estudiantil: 'auth.registro.studentCode',
+  id_escuela: 'auth.registro.school',
+  institucion: 'auth.registro.institution',
+  ocupacion: 'auth.registro.occupation',
+};
 
+/** Página /registro — crea una cuenta de Estudiante o Externo desde el portal público. */
+@Component({
+  selector: 'app-registro',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, AuthBrandComponent],
+  templateUrl: './registro.component.html',
+  styleUrl: './registro.component.scss',
+})
+export class RegistroComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private portal = inject(PublicPortalService);
-  private router = inject(Router);
   private translate = inject(TranslateService);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  readonly tab = signal<AuthTab>('login');
+  readonly roles: RegisterRole[] = ['Estudiante', 'Externo'];
   readonly registerRole = signal<RegisterRole>('Estudiante');
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -59,39 +63,29 @@ export class AuthModalComponent {
     });
   }
 
-  setTab(tab: AuthTab): void {
-    this.tab.set(tab);
-    this.errorMessage.set(null);
-    this.tempPassword.set(null);
-  }
-
   setRegisterRole(role: RegisterRole): void {
     this.registerRole.set(role);
     this.errorMessage.set(null);
   }
 
-  onOverlayClick(): void {
-    if (!this.loading()) {
-      this.closed.emit();
-    }
+  /** true si el campo debe mostrar su error (inválido y ya tocado o enviado). */
+  hasError(name: string): boolean {
+    const control = this.registerForm.get(name);
+    return !!control && control.invalid && control.touched;
   }
 
-  onClose(): void {
-    if (!this.loading()) {
-      this.closed.emit();
-    }
+  /** Clave i18n del motivo del error del campo. */
+  errorKey(name: string): string {
+    const errors = this.registerForm.get(name)?.errors;
+    return errors?.['email'] ? 'auth.registro.errors.email' : 'auth.registro.errors.required';
   }
 
-  onLoginSuccess(): void {
-    const user = this.auth.getCurrentUser();
-    if (!user) {
-      this.authenticated.emit();
-      return;
-    }
-
-    void navigateAfterLogin(this.router, user, { fromPortal: true }).finally(() => {
-      this.authenticated.emit();
-    });
+  private focusFirstInvalid(): void {
+    queueMicrotask(() =>
+      this.host.nativeElement
+        .querySelector<HTMLElement>('input.ng-invalid, select.ng-invalid')
+        ?.focus(),
+    );
   }
 
   submitRegister(): void {
@@ -107,10 +101,17 @@ export class AuthModalComponent {
       this.registerForm.get('codigo_estudiantil')?.clearValidators();
       this.registerForm.get('id_escuela')?.clearValidators();
     }
-    this.registerForm.updateValueAndValidity();
+    Object.values(this.registerForm.controls).forEach((c) => c.updateValueAndValidity());
 
     if (this.registerForm.invalid) {
-      this.errorMessage.set(this.translate.instant('home.authModal.formInvalid'));
+      this.registerForm.markAllAsTouched();
+      const campos = Object.keys(FIELD_LABELS)
+        .filter((name) => this.registerForm.get(name)?.invalid)
+        .map((name) => this.translate.instant(FIELD_LABELS[name]));
+      this.errorMessage.set(
+        this.translate.instant('auth.registro.formInvalidFields', { campos: campos.join(', ') }),
+      );
+      this.focusFirstInvalid();
       return;
     }
 
@@ -143,12 +144,10 @@ export class AuthModalComponent {
         },
         error: (err: { message?: string; details?: { error?: string } }) => {
           this.loading.set(false);
-          this.errorMessage.set(err.details?.error ?? err.message ?? this.translate.instant('common.error'));
+          this.errorMessage.set(
+            err.details?.error ?? err.message ?? this.translate.instant('common.error'),
+          );
         },
       });
-  }
-
-  continueAfterRegister(): void {
-    this.setTab('login');
   }
 }

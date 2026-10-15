@@ -56,6 +56,12 @@ export class CompletarPerfilComponent implements OnInit {
     }
   }
 
+  /** true si el campo es inválido y ya fue tocado (o se intentó enviar). */
+  hasError(name: string): boolean {
+    const control = this.form.get(name);
+    return !!control && control.invalid && control.touched;
+  }
+
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();

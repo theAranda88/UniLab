@@ -1,32 +1,41 @@
 @use '../../../../styles/design-tokens' as t;
 
+// Shell interno (ADM · COO · PRO) — sidebar 220px + topbar.
+// Ver docs/design/02-componentes.md › Navegación y layout.
+
 .shell {
   display: flex;
   min-height: 100vh;
-  background: t.$light-gray;
+  background: t.$cream;
 }
 
+// ---------------------------------------------------------------------------
+// Sidebar
+// ---------------------------------------------------------------------------
 .sidebar {
-  width: 220px;
+  position: sticky;
+  top: 0;
+  width: t.$sidebar-width;
+  height: 100vh;
   background: t.$white;
-  border-right: 1px solid t.$border-gray;
+  border-right: 1px solid t.$border-subtle;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  min-height: 100vh;
+  overflow-y: auto;
 }
 
 .logo-area {
   display: flex;
   align-items: center;
-  gap: t.$space-8;
-  padding: t.$space-16;
-  border-bottom: 1px solid t.$border-gray;
+  gap: t.$space-12;
+  padding: t.$space-20 t.$space-16;
+  border-bottom: 1px solid t.$border-subtle;
 }
 
 .logo-img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -37,173 +46,223 @@
   min-width: 0;
 }
 
+// Ttulo.svg: el texto ocupa y 24.6–53.8 de un viewBox de 86 → se recorta el aire con márgenes
 .logo-title {
-  font-size: 13px;
-  font-weight: t.$font-weight-medium;
-  color: t.$primary-blue;
-  line-height: 1.3;
+  display: block;
+  width: auto;
+  height: 36px;
+  margin: -10px 0 -13px -5px;
 }
 
 .logo-sub {
-  font-size: 11px;
-  color: t.$text-light;
-  margin-top: 2px;
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  color: t.$text-secondary;
 }
 
 .nav {
   flex: 1;
-  overflow-y: auto;
-  padding: t.$space-8;
+  padding: t.$space-8 t.$space-12;
 }
 
 .nav-section {
-  margin-bottom: t.$space-12;
-}
-
-.nav-label {
-  font-size: 10px;
-  font-weight: t.$font-weight-medium;
-  color: t.$text-light;
-  padding: t.$space-4 t.$space-8;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: t.$space-8;
-  padding: 7px t.$space-8;
-  border-radius: t.$radius-md;
-  cursor: pointer;
-  font-size: 13px;
-  color: t.$text-light;
-  transition: all t.$transition-fast;
-
-  i {
-    font-size: 15px;
-    width: 16px;
-    flex-shrink: 0;
-  }
-
-  &:hover:not(.disabled) {
-    background: t.$light-gray;
-    color: t.$text-dark;
-  }
-
-  &.active {
-    background: rgba(t.$light-blue, 0.12);
-    color: t.$primary-blue;
-    font-weight: t.$font-weight-medium;
-  }
-
-  &.disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-
-  .badge {
-    margin-left: auto;
-    font-size: 10px;
-    background: rgba(t.$error, 0.12);
-    color: t.$error;
-    padding: 1px 6px;
-    border-radius: 10px;
-  }
+  padding: t.$space-12 0 t.$space-4;
 }
 
 .nav-section--portal {
-  margin-top: auto;
-  padding: 0 t.$space-8 t.$space-8;
+  padding: t.$space-12 t.$space-12 t.$space-8;
+  border-top: 1px solid t.$border-subtle;
 }
 
-.nav-item--portal {
+.nav-label {
+  padding: 0 10px t.$space-8;
+  font-size: t.$font-size-2xs;
+  font-weight: t.$font-weight-bold;
+  letter-spacing: t.$letter-spacing-kicker;
+  text-transform: uppercase;
+  color: rgba(30, 30, 30, 0.5);
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 38px;
+  margin-bottom: 2px;
+  padding: 0 10px;
+  border-radius: t.$radius-md;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-semibold;
+  color: rgba(30, 30, 30, 0.75);
   text-decoration: none;
-  color: t.$primary-blue;
-  border: 1px solid rgba(t.$light-blue, 0.25);
-  background: rgba(t.$light-blue, 0.06);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 170ms ease,
+    color 170ms ease;
+
+  i {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  span:not(.badge) {
+    flex: 1;
+    min-width: 0;
+    @include t.truncate;
+  }
 
   &:hover {
-    background: rgba(t.$light-blue, 0.12);
-    color: t.$primary-blue;
+    background: t.$blue-tint;
+    color: t.$blue;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
+  }
+
+  // Activo: tinte azul + barra amarilla de 3px
+  &.active {
+    background: t.$blue-tint-strong;
+    color: t.$blue;
+    box-shadow: inset 3px 0 0 t.$accent;
+  }
+
+  // Módulo sin implementar: visible, bajo contraste y marca «Pronto»
+  &.disabled {
+    color: rgba(30, 30, 30, 0.34);
+    cursor: not-allowed;
+
+    &:hover {
+      background: transparent;
+      color: rgba(30, 30, 30, 0.34);
+    }
+
+    // Indicador «Próximamente» compacto (reloj); el texto traducido va en [attr.title]
+    &::after {
+      content: '';
+      flex-shrink: 0;
+      width: 22px;
+      height: 18px;
+      border: 1px dashed rgba(30, 30, 30, 0.22);
+      border-radius: t.$radius-xs;
+      background:
+        center / 11px 11px no-repeat
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23939393' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+    }
   }
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: t.$radius-full;
+  background: t.$accent;
+  color: t.$ink;
+  font-size: t.$font-size-2xs;
+  font-weight: t.$font-weight-extra-bold;
+}
+
 .sidebar-footer {
-  padding: t.$space-12;
-  border-top: 1px solid t.$border-gray;
+  padding: t.$space-12 t.$space-16 t.$space-16;
+  border-top: 1px solid t.$border-subtle;
 }
 
 .user-pill {
   display: flex;
   align-items: center;
-  gap: t.$space-8;
-  margin-bottom: t.$space-8;
+  gap: 10px;
+  margin-bottom: t.$space-12;
 }
 
 .avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: t.$font-weight-medium;
-  background: rgba(t.$light-blue, 0.15);
-  color: t.$primary-blue;
   flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: t.$blue;
+  color: t.$white;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-extra-bold;
 }
 
 .user-name {
-  font-size: 12px;
-  font-weight: t.$font-weight-medium;
-  color: t.$text-dark;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-extra-bold;
+  color: t.$ink;
 }
 
 .user-role {
-  font-size: 10px;
-  color: t.$text-light;
+  font-size: t.$font-size-xs;
+  color: t.$text-secondary;
 }
 
 .logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 6px t.$space-12;
-  font-size: 12px;
-  border: 1px solid t.$border-gray;
+  min-height: 36px;
+  border: 1px solid t.$border-control;
   border-radius: t.$radius-md;
-  color: t.$text-light;
   background: t.$white;
-  cursor: pointer;
-  transition: all t.$transition-base;
+  color: t.$ink;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-bold;
+  transition:
+    background t.$transition-base,
+    color t.$transition-base,
+    border-color t.$transition-base;
 
   &:hover {
-    background: t.$light-gray;
-    color: t.$text-dark;
+    border-color: rgba(176, 42, 42, 0.35);
+    background: rgba(176, 42, 42, 0.07);
+    color: t.$danger;
   }
 }
 
+// ---------------------------------------------------------------------------
+// Main + topbar
+// ---------------------------------------------------------------------------
 .main {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: t.$z-index-sticky;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: t.$space-12 t.$space-20;
-  border-bottom: 1px solid t.$border-gray;
-  background: t.$white;
+  gap: t.$space-16;
+  min-height: 64px;
+  padding: t.$space-12 t.$space-32;
+  background: rgba(255, 253, 245, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid t.$border-subtle;
 }
 
 .page-title {
-  font-size: 15px;
-  font-weight: t.$font-weight-medium;
-  color: t.$text-dark;
+  font-size: t.$font-size-xl;
+  font-weight: t.$font-weight-extra-bold;
+  letter-spacing: t.$letter-spacing-title;
+  color: t.$ink;
+  @include t.truncate;
 }
 
 .topbar-actions {
@@ -213,68 +272,325 @@
 }
 
 .tb-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px t.$space-12;
-  border: 1px solid t.$border-gray;
+  justify-content: center;
+  gap: t.$space-8;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid t.$border-subtle;
   border-radius: t.$radius-md;
-  font-size: 12px;
-  color: t.$text-light;
   background: t.$white;
+  color: t.$text-secondary;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-bold;
   text-decoration: none;
-  cursor: pointer;
-  transition: all t.$transition-base;
+  transition:
+    background t.$transition-base,
+    color t.$transition-base;
 
-  &:hover:not(:disabled) {
-    background: t.$light-gray;
+  i {
+    font-size: 18px;
   }
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  &:hover:not(:disabled) {
+    background: t.$blue-tint;
+    color: t.$blue;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
   }
 
   &.primary {
-    background: t.$primary-blue;
-    border-color: t.$primary-blue;
+    padding: 0 t.$space-16;
+    border-color: t.$blue;
+    background: t.$blue;
     color: t.$white;
-  }
 
-  &--portal {
-    color: t.$primary-blue;
-    border-color: rgba(t.$light-blue, 0.35);
-    background: rgba(t.$light-blue, 0.08);
+    &:hover:not(:disabled) {
+      background: t.$blue-pressed;
+      border-color: t.$blue-pressed;
+      color: t.$white;
+    }
 
-    &:hover {
-      background: rgba(t.$light-blue, 0.14);
-      color: t.$primary-blue;
+    &:disabled {
+      border-color: rgba(30, 30, 30, 0.12);
+      background: rgba(30, 30, 30, 0.05);
+      color: t.$text-disabled;
+      cursor: not-allowed;
     }
   }
 }
 
 .content {
   flex: 1;
-  padding: t.$space-20;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: t.$space-32;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 64px;
+// ---------------------------------------------------------------------------
+// Menús del topbar (notificaciones, configuración)
+// ---------------------------------------------------------------------------
+.tb-menu {
+  position: relative;
+}
+
+.tb-btn {
+  position: relative;
+}
+
+.tb-btn--menu {
+  display: none;
+}
+
+.tb-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: 2px solid t.$cream;
+  border-radius: t.$radius-full;
+  background: t.$accent;
+  color: t.$ink;
+  font-size: 10px;
+  font-weight: t.$font-weight-extra-bold;
+  line-height: 1;
+}
+
+.tb-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: t.$z-index-dropdown;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  padding: t.$space-8;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$white;
+  box-shadow: t.$shadow-overlay;
+
+  &--wide {
+    width: 340px;
+    max-height: 420px;
+    overflow-y: auto;
   }
 
-  .logo-text,
-  .nav-label,
-  .nav-item span,
-  .nav-item .badge,
-  .user-pill div,
-  .logout-btn,
-  .tb-btn span {
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: t.$space-4 t.$space-8 t.$space-8;
+    font-size: t.$font-size-2xs;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: t.$letter-spacing-kicker;
+    text-transform: uppercase;
+    color: t.$text-secondary;
+  }
+
+  &__refresh {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: t.$radius-sm;
+    color: t.$text-secondary;
+    font-size: 16px;
+
+    &:hover {
+      background: t.$blue-tint;
+      color: t.$blue;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: t.$space-8;
+    margin: 0;
+    padding: t.$space-24 t.$space-12;
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+    text-align: center;
+
+    i {
+      font-size: 24px;
+      color: t.$text-disabled;
+    }
+  }
+
+  &__sep {
+    height: 1px;
+    margin: t.$space-4 0;
+    background: t.$border-subtle;
+  }
+}
+
+.tb-notif {
+  display: flex;
+  align-items: flex-start;
+  gap: t.$space-12;
+  width: 100%;
+  padding: t.$space-8;
+  border-radius: t.$radius-md;
+  text-align: left;
+  transition: background t.$transition-base;
+
+  &:hover {
+    background: t.$blue-tint;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: t.$radius-md;
+    background: t.$accent-tint;
+    color: t.$accent-ink;
+    font-size: 16px;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    strong {
+      font-size: t.$font-size-label;
+      font-weight: t.$font-weight-bold;
+      color: t.$ink;
+      @include t.truncate;
+    }
+
+    small {
+      font-size: t.$font-size-xs;
+      color: t.$text-secondary;
+    }
+  }
+}
+
+.tb-option {
+  display: flex;
+  align-items: center;
+  gap: t.$space-8;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 t.$space-8;
+  border-radius: t.$radius-md;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-semibold;
+  color: t.$ink;
+  text-align: left;
+  transition: background t.$transition-base;
+
+  &:hover {
+    background: t.$blue-tint;
+    color: t.$blue;
+  }
+
+  .ti-check {
+    margin-left: auto;
+    color: t.$blue;
+  }
+
+  &--danger:hover {
+    background: rgba(176, 42, 42, 0.07);
+    color: t.$danger;
+  }
+}
+
+.drawer-overlay {
+  display: none;
+}
+
+// ---------------------------------------------------------------------------
+// Responsive
+// ---------------------------------------------------------------------------
+@media (max-width: 1024px) {
+  .tb-btn--portal span,
+  .tb-btn.primary span {
     display: none;
   }
 
-  .logo-area {
-    justify-content: center;
+  .tb-btn.primary {
+    padding: 0 10px;
+  }
+}
+
+// Bajo 768px el sidebar se convierte en cajón lateral abierto desde el topbar
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: t.$z-index-modal;
+    width: min(280px, 86vw);
+    height: 100dvh;
+    box-shadow: t.$shadow-overlay;
+    transform: translateX(-105%);
+    transition: transform t.$transition-slow;
+
+    &.sidebar--open {
+      transform: translateX(0);
+    }
+  }
+
+  .drawer-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: t.$z-index-modal-backdrop;
+    border: none;
+    background: t.$overlay;
+  }
+
+  .nav-item.disabled::after {
+    display: none;
+  }
+
+  .tb-btn--menu {
+    display: inline-flex;
+  }
+
+  .topbar {
+    gap: t.$space-8;
+    padding: t.$space-12 t.$space-16;
+  }
+
+  .page-title {
+    flex: 1;
+    font-size: t.$font-size-lg;
+  }
+
+  .tb-btn--portal {
+    display: none;
+  }
+
+  .tb-dropdown--wide {
+    position: fixed;
+    top: 64px;
+    right: t.$space-12;
+    left: t.$space-12;
+    width: auto;
+  }
+
+  .content {
+    padding: t.$space-16;
   }
 }

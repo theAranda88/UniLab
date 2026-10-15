@@ -35,7 +35,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       sectionKey: 'shell.nav.sections.eventos',
       items: [
         { labelKey: 'shell.nav.eventos', icon: 'ti-calendar-event', route: 'eventos', enabled: true },
-        { labelKey: 'shell.nav.asistencia', icon: 'ti-qrcode', route: 'eventos', enabled: true },
+        { labelKey: 'shell.nav.asistencia', icon: 'ti-qrcode', route: 'asistencia', enabled: true },
       ],
     },
     {
@@ -69,7 +69,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       sectionKey: 'shell.nav.sections.eventos',
       items: [
         { labelKey: 'shell.nav.eventos', icon: 'ti-calendar-event', route: 'eventos', enabled: true },
-        { labelKey: 'shell.nav.asistencia', icon: 'ti-chart-bar', route: 'eventos', enabled: true },
+        { labelKey: 'shell.nav.asistencia', icon: 'ti-chart-bar', route: 'asistencia', enabled: true },
       ],
     },
   ],

@@ -9,13 +9,15 @@ import { AuthService } from '../../core/auth/auth.service';
 import { Evento } from '../../core/models/evento.model';
 import { formatearFechaLocal } from '../../core/utils/date.util';
 import { hasPortalTheme } from '../../core/utils/portal-theme.util';
-import { CardTiltDirective } from '../home/directives/card-tilt.directive';
 import type { UiVariant } from '../../shared/ui/ui-variant';
+
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-eventos-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslatePipe, CardTiltDirective],
+  imports: [CommonModule, RouterModule, FormsModule, TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './eventos-list.component.html',
   styleUrl: './eventos-list.component.scss',
   host: {
@@ -31,7 +33,6 @@ export class EventosListComponent implements OnInit {
 
   readonly portalTheme = signal(false);
   readonly uiVariant = computed<UiVariant>(() => (this.portalTheme() ? 'portal' : 'default'));
-  readonly entered = signal(false);
 
   readonly estadosFiltro = ['', 'planeado', 'activo', 'finalizado'] as const;
 
@@ -61,7 +62,6 @@ export class EventosListComponent implements OnInit {
 
   ngOnInit() {
     this.portalTheme.set(hasPortalTheme(this.route));
-    window.setTimeout(() => this.entered.set(true), 120);
     this.cargarEventos();
   }
 
@@ -81,7 +81,6 @@ export class EventosListComponent implements OnInit {
       next: (data: Evento[]) => {
         this.eventos.set(data);
         this.cargando.set(false);
-        this.entered.set(true);
       },
       error: () => {
         this.error.set('eventos.errorCargar');

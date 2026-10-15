@@ -6,15 +6,20 @@ import { EventosService } from './eventos.service';
 import { ReporteEvento } from '../../core/models/evento.model';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
+
+import { ToastService } from '../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-reporte-evento',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, BreadcrumbComponent],
+  imports: [CommonModule, TranslatePipe, BreadcrumbComponent, EmptyStateComponent, SkeletonComponent],
   templateUrl: './reporte-evento.component.html',
   styleUrl: './reporte-evento.component.scss',
 })
 export class ReporteEventoComponent implements OnInit {
   eventoService = inject(EventosService);
+  private toast = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -79,6 +84,7 @@ export class ReporteEventoComponent implements OnInit {
     this.eventoService.actualizarPago(idInscripcion, 'confirmado').subscribe({
       next: () => {
         this.actualizandoPagoId.set(null);
+        this.toast.success('eventos.exitoPago');
         this.cargarReporte(this.idEvento());
       },
       error: () => this.actualizandoPagoId.set(null),

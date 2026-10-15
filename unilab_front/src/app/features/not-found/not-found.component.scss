@@ -1,0 +1,67 @@
+@use '../../../styles/design-tokens' as t;
+@use '../../../styles/auth-pages' as auth;
+
+:host {
+  display: block;
+}
+
+.nf {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: t.$space-24 t.$space-16;
+  background: t.$cream;
+}
+
+.nf__card {
+  @include auth.card(460px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-12;
+  padding: t.$space-40 t.$space-32 t.$space-32;
+  text-align: center;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, t.$blue 0 70%, t.$accent 70% 100%);
+  }
+
+  h1 {
+    @include auth.card-title;
+  }
+
+  p {
+    margin: 0 0 t.$space-8;
+    max-width: 36ch;
+    font-size: t.$font-size-sm;
+    line-height: t.$line-height-normal;
+    color: t.$text-secondary;
+  }
+}
+
+.nf__code {
+  font-size: 72px;
+  font-weight: t.$font-weight-black;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: t.$blue;
+}
+
+.nf__btn {
+  @include auth.submit;
+  width: auto;
+  padding: 0 24px;
+  text-decoration: none;
+
+  &:hover {
+    color: t.$white;
+    text-decoration: none;
+  }
+}

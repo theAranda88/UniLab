@@ -1,0 +1,38 @@
+<!-- Formas de fondo -->
+<span class="brand__shape brand__shape--sun" aria-hidden="true"></span>
+<span class="brand__shape brand__shape--arc" aria-hidden="true"></span>
+<span class="brand__shape brand__shape--wave" aria-hidden="true"></span>
+
+<div class="brand__inner">
+  <!-- Solo los logos: Eduinova | Universidad Autónoma del Cauca -->
+  <div class="brand__logos">
+    <a class="brand__logo" routerLink="/" [attr.aria-label]="'auth.brand.home' | translate">
+      <img src="assets/images/recursos/Logoeduinova.svg" alt="Eduinova" />
+    </a>
+    <span class="brand__divider" aria-hidden="true"></span>
+    <img
+      src="assets/images/recursos/Logouniautonoma.svg"
+      [alt]="'auth.brand.universityAlt' | translate"
+      class="brand__uni"
+    />
+  </div>
+
+  <div class="brand__copy">
+    <span class="brand__tag">{{ 'auth.brand.caption' | translate }}</span>
+    <h1 class="brand__welcome">
+      <span>{{ 'auth.login.welcome' | translate }}</span>
+      <img
+        src="assets/images/recursos/Ttulo-azul.svg"
+        [alt]="'auth.login.welcomeBrand' | translate"
+        class="brand__wordmark"
+      />
+    </h1>
+    <p class="brand__intro">{{ 'auth.login.intro' | translate }}</p>
+  </div>
+</div>
+
+<!-- Mascota institucional -->
+<div class="brand__mascot" aria-hidden="true">
+  <span class="brand__mascot-dot"></span>
+  <img src="assets/images/quime-auth.webp" alt="" />
+</div>

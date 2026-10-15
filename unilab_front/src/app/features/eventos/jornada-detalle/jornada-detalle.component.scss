@@ -1,0 +1,250 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+
+// Jornada — QR, evidencias y asistentes (prototipo «Eduinova Eventos › Jornada»).
+
+.jornada {
+  max-width: t.$content-max-width;
+  margin: 0 auto;
+}
+
+.jornada__header {
+  margin-bottom: t.$space-24;
+
+  h1 {
+    @include t.page-title;
+    margin: t.$space-4 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: t.$font-size-sm;
+    color: t.$text-secondary;
+  }
+}
+
+.jornada__kicker {
+  @include t.kicker;
+}
+
+.jornada__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  align-items: start;
+  gap: t.$space-20;
+
+  @media (max-width: 960px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.jornada__side {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-20;
+}
+
+.jornada__card {
+  @include t.surface-card;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-12;
+  padding: t.$space-24;
+
+  h2 {
+    margin: 0;
+    font-size: t.$font-size-lg;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: -0.01em;
+    color: t.$ink;
+  }
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-20 t.$space-16;
+  }
+}
+
+.jornada__card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: t.$space-12;
+}
+
+.jornada__hint {
+  margin: 0;
+  font-size: t.$font-size-label;
+  line-height: t.$line-height-normal;
+  color: t.$text-secondary;
+}
+
+// QR
+.jornada__qr-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: t.$space-16;
+  border: 1px dashed t.$blue-border;
+  border-radius: t.$radius-xl;
+  background: rgba(5, 54, 134, 0.035);
+
+  img {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    padding: t.$space-8;
+    border-radius: t.$radius-md;
+    background: t.$white;
+  }
+}
+
+.jornada__qr-loading {
+  font-size: t.$font-size-label;
+  color: t.$text-secondary;
+}
+
+.jornada__datum {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-4;
+
+  > span {
+    @include t.kicker;
+    color: t.$text-secondary;
+  }
+
+  code {
+    min-width: 0;
+    padding: t.$space-8 t.$space-12;
+    border: 1px solid t.$border-subtle;
+    border-radius: t.$radius-md;
+    background: t.$neutral-soft;
+    font-family: ui-monospace, monospace;
+    font-size: t.$font-size-xs;
+    color: t.$ink;
+    word-break: break-all;
+  }
+}
+
+.jornada__copy {
+  display: flex;
+  align-items: center;
+  gap: t.$space-4;
+
+  code {
+    flex: 1;
+  }
+}
+
+.jornada__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+  margin-top: t.$space-4;
+
+  a {
+    flex: 1 1 auto;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+// Evidencias (máx. 3)
+.jornada__evidencias {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: t.$space-12;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.jornada__evidencia {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  overflow: hidden;
+  background: t.$neutral-soft;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.jornada__evidencia-remove {
+  position: absolute;
+  top: t.$space-8;
+  right: t.$space-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(30, 30, 30, 0.72);
+  color: t.$white;
+  cursor: pointer;
+
+  &:hover {
+    background: t.$danger;
+  }
+}
+
+.jornada__upload {
+  @include ui.image-upload-zone;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  font-size: t.$font-size-xs;
+}
+
+// Asistentes
+.jornada__asistentes {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: t.$space-12;
+    margin: 0;
+    padding: t.$space-12 0;
+    border-bottom: 1px solid t.$border-subtle;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.jornada__asistente {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  strong {
+    font-size: t.$font-size-sm;
+    color: t.$ink;
+    @include t.truncate;
+  }
+
+  small {
+    font-size: t.$font-size-xs;
+    color: t.$text-secondary;
+    @include t.truncate;
+  }
+}

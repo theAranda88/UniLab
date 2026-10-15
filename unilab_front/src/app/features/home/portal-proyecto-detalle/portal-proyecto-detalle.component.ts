@@ -3,36 +3,30 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PublicPortalService } from '../public-portal.service';
-import { AuthModalService } from '../auth-modal.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import { urlsImagenesProyecto, type ProyectoPublico } from '../../../core/models/portal.model';
 
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+
 @Component({
   selector: 'app-portal-proyecto-detalle',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ProjectImageCarouselComponent],
+  imports: [CommonModule, TranslatePipe, ProjectImageCarouselComponent, EmptyStateComponent, SkeletonComponent],
   templateUrl: './portal-proyecto-detalle.component.html',
   styleUrl: './portal-proyecto-detalle.component.scss',
-  host: {
-    class: 'portal-route-page',
-    '[class.portal-route-page--entered]': 'entered()',
-    '[class.portal-route-page--exiting]': 'exiting()',
-  },
 })
 export class PortalProyectoDetalleComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private portal = inject(PublicPortalService);
   private translate = inject(TranslateService);
-  readonly authModal = inject(AuthModalService);
   private auth = inject(AuthService);
 
   readonly proyecto = signal<ProyectoPublico | null>(null);
   readonly loading = signal(true);
   readonly loadError = signal(false);
-  readonly entered = signal(false);
-  readonly exiting = signal(false);
 
   readonly isLoggedIn = computed(() => this.auth.isAuthenticated());
   readonly escuelaId = computed(() => this.proyecto()?.curso?.id_escuela ?? null);
@@ -42,7 +36,6 @@ export class PortalProyectoDetalleComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    window.setTimeout(() => this.entered.set(true), 120);
     const id = Number(this.route.snapshot.paramMap.get('idProyecto'));
     this.portal.obtenerProyecto(id).subscribe({
       next: (data) => {
@@ -62,18 +55,22 @@ export class PortalProyectoDetalleComponent implements OnInit {
       window.open(url, '_blank', 'noopener,noreferrer');
       return;
     }
-    this.authModal.open(() => window.open(url, '_blank', 'noopener,noreferrer'));
+    this.irALogin();
   }
 
   onRequireAuth(): void {
-    if (!this.isLoggedIn()) this.authModal.open();
+    if (!this.isLoggedIn()) this.irALogin();
+  }
+
+  /** Sin sesión: va a /login y vuelve a esta ficha al autenticarse. */
+  private irALogin(): void {
+    void this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
   }
 
   goBack(): void {
     const eid = this.escuelaId();
-    if (!eid || this.exiting()) return;
-    this.exiting.set(true);
-    window.setTimeout(() => this.router.navigate(['/escuelas', eid]), 620);
+    if (!eid) return;
+    void this.router.navigate(['/escuelas', eid]);
   }
 
   getCoordinador(p: ProyectoPublico): string {

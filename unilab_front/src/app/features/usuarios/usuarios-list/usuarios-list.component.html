@@ -1,66 +1,157 @@
 <div class="usuarios-list">
   <div class="usuarios-list__header">
-    <h1>{{ 'usuarios.titulo' | translate }}</h1>
+    <div>
+      <h1>{{ 'usuarios.titulo' | translate }}</h1>
+      @if (!cargando() && !error()) {
+        <p class="usuarios-list__count">
+          {{ 'usuarios.contador' | translate: { visibles: paginaActual().length, total: filtrados().length } }}
+        </p>
+      }
+    </div>
     <button type="button" class="btn btn-primary" (click)="crear()">
+      <i class="ti ti-user-plus" aria-hidden="true"></i>
       {{ 'usuarios.crear' | translate }}
     </button>
   </div>
 
+  <div class="usuarios-list__filters" role="group" [attr.aria-label]="'usuarios.filtroRol' | translate">
+    <button
+      type="button"
+      class="filter-chip"
+      [class.filter-chip--active]="filtroRol() === null"
+      (click)="setFiltroRol(null)"
+    >
+      {{ 'usuarios.todosRoles' | translate }}
+    </button>
+    @for (rol of roles; track rol) {
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtroRol() === rol"
+        (click)="setFiltroRol(rol)"
+      >
+        {{ 'usuarios.roles.' + rol | translate }}
+      </button>
+    }
+  </div>
+
   @if (cargando()) {
-    <p class="usuarios-list__loading">{{ 'common.cargando' | translate }}</p>
+    <app-skeleton variant="table" [rows]="6" />
   } @else if (error()) {
-    <p class="usuarios-list__error">{{ error() | translate }}</p>
-  } @else if (usuarios().length === 0) {
-    <p class="usuarios-list__empty">{{ 'usuarios.sinUsuarios' | translate }}</p>
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
+  } @else if (filtrados().length === 0) {
+    <app-empty-state
+      icon="ti-users"
+      [title]="(filtroRol() ? 'usuarios.sinUsuariosFiltro' : 'usuarios.sinUsuarios') | translate"
+      [message]="(filtroRol() ? 'usuarios.sinUsuariosFiltroHint' : 'usuarios.sinUsuariosHint') | translate"
+    >
+      @if (filtroRol()) {
+        <button type="button" class="edu-btn edu-btn--secondary" (click)="setFiltroRol(null)">{{ 'usuarios.todosRoles' | translate }}</button>
+      } @else {
+        <button type="button" class="edu-btn" (click)="crear()">{{ 'usuarios.crear' | translate }}</button>
+      }
+    </app-empty-state>
   } @else {
     <div class="usuarios-list__table-wrap">
       <table class="usuarios-list__table">
         <thead>
           <tr>
             <th>{{ 'usuarios.nombre' | translate }}</th>
-            <th>{{ 'usuarios.email' | translate }}</th>
             <th>{{ 'usuarios.rol' | translate }}</th>
             <th>{{ 'usuarios.estado' | translate }}</th>
-            <th>{{ 'common.acciones' | translate }}</th>
+            <th class="usuarios-list__th-actions">{{ 'common.acciones' | translate }}</th>
           </tr>
         </thead>
         <tbody>
-          @for (usuario of usuarios(); track trackById($index, usuario)) {
+          @for (usuario of paginaActual(); track trackById($index, usuario)) {
             <tr [class.usuarios-list__row--inactive]="!usuario.activo">
-              <td>{{ usuario.nombres }} {{ usuario.apellidos }}</td>
-              <td>{{ usuario.email }}</td>
-              <td>{{ usuario.rol.nombre_rol }}</td>
+              <td>
+                <div class="usuarios-list__person">
+                  <span class="edu-avatar">{{ iniciales(usuario) }}</span>
+                  <span class="usuarios-list__person-text">
+                    <span class="usuarios-list__name">{{ usuario.nombres }} {{ usuario.apellidos }}</span>
+                    <span class="usuarios-list__muted">{{ usuario.email }}</span>
+                  </span>
+                </div>
+              </td>
+              <td>{{ 'usuarios.roles.' + usuario.rol.nombre_rol | translate }}</td>
               <td>
                 @if (usuario.activo) {
-                  {{ 'usuarios.activo' | translate }}
+                  <span class="edu-badge edu-badge--activo">
+                    <span class="edu-badge__dot"></span>{{ 'usuarios.activo' | translate }}
+                  </span>
                 } @else {
-                  {{ 'usuarios.inactivo' | translate }}
+                  <span class="edu-badge">{{ 'usuarios.inactivo' | translate }}</span>
                 }
               </td>
-              <td class="usuarios-list__actions">
-                <button type="button" class="btn btn-link" (click)="editar(usuario.id_usuario)">
-                  {{ 'common.editar' | translate }}
-                </button>
-                <button type="button" class="btn btn-link" (click)="suspender(usuario)">
-                  {{ usuario.activo ? ('usuarios.suspender' | translate) : ('usuarios.reactivar' | translate) }}
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-link btn-link--danger"
-                  [disabled]="eliminandoId() === usuario.id_usuario"
-                  (click)="eliminar(usuario)"
-                >
-                  {{
-                    eliminandoId() === usuario.id_usuario
-                      ? ('common.cargando' | translate)
-                      : ('common.eliminar' | translate)
-                  }}
-                </button>
+              <td>
+                <div class="usuarios-list__actions">
+                  <button
+                    type="button"
+                    class="edu-icon-btn"
+                    (click)="editar(usuario.id_usuario)"
+                    [attr.aria-label]="'common.editar' | translate"
+                    [attr.title]="'common.editar' | translate"
+                  >
+                    <i class="ti ti-pencil" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="edu-icon-btn"
+                    (click)="suspender(usuario)"
+                    [attr.aria-label]="(usuario.activo ? 'usuarios.suspender' : 'usuarios.reactivar') | translate"
+                    [attr.title]="(usuario.activo ? 'usuarios.suspender' : 'usuarios.reactivar') | translate"
+                  >
+                    <i class="ti" [class.ti-user-pause]="usuario.activo" [class.ti-user-check]="!usuario.activo" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="edu-icon-btn edu-icon-btn--danger"
+                    [disabled]="eliminandoId() === usuario.id_usuario"
+                    (click)="eliminar(usuario)"
+                    [attr.aria-label]="'common.eliminar' | translate"
+                    [attr.title]="'common.eliminar' | translate"
+                  >
+                    <i class="ti" [class.ti-trash]="eliminandoId() !== usuario.id_usuario" [class.ti-loader]="eliminandoId() === usuario.id_usuario" aria-hidden="true"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           }
         </tbody>
       </table>
+
+      @if (totalPaginas() > 1) {
+        <nav class="usuarios-list__pagination" [attr.aria-label]="'usuarios.paginacion' | translate">
+          <span>{{ 'usuarios.paginaDe' | translate: { pagina: pagina(), total: totalPaginas() } }}</span>
+          <div class="usuarios-list__pages">
+            <button type="button" class="page-btn" [disabled]="pagina() === 1" (click)="irAPagina(pagina() - 1)">
+              {{ 'usuarios.anterior' | translate }}
+            </button>
+            @for (n of paginas(); track n) {
+              <button
+                type="button"
+                class="page-btn"
+                [class.page-btn--active]="n === pagina()"
+                [attr.aria-current]="n === pagina() ? 'page' : null"
+                (click)="irAPagina(n)"
+              >
+                {{ n }}
+              </button>
+            }
+            <button type="button" class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="irAPagina(pagina() + 1)">
+              {{ 'usuarios.siguiente' | translate }}
+            </button>
+          </div>
+        </nav>
+      }
     </div>
   }
 </div>

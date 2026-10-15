@@ -17,6 +17,7 @@ import { urlsImagenesProyecto } from '../../../core/models/portal.model';
 const TIPOS: TipoProyecto[] = ['web', 'movil', 'podcast', 'otro'];
 const MAX_IMAGENES = 3;
 
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-proyecto-estudiante-page',
   standalone: true,
@@ -25,8 +26,6 @@ const MAX_IMAGENES = 3;
   styleUrl: './proyecto-estudiante-page.component.scss',
   host: {
     '[class.portal-themed]': 'portalTheme()',
-    class: 'portal-route-page',
-    '[class.portal-route-page--entered]': 'entered()',
   },
 })
 export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
@@ -36,9 +35,9 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
+  private toast = inject(ToastService);
 
   readonly portalTheme = signal(false);
-  readonly entered = signal(false);
   readonly modoCrear = signal(false);
   readonly cargando = signal(false);
   readonly enviando = signal(false);
@@ -124,7 +123,6 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.portalTheme.set(hasPortalTheme(this.route));
-    window.setTimeout(() => this.entered.set(true), 120);
 
     const idParam = this.route.snapshot.paramMap.get('id');
     const isNuevo =
@@ -357,7 +355,7 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
       next: (actualizado) => {
         this.proyecto.set(actualizado);
         this.enviando.set(false);
-        void this.dialog.success({ messageKey: 'proyectosEstudiante.exitoGuardar' });
+        this.toast.success('proyectosEstudiante.exitoGuardar');
       },
       error: (err: { message?: string }) => {
         this.enviando.set(false);
@@ -385,7 +383,7 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
           this.proyecto.set(actualizado);
           this.formulario.disable();
           this.enviando.set(false);
-          void this.dialog.success({ messageKey: 'proyectosEstudiante.exitoRevision' });
+          this.toast.success('proyectosEstudiante.exitoRevision');
         },
         error: (err: { message?: string }) => {
           this.enviando.set(false);
@@ -492,7 +490,7 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
               this.previewsPendientes.set([]);
               this.enviando.set(false);
               this.subiendoImagenes.set(false);
-              void this.dialog.success({ messageKey: 'proyectosEstudiante.exitoCrearEnviado' });
+              this.toast.success('proyectosEstudiante.exitoCrearEnviado');
               this.router.navigate(['/mis-proyectos']);
             },
             error: (err: { message?: string }) => {

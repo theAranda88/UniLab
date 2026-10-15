@@ -13,15 +13,20 @@ export interface PendingPaymentItem {
   inscripcion: Inscripcion;
 }
 
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
 })
 export class AdminDashboardComponent implements OnInit {
   private eventosService = inject(EventosService);
+  private toast = inject(ToastService);
   private router = inject(Router);
 
   mock = DASHBOARD_MOCK.Administrador;
@@ -78,6 +83,7 @@ export class AdminDashboardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.actualizandoId.set(null);
+          this.toast.success('eventos.exitoPago');
           this.cargarPagosPendientes();
         },
         error: () => this.actualizandoId.set(null),

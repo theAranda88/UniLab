@@ -1,0 +1,12 @@
+@for (b of burbujas(); track $index) {
+  <span
+    #burbuja
+    class="bubble bubble--{{ b.tipo }}"
+    [style.width.px]="b.size"
+    [style.height.px]="b.size"
+    [style.top.%]="b.top"
+    [style.left.%]="b.left"
+  >
+    <span class="bubble__body bubble__body--float-{{ b.float }}"></span>
+  </span>
+}

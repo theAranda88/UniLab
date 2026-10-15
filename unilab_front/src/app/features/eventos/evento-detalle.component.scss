@@ -1,7 +1,7 @@
 @use '../../../styles/design-tokens' as t;
 @use '../../../styles/eventos-ui' as ui;
-@use '../../../styles/portal-codex-theme' as portal;
-@use '../../../styles/portal-codex-tokens' as p;
+
+// Pantalla 12 / 25 · Detalle de evento (panel y portal comparten diseño)
 
 .evento-detalle-container {
   @include ui.eventos-page;
@@ -11,462 +11,423 @@
     text-align: center;
     padding: t.$space-32;
     font-size: t.$font-size-sm;
+    color: t.$text-secondary;
   }
 
   .error {
-    color: t.$error;
-    background: #ffebee;
-    border-radius: t.$radius-md;
-  }
-
-  .evento-content {
-    @include ui.eventos-card;
-
-    .evento-header {
-      padding: t.$space-24;
-      border-bottom: 1px solid t.$border-gray;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: t.$space-16;
-
-      h1 {
-        margin: 0;
-        font-size: t.$font-size-2xl;
-        color: t.$primary-blue;
-        flex: 1;
-      }
-
-      .estado {
-        @include ui.estado-pill;
-
-        &.estado-planeado {
-          background: #e3f2fd;
-          color: t.$info;
-        }
-
-        &.estado-activo {
-          background: #e8f5e9;
-          color: t.$success;
-        }
-
-        &.estado-finalizado {
-          background: #f3e5f5;
-          color: #7b1fa2;
-        }
-      }
-    }
-
-    .evento-info {
-      padding: t.$space-24;
-      border-bottom: 1px solid t.$border-gray;
-
-      .info-row {
-        display: flex;
-        gap: t.$space-12;
-        margin-bottom: t.$space-8;
-        font-size: t.$font-size-sm;
-
-        strong {
-          min-width: 140px;
-          color: t.$text-dark;
-        }
-
-        span {
-          color: t.$text-light;
-        }
-      }
-    }
-
-    .descripcion-section {
-      padding: t.$space-24;
-      border-bottom: 1px solid t.$border-gray;
-
-      h3 {
-        margin: 0 0 t.$space-12;
-        font-size: t.$font-size-base;
-        color: t.$primary-blue;
-      }
-
-      p {
-        margin: 0;
-        color: t.$text-light;
-        line-height: t.$line-height-relaxed;
-        font-size: t.$font-size-sm;
-      }
-    }
-
-    .acciones {
-      padding: t.$space-24;
-      display: flex;
-      gap: t.$space-12;
-      flex-wrap: wrap;
-      align-items: center;
-      border-bottom: 1px solid t.$border-gray;
-
-      .btn {
-        &.btn-primary {
-          @include ui.btn-primary;
-        }
-
-        &.btn-secondary {
-          @include ui.btn-secondary;
-        }
-
-        &.btn-success {
-          @include ui.btn-success;
-        }
-
-        &.btn-danger {
-          @include ui.btn-danger;
-        }
-
-        &.btn-sm {
-          @include ui.btn-sm;
-        }
-      }
-
-      .badge-inscrito {
-        display: inline-flex;
-        align-items: center;
-        gap: t.$space-8;
-        padding: t.$space-8 t.$space-16;
-        background: #e8f5e9;
-        color: t.$success;
-        border-radius: t.$radius-full;
-        font-size: t.$font-size-sm;
-        font-weight: t.$font-weight-semibold;
-      }
-    }
-
-    .inscripciones-section,
-    .jornadas-section {
-      padding: t.$space-24;
-
-      h3 {
-        margin: 0 0 t.$space-16;
-        font-size: t.$font-size-base;
-        color: t.$primary-blue;
-      }
-
-      .no-data {
-        color: t.$text-light;
-        font-size: t.$font-size-sm;
-      }
-
-      .aviso-jornadas {
-        padding: t.$space-12 t.$space-16;
-        background: #fff8e1;
-        border: 1px solid rgba(245, 124, 0, 0.25);
-        border-radius: t.$radius-md;
-        color: t.$warning;
-      }
-    }
-
-    .inscripciones-section {
-      border-bottom: 1px solid t.$border-gray;
-    }
-
-    .inscripciones-list {
-      display: flex;
-      flex-direction: column;
-      gap: t.$space-12;
-    }
-
-    .inscripcion-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: t.$space-16;
-      padding: t.$space-16;
-      border: 1px solid t.$border-gray;
-      border-radius: t.$radius-md;
-      background: t.$light-gray;
-
-      .inscripcion-info {
-        display: flex;
-        flex-direction: column;
-        gap: t.$space-4;
-
-        strong {
-          font-size: t.$font-size-sm;
-          color: t.$text-dark;
-        }
-
-        span {
-          font-size: t.$font-size-xs;
-          color: t.$text-light;
-        }
-
-        .rol-tag {
-          display: inline-block;
-          width: fit-content;
-          padding: 2px t.$space-8;
-          background: rgba(28, 157, 216, 0.12);
-          color: t.$light-blue;
-          border-radius: t.$radius-full;
-          font-size: t.$font-size-xs;
-        }
-      }
-
-      .inscripcion-pago {
-        display: flex;
-        align-items: center;
-        gap: t.$space-8;
-      }
-
-      .badge-pago {
-        @include ui.estado-pill;
-        background: t.$gray-200;
-        color: t.$text-light;
-
-        &.pago-pendiente {
-          background: #fff3e0;
-          color: t.$warning;
-        }
-
-        &.pago-confirmado,
-        &.pago-exento {
-          background: #e8f5e9;
-          color: t.$success;
-        }
-      }
-    }
-
-    .jornadas-list {
-      display: flex;
-      flex-direction: column;
-      gap: t.$space-16;
-    }
-
-    .jornada-card {
-      border: 1px solid t.$border-gray;
-      border-radius: t.$radius-md;
-      overflow: hidden;
-
-      .jornada-header {
-        padding: t.$space-12 t.$space-16;
-        background: t.$light-gray;
-        border-bottom: 1px solid t.$border-gray;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: t.$space-12;
-
-        h4 {
-          margin: 0;
-          font-size: t.$font-size-sm;
-          color: t.$primary-blue;
-          flex: 1;
-          min-width: 0;
-        }
-
-        .jornada-actions {
-          display: flex;
-          gap: t.$space-8;
-          flex-shrink: 0;
-        }
-      }
-
-      .jornada-info {
-        padding: t.$space-16;
-
-        p {
-          margin: 0 0 t.$space-8;
-          font-size: t.$font-size-sm;
-          color: t.$text-light;
-
-          strong {
-            color: t.$text-dark;
-          }
-        }
-
-        .qr-section {
-          margin-top: t.$space-12;
-
-          .qr-container {
-            margin-top: t.$space-8;
-            padding: t.$space-12;
-            background: t.$light-gray;
-            border-radius: t.$radius-md;
-            text-align: center;
-
-            .qr-image {
-              max-width: 160px;
-              margin: 0 auto t.$space-8;
-            }
-
-            .qr-code-text {
-              display: block;
-              font-size: t.$font-size-xs;
-              color: t.$text-light;
-              word-break: break-all;
-            }
-          }
-        }
-      }
-    }
+    color: t.$danger-ink;
+    background: t.$danger-tint;
+    border: 1px solid t.$danger-border;
+    border-radius: t.$radius-lg;
   }
 }
 
-:host.portal-themed {
-  display: block;
-
-  .evento-detalle-container {
-    @include portal.portal-page;
-    max-width: min(56rem, 94vw);
-
-    .loading {
-      @include portal.portal-empty-state;
-    }
-
-    .error {
-      @include portal.portal-alert-error;
-      text-align: center;
-    }
-
-    .evento-content {
-      @include portal.portal-card;
-
-      .evento-header {
-        padding: t.$space-24;
-        border-bottom-color: p.$portal-border-subtle;
-
-        h1 {
-          @include portal.portal-page-title;
-          font-size: clamp(1.25rem, 1.5vw + 0.85rem, t.$font-size-2xl);
-        }
-
-        .estado.estado-planeado {
-          @include portal.portal-status-planeado;
-        }
-
-        .estado.estado-activo {
-          @include portal.portal-status-activo;
-        }
-
-        .estado.estado-finalizado {
-          @include portal.portal-status-finalizado;
-        }
-      }
-
-      .evento-info,
-      .descripcion-section,
-      .acciones,
-      .inscripciones-section {
-        border-bottom-color: p.$portal-border-subtle;
-      }
-
-      .evento-info .info-row {
-        @include portal.portal-info-row;
-      }
-
-      .descripcion-section h3,
-      .inscripciones-section h3,
-      .jornadas-section h3 {
-        @include portal.portal-section-title;
-      }
-
-      .descripcion-section p {
-        color: p.$portal-text-secondary;
-      }
-
-      .acciones {
-        .btn.btn-primary {
-          @include portal.portal-btn-primary;
-        }
-
-        .btn.btn-secondary {
-          @include portal.portal-btn-secondary;
-        }
-
-        .btn.btn-success {
-          @include portal.portal-btn-success;
-        }
-
-        .btn.btn-danger {
-          @include portal.portal-btn-danger;
-        }
-
-        .badge-inscrito {
-          @include portal.portal-status-activo;
-          gap: t.$space-8;
-        }
-      }
-
-      .inscripciones-section,
-      .jornadas-section {
-        .no-data {
-          color: p.$portal-text-muted;
-        }
-
-        .aviso-jornadas {
-          @include portal.portal-alert-warning;
-        }
-      }
-
-      .inscripcion-card {
-        border-color: p.$portal-border-subtle;
-        background: rgba(4, 12, 28, 0.55);
-
-        .inscripcion-info strong {
-          color: p.$portal-text-primary;
-        }
-
-        .inscripcion-info span {
-          color: p.$portal-text-muted;
-        }
-
-        .rol-tag {
-          background: rgba(212, 175, 55, 0.12);
-          color: p.$portal-gold-muted;
-        }
-      }
-
-      .jornada-card {
-        border-color: p.$portal-border-subtle;
-        background: rgba(4, 12, 28, 0.45);
-
-        .jornada-header {
-          background: rgba(212, 175, 55, 0.06);
-          border-bottom-color: p.$portal-border-subtle;
-
-          h4 {
-            color: p.$portal-text-primary;
-            font-family: p.$portal-font-display;
-          }
-        }
-
-        .jornada-info p {
-          color: p.$portal-text-secondary;
-
-          strong {
-            color: p.$portal-text-label;
-          }
-        }
-
-        .qr-section .qr-container {
-          background: rgba(2, 6, 23, 0.8);
-          border: 1px solid p.$portal-border-subtle;
-        }
-
-        .qr-code-text {
-          color: p.$portal-text-muted;
-        }
-      }
-    }
-  }
+.evento-content {
+  @include ui.eventos-card;
+  margin-top: t.$space-16;
 }
 
 .evento-flyer-hero {
-  margin: 1rem 0 1.5rem;
-  border-radius: 8px;
-  overflow: hidden;
+  background: t.$neutral-soft;
+  border-bottom: 1px solid t.$border-subtle;
 
   img {
     width: 100%;
-    max-height: 320px;
+    max-height: 340px;
     object-fit: cover;
     display: block;
+  }
+}
+
+.evento-header {
+  padding: t.$space-24 t.$space-24 t.$space-16;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: t.$space-12;
+
+  h1 {
+    flex: 1 1 100%;
+    order: 1;
+    margin: 0;
+    font-size: clamp(1.5rem, 2vw + 1rem, t.$font-size-2xl);
+    font-weight: t.$font-weight-black;
+    letter-spacing: t.$letter-spacing-display;
+    color: t.$ink;
+  }
+}
+
+// C10 · Badge de estado del evento
+.estado {
+  @include ui.estado-pill;
+  order: 0;
+  background: t.$neutral-tint;
+  color: rgba(30, 30, 30, 0.7);
+
+  &.estado-activo {
+    background: t.$blue-tint-strong;
+    border-color: t.$blue-border;
+    color: t.$blue;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  }
+
+  &.estado-finalizado {
+    background: rgba(30, 30, 30, 0.85);
+    border-color: rgba(30, 30, 30, 0.85);
+    color: t.$white;
+  }
+}
+
+// C15 · Dato-grid (2 columnas explícitas)
+.evento-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 t.$space-24;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$border-subtle;
+  overflow: hidden;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: t.$space-12 t.$space-16;
+    background: t.$white;
+
+    strong {
+      @include t.kicker;
+      color: t.$text-secondary;
+    }
+
+    span {
+      font-size: t.$font-size-sm;
+      font-weight: t.$font-weight-semibold;
+      color: t.$ink;
+    }
+
+    // Fila «Requiere pago» (sin valor): se muestra como indicador
+    &:has(strong:only-child) {
+      flex-direction: row;
+      align-items: center;
+      background: t.$accent-tint;
+
+      strong {
+        color: t.$accent-ink;
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: t.$font-size-label;
+      }
+    }
+
+    // Si queda una celda impar, ocupa el ancho completo
+    &:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.descripcion-section,
+.inscripciones-section,
+.jornadas-section {
+  padding: t.$space-24;
+  border-bottom: 1px solid t.$border-subtle;
+
+  h3 {
+    margin: 0 0 t.$space-12;
+    font-size: t.$font-size-lg;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: -0.01em;
+    color: t.$ink;
+  }
+}
+
+.jornadas-section {
+  border-bottom: none;
+}
+
+.descripcion-section p {
+  margin: 0;
+  color: t.$text-secondary;
+  line-height: t.$line-height-relaxed;
+  font-size: t.$font-size-base;
+}
+
+.acciones {
+  padding: t.$space-16 t.$space-24;
+  display: flex;
+  gap: t.$space-8;
+  flex-wrap: wrap;
+  align-items: center;
+  border-bottom: 1px solid t.$border-subtle;
+  background: t.$neutral-soft;
+
+  .info-publica {
+    flex: 1 1 100%;
+    margin: 0;
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+  }
+}
+
+.btn {
+  &.btn-primary,
+  &.btn-success {
+    @include ui.btn-primary;
+  }
+
+  &.btn-secondary {
+    @include ui.btn-secondary;
+  }
+
+  &.btn-danger {
+    @include ui.btn-danger;
+  }
+
+  &.btn-sm {
+    @include ui.btn-sm;
+  }
+}
+
+.jornada-actions .btn.btn-sm {
+  width: 32px;
+  padding: 0;
+}
+
+.badge-inscrito {
+  display: inline-flex;
+  align-items: center;
+  gap: t.$space-8;
+  min-height: 40px;
+  padding: 0 t.$space-16;
+  border-radius: t.$radius-md;
+  background: t.$ok-tint;
+  border: 1px solid t.$ok-border;
+  color: t.$ok;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-bold;
+}
+
+.no-data {
+  margin: 0;
+  padding: t.$space-16;
+  border-radius: t.$radius-lg;
+  background: t.$neutral-soft;
+  color: t.$text-secondary;
+  font-size: t.$font-size-sm;
+  text-align: center;
+}
+
+.aviso-jornadas {
+  background: t.$blue-tint;
+  color: t.$blue;
+  text-align: left;
+}
+
+// Inscripciones
+.inscripciones-list,
+.jornadas-list {
+  display: grid;
+  gap: t.$space-12;
+}
+
+.inscripcion-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: t.$space-12;
+  padding: t.$space-12 t.$space-16;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$white;
+}
+
+.inscripcion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  strong {
+    font-size: t.$font-size-sm;
+    color: t.$ink;
+  }
+
+  span {
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+  }
+
+  .rol-tag {
+    @include ui.estado-pill;
+    align-self: flex-start;
+    margin-top: t.$space-4;
+    background: t.$neutral-tint;
+    color: rgba(30, 30, 30, 0.7);
+  }
+}
+
+.inscripcion-pago {
+  display: flex;
+  align-items: center;
+  gap: t.$space-8;
+}
+
+.badge-pago {
+  @include ui.estado-pill;
+  background: t.$neutral-tint;
+  color: rgba(30, 30, 30, 0.7);
+
+  &.pago-pendiente {
+    background: t.$accent-tint;
+    border-color: t.$accent-border;
+    color: t.$accent-ink;
+  }
+
+  &.pago-confirmado {
+    background: t.$blue-tint-strong;
+    border-color: t.$blue-border;
+    color: t.$blue;
+  }
+}
+
+// Jornadas
+.jornada-card {
+  padding: t.$space-16;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$white;
+}
+
+.jornada-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: t.$space-12;
+  margin-bottom: t.$space-8;
+
+  h4 {
+    margin: 0;
+    font-size: t.$font-size-base;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+  }
+}
+
+.jornada-actions {
+  display: flex;
+  gap: t.$space-4;
+}
+
+.jornada-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: t.$space-4;
+  min-height: 32px;
+  margin-left: auto;
+  padding: 0 t.$space-8;
+  border-radius: t.$radius-md;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-bold;
+  text-decoration: none;
+
+  &:hover {
+    background: t.$blue-tint;
+    text-decoration: none;
+  }
+}
+
+.jornada-info {
+  p {
+    margin: 0 0 t.$space-4;
+    font-size: t.$font-size-sm;
+    color: t.$text-secondary;
+
+    strong {
+      color: t.$ink;
+      font-weight: t.$font-weight-bold;
+    }
+  }
+}
+
+.qr-section {
+  margin-top: t.$space-12;
+  font-size: t.$font-size-sm;
+
+  > strong {
+    display: block;
+    margin-bottom: t.$space-8;
+    color: t.$ink;
+  }
+}
+
+.qr-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: t.$space-16;
+  padding: t.$space-12;
+  border: 1px dashed t.$blue-border;
+  border-radius: t.$radius-lg;
+  background: rgba(5, 54, 134, 0.035);
+}
+
+.qr-image {
+  width: 132px;
+  height: 132px;
+  padding: t.$space-8;
+  border-radius: t.$radius-md;
+  background: t.$white;
+  border: 1px solid t.$border-subtle;
+}
+
+.qr-loading {
+  font-size: t.$font-size-label;
+  color: t.$text-secondary;
+}
+
+.qr-code-text {
+  padding: t.$space-4 t.$space-8;
+  border-radius: t.$radius-sm;
+  background: t.$white;
+  border: 1px solid t.$border-subtle;
+  font-family: ui-monospace, monospace;
+  font-size: t.$font-size-xs;
+  color: t.$ink;
+  word-break: break-all;
+}
+
+@include t.respond-to(t.$breakpoint-sm) {
+  .evento-header,
+  .descripcion-section,
+  .inscripciones-section,
+  .jornadas-section {
+    padding-left: t.$space-16;
+    padding-right: t.$space-16;
+  }
+
+  .evento-info {
+    margin: 0 t.$space-16;
+  }
+
+  .acciones {
+    padding: t.$space-16;
+
+    .btn {
+      flex: 1 1 100%;
+    }
   }
 }

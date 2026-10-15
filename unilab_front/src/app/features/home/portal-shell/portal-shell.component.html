@@ -1,60 +1,89 @@
-<div class="codex-portal">
-  <app-spiderweb-canvas />
-
-  <header class="codex-portal__header">
-    <div class="codex-portal__brand-group">
-      <button type="button" class="codex-portal__brand" (click)="goHome()">
-        <h1 class="codex-portal__title">{{ 'app.title' | translate }}</h1>
-        <span class="codex-portal__tagline">{{ 'home.portalTagline' | translate }}</span>
-      </button>
-      @if (showHeaderLogo() && !logoError()) {
-        <div
-          class="codex-portal__header-logo"
-          [class.codex-portal__header-logo--visible]="headerLogoVisible()"
-          aria-hidden="true"
-        >
-          <img
-            src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
-            [alt]="'home.logoAlt' | translate"
-            (error)="logoError.set(true)"
-          />
-        </div>
-      }
-    </div>
-    <div class="codex-portal__header-right">
-      <a routerLink="/eventos" class="codex-portal__auth-btn codex-portal__auth-btn--events">
-        {{ 'home.eventsNav' | translate }}
+<div class="portal">
+  <header class="portal__header">
+    <div class="portal__header-inner">
+      <a class="portal__brand" routerLink="/" [attr.aria-label]="'auth.brand.home' | translate">
+        <img src="assets/images/recursos/Logoeduinova.svg" alt="" class="portal__brand-mark" />
+        <span class="portal__brand-text">
+          <img src="assets/images/recursos/Ttulo.svg" alt="Eduinova" class="portal__brand-title" />
+          <span class="portal__brand-caption">{{ 'home.caption' | translate }}</span>
+        </span>
       </a>
-      @if (showStudentNav()) {
-        @if (isEstudiante()) {
-          <a routerLink="/mis-proyectos" class="codex-portal__auth-btn codex-portal__auth-btn--projects">
-            {{ 'home.projectsNav' | translate }}
-          </a>
-        }
-        <app-portal-profile-menu />
-      } @else if (staffPanelRoute(); as panelRoute) {
-        <a [routerLink]="panelRoute" class="codex-portal__auth-btn codex-portal__auth-btn--primary">
-          {{ 'home.goToPanel' | translate }}
+
+      <nav class="portal__nav" [attr.aria-label]="'home.nav.label' | translate">
+        <a routerLink="/" class="portal__nav-link" [class.portal__nav-link--active]="activeSection() === 'inicio'">
+          {{ 'home.nav.inicio' | translate }}
         </a>
-      } @else {
-        <button
-          type="button"
-          class="codex-portal__auth-btn codex-portal__auth-btn--primary"
-          (click)="onAuthClick()"
+        <a
+          routerLink="/"
+          fragment="escuelas"
+          class="portal__nav-link"
+          [class.portal__nav-link--active]="activeSection() === 'proyectos'"
         >
-          {{ 'home.signIn' | translate }}
-        </button>
-      }
+          {{ 'home.nav.proyectos' | translate }}
+        </a>
+        <a
+          routerLink="/eventos"
+          class="portal__nav-link"
+          [class.portal__nav-link--active]="activeSection() === 'eventos'"
+        >
+          {{ 'home.eventsNav' | translate }}
+        </a>
+
+        @if (isLoggedIn()) {
+          @if (isEstudiante()) {
+            <a
+              routerLink="/mis-proyectos"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'mis-proyectos'"
+            >
+              {{ 'home.projectsNav' | translate }}
+            </a>
+          }
+          @if (staffPanelRoute(); as panelRoute) {
+            <a [routerLink]="panelRoute" class="portal__cta">{{ 'home.goToPanel' | translate }}</a>
+          }
+          <app-portal-profile-menu class="portal__profile" />
+        } @else {
+          <a routerLink="/login" class="portal__cta">{{ 'home.signIn' | translate }}</a>
+        }
+      </nav>
     </div>
   </header>
 
-  <router-outlet />
+  <div class="portal__content">
+    <router-outlet />
+  </div>
 
-  <footer class="codex-portal__footer">
-    {{ 'home.footer' | translate }}
+  <footer class="portal__footer">
+    <div class="portal__footer-inner">
+      <div class="portal__footer-about">
+        <span class="portal__university">
+          <img src="assets/images/recursos/Logouniautonoma.svg" [alt]="'auth.brand.universityAlt' | translate" />
+          <span>
+            <strong>{{ 'auth.brand.universityName' | translate }}</strong>
+            <small>{{ 'auth.brand.universityPlace' | translate }}</small>
+          </span>
+        </span>
+        <p>{{ 'home.footer' | translate }}</p>
+      </div>
+
+      <div class="portal__footer-col">
+        <span class="portal__footer-title">{{ 'home.footerPortal' | translate }}</span>
+        <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
+        <a routerLink="/" fragment="escuelas">{{ 'home.nav.escuelasProyectos' | translate }}</a>
+        <a routerLink="/eventos">{{ 'home.eventsNav' | translate }}</a>
+      </div>
+
+      <div class="portal__footer-col">
+        <span class="portal__footer-title">{{ 'home.footerAccess' | translate }}</span>
+        @if (!isLoggedIn()) {
+          <a routerLink="/login">{{ 'home.signIn' | translate }}</a>
+          <a routerLink="/registro">{{ 'home.createAccount' | translate }}</a>
+        } @else if (staffPanelRoute(); as panelRoute) {
+          <a [routerLink]="panelRoute">{{ 'home.goToPanel' | translate }}</a>
+        }
+        <a routerLink="/eventos">{{ 'home.registerAttendance' | translate }}</a>
+      </div>
+    </div>
   </footer>
-
-  @if (showAuthModal()) {
-    <app-auth-modal (closed)="authModal.close()" (authenticated)="authModal.close()" />
-  }
 </div>

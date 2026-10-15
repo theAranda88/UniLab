@@ -1,87 +1,45 @@
 @use '../../../../styles/design-tokens' as t;
 @use '../../../../styles/eventos-ui' as ui;
+@use '../../../../styles/admin-pages' as pages;
 
+// Pantalla 08 · Usuario — crear / editar
 .usuarios-form {
-  @include ui.eventos-page;
-  max-width: 720px;
+  @include pages.form-page(760px);
 
-  &__card {
-    @include ui.eventos-card;
-    padding: t.$space-24;
-
-    h1 {
-      margin: 0 0 t.$space-24;
-      font-size: t.$font-size-xl;
-      color: t.$primary-blue;
-    }
-  }
-
-  &__loading,
-  &__error {
-    color: t.$error;
-  }
-
+  // Contraseña temporal: se destaca y se advierte que solo se muestra una vez
   &__success {
     display: flex;
     flex-direction: column;
     gap: t.$space-16;
+    padding: t.$space-20;
+    border: 1px solid t.$accent-border;
+    border-radius: t.$radius-lg;
+    background: t.$accent-tint;
 
-    code {
-      padding: t.$space-12;
-      background: t.$light-gray;
-      border-radius: t.$radius-md;
-      font-size: t.$font-size-lg;
-    }
-
-    .btn-primary {
-      @include ui.btn-primary;
-    }
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: t.$space-16;
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: t.$space-16;
-
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: t.$space-8;
-
-    label {
+    p {
+      margin: 0;
+      color: t.$accent-ink-strong;
       font-size: t.$font-size-sm;
       font-weight: t.$font-weight-semibold;
-      color: t.$text-dark;
     }
 
-    .form-control {
-      @include ui.form-control;
+    code {
+      padding: t.$space-16;
+      border: 1px dashed t.$blue-border;
+      border-radius: t.$radius-md;
+      background: t.$white;
+      color: t.$blue;
+      font-family: ui-monospace, monospace;
+      font-size: t.$font-size-xl;
+      font-weight: t.$font-weight-bold;
+      letter-spacing: 0.08em;
+      text-align: center;
+      user-select: all;
     }
-  }
-
-  &__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: t.$space-12;
-    margin-top: t.$space-8;
 
     .btn-primary {
       @include ui.btn-primary;
-    }
-
-    .btn-secondary {
-      @include ui.btn-secondary;
+      align-self: flex-end;
     }
   }
 }

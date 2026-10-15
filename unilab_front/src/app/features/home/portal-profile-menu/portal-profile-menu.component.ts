@@ -1,13 +1,14 @@
 import { Component, ElementRef, HostListener, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
+import { getShellPrefix } from '../../../core/config/role-redirect';
 
 @Component({
   selector: 'app-portal-profile-menu',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './portal-profile-menu.component.html',
   styleUrl: './portal-profile-menu.component.scss',
 })
@@ -35,6 +36,22 @@ export class PortalProfileMenuComponent {
     if (!u) return '';
     const full = `${u.nombres ?? ''} ${u.apellidos ?? ''}`.trim();
     return full || u.email;
+  });
+
+  /** Nombre corto que se muestra junto al avatar. */
+  readonly nombreCorto = computed(() => {
+    const u = this.user();
+    if (!u) return '';
+    return u.nombres?.trim().split(/\s+/)[0] || u.email.split('@')[0];
+  });
+
+  /** Panel propio según el rol: dashboard para staff, «Mis proyectos» para Estudiante. */
+  readonly panelRoute = computed<string | null>(() => {
+    const rol = this.user()?.id_rol ?? '';
+    const prefix = getShellPrefix(rol);
+    if (prefix) return `${prefix}/dashboard`;
+    if (rol === 'Estudiante') return '/mis-proyectos';
+    return null;
   });
 
   readonly rolKey = computed(() => {

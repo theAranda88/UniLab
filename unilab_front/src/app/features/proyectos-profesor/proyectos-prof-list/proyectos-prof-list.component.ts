@@ -5,10 +5,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ProyectosService } from '../../proyectos-estudiante/proyectos.service';
 import type { Proyecto, TipoProyecto } from '../../../core/models/proyecto.model';
 
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+
 @Component({
   selector: 'app-proyectos-prof-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './proyectos-prof-list.component.html',
   styleUrl: './proyectos-prof-list.component.scss',
 })

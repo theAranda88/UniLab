@@ -20,7 +20,7 @@ import { AdminShellComponent } from './shared/layout/admin-shell/admin-shell.com
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { CoordDashboardComponent } from './features/coordinador/dashboard/coord-dashboard.component';
 import { ProfDashboardComponent } from './features/profesor/dashboard/prof-dashboard.component';
-import { authGuard, roleGuard, primerLoginGuard, roleRedirectGuard, perfilPendienteGuard, completarPerfilGuard } from './core/auth/auth.guard';
+import { authGuard, roleGuard, primerLoginGuard, roleRedirectGuard, perfilPendienteGuard, completarPerfilGuard, guestGuard } from './core/auth/auth.guard';
 import { CompletarPerfilComponent } from './features/auth/completar-perfil/completar-perfil.component';
 import { UsuariosListComponent } from './features/usuarios/usuarios-list/usuarios-list.component';
 import { UsuariosFormComponent } from './features/usuarios/usuarios-form/usuarios-form.component';
@@ -30,41 +30,90 @@ import { UsuariosFormComponent } from './features/usuarios/usuarios-form/usuario
   standalone: true,
   template: `
     <div class="error-container">
-      <h1>403 - Acceso Denegado</h1>
-      <p>No tienes permiso para acceder a este recurso.</p>
-      <button (click)="goBack()">Volver</button>
+      <div class="error-card">
+        <span class="error-icon"><i class="ti ti-lock" aria-hidden="true"></i></span>
+        <h1>403 - Acceso Denegado</h1>
+        <p>No tienes permiso para acceder a este recurso.</p>
+        <button (click)="goBack()">Volver</button>
+      </div>
     </div>
   `,
   styles: [
     `
       .error-container {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        background: linear-gradient(135deg, #243b8e 0%, #1c9dd8 100%);
-        color: white;
+        padding: 24px 16px;
+        background: #fffdf5;
+      }
+      .error-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        max-width: 440px;
+        padding: 40px 32px 32px;
+        border: 1px solid rgba(30, 30, 30, 0.1);
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
         text-align: center;
-        gap: 16px;
+        overflow: hidden;
+      }
+      .error-card::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto;
+        height: 4px;
+        background: linear-gradient(90deg, #053686 0 70%, #e3c924 70% 100%);
+      }
+      .error-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        margin-bottom: 4px;
+        border-radius: 12px;
+        background: rgba(176, 42, 42, 0.08);
+        color: #b02a2a;
+        font-size: 26px;
       }
       h1 {
-        font-size: 48px;
         margin: 0;
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: #1e1e1e;
       }
       p {
-        font-size: 18px;
-        margin: 0;
+        margin: 0 0 8px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: rgba(30, 30, 30, 0.72);
       }
       button {
-        background-color: #fcc202;
-        color: #243b8e;
-        border: none;
-        padding: 10px 24px;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 4px;
+        min-height: 40px;
+        padding: 0 24px;
+        border: 1px solid #053686;
+        border-radius: 8px;
+        background: #053686;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
         cursor: pointer;
+        transition: background 180ms ease;
+      }
+      button:hover {
+        background: #032a6a;
+      }
+      button:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(5, 54, 134, 0.12);
       }
     `,
   ],
@@ -110,6 +159,15 @@ const eventosPortalChildren: Routes = [
 ];
 
 const eventosShellChildren: Routes = [
+  {
+    path: 'asistencia',
+    loadComponent: () =>
+      import('./features/eventos/asistencia-panel/asistencia-panel.component').then(
+        (m) => m.AsistenciaPanelComponent,
+      ),
+    canActivate: [roleGuard],
+    data: { roles: ['Administrador', 'Coordinador'] },
+  },
   { path: 'eventos', component: EventosListComponent },
   {
     path: 'eventos/crear',
@@ -134,6 +192,14 @@ const eventosShellChildren: Routes = [
   {
     path: 'eventos/:id/reporte',
     component: ReporteEventoComponent,
+    canActivate: [roleGuard],
+    data: { roles: ['Administrador', 'Coordinador'] },
+  },  {
+    path: 'eventos/:id/jornadas/:idJornada',
+    loadComponent: () =>
+      import('./features/eventos/jornada-detalle/jornada-detalle.component').then(
+        (m) => m.JornadaDetalleComponent,
+      ),
     canActivate: [roleGuard],
     data: { roles: ['Administrador', 'Coordinador'] },
   },
@@ -200,7 +266,21 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  {
+    path: 'registro',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/registro/registro.component').then((m) => m.RegistroComponent),
+  },
+  {
+    path: 'recuperar-contrasena',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/recuperar-contrasena/recuperar-contrasena.component').then(
+        (m) => m.RecuperarContrasenaComponent,
+      ),
+  },
   {
     path: 'cambiar-password',
     component: CambiarPasswordComponent,
@@ -259,5 +339,9 @@ export const routes: Routes = [
     data: { mobileMode: true, portalTheme: true },
   },
   { path: 'unauthorized', component: UnauthorizedComponent },
-  { path: '**', redirectTo: '' },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./features/not-found/not-found.component').then((m) => m.NotFoundComponent),
+  },
 ];

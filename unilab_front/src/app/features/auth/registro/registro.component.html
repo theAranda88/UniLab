@@ -1,0 +1,156 @@
+<div class="registro">
+  <app-auth-brand />
+
+  <!-- Formulario -->
+  <main class="registro__main">
+    <div class="registro__card">
+      <header class="registro__head">
+        <a routerLink="/" class="registro__back">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i>
+          {{ 'auth.brand.backToPortal' | translate }}
+        </a>
+        <h2>{{ 'auth.registro.title' | translate }}</h2>
+        <p>{{ 'auth.registro.subtitle' | translate }}</p>
+      </header>
+
+      @if (tempPassword()) {
+        <div class="registro__body">
+          <div class="registro__notice">
+            <i class="ti ti-key" aria-hidden="true"></i>
+            <span>{{ 'auth.registro.tempPasswordHint' | translate }}</span>
+          </div>
+          <code class="registro__password">{{ tempPassword() }}</code>
+        </div>
+        <footer class="registro__actions">
+          <a routerLink="/login" class="registro__btn registro__btn--primary">
+            {{ 'auth.registro.continueLogin' | translate }}
+          </a>
+        </footer>
+      } @else {
+        <form [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+          <div class="registro__body">
+            @if (errorMessage()) {
+              <div class="registro__alert" role="alert">
+                <i class="ti ti-alert-circle" aria-hidden="true"></i>
+                <span>{{ errorMessage() }}</span>
+              </div>
+            }
+
+            <div class="registro__group">
+              <span class="registro__label">{{ 'auth.registro.accountType' | translate }}</span>
+              <div class="registro__segmented" role="radiogroup">
+                @for (role of roles; track role) {
+                  <button
+                    type="button"
+                    role="radio"
+                    [attr.aria-checked]="registerRole() === role"
+                    [class.registro__segment--active]="registerRole() === role"
+                    (click)="setRegisterRole(role)"
+                  >
+                    {{ 'auth.registro.roles.' + role | translate }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="registro__grid">
+              <label class="registro__field">
+                <span>{{ 'auth.registro.firstName' | translate }} <em>*</em></span>
+                <input type="text" formControlName="nombres" [attr.aria-invalid]="hasError('nombres')" autocomplete="given-name" />
+                @if (hasError('nombres')) {
+                  <small class="registro__error">{{ errorKey('nombres') | translate }}</small>
+                }
+              </label>
+              <label class="registro__field">
+                <span>{{ 'auth.registro.lastName' | translate }} <em>*</em></span>
+                <input type="text" formControlName="apellidos" [attr.aria-invalid]="hasError('apellidos')" autocomplete="family-name" />
+                @if (hasError('apellidos')) {
+                  <small class="registro__error">{{ errorKey('apellidos') | translate }}</small>
+                }
+              </label>
+              <label class="registro__field">
+                <span>{{ 'auth.registro.email' | translate }} <em>*</em></span>
+                <input type="email" formControlName="email" [attr.aria-invalid]="hasError('email')" autocomplete="email" />
+                @if (hasError('email')) {
+                  <small class="registro__error">{{ errorKey('email') | translate }}</small>
+                }
+              </label>
+              <label class="registro__field">
+                <span>{{ 'auth.registro.document' | translate }} <em>*</em></span>
+                <input type="text" formControlName="documento_identidad" [attr.aria-invalid]="hasError('documento_identidad')" />
+                @if (hasError('documento_identidad')) {
+                  <small class="registro__error">{{ errorKey('documento_identidad') | translate }}</small>
+                }
+              </label>
+              <label class="registro__field">
+                <span>{{ 'auth.registro.phone' | translate }} <em>*</em></span>
+                <input type="tel" formControlName="telefono" [attr.aria-invalid]="hasError('telefono')" autocomplete="tel" />
+                @if (hasError('telefono')) {
+                  <small class="registro__error">{{ errorKey('telefono') | translate }}</small>
+                }
+              </label>
+            </div>
+
+            <fieldset class="registro__role-fields">
+              <legend>
+                {{ 'auth.registro.roleFields' | translate: { role: ('auth.registro.roles.' + registerRole() | translate) } }}
+              </legend>
+              <div class="registro__grid">
+                @if (registerRole() === 'Estudiante') {
+                  <label class="registro__field">
+                    <span>{{ 'auth.registro.studentCode' | translate }} <em>*</em></span>
+                    <input type="text" formControlName="codigo_estudiantil" [attr.aria-invalid]="hasError('codigo_estudiantil')" />
+                    @if (hasError('codigo_estudiantil')) {
+                      <small class="registro__error">{{ errorKey('codigo_estudiantil') | translate }}</small>
+                    }
+                  </label>
+                  <label class="registro__field">
+                    <span>{{ 'auth.registro.school' | translate }} <em>*</em></span>
+                    <select formControlName="id_escuela" [attr.aria-invalid]="hasError('id_escuela')">
+                      <option [ngValue]="null">{{ 'auth.registro.selectSchool' | translate }}</option>
+                      @for (escuela of escuelas(); track escuela.id_escuela) {
+                        <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+                      }
+                    </select>
+                    @if (hasError('id_escuela')) {
+                      <small class="registro__error">{{ errorKey('id_escuela') | translate }}</small>
+                    }
+                  </label>
+                } @else {
+                  <label class="registro__field">
+                    <span>{{ 'auth.registro.institution' | translate }} <em>*</em></span>
+                    <input type="text" formControlName="institucion" [attr.aria-invalid]="hasError('institucion')" />
+                    @if (hasError('institucion')) {
+                      <small class="registro__error">{{ errorKey('institucion') | translate }}</small>
+                    }
+                  </label>
+                  <label class="registro__field">
+                    <span>{{ 'auth.registro.occupation' | translate }} <em>*</em></span>
+                    <input type="text" formControlName="ocupacion" [attr.aria-invalid]="hasError('ocupacion')" />
+                    @if (hasError('ocupacion')) {
+                      <small class="registro__error">{{ errorKey('ocupacion') | translate }}</small>
+                    }
+                  </label>
+                }
+              </div>
+            </fieldset>
+
+            <div class="registro__notice">
+              <i class="ti ti-key" aria-hidden="true"></i>
+              <span>{{ 'auth.registro.tempPasswordInfo' | translate }}</span>
+            </div>
+          </div>
+
+          <footer class="registro__actions">
+            <a routerLink="/login" class="registro__btn registro__btn--secondary">
+              {{ 'common.cancelar' | translate }}
+            </a>
+            <button type="submit" class="registro__btn registro__btn--primary" [disabled]="loading()">
+              {{ loading() ? ('common.loading' | translate) : ('auth.registro.submit' | translate) }}
+            </button>
+          </footer>
+        </form>
+      }
+    </div>
+  </main>
+</div>

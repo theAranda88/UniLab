@@ -1,12 +1,12 @@
 {
   "app": {
-    "title": "UniLab",
+    "title": "Eduinova",
     "subtitle": "Academic Management Platform"
   },
   "shell": {
     "brand": {
-      "title": "University Platform",
-      "subtitle": "Management panel"
+      "title": "Eduinova",
+      "subtitle": "Academic management"
     },
     "nav": {
       "comingSoon": "Coming soon",
@@ -41,7 +41,7 @@
         "miGestion": "My management",
         "proyectos": "Projects",
         "recursos": "Resources",
-        "portal": "UniLab"
+        "portal": "Eduinova"
       }
     },
     "pages": {
@@ -49,7 +49,8 @@
       "miPanel": "My panel",
       "eventos": "Events",
       "escuelas": "Schools and programs",
-      "usuarios": "Users"
+      "usuarios": "Users",
+      "asistencia": "Attendance control"
     },
     "cta": {
       "crearUsuario": "Create user",
@@ -57,25 +58,43 @@
       "autorizarEstudiante": "Authorize student"
     },
     "roles": {
-      "admin": { "sub": "Full access" },
-      "coord": { "sub": "Analytics view" },
-      "prof": { "sub": "Academic management" }
+      "admin": {
+        "sub": "Full access"
+      },
+      "coord": {
+        "sub": "Analytics view"
+      },
+      "prof": {
+        "sub": "Academic management"
+      }
+    },
+    "menu": "Open menu",
+    "notifications": {
+      "title": "Notifications",
+      "empty": "You have no pending notifications.",
+      "pagoPendiente": "Pending payment from {{nombre}}",
+      "proyectoRevision": "Project under review, awaiting your decision"
+    },
+    "settings": {
+      "title": "Settings",
+      "language": "Language",
+      "languages": {
+        "es": "Español",
+        "en": "English"
+      }
     }
   },
   "auth": {
     "login": {
-      "title": "UniLab",
-      "subtitle": "Enter your university credentials to manage your academic requests.",
+      "subtitle": "Sign in with your institutional email to access the platform.",
       "email": "Email",
-      "emailPlaceholder": "E.g: student@uniautonomous.edu",
-      "emailHint": "Enter your institutional email.",
+      "emailPlaceholder": "name@uniautonoma.edu.co",
+      "emailHint": "It must be your institutional email.",
       "password": "Password",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Enter your password",
       "showPassword": "Show password",
-      "submitButton": "Sign In →",
-      "support": "Having trouble signing in?",
-      "supportLink": "Contact Support",
-      "security": "SECURE CONNECTION · INSTITUTIONAL SSL",
+      "submitButton": "Sign in",
+      "security": "Secure connection · Universidad Autónoma del Cauca",
       "formInvalid": "Please complete all fields correctly.",
       "invalidCredentials": "Invalid credentials. Please try again.",
       "emailRequired": "Email is required",
@@ -83,11 +102,21 @@
       "passwordMinLength": "Minimum 6 characters",
       "orContinueWith": "or continue with",
       "googleButton": "Continue with Google",
-      "googleError": "Could not sign in with Google"
+      "googleError": "Could not sign in with Google",
+      "heading": "Sign in",
+      "welcome": "Welcome to",
+      "welcomeBrand": "Eduinova",
+      "intro": "Academic management platform for projects, schools and events of Universidad Autónoma.",
+      "feature1": "Research group projects and their review",
+      "feature2": "Events, sessions and QR attendance",
+      "feature3": "Schools and their academic output",
+      "forgot": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up"
     },
     "completarPerfil": {
-      "title": "Complete your profile",
-      "subtitle": "We need a few more details to activate your account.",
+      "title": "Complete profile",
+      "subtitle": "We need a few more details to link your account to your school.",
       "document": "Identity document",
       "phone": "Phone",
       "studentCode": "Student code",
@@ -96,25 +125,78 @@
       "institution": "Institution",
       "occupation": "Occupation",
       "submit": "Save and continue",
-      "error": "Could not complete profile"
+      "error": "Could not complete profile",
+      "roleAssigned": "Assigned role"
     },
     "cambiarPassword": {
-      "title": "Change Password",
-      "subtitle": "This is your first login. Please set a new and secure password for your account.",
-      "nuevaPassword": "New Password",
-      "confirmarPassword": "Confirm Password",
+      "title": "Change password",
+      "subtitle": "This is your first sign-in. Set your own password to continue.",
+      "nuevaPassword": "New password",
+      "confirmarPassword": "Confirm password",
       "passwordPlaceholder": "••••••••",
-      "passwordHint": "Minimum 8 characters. Use uppercase letters, numbers and special characters.",
+      "passwordHint": "At least 8 characters.",
       "showPassword": "Show password",
-      "submitButton": "Update Password",
-      "passwordsMismatch": "Passwords do not match",
+      "submitButton": "Save password",
+      "passwordsMismatch": "Passwords do not match.",
       "passwordTooShort": "Password must be at least 8 characters long",
-      "security": "SECURE CONNECTION · INSTITUTIONAL SSL",
-      "securityBadge": "🔒"
+      "security": "Your password is stored encrypted",
+      "required": "This field is required."
+    },
+    "brand": {
+      "caption": "Academic management",
+      "home": "Go to the Eduinova portal home",
+      "backToPortal": "Back to portal",
+      "universityName": "Universidad Autónoma",
+      "universityPlace": "del Cauca",
+      "universityAlt": "Universidad Autónoma del Cauca"
+    },
+    "registro": {
+      "title": "Create account",
+      "subtitle": "Sign up to publish projects or attend events.",
+      "tab": "Sign up",
+      "accountType": "Account type",
+      "roles": {
+        "Estudiante": "Student",
+        "Externo": "External",
+        "Administrador": "Administrator",
+        "Coordinador": "Coordinator",
+        "Profesor": "Teacher"
+      },
+      "firstName": "First names",
+      "lastName": "Last names",
+      "email": "Email",
+      "document": "ID document",
+      "phone": "Phone",
+      "roleFields": "{{role}} fields",
+      "studentCode": "Student code",
+      "school": "School",
+      "selectSchool": "Select a school",
+      "institution": "Institution",
+      "occupation": "Occupation",
+      "tempPasswordInfo": "A temporary password is generated when the account is created. Save it: it is shown only once.",
+      "tempPasswordHint": "Account created. This is your temporary password: save it, it is shown only once. You will change it on your first sign-in.",
+      "submit": "Create account",
+      "continueLogin": "Continue to sign in",
+      "formInvalid": "Complete the required fields.",
+      "formInvalidFields": "Check the highlighted fields: {{campos}}.",
+      "errors": {
+        "required": "This field is required.",
+        "email": "Enter a valid email, e.g. user@uniautonoma.edu.co."
+      }
+    },
+    "recuperar": {
+      "title": "Recover password",
+      "subtitle": "Enter your account email and we will generate a temporary password so you can sign in again.",
+      "emailHint": "The email you registered with.",
+      "submit": "Generate temporary password",
+      "tempPasswordHint": "This is your temporary password: save it, it is shown only once. You will set a new one when you sign in.",
+      "goLogin": "Go to sign in",
+      "backToLogin": "Back to sign in",
+      "formInvalid": "Enter a valid email address."
     }
   },
   "dashboard": {
-    "title": "UniLab - Dashboard",
+    "title": "Eduinova - Dashboard",
     "welcome": "Welcome,",
     "logout": "Sign Out",
     "heading": "Welcome to the System",
@@ -138,16 +220,26 @@
       "left": {
         "title": "Latest projects",
         "link": "View all",
-        "item1": { "title": "Environmental management app", "sub": "Software Eng. · Carlos R." },
-        "item2": { "title": "Podcast: Finance for everyone", "sub": "Business · Ana M." },
-        "item3": { "title": "Sports tracking app", "sub": "Education · Luis T." }
+        "item1": {
+          "title": "Environmental management app",
+          "sub": "Software Eng. · Carlos R."
+        },
+        "item2": {
+          "title": "Podcast: Finance for everyone",
+          "sub": "Business · Ana M."
+        },
+        "item3": {
+          "title": "Sports tracking app",
+          "sub": "Education · Luis T."
+        }
       },
       "right": {
         "title": "Pending registrations",
         "link": "Manage",
         "empty": "No pending payments",
         "pagoPendiente": "pending payment",
-        "confirmar": "Confirm"
+        "confirmar": "Confirm",
+        "emptyHint": "All paid registrations are up to date."
       },
       "pills": {
         "publicado": "Published",
@@ -168,16 +260,34 @@
       "left": {
         "title": "Projects by school",
         "link": "View detail",
-        "item1": { "title": "Software & Technology School", "sub": "54 projects · 4.4 ★" },
-        "item2": { "title": "Engineering & Sustainability School", "sub": "38 projects · 4.1 ★" },
-        "item3": { "title": "Business School", "sub": "31 projects · 4.3 ★" }
+        "item1": {
+          "title": "Software & Technology School",
+          "sub": "54 projects · 4.4 ★"
+        },
+        "item2": {
+          "title": "Engineering & Sustainability School",
+          "sub": "38 projects · 4.1 ★"
+        },
+        "item3": {
+          "title": "Business School",
+          "sub": "31 projects · 4.3 ★"
+        }
       },
       "right": {
         "title": "Active research groups",
         "link": "View all",
-        "item1": { "title": "AI & Data Research Group", "sub": "12 students · 3 projects" },
-        "item2": { "title": "Environmental Research Group", "sub": "8 students · 2 projects" },
-        "item3": { "title": "Law Research Group", "sub": "5 students · 1 project" }
+        "item1": {
+          "title": "AI & Data Research Group",
+          "sub": "12 students · 3 projects"
+        },
+        "item2": {
+          "title": "Environmental Research Group",
+          "sub": "8 students · 2 projects"
+        },
+        "item3": {
+          "title": "Law Research Group",
+          "sub": "5 students · 1 project"
+        }
       },
       "pills": {
         "up23": "↑ 23%",
@@ -200,16 +310,34 @@
       "left": {
         "title": "Students to authorize",
         "link": "View all",
-        "item1": { "title": "Sofía Martínez", "sub": "AI Group · publish request" },
-        "item2": { "title": "Andrés Cárdenas", "sub": "Physics I · project upload request" },
-        "item3": { "title": "Valentina Cruz", "sub": "Calculus II · already authorized" }
+        "item1": {
+          "title": "Sofía Martínez",
+          "sub": "AI Group · publish request"
+        },
+        "item2": {
+          "title": "Andrés Cárdenas",
+          "sub": "Physics I · project upload request"
+        },
+        "item3": {
+          "title": "Valentina Cruz",
+          "sub": "Calculus II · already authorized"
+        }
       },
       "right": {
         "title": "Projects under review",
         "link": "Review",
-        "item1": { "title": "Smart irrigation system", "sub": "Civil Eng. · sent today" },
-        "item2": { "title": "Green routes app", "sub": "Environmental Eng. · sent yesterday" },
-        "item3": { "title": "Financial dashboard", "sub": "Accounting · reviewed" }
+        "item1": {
+          "title": "Smart irrigation system",
+          "sub": "Civil Eng. · sent today"
+        },
+        "item2": {
+          "title": "Green routes app",
+          "sub": "Environmental Eng. · sent yesterday"
+        },
+        "item3": {
+          "title": "Financial dashboard",
+          "sub": "Accounting · reviewed"
+        }
       },
       "pills": {
         "pendiente": "Pending",
@@ -248,13 +376,23 @@
     "otro": "Other",
     "seleccionar": "Select",
     "creando": "Creating...",
-    "enviando": "Sending..."
+    "enviando": "Sending...",
+    "loadErrorTitle": "The information could not be loaded",
+    "reintentar": "Retry"
   },
   "dialog": {
-    "success": { "title": "Success" },
-    "error": { "title": "Error" },
-    "warning": { "title": "Warning" },
-    "info": { "title": "Information" },
+    "success": {
+      "title": "Success"
+    },
+    "error": {
+      "title": "Error"
+    },
+    "warning": {
+      "title": "Warning"
+    },
+    "info": {
+      "title": "Information"
+    },
     "confirm": {
       "deleteTitle": "Confirm deletion",
       "updateTitle": "Confirm action"
@@ -282,7 +420,13 @@
     "errorActualizar": "Error updating school",
     "errorEliminar": "Error deleting school",
     "eliminarTitulo": "Delete school",
-    "eliminarMensaje": "Delete school \"{{nombre}}\"? Its courses will also be soft-deleted."
+    "eliminarMensaje": "Delete school \"{{nombre}}\"? Its courses will also be soft-deleted.",
+    "exitoCrear": "School created successfully.",
+    "exitoActualizar": "School updated successfully.",
+    "exitoEliminar": "School deleted.",
+    "sinEscuelasHint": "Create the first school to link courses and projects to it.",
+    "sinCursos": "No registered courses.",
+    "verProyectos": "View projects"
   },
   "usuarios": {
     "titulo": "Users",
@@ -328,7 +472,21 @@
       "Profesor": "Professor",
       "Estudiante": "Student",
       "Externo": "External"
-    }
+    },
+    "exitoActualizar": "User updated successfully.",
+    "exitoSuspender": "User suspended.",
+    "exitoReactivar": "User reactivated.",
+    "exitoEliminar": "User deleted.",
+    "contador": "{{visibles}} of {{total}} records",
+    "filtroRol": "Filter by role",
+    "todosRoles": "All roles",
+    "sinUsuariosHint": "Create the first user to give them access to the platform.",
+    "sinUsuariosFiltro": "No users with this role",
+    "sinUsuariosFiltroHint": "Try another role or clear the filter.",
+    "paginacion": "Users pagination",
+    "paginaDe": "Page {{pagina}} of {{total}}",
+    "anterior": "Previous",
+    "siguiente": "Next"
   },
   "eventos": {
     "title": "Events",
@@ -376,7 +534,8 @@
     "inscripciones": {
       "titulo": "Registrations",
       "sinInscripciones": "No registrations found"
-    }
+    },
+    "sinEventosHint": "New events will appear here once they are published."
   },
   "jornadas": {
     "title": "Sessions",
@@ -408,7 +567,27 @@
     "sinEvidencias": "No evidence uploaded",
     "evidenciasExito": "Evidence uploaded successfully",
     "evidenciasError": "Could not upload evidence",
-    "eliminarEvidencia": "Remove"
+    "eliminarEvidencia": "Remove",
+    "kicker": "Session",
+    "noEncontrada": "The session does not exist or was deleted.",
+    "errorCargar": "The session could not be loaded.",
+    "codigoCopiado": "Code copied to clipboard.",
+    "codigoNoCopiado": "The code could not be copied.",
+    "evidenciasSubidas": "Evidence uploaded successfully.",
+    "evidenciaEliminada": "Evidence deleted.",
+    "qrAlt": "Attendance QR code for {{nombre}}",
+    "qrHint": "Real, scannable QR: it points to this session's attendance link.",
+    "uuid": "Session code",
+    "copiar": "Copy code",
+    "enlace": "Attendance link",
+    "descargarQr": "Download QR",
+    "verPantallaAsistente": "View attendee screen",
+    "asistentes": "Registered attendance",
+    "asistentesConteo": "{{asistentes}} of {{inscritos}} registered",
+    "sinAsistentes": "No attendance yet",
+    "sinAsistentesHint": "Attendance appears here when registered people scan the QR.",
+    "presente": "Present",
+    "verJornada": "View session"
   },
   "inscripcion": {
     "titulo": "Register for Event",
@@ -422,7 +601,7 @@
     "exito": "You have successfully registered for the event!",
     "yaInscrito": "Already registered",
     "errorRegistrar": "Could not complete registration.",
-    "sinCuenta": "You do not need a UniLab account to register for this event."
+    "sinCuenta": "You do not need a Eduinova account to register for this event."
   },
   "asistencia": {
     "titulo": "Register Attendance",
@@ -449,7 +628,11 @@
       "registrando": "Registering your attendance...",
       "exitoTitulo": "Registration successful!",
       "errorTitulo": "Could not register",
-      "preparando": "Preparing attendance registration..."
+      "preparando": "Preparing attendance registration...",
+      "listo": "All set!",
+      "confirmada": "Attendance confirmed",
+      "confirmadaDetalle": "Your attendance to the event was recorded successfully.",
+      "volverInicio": "Back to home"
     }
   },
   "reporte": {
@@ -470,9 +653,6 @@
   },
   "home": {
     "subtitle": "Academic projects portal",
-    "portalTagline": "Research Projects Portal",
-    "systemStatus": "SYSTEM:",
-    "systemName": "INTEGRATED PROJECT CODEX",
     "signIn": "Sign in",
     "goToPanel": "Go to panel",
     "eventsNav": "Events",
@@ -483,8 +663,6 @@
       "logout": "Sign out"
     },
     "enterPortal": "Go to my dashboard",
-    "logoAlt": "Official Uniautónoma del Cauca logo",
-    "logoFallback": "COGNITIO ET SCIENTIA",
     "backToSchools": "← Back",
     "carousel": {
       "prev": "Previous image",
@@ -520,9 +698,8 @@
     "academicProgram": "ACADEMIC PROGRAM",
     "director": "Director:",
     "unknownLeader": "Research team",
-    "exploreDeep": "EXPLORE IN DEPTH →",
-    "connectedSystem": "SYSTEM CONNECTED TO THE UNIAUTÓNOMA PROJECT BANK",
-    "footer": "© 2026 UNIVERSIDAD AUTÓNOMA DEL CAUCA • EX COLOSSUS AD ARDUA",
+    "exploreDeep": "Explore",
+    "footer": "Eduinova · Portal of academic projects, research groups and events.",
     "mobileMenu": "Select school",
     "facultyProjects": "Projects from {{escuela}}",
     "coursesTitle": "Courses",
@@ -532,65 +709,58 @@
     "loadProjectsError": "Could not load projects. Please try again in a moment.",
     "loadProjectError": "Could not load project details.",
     "views": "{{count}} views",
-    "schoolProjectBadge": "{{count}} PROJ.",
     "openApp": "Open app",
     "downloadApk": "Download APK",
     "downloadYoutube": "Watch on YouTube",
     "downloadSpotify": "Listen on Spotify",
     "comment": "Comment",
     "rate": "Rate",
-    "escuelas": {
-      "derecho": "Legal Sciences",
-      "educacion": "Education Sciences",
-      "ingenieria": "Engineering and Sustainability",
-      "negocios": "Administrative Sciences",
-      "software": "Software Engineering"
+    "caption": "Projects portal",
+    "nav": {
+      "label": "Portal navigation",
+      "inicio": "Home",
+      "proyectos": "Projects",
+      "escuelasProyectos": "Schools and projects"
     },
-    "cards": {
-      "derecho": {
-        "subtitle": "// JURIDICAL SCIENCES",
-        "cursive": "la Giustizia"
-      },
-      "educacion": {
-        "subtitle": "// ACADEMIC DEVELOPMENT",
-        "cursive": "la Pedagogia"
-      },
-      "ingenieria": {
-        "subtitle": "// INFRASTRUCTURE",
-        "cursive": "l'Architettura"
-      },
-      "negocios": {
-        "subtitle": "// SOCIAL RESEARCH",
-        "cursive": "l'Umanità"
-      },
-      "software": {
-        "subtitle": "// COMPUTE & CORE",
-        "cursive": "l'Ingegneria"
-      },
-      "generic": {
-        "subtitle": "// ACADEMIC UNIT"
-      }
+    "footerPortal": "Portal",
+    "footerAccess": "Access",
+    "createAccount": "Create account",
+    "registerAttendance": "Register attendance",
+    "hero": {
+      "tag": "Universidad Autónoma del Cauca",
+      "titleStart": "The projects",
+      "titleLight": "built",
+      "titleEnd": "by our students",
+      "lead": "Explore published projects by school, meet the research groups and take part in academic events.",
+      "exploreProjects": "Explore projects",
+      "viewEvents": "View events"
     },
-    "authModal": {
-      "title": "Access to the Temple of Knowledge",
-      "loginTab": "Sign in",
-      "registerTab": "Register",
-      "student": "Student",
-      "external": "External",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "document": "ID document",
-      "phone": "Phone",
-      "studentCode": "Student code",
-      "school": "School",
-      "selectSchool": "Select a school",
-      "institution": "Institution",
-      "occupation": "Occupation",
-      "registerSubmit": "Create account",
-      "formInvalid": "Please complete the required fields.",
-      "tempPasswordHint": "Save this temporary password. It is shown only once:",
-      "continueLogin": "Continue to sign in"
-    }
+    "stats": {
+      "title": "The portal in numbers",
+      "projects": "Published projects",
+      "projectsNote": "Public records on the portal",
+      "schools": "Registered schools",
+      "schoolsNote": "With their academic output",
+      "courses": "Registered courses",
+      "coursesNote": "Programs linked to schools",
+      "events": "Open events",
+      "eventsNote": "With registration on the portal"
+    },
+    "schools": {
+      "kicker": "Schools",
+      "title": "Explore by school",
+      "lead": "Each school gathers the published projects of its academic programs.",
+      "noProjects": "No published projects",
+      "oneProject": "1 published project",
+      "projects": "{{count}} published projects"
+    },
+    "nextEvent": {
+      "kicker": "Next event",
+      "paid": "Registration fee required",
+      "free": "Free registration",
+      "cta": "View event"
+    },
+    "noProjectsHint": "Projects will appear here once the school publishes them."
   },
   "proyectosEstudiante": {
     "titulo": "My projects",
@@ -655,7 +825,8 @@
       "aprobado": "Approved",
       "publicado": "Published",
       "rechazado": "Rejected"
-    }
+    },
+    "sinProyectosHint": "Create your first project to send it for review to your assigned teacher."
   },
   "proyectosProfesor": {
     "titulo": "Assigned projects",
@@ -681,16 +852,36 @@
     "urlAplicativo": "Web app",
     "aprobar": "Approve and publish",
     "aprobarTitulo": "Approve and publish project",
-    "aprobarMensaje": "The project will be visible on the UniLab public portal. Confirm approval?",
+    "aprobarMensaje": "The project will be visible on the Eduinova public portal. Confirm approval?",
     "rechazar": "Reject",
     "publicar": "Publish to portal",
     "verEnPortal": "View on public portal",
     "rechazarTitulo": "Reject project",
     "rechazarMensaje": "The student will not be able to publish this project. Confirm rejection?",
     "publicarTitulo": "Publish project",
-    "publicarMensaje": "The project will be visible on the UniLab public portal.",
+    "publicarMensaje": "The project will be visible on the Eduinova public portal.",
     "exitoAprobar": "Project approved and published on the portal.",
     "exitoRechazar": "Project rejected.",
-    "exitoPublicar": "Project published on the portal."
+    "exitoPublicar": "Project published on the portal.",
+    "sinAsignadosHint": "There are no projects with this status among the ones you coordinate."
+  },
+  "session": {
+    "expiredTitle": "Your session ended",
+    "expiredMessage": "Your session expired due to inactivity. Sign in again to continue where you were.",
+    "signIn": "Sign in"
+  },
+  "notFound": {
+    "title": "This page does not exist",
+    "message": "The address may have changed or the resource was removed.",
+    "back": "Back to the portal"
+  },
+  "asistenciaPanel": {
+    "titulo": "Attendance control",
+    "descripcion": "QR check-in and participant report for each event.",
+    "registrarManual": "Register by code",
+    "verQr": "View QR",
+    "sinEventos": "No events with this status",
+    "sinEventosHint": "Once there are events with sessions, their attendance control will appear here.",
+    "errorCargar": "Events could not be loaded."
   }
 }

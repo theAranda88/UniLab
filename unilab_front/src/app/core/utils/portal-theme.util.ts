@@ -32,7 +32,7 @@ export function hasPortalTheme(route: ActivatedRoute): boolean {
   return false;
 }
 
-/** Detecta si la UI debe usar el tema portal Codex (ruta o rol estudiante/externo). */
+/** Detecta si la UI debe usar el tema del portal público (ruta o rol estudiante/externo). */
 export function shouldUsePortalUi(router: Router, role?: string | null): boolean {
   if (snapshotHasPortalTheme(getActiveRouteSnapshot(router))) {
     return true;

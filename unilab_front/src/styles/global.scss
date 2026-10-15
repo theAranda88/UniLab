@@ -1,9 +1,10 @@
 // ==========================================
-// GLOBAL STYLES
+// GLOBAL STYLES — Eduinova
 // ==========================================
 
 @use './design-tokens' as tokens;
 @use './eventos-media';
+@use './components';
 
 // Reset & Normalize
 * {
@@ -23,24 +24,24 @@ body {
   font-family: tokens.$font-family-base;
   font-size: tokens.$font-size-base;
   line-height: tokens.$line-height-normal;
-  color: tokens.$text-dark;
-  background-color: tokens.$white;
+  color: tokens.$ink;
+  background-color: tokens.$cream;
   margin: 0;
   padding: 0;
 }
 
 a {
-  color: tokens.$light-blue;
+  color: tokens.$blue;
   text-decoration: none;
   transition: color tokens.$transition-base;
 
   &:hover {
-    color: tokens.$primary-blue;
+    color: tokens.$blue-pressed;
     text-decoration: underline;
   }
 
   &:focus {
-    outline: 2px solid tokens.$light-blue;
+    outline: 2px solid tokens.$blue;
     outline-offset: 2px;
   }
 }
@@ -87,8 +88,10 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: tokens.$font-weight-bold;
+  font-weight: tokens.$font-weight-extra-bold;
   line-height: tokens.$line-height-tight;
+  letter-spacing: tokens.$letter-spacing-title;
+  color: tokens.$ink;
   margin-bottom: tokens.$space-16;
 
   &:last-child {
@@ -106,10 +109,12 @@ h2 {
 
 h3 {
   font-size: tokens.$font-size-xl;
+  font-weight: tokens.$font-weight-bold;
 }
 
 h4 {
   font-size: tokens.$font-size-lg;
+  font-weight: tokens.$font-weight-bold;
 }
 
 h5,
@@ -146,26 +151,38 @@ ol {
 }
 
 ::-webkit-scrollbar-track {
-  background: tokens.$light-gray;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: tokens.$gray-400;
-  border-radius: tokens.$radius-base;
+  background: rgba(30, 30, 30, 0.18);
+  border-radius: tokens.$radius-full;
 
   &:hover {
-    background: tokens.$gray-500;
+    background: rgba(30, 30, 30, 0.3);
   }
 }
 
 // Focus Styles
 :focus-visible {
-  outline: 2px solid tokens.$light-blue;
+  outline: 2px solid tokens.$blue;
   outline-offset: 2px;
 }
 
 // Selection
 ::selection {
-  background-color: tokens.$light-blue;
-  color: tokens.$white;
+  background-color: rgba(227, 201, 36, 0.45);
+  color: tokens.$ink;
+}
+
+// Movimiento reducido
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

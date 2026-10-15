@@ -1,118 +1,147 @@
 @use '../../../styles/design-tokens' as t;
 @use '../../../styles/eventos-ui' as ui;
 
+// Pantalla 13 · Evento — crear / editar
+
 .evento-form-container {
-  @include ui.eventos-page;
-  max-width: 700px;
+  max-width: 760px;
+  margin: 0 auto;
+}
 
-  .form-card {
-    @include ui.eventos-card;
-    padding: t.$space-24;
+.form-card {
+  @include t.surface-card;
+  margin-top: t.$space-16;
+  padding: t.$space-32;
 
-    h1 {
-      margin: 0 0 t.$space-24;
-      font-size: t.$font-size-2xl;
-      color: t.$primary-blue;
+  h1 {
+    @include t.page-title;
+    margin-bottom: t.$space-24;
+  }
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-24 t.$space-16;
+  }
+}
+
+.loading {
+  text-align: center;
+  color: t.$text-secondary;
+  font-size: t.$font-size-sm;
+}
+
+.error-message {
+  margin-bottom: t.$space-16;
+  padding: t.$space-12 t.$space-16;
+  border: 1px solid t.$danger-border;
+  border-radius: t.$radius-lg;
+  background: t.$danger-tint;
+  color: t.$danger-ink;
+  font-size: t.$font-size-sm;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-16;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-weight: t.$font-weight-bold;
+    font-size: t.$font-size-label;
+    color: t.$ink;
+  }
+
+  .form-hint {
+    @include ui.form-hint;
+    margin: 0;
+  }
+
+  .form-control {
+    @include ui.form-control;
+  }
+
+  textarea.form-control {
+    min-height: 112px;
+    resize: vertical;
+    line-height: t.$line-height-normal;
+  }
+
+  .error-text {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-semibold;
+    color: t.$danger;
+  }
+
+  // C06 · Toggle «Requiere pago»
+  &.checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: t.$space-12;
+    padding: t.$space-12 t.$space-16;
+    border: 1px solid t.$border-subtle;
+    border-radius: t.$radius-lg;
+    background: t.$neutral-soft;
+
+    input[type='checkbox'] {
+      appearance: none;
+      position: relative;
+      flex-shrink: 0;
+      width: 40px;
+      height: 22px;
+      margin: 0;
+      border-radius: t.$radius-full;
+      background: rgba(30, 30, 30, 0.2);
+      cursor: pointer;
+      transition: background t.$transition-base;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: t.$white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform t.$transition-base;
+      }
+
+      &:checked {
+        background: t.$blue;
+
+        &::after {
+          transform: translateX(18px);
+        }
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: t.$focus-ring;
+      }
     }
 
-    .loading {
-      text-align: center;
-      color: t.$text-light;
+    label {
+      margin: 0;
       font-size: t.$font-size-sm;
+      font-weight: t.$font-weight-semibold;
+      cursor: pointer;
     }
+  }
+}
 
-    .error-message {
-      background: #ffebee;
-      color: t.$error;
-      padding: t.$space-12;
-      border-radius: t.$radius-md;
-      margin-bottom: t.$space-16;
-      border-left: 4px solid t.$error;
-      font-size: t.$font-size-sm;
-    }
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: t.$space-16;
 
-    .form {
-      .form-group {
-        margin-bottom: t.$space-16;
-
-        label {
-          display: block;
-          margin-bottom: t.$space-4;
-          font-weight: t.$font-weight-semibold;
-          font-size: t.$font-size-sm;
-          color: t.$text-dark;
-        }
-
-        .form-hint {
-          @include ui.form-hint;
-        }
-
-        .form-control {
-          @include ui.form-control;
-        }
-
-        textarea.form-control {
-          resize: vertical;
-        }
-
-        .error-text {
-          display: block;
-          color: t.$error;
-          font-size: t.$font-size-xs;
-          margin-top: t.$space-4;
-        }
-
-        &.checkbox {
-          display: flex;
-          align-items: center;
-          gap: t.$space-8;
-
-          input[type='checkbox'] {
-            margin: 0;
-            cursor: pointer;
-          }
-
-          label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: t.$font-weight-normal;
-          }
-        }
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: t.$space-12;
-
-        @media (max-width: 600px) {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .form-actions {
-        display: flex;
-        gap: t.$space-12;
-        margin-top: t.$space-24;
-
-        .btn {
-          flex: 1;
-
-          &.btn-primary {
-            @include ui.btn-primary;
-          }
-
-          &.btn-secondary {
-            @include ui.btn-secondary;
-          }
-
-          &.btn-sm {
-            @include ui.btn-sm;
-            flex: 0 1 auto;
-          }
-        }
-      }
-    }
+  @media (max-width: 600px) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -123,5 +152,44 @@
 
   .image-upload-zone {
     @include ui.image-upload-zone;
+  }
+}
+
+.btn {
+  &.btn-primary {
+    @include ui.btn-primary;
+  }
+
+  &.btn-secondary {
+    @include ui.btn-secondary;
+  }
+
+  &.btn-sm {
+    @include ui.btn-sm;
+  }
+}
+
+// Cancelar (secundario) a la izquierda del primario
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+  margin-top: t.$space-8;
+  padding-top: t.$space-16;
+  border-top: 1px solid t.$border-subtle;
+
+  .btn-secondary {
+    order: -1;
+  }
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    .btn {
+      flex: 1 1 100%;
+    }
+
+    .btn-secondary {
+      order: 1;
+    }
   }
 }

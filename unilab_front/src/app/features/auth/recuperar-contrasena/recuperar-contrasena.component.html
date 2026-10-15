@@ -1,0 +1,48 @@
+<div class="recuperar">
+  <div class="recuperar__card">
+    <header class="recuperar__header">
+      <span class="recuperar__icon"><i class="ti ti-shield-lock" aria-hidden="true"></i></span>
+      <h1>{{ 'auth.recuperar.title' | translate }}</h1>
+      <p>{{ 'auth.recuperar.subtitle' | translate }}</p>
+    </header>
+
+    @if (tempPassword()) {
+      <div class="recuperar__body">
+        <div class="recuperar__notice">
+          <i class="ti ti-key" aria-hidden="true"></i>
+          <span>{{ 'auth.recuperar.tempPasswordHint' | translate }}</span>
+        </div>
+        <code class="recuperar__password">{{ tempPassword() }}</code>
+        <a routerLink="/login" class="recuperar__submit">{{ 'auth.recuperar.goLogin' | translate }}</a>
+      </div>
+    } @else {
+      <form class="recuperar__body" [formGroup]="form" (ngSubmit)="submit()">
+        @if (errorMessage()) {
+          <div class="recuperar__alert" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <label class="recuperar__field">
+          <span>{{ 'auth.login.email' | translate }} <em>*</em></span>
+          <input
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            [placeholder]="'auth.login.emailPlaceholder' | translate"
+          />
+          <small>{{ 'auth.recuperar.emailHint' | translate }}</small>
+        </label>
+
+        <button type="submit" class="recuperar__submit" [disabled]="loading()">
+          {{ loading() ? ('common.loading' | translate) : ('auth.recuperar.submit' | translate) }}
+        </button>
+      </form>
+    }
+
+    <footer class="recuperar__links">
+      <a routerLink="/login">{{ 'auth.recuperar.backToLogin' | translate }}</a>
+    </footer>
+  </div>
+</div>

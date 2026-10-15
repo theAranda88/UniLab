@@ -1,12 +1,12 @@
 {
   "app": {
-    "title": "UniLab",
+    "title": "Eduinova",
     "subtitle": "Plataforma de Gestión Académica"
   },
   "shell": {
     "brand": {
-      "title": "Plataforma Universitaria",
-      "subtitle": "Panel de gestión"
+      "title": "Eduinova",
+      "subtitle": "Gestión académica"
     },
     "nav": {
       "comingSoon": "Próximamente",
@@ -41,7 +41,7 @@
         "miGestion": "Mi gestión",
         "proyectos": "Proyectos",
         "recursos": "Recursos",
-        "portal": "UniLab"
+        "portal": "Eduinova"
       }
     },
     "pages": {
@@ -49,7 +49,8 @@
       "miPanel": "Mi panel",
       "eventos": "Eventos",
       "escuelas": "Escuelas y carreras",
-      "usuarios": "Usuarios"
+      "usuarios": "Usuarios",
+      "asistencia": "Control de asistencia"
     },
     "cta": {
       "crearUsuario": "Crear usuario",
@@ -57,25 +58,43 @@
       "autorizarEstudiante": "Autorizar estudiante"
     },
     "roles": {
-      "admin": { "sub": "Acceso completo" },
-      "coord": { "sub": "Vista analítica" },
-      "prof": { "sub": "Gestión académica" }
+      "admin": {
+        "sub": "Acceso completo"
+      },
+      "coord": {
+        "sub": "Vista analítica"
+      },
+      "prof": {
+        "sub": "Gestión académica"
+      }
+    },
+    "menu": "Abrir menú",
+    "notifications": {
+      "title": "Notificaciones",
+      "empty": "No tienes notificaciones pendientes.",
+      "pagoPendiente": "Pago pendiente de {{nombre}}",
+      "proyectoRevision": "Proyecto en revisión, espera tu decisión"
+    },
+    "settings": {
+      "title": "Configuración",
+      "language": "Idioma",
+      "languages": {
+        "es": "Español",
+        "en": "English"
+      }
     }
   },
   "auth": {
     "login": {
-      "title": "UniLab",
-      "subtitle": "Ingrese sus credenciales universitarias para gestionar sus solicitudes académicas.",
-      "email": "Correo Electrónico",
-      "emailPlaceholder": "Ej: estudiante@uniautónoma.edu",
-      "emailHint": "Ingresa tu correo electrónico institucional.",
+      "subtitle": "Ingresa con tu correo institucional para acceder a la plataforma.",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "nombre@uniautonoma.edu.co",
+      "emailHint": "Debe ser tu correo institucional.",
       "password": "Contraseña",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Ingresa tu contraseña",
       "showPassword": "Mostrar contraseña",
-      "submitButton": "Ingresar al Portal →",
-      "support": "¿Problemas para ingresar?",
-      "supportLink": "Contactar Soporte",
-      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL",
+      "submitButton": "Ingresar",
+      "security": "Conexión segura · Universidad Autónoma del Cauca",
       "formInvalid": "Por favor completa todos los campos correctamente.",
       "invalidCredentials": "Credenciales inválidas. Por favor intenta de nuevo.",
       "emailRequired": "El correo electrónico es requerido",
@@ -83,11 +102,21 @@
       "passwordMinLength": "Mínimo 6 caracteres",
       "orContinueWith": "o continúa con",
       "googleButton": "Continuar con Google",
-      "googleError": "No se pudo iniciar sesión con Google"
+      "googleError": "No se pudo iniciar sesión con Google",
+      "heading": "Iniciar sesión",
+      "welcome": "Bienvenido a",
+      "welcomeBrand": "Eduinova",
+      "intro": "Plataforma de gestión académica de proyectos, escuelas y eventos de la Universidad Autónoma.",
+      "feature1": "Proyectos de semilleros y su revisión",
+      "feature2": "Eventos, jornadas y asistencia por QR",
+      "feature3": "Escuelas y su producción académica",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Regístrate"
     },
     "completarPerfil": {
-      "title": "Completa tu perfil",
-      "subtitle": "Necesitamos algunos datos adicionales para activar tu cuenta.",
+      "title": "Completar perfil",
+      "subtitle": "Necesitamos unos datos más para asociar tu cuenta a tu escuela.",
       "document": "Documento de identidad",
       "phone": "Teléfono",
       "studentCode": "Código estudiantil",
@@ -96,25 +125,78 @@
       "institution": "Institución",
       "occupation": "Ocupación",
       "submit": "Guardar y continuar",
-      "error": "No se pudo completar el perfil"
+      "error": "No se pudo completar el perfil",
+      "roleAssigned": "Rol asignado"
     },
     "cambiarPassword": {
-      "title": "Cambiar Contraseña",
-      "subtitle": "Este es tu primer ingreso. Por favor, establece una contraseña nueva y segura para tu cuenta.",
-      "nuevaPassword": "Nueva Contraseña",
-      "confirmarPassword": "Confirmar Contraseña",
+      "title": "Cambiar contraseña",
+      "subtitle": "Es tu primer ingreso. Define una contraseña propia para continuar.",
+      "nuevaPassword": "Nueva contraseña",
+      "confirmarPassword": "Confirmar contraseña",
       "passwordPlaceholder": "••••••••",
-      "passwordHint": "Mínimo 8 caracteres. Usa mayúsculas, números y caracteres especiales.",
+      "passwordHint": "Mínimo 8 caracteres.",
       "showPassword": "Mostrar contraseña",
-      "submitButton": "Actualizar Contraseña",
-      "passwordsMismatch": "Las contraseñas no coinciden",
+      "submitButton": "Guardar contraseña",
+      "passwordsMismatch": "Las contraseñas no coinciden.",
       "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
-      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL",
-      "securityBadge": "🔒"
+      "security": "Tu contraseña se almacena cifrada",
+      "required": "Este campo es obligatorio."
+    },
+    "brand": {
+      "caption": "Gestión académica",
+      "home": "Ir al inicio del portal Eduinova",
+      "backToPortal": "Volver al portal",
+      "universityName": "Universidad Autónoma",
+      "universityPlace": "del Cauca",
+      "universityAlt": "Universidad Autónoma del Cauca"
+    },
+    "registro": {
+      "title": "Crear cuenta",
+      "subtitle": "Regístrate para publicar proyectos o asistir a eventos.",
+      "tab": "Registrarse",
+      "accountType": "Tipo de cuenta",
+      "roles": {
+        "Estudiante": "Estudiante",
+        "Externo": "Externo",
+        "Administrador": "Administrador",
+        "Coordinador": "Coordinador",
+        "Profesor": "Profesor"
+      },
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "email": "Correo electrónico",
+      "document": "Documento de identidad",
+      "phone": "Teléfono",
+      "roleFields": "Campos de {{role}}",
+      "studentCode": "Código estudiantil",
+      "school": "Escuela",
+      "selectSchool": "Seleccione una escuela",
+      "institution": "Institución",
+      "occupation": "Ocupación",
+      "tempPasswordInfo": "Al crear la cuenta se genera una contraseña temporal. Guárdala: solo se muestra una vez.",
+      "tempPasswordHint": "Cuenta creada. Esta es tu contraseña temporal: guárdala, solo se muestra una vez. Deberás cambiarla en tu primer ingreso.",
+      "submit": "Crear cuenta",
+      "continueLogin": "Continuar al inicio de sesión",
+      "formInvalid": "Completa los campos requeridos.",
+      "formInvalidFields": "Revisa los campos marcados: {{campos}}.",
+      "errors": {
+        "required": "Este campo es obligatorio.",
+        "email": "Escribe un correo válido, por ejemplo usuario@uniautonoma.edu.co."
+      }
+    },
+    "recuperar": {
+      "title": "Recuperar contraseña",
+      "subtitle": "Ingresa el correo de tu cuenta y generaremos una contraseña temporal para que puedas volver a entrar.",
+      "emailHint": "El correo con el que te registraste.",
+      "submit": "Generar contraseña temporal",
+      "tempPasswordHint": "Esta es tu contraseña temporal: guárdala, solo se muestra una vez. Al ingresar deberás definir una nueva.",
+      "goLogin": "Ir a iniciar sesión",
+      "backToLogin": "Volver a iniciar sesión",
+      "formInvalid": "Ingresa un correo electrónico válido."
     }
   },
   "dashboard": {
-    "title": "UniLab - Dashboard",
+    "title": "Eduinova - Dashboard",
     "welcome": "Bienvenido,",
     "logout": "Cerrar Sesión",
     "heading": "Bienvenido al Sistema",
@@ -138,16 +220,26 @@
       "left": {
         "title": "Últimos proyectos",
         "link": "Ver todos",
-        "item1": { "title": "App de gestión ambiental", "sub": "Ing. Software · Carlos R." },
-        "item2": { "title": "Podcast: Finanzas para todos", "sub": "Negocios · Ana M." },
-        "item3": { "title": "App de seguimiento deportivo", "sub": "Educación · Luis T." }
+        "item1": {
+          "title": "App de gestión ambiental",
+          "sub": "Ing. Software · Carlos R."
+        },
+        "item2": {
+          "title": "Podcast: Finanzas para todos",
+          "sub": "Negocios · Ana M."
+        },
+        "item3": {
+          "title": "App de seguimiento deportivo",
+          "sub": "Educación · Luis T."
+        }
       },
       "right": {
         "title": "Inscripciones pendientes",
         "link": "Gestionar",
         "empty": "No hay pagos pendientes",
         "pagoPendiente": "pago pendiente",
-        "confirmar": "Confirmar"
+        "confirmar": "Confirmar",
+        "emptyHint": "Todas las inscripciones con pago están al día."
       },
       "pills": {
         "publicado": "Publicado",
@@ -168,16 +260,34 @@
       "left": {
         "title": "Proyectos por escuela",
         "link": "Ver detalle",
-        "item1": { "title": "Esc. Software y Tecnología", "sub": "54 proyectos · 4.4 ★" },
-        "item2": { "title": "Esc. Ingeniería y Sosten.", "sub": "38 proyectos · 4.1 ★" },
-        "item3": { "title": "Esc. de Negocios", "sub": "31 proyectos · 4.3 ★" }
+        "item1": {
+          "title": "Esc. Software y Tecnología",
+          "sub": "54 proyectos · 4.4 ★"
+        },
+        "item2": {
+          "title": "Esc. Ingeniería y Sosten.",
+          "sub": "38 proyectos · 4.1 ★"
+        },
+        "item3": {
+          "title": "Esc. de Negocios",
+          "sub": "31 proyectos · 4.3 ★"
+        }
       },
       "right": {
         "title": "Semilleros activos",
         "link": "Ver todos",
-        "item1": { "title": "Semillero de IA y Datos", "sub": "12 estudiantes · 3 proyectos" },
-        "item2": { "title": "Semillero Ambiental", "sub": "8 estudiantes · 2 proyectos" },
-        "item3": { "title": "Semillero de Derecho", "sub": "5 estudiantes · 1 proyecto" }
+        "item1": {
+          "title": "Semillero de IA y Datos",
+          "sub": "12 estudiantes · 3 proyectos"
+        },
+        "item2": {
+          "title": "Semillero Ambiental",
+          "sub": "8 estudiantes · 2 proyectos"
+        },
+        "item3": {
+          "title": "Semillero de Derecho",
+          "sub": "5 estudiantes · 1 proyecto"
+        }
       },
       "pills": {
         "up23": "↑ 23%",
@@ -200,16 +310,34 @@
       "left": {
         "title": "Estudiantes por autorizar",
         "link": "Ver todos",
-        "item1": { "title": "Sofía Martínez", "sub": "Semillero IA · solicitud de publicar" },
-        "item2": { "title": "Andrés Cárdenas", "sub": "Física I · solicitud de subir proyecto" },
-        "item3": { "title": "Valentina Cruz", "sub": "Cálculo II · ya autorizada" }
+        "item1": {
+          "title": "Sofía Martínez",
+          "sub": "Semillero IA · solicitud de publicar"
+        },
+        "item2": {
+          "title": "Andrés Cárdenas",
+          "sub": "Física I · solicitud de subir proyecto"
+        },
+        "item3": {
+          "title": "Valentina Cruz",
+          "sub": "Cálculo II · ya autorizada"
+        }
       },
       "right": {
         "title": "Proyectos en revisión",
         "link": "Revisar",
-        "item1": { "title": "Sistema de riego inteligente", "sub": "Ing. Civil · enviado hoy" },
-        "item2": { "title": "App de rutas verdes", "sub": "Ing. Ambiental · enviado ayer" },
-        "item3": { "title": "Dashboard financiero", "sub": "Contabilidad · revisado" }
+        "item1": {
+          "title": "Sistema de riego inteligente",
+          "sub": "Ing. Civil · enviado hoy"
+        },
+        "item2": {
+          "title": "App de rutas verdes",
+          "sub": "Ing. Ambiental · enviado ayer"
+        },
+        "item3": {
+          "title": "Dashboard financiero",
+          "sub": "Contabilidad · revisado"
+        }
       },
       "pills": {
         "pendiente": "Pendiente",
@@ -240,7 +368,7 @@
     "nombre": "Nombre",
     "nombreCompleto": "Nombre Completo",
     "documento": "Documento",
-    "email": "Correo Electrónico",
+    "email": "Correo electrónico",
     "telefono": "Teléfono",
     "genero": "Género",
     "masculino": "Masculino",
@@ -248,7 +376,9 @@
     "otro": "Otro",
     "seleccionar": "Seleccionar",
     "creando": "Creando...",
-    "enviando": "Enviando..."
+    "enviando": "Enviando...",
+    "loadErrorTitle": "No se pudo cargar la información",
+    "reintentar": "Reintentar"
   },
   "dialog": {
     "success": {
@@ -290,7 +420,13 @@
     "errorActualizar": "Error al actualizar la escuela",
     "errorEliminar": "Error al eliminar la escuela",
     "eliminarTitulo": "Eliminar escuela",
-    "eliminarMensaje": "¿Eliminar la escuela \"{{nombre}}\"? También se eliminarán sus cursos de forma lógica."
+    "eliminarMensaje": "¿Eliminar la escuela \"{{nombre}}\"? También se eliminarán sus cursos de forma lógica.",
+    "exitoCrear": "Escuela creada correctamente.",
+    "exitoActualizar": "Escuela actualizada correctamente.",
+    "exitoEliminar": "Escuela eliminada.",
+    "sinEscuelasHint": "Crea la primera escuela para asociarle cursos y proyectos.",
+    "sinCursos": "Sin cursos registrados.",
+    "verProyectos": "Ver proyectos"
   },
   "usuarios": {
     "titulo": "Usuarios",
@@ -336,7 +472,21 @@
       "Profesor": "Profesor",
       "Estudiante": "Estudiante",
       "Externo": "Externo"
-    }
+    },
+    "exitoActualizar": "Usuario actualizado correctamente.",
+    "exitoSuspender": "Usuario suspendido.",
+    "exitoReactivar": "Usuario reactivado.",
+    "exitoEliminar": "Usuario eliminado.",
+    "contador": "{{visibles}} de {{total}} registros",
+    "filtroRol": "Filtrar por rol",
+    "todosRoles": "Todos los roles",
+    "sinUsuariosHint": "Crea el primer usuario para darle acceso a la plataforma.",
+    "sinUsuariosFiltro": "No hay usuarios con este rol",
+    "sinUsuariosFiltroHint": "Prueba con otro rol o quita el filtro.",
+    "paginacion": "Paginación de usuarios",
+    "paginaDe": "Página {{pagina}} de {{total}}",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente"
   },
   "eventos": {
     "title": "Eventos",
@@ -384,7 +534,8 @@
     "inscripciones": {
       "titulo": "Inscripciones",
       "sinInscripciones": "No hay inscripciones registradas"
-    }
+    },
+    "sinEventosHint": "Cuando se publique un nuevo evento aparecerá aquí."
   },
   "jornadas": {
     "title": "Jornadas",
@@ -416,7 +567,27 @@
     "sinEvidencias": "Sin evidencias cargadas",
     "evidenciasExito": "Evidencias subidas correctamente",
     "evidenciasError": "No se pudieron subir las evidencias",
-    "eliminarEvidencia": "Eliminar"
+    "eliminarEvidencia": "Eliminar",
+    "kicker": "Jornada",
+    "noEncontrada": "La jornada no existe o fue eliminada.",
+    "errorCargar": "No se pudo cargar la jornada.",
+    "codigoCopiado": "Código copiado al portapapeles.",
+    "codigoNoCopiado": "No se pudo copiar el código.",
+    "evidenciasSubidas": "Evidencias subidas correctamente.",
+    "evidenciaEliminada": "Evidencia eliminada.",
+    "qrAlt": "Código QR de asistencia de {{nombre}}",
+    "qrHint": "QR real y escaneable: apunta al enlace de asistencia de esta jornada.",
+    "uuid": "Código de la jornada",
+    "copiar": "Copiar código",
+    "enlace": "Enlace de asistencia",
+    "descargarQr": "Descargar QR",
+    "verPantallaAsistente": "Ver pantalla del asistente",
+    "asistentes": "Asistencia registrada",
+    "asistentesConteo": "{{asistentes}} de {{inscritos}} inscritos",
+    "sinAsistentes": "Aún no hay asistencias",
+    "sinAsistentesHint": "Las asistencias aparecen aquí cuando los inscritos escanean el QR.",
+    "presente": "Presente",
+    "verJornada": "Ver jornada"
   },
   "inscripcion": {
     "titulo": "Inscribirse al Evento",
@@ -430,7 +601,7 @@
     "exito": "¡Te has inscrito correctamente al evento!",
     "yaInscrito": "Ya estás inscrito",
     "errorRegistrar": "No se pudo completar la inscripción.",
-    "sinCuenta": "No necesitas cuenta UniLab para inscribirte a este evento."
+    "sinCuenta": "No necesitas cuenta Eduinova para inscribirte a este evento."
   },
   "asistencia": {
     "titulo": "Registrar Asistencia",
@@ -457,7 +628,11 @@
       "registrando": "Registrando tu asistencia...",
       "exitoTitulo": "¡Registro exitoso!",
       "errorTitulo": "No se pudo registrar",
-      "preparando": "Preparando registro de asistencia..."
+      "preparando": "Preparando registro de asistencia...",
+      "listo": "¡Listo!",
+      "confirmada": "Asistencia confirmada",
+      "confirmadaDetalle": "Tu asistencia al evento quedó registrada correctamente.",
+      "volverInicio": "Volver al inicio"
     }
   },
   "reporte": {
@@ -478,9 +653,6 @@
   },
   "home": {
     "subtitle": "Portal de proyectos académicos",
-    "portalTagline": "Portal de Proyectos Investigativos",
-    "systemStatus": "SISTEMA:",
-    "systemName": "CÓDICE DE PROYECTOS INTEGRADO",
     "signIn": "Iniciar sesión",
     "goToPanel": "Ir al panel",
     "eventsNav": "Eventos",
@@ -491,8 +663,6 @@
       "logout": "Cerrar sesión"
     },
     "enterPortal": "Ir a mi panel",
-    "logoAlt": "Logo Oficial Uniautónoma del Cauca",
-    "logoFallback": "COGNITIO ET SCIENTIA",
     "backToSchools": "← Volver",
     "carousel": {
       "prev": "Imagen anterior",
@@ -528,9 +698,8 @@
     "academicProgram": "PROGRAMA ACADÉMICO",
     "director": "Director:",
     "unknownLeader": "Equipo investigador",
-    "exploreDeep": "EXPLORAR A FONDO →",
-    "connectedSystem": "SISTEMA CONECTADO CON EL BANCO DE PROYECTOS UNIAUTÓNOMA",
-    "footer": "© 2026 CORPORACIÓN UNIVERSITARIA AUTÓNOMA DEL CAUCA • EX COLOSSUS AD ARDUA",
+    "exploreDeep": "Explorar",
+    "footer": "Eduinova · Portal de proyectos académicos, semilleros y eventos.",
     "mobileMenu": "Seleccionar escuela",
     "facultyProjects": "Proyectos de {{escuela}}",
     "coursesTitle": "Cursos",
@@ -540,65 +709,58 @@
     "loadProjectsError": "No se pudieron cargar los proyectos. Intenta de nuevo en unos momentos.",
     "loadProjectError": "No se pudo cargar el detalle del proyecto.",
     "views": "{{count}} vistas",
-    "schoolProjectBadge": "{{count}} PROY.",
     "openApp": "Abrir aplicativo",
     "downloadApk": "Descargar APK",
     "downloadYoutube": "Ver en YouTube",
     "downloadSpotify": "Escuchar en Spotify",
     "comment": "Comentar",
     "rate": "Calificar",
-    "escuelas": {
-      "derecho": "Ciencias Jurídicas",
-      "educacion": "Ciencias de la Educación",
-      "ingenieria": "Ingeniería y Sostenibilidad",
-      "negocios": "Ciencias Administrativas",
-      "software": "Ingeniería de Software"
+    "caption": "Portal de proyectos",
+    "nav": {
+      "label": "Navegación del portal",
+      "inicio": "Inicio",
+      "proyectos": "Proyectos",
+      "escuelasProyectos": "Escuelas y proyectos"
     },
-    "cards": {
-      "derecho": {
-        "subtitle": "// JURIDICAL SCIENCES",
-        "cursive": "la Giustizia"
-      },
-      "educacion": {
-        "subtitle": "// ACADEMIC DEVELOPMENT",
-        "cursive": "la Pedagogia"
-      },
-      "ingenieria": {
-        "subtitle": "// INFRASTRUCTURE",
-        "cursive": "l'Architettura"
-      },
-      "negocios": {
-        "subtitle": "// SOCIAL RESEARCH",
-        "cursive": "l'Umanità"
-      },
-      "software": {
-        "subtitle": "// COMPUTE & CORE",
-        "cursive": "l'Ingegneria"
-      },
-      "generic": {
-        "subtitle": "// ACADEMIC UNIT"
-      }
+    "footerPortal": "Portal",
+    "footerAccess": "Acceso",
+    "createAccount": "Crear cuenta",
+    "registerAttendance": "Registrar asistencia",
+    "hero": {
+      "tag": "Universidad Autónoma del Cauca",
+      "titleStart": "Los proyectos que",
+      "titleLight": "construyen",
+      "titleEnd": "nuestros estudiantes",
+      "lead": "Explora los proyectos publicados por escuela, conoce los semilleros de investigación y participa en los eventos académicos.",
+      "exploreProjects": "Explorar proyectos",
+      "viewEvents": "Ver eventos"
     },
-    "authModal": {
-      "title": "Acceso al Templo del Conocimiento",
-      "loginTab": "Iniciar sesión",
-      "registerTab": "Registrarse",
-      "student": "Estudiante",
-      "external": "Externo",
-      "firstName": "Nombres",
-      "lastName": "Apellidos",
-      "document": "Documento de identidad",
-      "phone": "Teléfono",
-      "studentCode": "Código estudiantil",
-      "school": "Escuela",
-      "selectSchool": "Seleccione una escuela",
-      "institution": "Institución",
-      "occupation": "Ocupación",
-      "registerSubmit": "Crear cuenta",
-      "formInvalid": "Complete los campos requeridos.",
-      "tempPasswordHint": "Guarde esta contraseña temporal. Solo se muestra una vez:",
-      "continueLogin": "Continuar al inicio de sesión"
-    }
+    "stats": {
+      "title": "El portal en números",
+      "projects": "Proyectos publicados",
+      "projectsNote": "Fichas públicas en el portal",
+      "schools": "Escuelas registradas",
+      "schoolsNote": "Con su producción académica",
+      "courses": "Cursos registrados",
+      "coursesNote": "Programas asociados a escuelas",
+      "events": "Eventos abiertos",
+      "eventsNote": "Con inscripción en el portal"
+    },
+    "schools": {
+      "kicker": "Escuelas",
+      "title": "Explora por escuela",
+      "lead": "Cada escuela reúne los proyectos publicados de sus programas académicos.",
+      "noProjects": "Sin proyectos publicados",
+      "oneProject": "1 proyecto publicado",
+      "projects": "{{count}} proyectos publicados"
+    },
+    "nextEvent": {
+      "kicker": "Próximo evento",
+      "paid": "Requiere pago de inscripción",
+      "free": "Sin costo de inscripción",
+      "cta": "Ver el evento"
+    },
+    "noProjectsHint": "Cuando la escuela publique proyectos aparecerán aquí."
   },
   "proyectosEstudiante": {
     "titulo": "Mis proyectos",
@@ -663,7 +825,8 @@
       "aprobado": "Aprobado",
       "publicado": "Publicado",
       "rechazado": "Rechazado"
-    }
+    },
+    "sinProyectosHint": "Crea tu primer proyecto para enviarlo a revisión de tu profesor asignado."
   },
   "proyectosProfesor": {
     "titulo": "Proyectos asignados",
@@ -692,13 +855,33 @@
     "publicar": "Publicar en portal",
     "verEnPortal": "Ver en portal público",
     "aprobarTitulo": "Aprobar y publicar proyecto",
-    "aprobarMensaje": "El proyecto quedará visible en el portal público de UniLab. ¿Confirmas la aprobación?",
+    "aprobarMensaje": "El proyecto quedará visible en el portal público de Eduinova. ¿Confirmas la aprobación?",
     "rechazarTitulo": "Rechazar proyecto",
     "rechazarMensaje": "El estudiante no podrá publicar este proyecto. ¿Confirmas el rechazo?",
     "publicarTitulo": "Publicar proyecto",
-    "publicarMensaje": "El proyecto será visible en el portal público de UniLab.",
+    "publicarMensaje": "El proyecto será visible en el portal público de Eduinova.",
     "exitoAprobar": "Proyecto aprobado y publicado en el portal.",
     "exitoRechazar": "Proyecto rechazado.",
-    "exitoPublicar": "Proyecto publicado en el portal."
+    "exitoPublicar": "Proyecto publicado en el portal.",
+    "sinAsignadosHint": "No hay proyectos con este estado entre los que coordinas."
+  },
+  "session": {
+    "expiredTitle": "Tu sesión se cerró",
+    "expiredMessage": "La sesión expiró por inactividad. Vuelve a iniciar sesión para continuar donde estabas.",
+    "signIn": "Iniciar sesión"
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "message": "La dirección puede haber cambiado o el recurso fue eliminado.",
+    "back": "Volver al portal"
+  },
+  "asistenciaPanel": {
+    "titulo": "Control de asistencia",
+    "descripcion": "Registro por QR y reporte de participantes de cada evento.",
+    "registrarManual": "Registrar por código",
+    "verQr": "Ver QR",
+    "sinEventos": "No hay eventos con este estado",
+    "sinEventosHint": "Cuando haya eventos con jornadas, su control de asistencia aparecerá aquí.",
+    "errorCargar": "No se pudieron cargar los eventos."
   }
 }

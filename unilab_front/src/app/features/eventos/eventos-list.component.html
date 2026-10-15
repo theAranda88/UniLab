@@ -113,34 +113,37 @@
 
 
   @if (cargando()) {
-
-    <p class="loading">{{ 'common.cargando' | translate }}</p>
-
+    <app-skeleton variant="cards" [rows]="3" />
   } @else if (error()) {
-
-    <p class="error">{{ error() | translate }}</p>
-
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargarEventos()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
   } @else if (eventosFiltrados().length === 0) {
-
-    <p class="no-data">{{ 'eventos.sinEventos' | translate }}</p>
-
+    <app-empty-state
+      icon="ti-calendar-event"
+      [title]="'eventos.sinEventos' | translate"
+      [message]="'eventos.sinEventosHint' | translate"
+    >
+      @if (puedeCrear()) {
+        <button type="button" class="edu-btn" (click)="crearEvento()">{{ 'eventos.crear' | translate }}</button>
+      }
+    </app-empty-state>
   } @else {
 
     <div class="eventos-grid">
 
-      @for (evento of eventosFiltrados(); track evento.id_evento; let i = $index) {
+      @for (evento of eventosFiltrados(); track evento.id_evento) {
 
         <div
 
           class="evento-card"
 
           [class.evento-card--portal]="portalTheme()"
-
-          [class.evento-card--emerge]="portalTheme()"
-
-          [style.--emerge-delay]="portalTheme() ? i * 0.08 + 's' : null"
-
-          [appCardTilt]="portalTheme()"
 
           (click)="verDetalle(evento.id_evento)"
 

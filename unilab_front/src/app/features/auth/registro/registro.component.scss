@@ -1,0 +1,226 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
+@use '../../../../styles/auth-pages' as auth;
+
+// Página /registro — mismo diseño que /login: panel de marca compartido
+// (app-auth-brand) + formulario compacto que cabe en una pantalla de escritorio.
+
+:host {
+  display: block;
+}
+
+.registro {
+  @include auth.split-layout;
+}
+
+.registro__main {
+  @include auth.split-main;
+}
+
+.registro__card {
+  @include auth.split-card(620px);
+}
+
+.registro__head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(20px, 3.4vh, 32px) 28px 0;
+
+  h2 {
+    @include auth.card-title;
+    font-size: clamp(26px, 2.2vw, 32px);
+    color: t.$blue;
+  }
+
+  p {
+    @include auth.card-subtitle;
+  }
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 20px 20px 0;
+  }
+}
+
+.registro__back {
+  @include auth.back-link;
+  margin-bottom: 2px;
+}
+
+.registro__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vh, 16px);
+  padding: clamp(14px, 2.2vh, 20px) 28px;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 18px 20px;
+  }
+}
+
+.registro__alert {
+  @include auth.alert-error;
+}
+
+.registro__group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.registro__label {
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-bold;
+  color: t.$ink;
+}
+
+// C07 · Segmented
+.registro__segmented {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$cream;
+
+  button {
+    height: 34px;
+    padding: 0 16px;
+    border: none;
+    border-radius: t.$radius-md;
+    background: transparent;
+    color: rgba(30, 30, 30, 0.62);
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background 170ms ease,
+      color 170ms ease;
+  }
+
+  .registro__segment--active {
+    background: t.$blue;
+    color: t.$white;
+  }
+}
+
+// Dos columnas fijas para que el formulario no crezca en alto
+.registro__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.registro__field {
+  @include auth.field;
+
+  gap: 5px;
+
+  input,
+  select {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+
+  em {
+    font-style: normal;
+    color: t.$danger;
+  }
+
+  // Campo con error: borde rojo (C03 · estado error)
+  input[aria-invalid='true'],
+  select[aria-invalid='true'] {
+    border-color: rgba(176, 42, 42, 0.55);
+
+    &:focus {
+      border-color: t.$danger;
+      box-shadow: t.$focus-ring-danger;
+    }
+  }
+}
+
+.registro__error {
+  @include auth.error-text;
+}
+
+// Campos según el tipo de cuenta
+.registro__role-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px 14px;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$cream;
+
+  legend {
+    float: left;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 0;
+    @include t.kicker;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: 0.1em;
+  }
+}
+
+.registro__notice {
+  @include auth.notice;
+}
+
+.registro__password {
+  @include auth.temp-password;
+}
+
+// Pie de acciones
+.registro__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: clamp(12px, 2vh, 16px) 28px;
+  border-top: 1px solid t.$border-subtle;
+  background: t.$cream;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 16px 20px;
+
+    .registro__btn {
+      flex: 1 1 100%;
+    }
+
+    .registro__btn--secondary {
+      order: 1;
+    }
+  }
+}
+
+.registro__btn {
+  min-height: 44px;
+  padding: 0 20px;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &--primary {
+    @include ui.btn-primary;
+    font-weight: t.$font-weight-extra-bold;
+
+    &:hover:not(:disabled) {
+      color: t.$white;
+    }
+  }
+
+  &--secondary {
+    @include ui.btn-secondary;
+  }
+}

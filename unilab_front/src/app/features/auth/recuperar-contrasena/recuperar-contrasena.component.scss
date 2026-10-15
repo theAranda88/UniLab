@@ -1,0 +1,109 @@
+@use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/auth-pages' as auth;
+
+// Página /recuperar-contrasena — misma tarjeta que «Cambiar contraseña» del prototipo.
+
+:host {
+  display: block;
+}
+
+.recuperar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 56px 24px;
+  background: t.$cream;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 32px 16px;
+  }
+}
+
+.recuperar__card {
+  @include auth.card(480px);
+  overflow: hidden;
+}
+
+.recuperar__header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 32px 36px 0;
+
+  h1 {
+    @include auth.card-title;
+  }
+
+  p {
+    @include auth.card-subtitle;
+  }
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 28px 20px 0;
+  }
+}
+
+.recuperar__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: t.$radius-xl;
+  background: t.$blue-tint;
+  color: t.$blue;
+  font-size: 25px;
+}
+
+.recuperar__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 36px 28px;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 24px 20px;
+  }
+}
+
+.recuperar__alert {
+  @include auth.alert-error;
+}
+
+.recuperar__field {
+  @include auth.field;
+
+  em {
+    font-style: normal;
+    color: t.$danger;
+  }
+
+  small {
+    @include auth.hint;
+  }
+}
+
+.recuperar__notice {
+  @include auth.notice;
+}
+
+.recuperar__password {
+  @include auth.temp-password;
+}
+
+.recuperar__submit {
+  @include auth.submit;
+  text-decoration: none;
+
+  &:hover {
+    color: t.$white;
+    text-decoration: none;
+  }
+}
+
+.recuperar__links {
+  @include auth.text-links;
+  padding: 16px 36px 24px;
+  border-top: 1px solid rgba(30, 30, 30, 0.08);
+}

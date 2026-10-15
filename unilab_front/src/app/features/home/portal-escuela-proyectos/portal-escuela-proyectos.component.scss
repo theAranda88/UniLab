@@ -1,6 +1,8 @@
 @use '../../../../styles/design-tokens' as *;
-@use '../portal-route-page';
+@use '../portal-back-link';
 @use '../portal-layout';
+
+// Pantalla 22 · Portal — escuela y sus proyectos
 
 .portal-sub {
   position: relative;
@@ -10,110 +12,87 @@
   min-height: 60vh;
 }
 
-.portal-sub__content {
-  margin-left: 0;
-  padding-top: $space-8;
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.45s,
-    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.45s;
-}
-
-.portal-sub--entered .portal-sub__content {
-  opacity: 1;
-  transform: translateY(0);
-}
-
+// Cabecera de la escuela
 .portal-sub__header {
-  margin-bottom: $space-24;
-  padding-bottom: $space-16;
-  border-bottom: 1px solid rgba(74, 115, 150, 0.35);
-}
-
-.portal-sub__back {
-  display: inline-block;
-  margin-bottom: $space-12;
-  padding: 0;
-  border: none;
-  background: none;
-  font-family: ui-monospace, monospace;
-  font-size: $font-size-xs;
-  color: rgba(212, 175, 55, 0.75);
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  text-decoration: none;
-
-  &:hover { color: #fcd34d; }
+  margin-bottom: $space-32;
+  padding-bottom: $space-24;
+  border-bottom: 1px solid $border-subtle;
 }
 
 .portal-sub__eyebrow {
   display: block;
-  font-family: 'Cinzel', serif;
-  font-size: 0.5625rem;
-  letter-spacing: 0.2em;
-  color: rgba(245, 158, 11, 0.55);
-  text-transform: uppercase;
+  @include kicker;
 }
 
 .portal-sub__title {
   margin: $space-8 0;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 700;
-  color: rgba(254, 243, 199, 1);
+  font-weight: $font-weight-black;
+  letter-spacing: $letter-spacing-display;
+  line-height: 1.05;
+  color: $ink;
 }
 
 .portal-sub__subtitle {
   margin: 0;
-  font-size: $font-size-sm;
-  color: rgba(148, 163, 184, 0.85);
+  max-width: 44rem;
+  font-size: $font-size-base;
+  color: $text-secondary;
 }
 
 .portal-sub__loading,
-.portal-sub__empty,
-.portal-sub__error {
-  color: rgba(203, 213, 225, 0.8);
-}
-
-.portal-sub__error {
-  color: rgba(248, 113, 113, 0.9);
+.portal-sub__empty {
+  margin: 0;
+  padding: $space-48 $space-24;
+  border-radius: $radius-lg;
+  text-align: center;
+  font-size: $font-size-sm;
+  @include surface-card;
+  color: $text-secondary;
 }
 
 .portal-sub__grid {
   display: grid;
 }
 
+// C14 · Card de proyecto
 .portal-project-card {
-  border: 1px solid rgba(74, 115, 150, 0.4);
-  border-radius: $radius-xl;
-  padding: $space-20;
-  background: linear-gradient(145deg, rgba(21, 34, 56, 0.9), rgba(10, 22, 40, 0.95));
+  @include surface-card;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
   cursor: pointer;
   text-align: left;
-  opacity: 0;
-  transform: translateY(16px);
-  animation: project-card-in 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: var(--card-delay, 0s);
-  transition: border-color $transition-base, box-shadow $transition-base;
-}
+  transition: border-color $transition-base;
 
-.portal-project-card--flipping {
-  animation: card-flip-out 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-  pointer-events: none;
+  &:hover {
+    border-color: $blue-border;
+
+    .portal-project-card__cta {
+      background: $blue-tint;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring, $shadow-card;
+  }
 }
 
 .portal-project-card__inner {
   display: flex;
   flex-direction: column;
-  gap: $space-12;
+  gap: $space-8;
+  height: 100%;
+  padding-bottom: $space-16;
 }
 
 .portal-project-card__media {
   width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: $radius-lg;
+  margin-bottom: $space-8;
+  border-bottom: 1px solid $border-subtle;
+  background: $neutral-soft;
   overflow: hidden;
-  border: 1px solid rgba(74, 115, 150, 0.35);
 
   app-project-image-carousel {
     display: block;
@@ -122,86 +101,75 @@
   }
 }
 
-.portal-project-card__thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.portal-project-card__thumb--fallback {
-  background: linear-gradient(135deg, rgba(30, 51, 84, 0.9), rgba(21, 34, 56, 0.95));
+.portal-project-card__head,
+.portal-project-card__title,
+.portal-project-card__desc,
+.portal-project-card__meta {
+  padding: 0 $space-20;
 }
 
 .portal-project-card__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $space-12;
+  gap: $space-8;
 }
 
 .portal-project-card__type {
-  font-family: ui-monospace, monospace;
-  font-size: 0.5625rem;
-  padding: $space-4 $space-8;
-  border-radius: $radius-sm;
-  background: rgba(58, 95, 130, 0.45);
-  color: #93c5fd;
-  border: 1px solid rgba(74, 115, 150, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  @include kicker;
 }
 
 .portal-project-card__views {
-  font-size: 0.625rem;
-  color: rgba(148, 163, 184, 0.75);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $text-secondary;
 }
 
 .portal-project-card__title {
-  margin: 0 0 $space-8;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.125rem, 1vw + 0.85rem, 1.5rem);
-  font-weight: 700;
-  color: rgba(254, 243, 199, 1);
+  margin: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-extra-bold;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: $ink;
 }
 
 .portal-project-card__desc {
-  margin: 0 0 $space-12;
+  margin: 0;
   font-size: $font-size-sm;
-  line-height: 1.5;
-  color: rgba(203, 213, 225, 0.82);
+  line-height: $line-height-normal;
+  color: $text-secondary;
+  @include line-clamp(3);
 }
 
 .portal-project-card__meta {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
-  font-size: 0.625rem;
-  color: rgba(148, 163, 184, 0.9);
+  gap: 2px;
+  font-size: $font-size-label;
+  color: $text-secondary;
 
-  strong { color: rgba(251, 191, 36, 0.9); font-weight: 500; }
+  strong {
+    color: $ink;
+    font-weight: $font-weight-bold;
+  }
 }
 
 .portal-project-card__origin {
-  color: rgba(96, 165, 250, 0.75);
   font-style: italic;
 }
 
 .portal-project-card__cta {
-  display: inline-block;
-  margin-top: $space-12;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #fbbf24;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin: $space-8 $space-12 0;
+  padding: 0 $space-8;
+  border-radius: $radius-md;
+  font-size: $font-size-label;
+  font-weight: $font-weight-extra-bold;
+  color: $blue;
+  transition: background $transition-base;
 }
 
-@keyframes project-card-in {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes card-flip-out {
-  0% { transform: perspective(1000px) rotateY(0) scale(1); opacity: 1; }
-  40% { transform: perspective(1000px) rotateY(180deg) scale(1.04); opacity: 1; }
-  100% { transform: perspective(1000px) rotateY(360deg) scale(0.9); opacity: 0; }
-}

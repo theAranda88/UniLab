@@ -5,21 +5,28 @@
     <h1>{{ 'reporte.titulo' | translate }}</h1>
     <div class="acciones">
       <button class="btn btn-primary" (click)="exportarCSV()">
+        <i class="ti ti-file-export" aria-hidden="true"></i>
         {{ 'reporte.exportarCSV' | translate }}
       </button>
-      <button class="btn btn-primary" (click)="exportarExcel()">
+      <button class="btn btn-secondary" (click)="exportarExcel()">
+        <i class="ti ti-table-export" aria-hidden="true"></i>
         {{ 'reporte.exportarExcel' | translate }}
       </button>
-      <button class="btn btn-secondary" (click)="volver()">
+      <button class="btn btn-ghost" (click)="volver()">
         {{ 'common.volver' | translate }}
       </button>
     </div>
   </div>
 
   @if (cargando()) {
-    <p class="loading">{{ 'common.cargando' | translate }}</p>
+    <app-skeleton variant="table" [rows]="5" />
   } @else if (error()) {
-    <p class="error">{{ error() | translate }}</p>
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    />
   } @else if (reporte()) {
     <div class="reporte-content">
       <div class="resumen">

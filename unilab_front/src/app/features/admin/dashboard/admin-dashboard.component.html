@@ -45,9 +45,14 @@
       </div>
 
       @if (cargandoPagos()) {
-        <p class="loading-text">{{ 'common.cargando' | translate }}</p>
+        <app-skeleton variant="list" [rows]="3" />
       } @else if (pendingPayments().length === 0) {
-        <p class="empty-text">{{ 'dashboard.admin.right.empty' | translate }}</p>
+        <app-empty-state
+          [compact]="true"
+          icon="ti-circle-check"
+          [title]="'dashboard.admin.right.empty' | translate"
+          [message]="'dashboard.admin.right.emptyHint' | translate"
+        />
       } @else {
         @for (item of pendingPayments(); track item.inscripcion.id_inscripcion) {
           <div class="list-item">

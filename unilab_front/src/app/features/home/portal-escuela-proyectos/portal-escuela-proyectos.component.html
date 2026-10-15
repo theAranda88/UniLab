@@ -1,31 +1,37 @@
-<main class="portal-sub portal-sub--escuela" [class.portal-sub--entered]="entered()">
+<main class="portal-sub portal-sub--escuela">
   <div class="portal-sub__content">
     <header class="portal-sub__header">
       <button type="button" class="portal-sub__back" (click)="goBack()">{{ 'home.backToSchools' | translate }}</button>
       @if (escuela(); as esc) {
         <span class="portal-sub__eyebrow">
-          {{ 'home.cards.' + themeKey() + '.subtitle' | translate }}
+          {{ 'home.schools.kicker' | translate }}
         </span>
-        <h1 class="portal-sub__title">{{ 'home.escuelas.' + themeKey() | translate }}</h1>
+        <h1 class="portal-sub__title">{{ esc.nombre_escuela }}</h1>
         <p class="portal-sub__subtitle">{{ 'home.projectsListHint' | translate }}</p>
       }
     </header>
 
     @if (loading()) {
-      <p class="portal-sub__loading">{{ 'common.loading' | translate }}</p>
+      <app-skeleton variant="cards" [rows]="3" />
     } @else if (loadError()) {
-      <p class="portal-sub__error">{{ 'home.loadProjectsError' | translate }}</p>
+      <app-empty-state
+        icon="ti-cloud-off"
+        tone="error"
+        [title]="'common.loadErrorTitle' | translate"
+        [message]="'home.loadProjectsError' | translate"
+      />
     } @else if (proyectos().length === 0) {
-      <p class="portal-sub__empty">{{ 'home.noProjects' | translate }}</p>
+      <app-empty-state
+        icon="ti-folders"
+        [title]="'home.noProjects' | translate"
+        [message]="'home.noProjectsHint' | translate"
+      />
     } @else {
       <div class="portal-sub__grid">
-        @for (proyecto of proyectos(); track trackByProyectoId($index, proyecto); let i = $index) {
+        @for (proyecto of proyectos(); track trackByProyectoId($index, proyecto)) {
           <button
             type="button"
             class="portal-project-card"
-            [class.portal-project-card--flipping]="flippingProjectId() === proyecto.id_proyecto"
-            [style.--card-delay]="i * 0.06 + 's'"
-            appCardTilt
             (click)="onProjectClick(proyecto)"
           >
             <div class="portal-project-card__inner">

@@ -1,209 +1,243 @@
 @use '../../../../styles/design-tokens' as *;
 
+// Shell del portal Eduinova — prototipo «Eduinova Portal» (cabecera + pie). Estático.
+
 :host {
   display: block;
   min-height: 100vh;
 }
 
-.codex-portal {
-  position: relative;
+.portal {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: radial-gradient(circle at center, #010816 0%, #000205 100%);
-  color: rgba(254, 243, 199, 0.9);
-  font-family: 'Plus Jakarta Sans', $font-family-base, sans-serif;
-  perspective: 1200px;
+  background: $cream;
+  color: $ink;
 }
 
-.codex-portal__header {
-  position: relative;
-  z-index: 20;
+// ---------------------------------------------------------------------------
+// Cabecera
+// ---------------------------------------------------------------------------
+.portal__header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: $white;
+  border-bottom: 1px solid $border-subtle;
+}
+
+.portal__header-inner {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: min(120rem, 96vw);
+  gap: 16px;
+  max-width: $content-max-width;
   margin: 0 auto;
-  padding: clamp(#{$space-12}, 2vh, #{$space-16}) clamp(#{$space-16}, 3vw, #{$space-32})
-    clamp(#{$space-12}, 2vh, #{$space-16}) clamp(#{$space-8}, 2vw, #{$space-16});
-  gap: clamp(#{$space-12}, 2vw, #{$space-24});
-}
+  padding: 14px 24px;
 
-.codex-portal__brand-group {
-  display: flex;
-  align-items: center;
-  gap: clamp(#{$space-12}, 2vw, #{$space-24});
-  min-width: 0;
-  flex: 0 1 auto;
-}
-
-.codex-portal__header-right {
-  display: flex;
-  align-items: center;
-  gap: $space-16;
-  flex-shrink: 0;
-  margin-left: auto;
-  z-index: 25;
-}
-
-.codex-portal__brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-left: $space-4;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-  flex-shrink: 0;
-}
-
-.codex-portal__header-logo {
-  --header-logo-size: clamp(2.75rem, 3.5vw + 1rem, 4.25rem);
-  width: var(--header-logo-size);
-  height: var(--header-logo-size);
-  flex-shrink: 0;
-  opacity: 0;
-  transform: scale(1.35) translateX(-12px);
-  transition:
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 16px rgba(212, 175, 55, 0.35));
+  @include respond-to($breakpoint-sm) {
+    padding: 12px 16px;
   }
 }
 
-.codex-portal__header-logo--visible {
-  opacity: 1;
-  transform: scale(1) translateX(0);
-}
-
-.codex-portal__title {
-  margin: 0;
-  font-family: 'Cinzel', serif;
-  font-size: clamp(1.25rem, 1.5vw + 0.75rem, 2rem);
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  background: linear-gradient(to right, #fde68a, #eab308, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.codex-portal__tagline {
-  margin-top: $space-4;
-  font-size: clamp(0.625rem, 0.45vw + 0.5rem, 0.875rem);
-  letter-spacing: 0.12em;
-  text-transform: none;
-  color: rgba(245, 158, 11, 0.75);
-  font-weight: 500;
-}
-
-.codex-portal__status {
+.portal__brand {
   display: flex;
   align-items: center;
-  gap: $space-8;
-  font-family: ui-monospace, monospace;
-  font-size: 0.625rem;
-  color: rgba(217, 119, 6, 0.6);
-}
-
-.codex-portal__status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #f59e0b;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-.codex-portal__status-name { color: #f59e0b; font-weight: 700; }
-
-.codex-portal__auth-btn {
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: $radius-lg;
-  padding: clamp(#{$space-8}, 1vh, #{$space-12}) clamp(#{$space-12}, 1.5vw, #{$space-16});
-  background: rgba(212, 175, 55, 0.08);
-  color: #fcd34d;
-  font-size: clamp(#{$font-size-xs}, 0.35vw + 0.65rem, #{$font-size-sm});
-  font-weight: 600;
-  cursor: pointer;
+  gap: 11px;
   text-decoration: none;
-  transition:
-    background 0.25s ease,
-    border-color 0.25s ease,
-    color 0.25s ease,
-    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-    border-color: rgba(212, 175, 55, 0.5);
-    background: rgba(212, 175, 55, 0.14);
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
   }
 }
 
-.codex-portal__auth-btn--primary {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: rgba(212, 175, 55, 0.45);
+.portal__brand-mark {
+  display: block;
+  flex: none;
+  width: 32px;
+  height: 34px;
 }
 
-.codex-portal__auth-btn--events {
-  text-decoration: none;
+.portal__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.2;
+}
+
+// Ttulo.svg: el texto ocupa y 24.6–53.8 de un viewBox de 86 → se recorta el aire con márgenes
+.portal__brand-title {
+  display: block;
+  width: auto;
+  height: 38px;
+  margin: -11px 0 -14px -5px;
+}
+
+.portal__brand-caption {
+  font-size: 11px;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-secondary;
+}
+
+.portal__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.portal__nav-link {
   display: inline-flex;
   align-items: center;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: $radius-md;
+  font-size: $font-size-label;
+  font-weight: $font-weight-bold;
+  color: rgba(30, 30, 30, 0.74);
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background 170ms ease,
+    color 170ms ease;
+
+  &:hover {
+    background: $blue-tint;
+    color: $blue;
+    text-decoration: none;
+  }
+
+  &--active {
+    background: $blue-tint-strong;
+    color: $blue;
+    box-shadow: inset 0 -3px 0 $accent;
+  }
 }
 
-.codex-portal__footer {
-  position: relative;
-  z-index: 20;
-  padding: $space-12 0;
-  text-align: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.5rem;
-  letter-spacing: 0.3em;
-  color: rgba(180, 83, 9, 0.6);
+.portal__cta {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  margin-left: 8px;
+  padding: 0 16px;
+  border: 1px solid $blue;
+  border-radius: $radius-md;
+  background: $blue;
+  color: $white;
+  font-size: $font-size-label;
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+  transition: background 180ms ease;
+
+  &:hover {
+    background: $blue-pressed;
+    color: $white;
+    text-decoration: none;
+  }
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+.portal__profile {
+  margin-left: 8px;
 }
 
-@include respond-to($breakpoint-md) {
-  .codex-portal__header {
+.portal__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+// ---------------------------------------------------------------------------
+// Pie
+// ---------------------------------------------------------------------------
+.portal__footer {
+  margin-top: auto;
+  background: $blue;
+}
+
+.portal__footer-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+  gap: 32px;
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 44px 24px;
+}
+
+.portal__footer-about {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  p {
+    margin: 0;
+    max-width: 38ch;
+    font-size: $font-size-label;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.86);
+  }
+}
+
+.portal__university {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: $radius-lg;
+  background: $white;
+
+  img {
+    display: block;
+    height: 64px;
+  }
+
+  span {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    max-width: 100%;
+    max-width: 14ch;
+    line-height: 1.25;
   }
 
-  .codex-portal__header-right {
-    width: 100%;
-    justify-content: flex-end;
+  strong {
+    font-size: $font-size-label;
+    font-weight: $font-weight-extra-bold;
+    letter-spacing: -0.01em;
+    color: $blue;
   }
 
-  .codex-portal__header-logo {
-    --header-logo-size: clamp(2.25rem, 12vw, 3rem);
-  }
-
-  .codex-portal__status {
-    display: none;
+  small {
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
   }
 }
 
-@media (min-width: 1920px) {
-  .codex-portal__status {
-    font-size: clamp(0.625rem, 0.35vw + 0.5rem, 0.75rem);
+.portal__footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  a {
+    font-size: $font-size-label;
+    font-weight: $font-weight-semibold;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+
+    &:hover {
+      color: $white;
+      text-decoration: underline;
+    }
   }
+}
+
+.portal__footer-title {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-extra-bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $accent;
 }

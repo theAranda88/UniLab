@@ -1,0 +1,94 @@
+@use '../../../../styles/design-tokens' as *;
+
+// Círculos decorativos: el wrapper (.bubble) lo aparta el .ts solo cuando el mouse está encima;
+// el cuerpo (.bubble__body) flota solo con CSS para que ambas transformaciones no choquen.
+:host {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  will-change: transform;
+}
+
+.bubble__body {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    background-color 0.35s ease;
+
+  &--float-0 { animation: bubble-float-a 9s ease-in-out infinite; }
+  &--float-1 { animation: bubble-float-b 11s ease-in-out infinite; }
+  &--float-2 { animation: bubble-float-a 13s ease-in-out -4s infinite reverse; }
+  &--float-3 { animation: bubble-float-b 8s ease-in-out -2s infinite; }
+}
+
+.bubble--ring-accent .bubble__body {
+  border: 2px solid rgba(227, 201, 36, 0.32);
+}
+
+.bubble--ring-light .bubble__body {
+  border: 2px solid rgba(255, 255, 255, 0.14);
+}
+
+.bubble--dot-accent .bubble__body {
+  background: rgba(227, 201, 36, 0.75);
+  box-shadow: 0 0 18px rgba(227, 201, 36, 0.35);
+}
+
+.bubble--dot-light .bubble__body {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.bubble--glass .bubble__body {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02) 70%);
+}
+
+// Al acercarse el puntero, el círculo se ilumina
+.bubble--near {
+  &.bubble--ring-accent .bubble__body {
+    border-color: rgba(227, 201, 36, 0.8);
+    box-shadow: 0 0 36px rgba(227, 201, 36, 0.3);
+  }
+
+  &.bubble--ring-light .bubble__body,
+  &.bubble--glass .bubble__body {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 32px rgba(255, 255, 255, 0.18);
+  }
+
+  &.bubble--dot-accent .bubble__body {
+    background: $accent;
+    box-shadow: 0 0 28px rgba(227, 201, 36, 0.7);
+  }
+
+  &.bubble--dot-light .bubble__body {
+    background: $white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes bubble-float-a {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, -16px); }
+}
+
+@keyframes bubble-float-b {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-12px, 8px); }
+  66% { transform: translate(8px, 12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble__body {
+    animation: none !important;
+  }
+}

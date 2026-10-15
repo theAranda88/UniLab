@@ -3,26 +3,22 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PublicPortalService } from '../public-portal.service';
-import { CardTiltDirective } from '../directives/card-tilt.directive';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import {
-  resolveEscuelaCardConfig,
   urlsImagenesProyecto,
   type Escuela,
   type ProyectoPublico,
 } from '../../../core/models/portal.model';
 
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+
 @Component({
   selector: 'app-portal-escuela-proyectos',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, CardTiltDirective, ProjectImageCarouselComponent],
+  imports: [CommonModule, TranslatePipe, ProjectImageCarouselComponent, EmptyStateComponent, SkeletonComponent],
   templateUrl: './portal-escuela-proyectos.component.html',
   styleUrl: './portal-escuela-proyectos.component.scss',
-  host: {
-    class: 'portal-route-page',
-    '[class.portal-route-page--entered]': 'entered()',
-    '[class.portal-route-page--exiting]': 'exiting()',
-  },
 })
 export class PortalEscuelaProyectosComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -31,17 +27,11 @@ export class PortalEscuelaProyectosComponent implements OnInit {
   private translate = inject(TranslateService);
 
   readonly escuela = signal<Escuela | null>(null);
-  readonly themeKey = signal<string>('software');
   readonly proyectos = signal<ProyectoPublico[]>([]);
   readonly loading = signal(true);
   readonly loadError = signal(false);
-  readonly flippingProjectId = signal<number | null>(null);
-  readonly entered = signal(false);
-  readonly exiting = signal(false);
 
   ngOnInit(): void {
-    window.setTimeout(() => this.entered.set(true), 120);
-
     const idEscuela = Number(this.route.snapshot.paramMap.get('idEscuela'));
     this.portal.listarEscuelas().subscribe({
       next: (escuelas) => {
@@ -51,8 +41,6 @@ export class PortalEscuelaProyectosComponent implements OnInit {
           return;
         }
         this.escuela.set(found);
-        const config = resolveEscuelaCardConfig(found.nombre_escuela);
-        if (config) this.themeKey.set(config.themeKey);
       },
     });
 
@@ -69,17 +57,11 @@ export class PortalEscuelaProyectosComponent implements OnInit {
   }
 
   onProjectClick(proyecto: ProyectoPublico): void {
-    if (this.flippingProjectId()) return;
-    this.flippingProjectId.set(proyecto.id_proyecto);
-    window.setTimeout(() => {
-      this.router.navigate(['/proyectos', proyecto.id_proyecto]);
-    }, 750);
+    void this.router.navigate(['/proyectos', proyecto.id_proyecto]);
   }
 
   goBack(): void {
-    if (this.exiting()) return;
-    this.exiting.set(true);
-    window.setTimeout(() => this.router.navigate(['/']), 620);
+    void this.router.navigate(['/']);
   }
 
   imagenesProyecto(proyecto: ProyectoPublico): string[] {
