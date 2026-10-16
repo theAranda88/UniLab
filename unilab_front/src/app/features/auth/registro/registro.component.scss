@@ -19,13 +19,16 @@
 
 .registro__card {
   @include auth.split-card(620px);
+  // clip (no hidden): conserva las esquinas sin crear un contenedor de scroll,
+  // así el pie de acciones puede quedar fijo abajo mientras se desplaza el formulario.
+  overflow: clip;
 }
 
 .registro__head {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: clamp(20px, 3.4vh, 32px) 28px 0;
+  gap: 4px;
+  padding: clamp(16px, 2.6vh, 28px) 28px 0;
 
   h2 {
     @include auth.card-title;
@@ -50,8 +53,8 @@
 .registro__body {
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 1.8vh, 16px);
-  padding: clamp(14px, 2.2vh, 20px) 28px;
+  gap: clamp(10px, 1.6vh, 14px);
+  padding: clamp(12px, 1.8vh, 18px) 28px;
 
   @include t.respond-to(t.$breakpoint-sm) {
     padding: 18px 20px;
@@ -117,6 +120,10 @@
   }
 }
 
+.registro__field--wide {
+  grid-column: 1 / -1;
+}
+
 .registro__field {
   @include auth.field;
 
@@ -153,9 +160,9 @@
 .registro__role-fields {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
-  padding: 12px 14px 14px;
+  padding: 10px 14px 12px;
   border: 1px solid t.$border-subtle;
   border-radius: t.$radius-lg;
   background: t.$cream;
@@ -163,7 +170,7 @@
   legend {
     float: left;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     padding: 0;
     @include t.kicker;
     font-weight: t.$font-weight-extra-bold;
@@ -175,14 +182,36 @@
   @include auth.notice;
 }
 
+// Aviso de la contraseña temporal en una línea discreta (antes, un bloque destacado)
+.registro__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: t.$font-size-label;
+  line-height: t.$line-height-normal;
+  color: t.$text-secondary;
+
+  i {
+    flex: none;
+    margin-top: 2px;
+    font-size: 16px;
+    color: t.$accent-ink;
+  }
+}
+
 .registro__password {
   @include auth.temp-password;
 }
 
 // Pie de acciones
 .registro__actions {
+  position: sticky;
+  z-index: 2;
+  bottom: 0;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
   padding: clamp(12px, 2vh, 16px) 28px;
@@ -196,8 +225,34 @@
       flex: 1 1 100%;
     }
 
-    .registro__btn--secondary {
+    .registro__login {
       order: 1;
+      flex: 1 1 100%;
+      text-align: center;
+    }
+  }
+}
+
+// «¿Ya tienes una cuenta? Inicia sesión»: enlace de texto, no compite con el botón principal
+.registro__login {
+  margin: 0;
+  font-size: t.$font-size-label;
+  color: t.$text-secondary;
+
+  a {
+    display: inline-block;
+    padding: 4px 2px;
+    border-radius: t.$radius-sm;
+    font-weight: t.$font-weight-bold;
+    color: t.$blue;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: t.$focus-ring;
     }
   }
 }

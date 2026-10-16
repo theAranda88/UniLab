@@ -11,10 +11,10 @@ import type {
 } from '../../../core/models/evento.model';
 import { formatearFechaLocal } from '../../../core/utils/date.util';
 import { enlaceAsistencia, generarQrAsistencia } from '../../../core/utils/qr.util';
-import { BreadcrumbComponent, type BreadcrumbItem } from '../../../shared/ui/breadcrumb/breadcrumb.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { ImageLightboxComponent } from '../../../shared/ui/image-lightbox/image-lightbox.component';
 
 const MAX_EVIDENCIAS = 3;
 
@@ -22,7 +22,7 @@ const MAX_EVIDENCIAS = 3;
 @Component({
   selector: 'app-jornada-detalle',
   standalone: true,
-  imports: [TranslatePipe, BreadcrumbComponent, EmptyStateComponent, SkeletonComponent],
+  imports: [ImageLightboxComponent, TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './jornada-detalle.component.html',
   styleUrl: './jornada-detalle.component.scss',
 })
@@ -53,16 +53,6 @@ export class JornadaDetalleComponent implements OnInit {
     const ev = this.evento();
     const jo = this.jornada();
     return ev && jo ? enlaceAsistencia(ev.id_evento, jo.codigo_qr) : '';
-  });
-
-  readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => {
-    const base = this.eventoService.getBasePath();
-    const ev = this.evento();
-    const items: BreadcrumbItem[] = [{ labelKey: 'eventos.title', route: base }];
-    if (ev) items.push({ label: ev.nombre_evento, route: `${base}/${ev.id_evento}` });
-    const jo = this.jornada();
-    if (jo) items.push({ label: jo.nombre_jornada });
-    return items;
   });
 
   ngOnInit(): void {
@@ -177,5 +167,16 @@ export class JornadaDetalleComponent implements OnInit {
   nombreArchivoQr(): string {
     const jo = this.jornada();
     return `qr-jornada-${jo?.id_jornada ?? ''}.png`;
+  }
+
+  /** Visor con zoom de las evidencias (imágenes + posición inicial). */
+  readonly visor = signal<{ imagenes: string[]; inicio: number } | null>(null);
+
+  abrirVisor(imagenes: string[], inicio: number): void {
+    this.visor.set({ imagenes, inicio });
+  }
+
+  urlsEvidencias(): string[] {
+    return this.evidencias().map((e) => e.url);
   }
 }

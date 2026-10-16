@@ -5,17 +5,24 @@
         {{
           soloPendientes()
             ? ('proyectosProfesor.pendientesTitulo' | translate)
-            : ('proyectosProfesor.titulo' | translate)
+            : ((consultaGlobal ? 'proyectosProfesor.tituloTodos' : 'proyectosProfesor.titulo') | translate)
         }}
       </h1>
       <p class="proyectos-prof-list__subtitle">
-        {{ 'proyectosProfesor.subtitulo' | translate }}
+        {{ (consultaGlobal ? 'proyectosProfesor.subtituloTodos' : 'proyectosProfesor.subtitulo') | translate }}
       </p>
     </div>
     @if (pendientesCount() > 0 && !soloPendientes()) {
-      <a routerLink="/prof/pendientes" class="btn btn-secondary">
-        {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
-      </a>
+      @if (consultaGlobal) {
+        <!-- Admin/Coordinador no tienen «Pendientes de aprobar»: filtra aquí mismo -->
+        <button type="button" class="btn btn-secondary" (click)="setFiltroEstado('en_revision')">
+          {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
+        </button>
+      } @else {
+        <a routerLink="/prof/pendientes" class="btn btn-secondary">
+          {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
+        </a>
+      }
     }
   </div>
 
@@ -55,8 +62,8 @@
   } @else if (proyectosAsignados().length === 0) {
     <app-empty-state
       icon="ti-folders"
-      [title]="'proyectosProfesor.sinAsignados' | translate"
-      [message]="'proyectosProfesor.sinAsignadosHint' | translate"
+      [title]="(consultaGlobal ? 'proyectosProfesor.sinProyectos' : 'proyectosProfesor.sinAsignados') | translate"
+      [message]="(consultaGlobal ? 'proyectosProfesor.sinProyectosHint' : 'proyectosProfesor.sinAsignadosHint') | translate"
     />
   } @else {
     <div class="proyectos-prof-list__table-wrap">

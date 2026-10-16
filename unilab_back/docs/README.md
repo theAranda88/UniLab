@@ -126,7 +126,7 @@ Si la base ya existe, verás un error de “already exists”; en ese caso puede
 
 ## 6. Aplicar la migración inicial
 
-El esquema de las **22 tablas** ya está versionado en `prisma/migrations/`. Al clonar, solo hay que **aplicar** esas migraciones a tu BD local.
+El esquema de las **25 tablas** ya está versionado en `prisma/migrations/` (7 migraciones; la última, `20261015000000_configuracion_sistema`). Al clonar, solo hay que **aplicar** esas migraciones a tu BD local.
 
 ```bash
 npx prisma migrate deploy
@@ -254,15 +254,9 @@ El backend tiene **CORS habilitado** para desarrollo. Si el frontend corre en ot
 
 Si un usuario se registra o un admin lo crea, el sistema devuelve una **contraseña temporal** y deja `primer_login = true`. Ese usuario solo puede llamar a `POST /api/auth/cambiar-password` hasta fijar su contraseña definitiva. El frontend debe contemplar ese flujo.
 
-### Variables sugeridas en el frontend (.env)
+### URL de la API en el frontend
 
-```env
-VITE_API_URL=http://localhost:3000/api
-# o
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-```
-
-(Ajusta el prefijo según el framework: Vite, Next.js, Angular, etc.)
+El frontend (Angular) tiene la URL fijada en sus servicios como `http://localhost:3000/api`. Si cambias el puerto del API, actualízala ahí (ver `unilab_front/README.md`).
 
 ---
 
@@ -339,6 +333,8 @@ npm run dev
 | `npm run prisma:migrate` | Crea/aplica migraciones en modo dev (`migrate dev`) |
 | `npm run prisma:generate` | Regenera el cliente Prisma |
 | `npm run prisma:seed` | Ejecuta `prisma/seed.ts` |
+| `npm test` | Pruebas unitarias (Vitest, sin base de datos) |
+| `npm run test:watch` | Pruebas en modo observación |
 
 ---
 
@@ -377,12 +373,14 @@ Solo vuelve a sembrar si te lo indica el equipo o si necesitas resetear datos lo
 
 | Archivo | Contenido |
 |---------|-----------|
-| `00-esquema-bd-referencia.md` | Modelo de datos (22 tablas) — fuente de verdad |
-| `01-prompt-maestro-backend.md` | Plan de construcción del backend |
+| `CONTEXT_TOKENS.md` | Guía interna del agente (ahorro de tokens); no editar a mano |
+| `LECCIONES_ERRORES.md` | Problemas encontrados en el desarrollo; consultar antes de implementar |
 | `postman_collection.json` | Colección de endpoints en español |
 | `postman_environment.json` | Entorno local (`npm run dev`) |
 | `postman_environment.docker.json` | Entorno Docker Compose |
 | `postman_environment.production.json` | Plantilla de entorno producción |
+
+Pendientes que el frontend necesita del backend: [`../../docs/PENDIENTES-BACKEND.md`](../../docs/PENDIENTES-BACKEND.md).
 
 ---
 
@@ -390,6 +388,6 @@ Solo vuelve a sembrar si te lo indica el equipo o si necesitas resetear datos lo
 
 - **Rama principal de trabajo:** acordar con el líder del proyecto (ej. `main` o `develop`).
 - **No commitear** `.env` ni credenciales reales.
-- Antes de abrir un PR, verifica: `npm run build` sin errores y login funcional con usuario del seed.
+- Antes de abrir un PR, verifica: `npm run build` y `npm test` sin errores, y login funcional con usuario del seed.
 
 Si algo de esta guía no coincide con tu entorno, revisa primero `DATABASE_URL` y que PostgreSQL esté activo; la mayoría de incidencias locales vienen de ahí.

@@ -1,0 +1,132 @@
+<div class="semilleros-list">
+  <header class="edu-page-header">
+    <div>
+      <h1 class="edu-page-header__title">
+        {{ (esProfesor ? 'semilleros.misSemilleros' : 'semilleros.titulo') | translate }}
+      </h1>
+      <p class="edu-page-header__description">
+        {{ (esProfesor ? 'semilleros.descripcionProfesor' : 'semilleros.descripcion') | translate }}
+      </p>
+    </div>
+    @if (esAdmin) {
+      <div class="edu-page-header__actions">
+        <button type="button" class="edu-btn" (click)="crear()">
+          <i class="ti ti-plus" aria-hidden="true"></i>
+          {{ 'semilleros.crear' | translate }}
+        </button>
+      </div>
+    }
+  </header>
+
+  @if (cargando()) {
+    <app-skeleton variant="cards" [rows]="3" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">
+        {{ 'common.reintentar' | translate }}
+      </button>
+    </app-empty-state>
+  } @else if (cards().length === 0) {
+    <app-empty-state
+      icon="ti-flask"
+      [title]="
+        (esProfesor ? 'semilleros.sinSemillerosProfesor' : 'semilleros.sinSemilleros') | translate
+      "
+      [message]="
+        (esProfesor ? 'semilleros.sinSemillerosProfesorHint' : 'semilleros.sinSemillerosHint')
+          | translate
+      "
+    >
+      @if (esAdmin) {
+        <button type="button" class="edu-btn" (click)="crear()">
+          {{ 'semilleros.crear' | translate }}
+        </button>
+      }
+    </app-empty-state>
+  } @else {
+    <div class="semilleros-list__grid">
+      @for (card of cards(); track card.semillero.id_semillero) {
+        <article class="semillero-card" [class.semillero-card--inactivo]="!card.semillero.activo">
+          <header class="semillero-card__head">
+            <span class="semillero-card__icon"><i class="ti ti-flask" aria-hidden="true"></i></span>
+            <div class="semillero-card__titles">
+              <h2 class="semillero-card__title">{{ card.semillero.nombre_semillero }}</h2>
+              <span class="semillero-card__escuela">{{
+                card.semillero.escuela?.nombre_escuela
+              }}</span>
+            </div>
+            @if (!card.semillero.activo) {
+              <span class="edu-badge">{{ 'semilleros.inactivo' | translate }}</span>
+            } @else if (card.esLider) {
+              <span class="edu-badge edu-badge--info">{{
+                'semilleros.eresLider' | translate
+              }}</span>
+            }
+          </header>
+
+          <p class="semillero-card__desc">{{ card.semillero.descripcion }}</p>
+
+          <dl class="semillero-card__meta">
+            <div>
+              <dt>{{ 'semilleros.lider' | translate }}</dt>
+              <dd>{{ nombreLider(card.semillero) }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'semilleros.miembros' | translate }}</dt>
+              <dd>{{ card.miembros }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'semilleros.pendientes' | translate }}</dt>
+              <dd>
+                @if (card.pendientes > 0) {
+                  <span class="edu-badge edu-badge--pendiente">{{ card.pendientes }}</span>
+                } @else {
+                  0
+                }
+              </dd>
+            </div>
+          </dl>
+
+          <footer class="semillero-card__foot">
+            <a
+              class="edu-btn edu-btn--secondary edu-btn--sm"
+              [routerLink]="[basePath, card.semillero.id_semillero]"
+            >
+              {{ 'semilleros.verDetalle' | translate }}
+            </a>
+            @if (esAdmin) {
+              <button
+                type="button"
+                class="edu-icon-btn"
+                (click)="editar(card.semillero.id_semillero)"
+                [attr.aria-label]="
+                  ('common.editar' | translate) + ': ' + card.semillero.nombre_semillero
+                "
+                [attr.title]="'common.editar' | translate"
+              >
+                <i class="ti ti-pencil" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="edu-icon-btn edu-icon-btn--danger"
+                [disabled]="eliminandoId() === card.semillero.id_semillero"
+                (click)="eliminar(card.semillero)"
+                [attr.aria-label]="
+                  ('common.eliminar' | translate) + ': ' + card.semillero.nombre_semillero
+                "
+                [attr.title]="'common.eliminar' | translate"
+              >
+                <i class="ti ti-trash" aria-hidden="true"></i>
+              </button>
+            }
+          </footer>
+        </article>
+      }
+    </div>
+  }
+</div>

@@ -1,5 +1,4 @@
 <div class="reporte-container">
-  <app-breadcrumb [items]="breadcrumbItems()" />
 
   <div class="reporte-header">
     <h1>{{ 'reporte.titulo' | translate }}</h1>
@@ -11,9 +10,6 @@
       <button class="btn btn-secondary" (click)="exportarExcel()">
         <i class="ti ti-table-export" aria-hidden="true"></i>
         {{ 'reporte.exportarExcel' | translate }}
-      </button>
-      <button class="btn btn-ghost" (click)="volver()">
-        {{ 'common.volver' | translate }}
       </button>
     </div>
   </div>

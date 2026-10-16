@@ -6,6 +6,9 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { PublicPortalService } from '../../home/public-portal.service';
 import { AuthBrandComponent } from '../auth-brand/auth-brand.component';
+import { ConfiguracionService } from '../../configuracion/configuracion.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import type { Escuela } from '../../../core/models/portal.model';
 
 type RegisterRole = 'Estudiante' | 'Externo';
@@ -44,6 +47,13 @@ export class RegistroComponent {
   readonly errorMessage = signal<string | null>(null);
   readonly tempPassword = signal<string | null>(null);
   readonly escuelas = signal<Escuela[]>([]);
+  /** RA-013: el administrador puede cerrar el auto-registro sin redesplegar. */
+  readonly registroAbierto = toSignal(
+    inject(ConfiguracionService)
+      .publica()
+      .pipe(map((config) => config.registro_abierto)),
+    { initialValue: true },
+  );
 
   registerForm: FormGroup = this.fb.group({
     nombres: ['', Validators.required],

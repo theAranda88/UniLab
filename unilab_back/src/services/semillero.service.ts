@@ -1,7 +1,17 @@
 import { AppError } from '../utils/AppError';
+import { prisma } from '../models/prisma.client';
 import { semilleroRepository } from '../models/semillero.repository';
 import { escuelaRepository } from '../models/escuela.repository';
 import { usuarioRepository } from '../models/usuario.repository';
+import { configuracionService } from './configuracion.service';
+
+async function validarProfesor(id_profesor: number, mensaje = 'Debe ser un Profesor') {
+  const profesor = await usuarioRepository.findById(id_profesor);
+  if (!profesor || profesor.rol.nombre_rol !== 'Profesor') {
+    throw new AppError(mensaje, 422);
+  }
+  return profesor;
+}
 
 export const semilleroService = {
   listar() {
@@ -24,10 +34,7 @@ export const semilleroService = {
     const escuela = await escuelaRepository.findById(data.id_escuela);
     if (!escuela) throw new AppError('Escuela no encontrada', 404);
 
-    const profesor = await usuarioRepository.findById(data.id_profesor_lider);
-    if (!profesor || profesor.rol.nombre_rol !== 'Profesor') {
-      throw new AppError('El líder debe ser un Profesor', 422);
-    }
+    await validarProfesor(data.id_profesor_lider, 'El líder debe ser un Profesor');
 
     const semillero = await semilleroRepository.create({
       nombre_semillero: data.nombre_semillero,
@@ -48,9 +55,46 @@ export const semilleroService = {
     return semillero;
   },
 
-  async actualizar(id: number, data: Partial<{ nombre_semillero: string; descripcion: string; activo: boolean }>) {
-    await semilleroService.obtener(id);
-    return semilleroRepository.update(id, data);
+  async actualizar(
+    id: number,
+    data: Partial<{
+      nombre_semillero: string;
+      descripcion: string;
+      activo: boolean;
+      id_escuela: number;
+      id_profesor_lider: number;
+    }>,
+    updated_by: number,
+  ) {
+    const actual = await semilleroService.obtener(id);
+    const { id_escuela, id_profesor_lider, ...campos } = data;
+
+    if (id_escuela !== undefined && id_escuela !== actual.id_escuela) {
+      const escuela = await escuelaRepository.findById(id_escuela);
+      if (!escuela) throw new AppError('Escuela no encontrada', 404);
+    }
+
+    const cambiaLider = id_profesor_lider !== undefined && id_profesor_lider !== actual.id_profesor_lider;
+    if (cambiaLider) {
+      await validarProfesor(id_profesor_lider, 'El líder debe ser un Profesor');
+    }
+
+    const semillero = await semilleroRepository.update(id, {
+      ...campos,
+      ...(id_escuela !== undefined ? { escuela: { connect: { id_escuela } } } : {}),
+      ...(cambiaLider ? { profesor_lider: { connect: { id_usuario: id_profesor_lider } } } : {}),
+    });
+
+    if (cambiaLider) {
+      // El líder anterior sigue como profesor del semillero, pero sin marca de líder.
+      await prisma.semillero_profesores.updateMany({
+        where: { id_semillero: id, id_profesor: actual.id_profesor_lider, deleted_at: null },
+        data: { es_lider: false },
+      });
+      await semilleroService.asignarProfesor(id, id_profesor_lider, updated_by, true, true);
+    }
+
+    return semillero;
   },
 
   async eliminar(id: number) {
@@ -58,11 +102,33 @@ export const semilleroService = {
     await semilleroRepository.softDelete(id);
   },
 
-  async asignarProfesor(id_semillero: number, id_profesor: number, created_by: number, es_lider = false) {
+  /**
+   * La tabla usa PK compuesta (semillero, profesor): si el profesor fue retirado antes,
+   * se restaura el registro en lugar de crear uno nuevo.
+   */
+  async asignarProfesor(
+    id_semillero: number,
+    id_profesor: number,
+    created_by: number,
+    es_lider = false,
+    permitirExistente = false,
+  ) {
     await semilleroService.obtener(id_semillero);
-    const profesor = await usuarioRepository.findById(id_profesor);
-    if (!profesor || profesor.rol.nombre_rol !== 'Profesor') {
-      throw new AppError('Debe ser un Profesor', 422);
+    await validarProfesor(id_profesor);
+
+    const clave = { id_semillero_id_profesor: { id_semillero, id_profesor } };
+    const existente = await prisma.semillero_profesores.findUnique({ where: clave });
+
+    if (existente && !existente.deleted_at) {
+      if (!permitirExistente) throw new AppError('El profesor ya está asignado a este semillero', 409);
+      return prisma.semillero_profesores.update({ where: clave, data: { es_lider } });
+    }
+
+    if (existente) {
+      return prisma.semillero_profesores.update({
+        where: clave,
+        data: { deleted_at: null, es_lider, fecha_asignacion: new Date() },
+      });
     }
 
     return semilleroRepository.agregarProfesor({
@@ -75,19 +141,38 @@ export const semilleroService = {
   },
 
   async quitarProfesor(id_semillero: number, id_profesor: number) {
-    await semilleroService.obtener(id_semillero);
+    const semillero = await semilleroService.obtener(id_semillero);
+    if (semillero.id_profesor_lider === id_profesor) {
+      throw new AppError('No se puede retirar al profesor líder; asigne otro líder primero', 422);
+    }
+    const asignado = await semilleroRepository.buscarProfesor(id_semillero, id_profesor);
+    if (!asignado) throw new AppError('El profesor no está asignado a este semillero', 404);
     await semilleroRepository.quitarProfesor(id_semillero, id_profesor);
   },
 
   async solicitarMembresia(id_semillero: number, id_estudiante: number) {
-    await semilleroService.obtener(id_semillero);
+    if (!(await configuracionService.obtener('semilleros_solicitudes_abiertas'))) {
+      throw new AppError('Las solicitudes a semilleros están cerradas temporalmente', 422);
+    }
+    const semillero = await semilleroService.obtener(id_semillero);
+    if (!semillero.activo) throw new AppError('El semillero no está recibiendo solicitudes', 422);
+
     const estudiante = await usuarioRepository.findById(id_estudiante);
     if (!estudiante || estudiante.rol.nombre_rol !== 'Estudiante') {
       throw new AppError('Debe ser un Estudiante', 422);
     }
 
     const existente = await semilleroRepository.buscarMembresia(id_semillero, id_estudiante);
-    if (existente) throw new AppError('Ya existe solicitud o membresía', 409);
+    if (existente) {
+      // Tras un rechazo, el estudiante puede volver a postularse.
+      if (existente.estado_solicitud === 'rechazado') {
+        return semilleroRepository.actualizarMembresia(existente.id_membresia, {
+          estado_solicitud: 'pendiente',
+          fecha_resolucion: null,
+        });
+      }
+      throw new AppError('Ya existe solicitud o membresía', 409);
+    }
 
     return semilleroRepository.crearMembresia({
       semillero: { connect: { id_semillero } },
@@ -115,6 +200,8 @@ export const semilleroService = {
     return semilleroRepository.actualizarMembresia(membresia.id_membresia, {
       estado_solicitud: estado,
       fecha_resolucion: new Date(),
+      // Un rechazo revoca cualquier permiso de publicación previo.
+      ...(estado === 'rechazado' ? { puede_publicar: false } : {}),
     });
   },
 

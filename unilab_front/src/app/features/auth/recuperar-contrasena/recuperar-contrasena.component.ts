@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthBrandComponent } from '../auth-brand/auth-brand.component';
 
 /**
  * Página /recuperar-contrasena.
@@ -12,7 +13,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   selector: 'app-recuperar-contrasena',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AuthBrandComponent],
   templateUrl: './recuperar-contrasena.component.html',
   styleUrl: './recuperar-contrasena.component.scss',
 })
@@ -28,6 +29,11 @@ export class RecuperarContrasenaComponent {
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
   });
+
+  emailInvalido(): boolean {
+    const control = this.form.controls.email;
+    return control.invalid && control.touched;
+  }
 
   submit(): void {
     if (this.form.invalid) {

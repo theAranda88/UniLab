@@ -1,6 +1,6 @@
 @use '../../../../styles/design-tokens' as t;
 
-// Shell interno (ADM · COO · PRO) — sidebar 220px + topbar.
+// Shell interno (ADM · COO · PRO) — barra lateral con grupos plegables + cabecera con ruta.
 // Ver docs/design/02-componentes.md › Navegación y layout.
 
 .shell {
@@ -15,7 +15,7 @@
 .sidebar {
   position: sticky;
   top: 0;
-  width: t.$sidebar-width;
+  width: 232px;
   height: 100vh;
   background: t.$white;
   border-right: 1px solid t.$border-subtle;
@@ -61,26 +61,116 @@
 }
 
 .nav {
+  display: flex;
   flex: 1;
-  padding: t.$space-8 t.$space-12;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 8px 8px;
 }
 
-.nav-section {
-  padding: t.$space-12 0 t.$space-4;
+// Grupo plegable (acordeón)
+.nav-group {
+  border-radius: t.$radius-lg;
 }
 
-.nav-section--portal {
-  padding: t.$space-12 t.$space-12 t.$space-8;
-  border-top: 1px solid t.$border-subtle;
-}
-
-.nav-label {
-  padding: 0 10px t.$space-8;
-  font-size: t.$font-size-2xs;
+.nav-group__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: t.$radius-lg;
+  background: transparent;
+  color: rgba(30, 30, 30, 0.78);
+  font: inherit;
+  font-size: t.$font-size-sm;
   font-weight: t.$font-weight-bold;
-  letter-spacing: t.$letter-spacing-kicker;
-  text-transform: uppercase;
-  color: rgba(30, 30, 30, 0.5);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+
+  &:hover {
+    color: t.$blue;
+
+    .nav-group__icon {
+      color: t.$blue;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
+  }
+}
+
+.nav-group__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: t.$text-secondary;
+  font-size: 20px;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.nav-group__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-group__chevron {
+  font-size: 16px;
+  color: t.$text-secondary;
+  transition: transform 220ms ease;
+}
+
+.nav-group--open .nav-group__chevron {
+  transform: rotate(180deg);
+}
+
+// El grupo de la página actual se distingue aunque esté plegado
+.nav-group--current {
+  .nav-group__toggle {
+    color: t.$blue;
+  }
+
+  .nav-group__icon {
+    color: t.$blue;
+  }
+}
+
+// Despliegue animado sin medir alturas: filas 0fr → 1fr
+.nav-group__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms ease;
+
+  > .nav-group__list {
+    overflow: hidden;
+  }
+}
+
+.nav-group--open .nav-group__panel {
+  grid-template-rows: 1fr;
+}
+
+.nav-group__list {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-group--open .nav-group__list {
+  padding: 2px 0 8px;
 }
 
 .nav-item {
@@ -88,34 +178,26 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  min-height: 38px;
-  margin-bottom: 2px;
-  padding: 0 10px;
+  min-height: 36px;
+  margin: 1px 0;
+  padding: 6px 8px 6px 42px;
   border-radius: t.$radius-md;
+  color: rgba(30, 30, 30, 0.72);
   font-size: t.$font-size-label;
   font-weight: t.$font-weight-semibold;
-  color: rgba(30, 30, 30, 0.75);
   text-decoration: none;
-  cursor: pointer;
-  user-select: none;
   transition:
-    background 170ms ease,
-    color 170ms ease;
+    background 150ms ease,
+    color 150ms ease;
 
-  i {
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-
-  span:not(.badge) {
-    flex: 1;
-    min-width: 0;
-    @include t.truncate;
+  > .ti:first-child {
+    position: absolute;
+    left: 18px;
+    font-size: 16px;
+    opacity: 0.8;
   }
 
   &:hover {
-    background: t.$blue-tint;
     color: t.$blue;
     text-decoration: none;
   }
@@ -125,110 +207,170 @@
     box-shadow: t.$focus-ring;
   }
 
-  // Activo: tinte azul + barra amarilla de 3px
   &.active {
-    background: t.$blue-tint-strong;
     color: t.$blue;
-    box-shadow: inset 3px 0 0 t.$accent;
-  }
+    font-weight: t.$font-weight-bold;
 
-  // Módulo sin implementar: visible, bajo contraste y marca «Pronto»
-  &.disabled {
-    color: rgba(30, 30, 30, 0.34);
-    cursor: not-allowed;
-
-    &:hover {
-      background: transparent;
-      color: rgba(30, 30, 30, 0.34);
-    }
-
-    // Indicador «Próximamente» compacto (reloj); el texto traducido va en [attr.title]
-    &::after {
+    // Línea fina en el margen izquierdo que marca la página actual
+    &::before {
       content: '';
-      flex-shrink: 0;
-      width: 22px;
-      height: 18px;
-      border: 1px dashed rgba(30, 30, 30, 0.22);
-      border-radius: t.$radius-xs;
-      background:
-        center / 11px 11px no-repeat
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23939393' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+      position: absolute;
+      top: 9px;
+      bottom: 9px;
+      left: 6px;
+      width: 2px;
+      border-radius: 2px;
+      background: t.$blue;
+    }
+
+    > .ti:first-child {
+      opacity: 1;
     }
   }
+}
+
+.nav-item__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Opción aún no disponible: visible pero sin enlace
+.nav-item--soon {
+  color: t.$text-disabled;
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+    color: t.$text-disabled;
+  }
+}
+
+.soon-tag {
+  flex: none;
+  padding: 2px 7px;
+  border-radius: t.$radius-full;
+  background: t.$neutral-tint;
+  color: t.$text-secondary;
+  font-size: 10px;
+  font-weight: t.$font-weight-extra-bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  flex: none;
   min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+  padding: 1px 6px;
   border-radius: t.$radius-full;
   background: t.$accent;
   color: t.$ink;
-  font-size: t.$font-size-2xs;
+  font-size: 11px;
   font-weight: t.$font-weight-extra-bold;
+  text-align: center;
 }
 
-.sidebar-footer {
-  padding: t.$space-12 t.$space-16 t.$space-16;
+// Pie de la barra: portal + usuario
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 8px 12px;
   border-top: 1px solid t.$border-subtle;
 }
 
-.user-pill {
+.nav-item--portal {
+  padding-left: 12px;
+
+  > .ti:first-child {
+    position: static;
+  }
+}
+
+.nav-item__ext {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.user-card {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: t.$space-12;
+  padding: 8px;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$cream;
 }
 
-.avatar {
+.user-card__avatar {
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   width: 36px;
   height: 36px;
   border-radius: 50%;
   background: t.$blue;
   color: t.$white;
-  font-size: t.$font-size-label;
+  font-size: t.$font-size-xs;
   font-weight: t.$font-weight-extra-bold;
+  box-shadow: 0 0 0 2px t.$accent;
 }
 
-.user-name {
+.user-card__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-card__name {
+  overflow: hidden;
   font-size: t.$font-size-label;
-  font-weight: t.$font-weight-extra-bold;
+  font-weight: t.$font-weight-bold;
   color: t.$ink;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.user-role {
+.user-card__role {
   font-size: t.$font-size-xs;
   color: t.$text-secondary;
 }
 
-.logout-btn {
+.user-card__logout {
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  min-height: 36px;
-  border: 1px solid t.$border-control;
+  width: 34px;
+  height: 34px;
+  border: none;
   border-radius: t.$radius-md;
-  background: t.$white;
-  color: t.$ink;
-  font-size: t.$font-size-label;
-  font-weight: t.$font-weight-bold;
-  transition:
-    background t.$transition-base,
-    color t.$transition-base,
-    border-color t.$transition-base;
+  background: transparent;
+  color: t.$text-secondary;
+  font-size: 18px;
+  cursor: pointer;
 
   &:hover {
-    border-color: rgba(176, 42, 42, 0.35);
-    background: rgba(176, 42, 42, 0.07);
+    background: rgba(176, 42, 42, 0.08);
     color: t.$danger;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-group__panel,
+  .nav-group__chevron,
+  .nav-group,
+  .nav-item {
+    transition: none;
   }
 }
 
@@ -258,11 +400,15 @@
 }
 
 .page-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   font-size: t.$font-size-xl;
   font-weight: t.$font-weight-extra-bold;
-  letter-spacing: t.$letter-spacing-title;
+  letter-spacing: -0.01em;
   color: t.$ink;
-  @include t.truncate;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .topbar-actions {
@@ -560,10 +706,6 @@
     background: t.$overlay;
   }
 
-  .nav-item.disabled::after {
-    display: none;
-  }
-
   .tb-btn--menu {
     display: inline-flex;
   }
@@ -574,7 +716,6 @@
   }
 
   .page-title {
-    flex: 1;
     font-size: t.$font-size-lg;
   }
 

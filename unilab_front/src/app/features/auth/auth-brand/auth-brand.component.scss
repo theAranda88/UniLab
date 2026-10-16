@@ -262,3 +262,38 @@
     right: -90px;
   }
 }
+
+// Teléfonos: el formulario es lo prioritario. La marca se reduce a logos + «Bienvenido a
+// EDUINOVA»; la etiqueta y la frase descriptiva se ocultan para subir el formulario.
+@media (max-width: 600px) {
+  .brand__inner {
+    gap: 16px;
+    padding: 20px 16px 4px;
+  }
+
+  .brand__logo img,
+  .brand__uni {
+    height: 38px;
+  }
+
+  .brand__divider {
+    height: 32px;
+  }
+
+  .brand__tag,
+  .brand__intro {
+    display: none;
+  }
+
+  .brand__welcome {
+    gap: 6px;
+
+    span {
+      font-size: 24px;
+    }
+  }
+
+  .brand__wordmark {
+    width: clamp(170px, 52vw, 230px);
+  }
+}

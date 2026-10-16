@@ -1,5 +1,4 @@
 <div class="jornada">
-  <app-breadcrumb [items]="breadcrumbItems()" />
 
   @if (cargando()) {
     <app-skeleton variant="cards" [rows]="2" />
@@ -73,9 +72,16 @@
           <p class="jornada__hint">{{ 'jornadas.evidenciasHint' | translate }}</p>
 
           <div class="jornada__evidencias">
-            @for (ev of evidencias(); track ev.id_evidencia) {
+            @for (ev of evidencias(); track ev.id_evidencia; let i = $index) {
               <figure class="jornada__evidencia">
-                <img [src]="ev.url" [alt]="ev.nombre_original" />
+                <button
+                  type="button"
+                  class="evidencia-zoom"
+                  (click)="abrirVisor(urlsEvidencias(), i)"
+                  [attr.aria-label]="('common.zoom.open' | translate) + ': ' + ev.nombre_original"
+                >
+                  <img [src]="ev.url" [alt]="ev.nombre_original" />
+                </button>
                 @if (puedeGestionarEvidencias) {
                   <button
                     type="button"
@@ -142,3 +148,7 @@
     </div>
   }
 </div>
+
+@if (visor(); as v) {
+  <app-image-lightbox [images]="v.imagenes" [startIndex]="v.inicio" (closed)="visor.set(null)" />
+}

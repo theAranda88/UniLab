@@ -1,119 +1,284 @@
-<main class="portal-sub portal-sub--detalle">
+<main class="pd" [style.--school-color]="estilo().color">
   @if (loading()) {
-    <app-skeleton variant="cards" [rows]="1" />
+    <div class="pd__container"><app-skeleton variant="cards" [rows]="1" /></div>
   } @else if (loadError()) {
-    <app-empty-state
-      icon="ti-cloud-off"
-      tone="error"
-      [title]="'common.loadErrorTitle' | translate"
-      [message]="'home.loadProjectError' | translate"
-    />
+    <div class="pd__container">
+      <app-empty-state
+        icon="ti-cloud-off"
+        tone="error"
+        [title]="'common.loadErrorTitle' | translate"
+        [message]="'home.loadProjectError' | translate"
+      >
+        <a class="edu-btn edu-btn--secondary" routerLink="/" fragment="escuelas">{{ 'home.schoolPage.exploreOthers' | translate }}</a>
+      </app-empty-state>
+    </div>
   } @else if (proyecto(); as p) {
-    <article class="portal-detail">
-      <header class="portal-detail__header">
-        @if (escuelaId(); as eid) {
-          <button type="button" class="portal-sub__back" (click)="goBack()">{{ 'home.backToProjects' | translate }}</button>
-        }
-        <span class="portal-sub__eyebrow">{{ 'home.projectTypes.' + p.tipo_proyecto | translate }}</span>
-        <h1 class="portal-detail__title">{{ p.titulo }}</h1>
-        <div class="portal-detail__stats">
-          <span>{{ 'home.views' | translate: { count: p.contador_vistas } }}</span>
-          @if (p.fecha_publicacion) {
-            <span>{{ 'home.publishedAt' | translate: { date: (p.fecha_publicacion | date:'mediumDate') } }}</span>
+    <!-- Cabecera -->
+    <header class="pd-head">
+      <div class="pd__container pd-head__inner">
+        <nav class="pd-head__crumbs" [attr.aria-label]="'home.breadcrumb' | translate">
+          <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
+          @if (p.curso?.escuela; as esc) {
+            <a [routerLink]="['/escuelas', esc.id_escuela]">{{ esc.nombre_escuela }}</a>
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
           }
-        </div>
-      </header>
+          <span aria-current="page">{{ p.titulo }}</span>
+        </nav>
 
-      @if (imagenes().length > 0) {
-        <figure class="portal-detail__hero">
-          <app-project-image-carousel
-            [images]="imagenes()"
-            [alt]="p.titulo"
-            [autoplayMs]="5500"
-          />
-        </figure>
-      }
+        <span class="pd-head__type">
+          <i class="ti {{ iconoTipo() }}" aria-hidden="true"></i>
+          {{ 'home.projectTypes.' + p.tipo_proyecto | translate }}
+        </span>
+        <h1 class="pd-head__title">{{ p.titulo }}</h1>
 
-      <section class="portal-detail__section">
-        <h2>{{ 'home.detail.description' | translate }}</h2>
-        <p>{{ p.descripcion }}</p>
-      </section>
+        <ul class="pd-head__meta">
+          @if (p.curso?.escuela?.nombre_escuela) {
+            <li>
+              <i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+              {{ p.curso!.escuela!.nombre_escuela }}
+            </li>
+          }
+          @if (p.fecha_publicacion) {
+            <li>
+              <i class="ti ti-calendar-check" aria-hidden="true"></i>
+              {{ 'home.publishedAt' | translate: { date: (p.fecha_publicacion | date: 'mediumDate') } }}
+            </li>
+          }
+          <li>
+            <i class="ti ti-eye" aria-hidden="true"></i>
+            {{ 'home.views' | translate: { count: p.contador_vistas } }}
+          </li>
+          @if (promedio(); as prom) {
+            <li>
+              <i class="ti ti-star-filled pd-head__star" aria-hidden="true"></i>
+              {{ prom | number: '1.1-1' }}
+              <span class="pd-head__muted">({{ 'home.rating.count' | translate: { count: calificaciones().length } }})</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </header>
 
-      <section class="portal-detail__section portal-detail__grid-2">
-        <div>
-          <h2>{{ 'home.detail.context' | translate }}</h2>
-          <ul class="portal-detail__facts">
-            <li>
-              <strong>{{ 'home.detail.school' | translate }}:</strong>
-              {{ p.curso?.escuela?.nombre_escuela }}
-            </li>
-            <li>
-              <strong>{{ 'home.detail.course' | translate }}:</strong>
-              {{ p.curso?.nombre_curso }} · {{ p.curso?.periodo_academico }}
-            </li>
-            @if (p.semillero) {
-              <li>
-                <strong>{{ 'home.detail.semillero' | translate }}:</strong>
-                {{ p.semillero.nombre_semillero }}
-              </li>
-            }
-            <li>
-              <strong>{{ 'home.director' | translate }}</strong>
-              {{ getCoordinador(p) }}
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h2>{{ 'home.detail.members' | translate }}</h2>
-          @if (p.autores && p.autores.length > 0) {
-            <ul class="portal-detail__members">
-              @for (autor of p.autores; track autor.estudiante.nombres) {
-                <li>
-                  {{ autorNombre(autor.rol_autor, autor.estudiante.nombres, autor.estudiante.apellidos) }}
+    <div class="pd__container pd-body">
+      <!-- Columna principal -->
+      <div class="pd-main">
+        @if (imagenes().length > 0) {
+          <figure class="pd-gallery">
+            <app-project-image-carousel [zoomable]="true" [images]="imagenes()" [alt]="p.titulo" [autoplayMs]="5500" />
+          </figure>
+        }
+
+        <section class="pd-section" aria-labelledby="pd-desc">
+          <h2 id="pd-desc" class="pd-section__title">{{ 'home.detail.description' | translate }}</h2>
+          <p class="pd-desc">{{ p.descripcion }}</p>
+        </section>
+
+        @if (integrantes().length > 0) {
+          <section class="pd-section" aria-labelledby="pd-team">
+            <h2 id="pd-team" class="pd-section__title">{{ 'home.detail.members' | translate }}</h2>
+            <ul class="pd-team">
+              @for (persona of integrantes(); track persona.nombre) {
+                <li class="pd-team__item">
+                  <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
+                  <span class="pd-team__text">
+                    <span class="pd-team__name">{{ persona.nombre }}</span>
+                    <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
+                  </span>
                 </li>
               }
             </ul>
-          } @else if (p.estudiante_creador) {
-            <ul class="portal-detail__members">
-              <li>
-                {{ p.estudiante_creador.nombres }} {{ p.estudiante_creador.apellidos }}
-                ({{ 'home.authorRoles.principal' | translate }})
-              </li>
-            </ul>
-          }
-        </div>
-      </section>
+          </section>
+        }
 
-      <section class="portal-detail__section">
-        <h2>{{ 'home.detail.resources' | translate }}</h2>
-        <p class="portal-detail__resources-hint">{{ 'home.detail.resourcesHint' | translate }}</p>
-        <div class="portal-detail__resources">
-          <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_aplicativo)">
-            {{ 'home.openApp' | translate }}
-          </button>
-          @if (p.url_apk) {
-            <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_apk)">
-              {{ 'home.downloadApk' | translate }}
-            </button>
+        <!-- Comentarios (funcionalidad existente: POST /proyectos/:id/comentarios) -->
+        <section class="pd-section" aria-labelledby="pd-comments">
+          <h2 id="pd-comments" class="pd-section__title">
+            {{ 'home.comments.title' | translate }}
+            <span class="pd-section__count">{{ totalComentarios() }}</span>
+          </h2>
+
+          @if (hilos().length === 0) {
+            <p class="pd-muted">{{ 'home.comments.empty' | translate }}</p>
+          } @else {
+            <ol class="pd-comments">
+              @for (hilo of hilos(); track hilo.comentario.id_comentario) {
+                <li class="pd-comment">
+                  <p class="pd-comment__meta">
+                    <strong>{{ (esMio(hilo.comentario) ? 'home.comments.you' : 'home.comments.member') | translate }}</strong>
+                    <time [attr.datetime]="hilo.comentario.fecha_comentario">{{ hilo.comentario.fecha_comentario | date: 'medium' }}</time>
+                  </p>
+                  <p class="pd-comment__text">{{ hilo.comentario.contenido }}</p>
+                  @if (isLoggedIn() && respondiendoA() !== hilo.comentario.id_comentario) {
+                    <button type="button" class="pd-reply-btn" (click)="abrirRespuesta(hilo.comentario.id_comentario)">
+                      <i class="ti ti-arrow-back-up" aria-hidden="true"></i>
+                      {{ 'home.comments.reply' | translate }}
+                    </button>
+                  }
+                  @if (hilo.respuestas.length > 0) {
+                    <ol class="pd-comments pd-comments--replies">
+                      @for (r of hilo.respuestas; track r.id_comentario) {
+                        <li class="pd-comment">
+                          <p class="pd-comment__meta">
+                            <strong>{{ (esMio(r) ? 'home.comments.you' : 'home.comments.member') | translate }}</strong>
+                            <time [attr.datetime]="r.fecha_comentario">{{ r.fecha_comentario | date: 'medium' }}</time>
+                          </p>
+                          <p class="pd-comment__text">{{ r.contenido }}</p>
+                        </li>
+                      }
+                    </ol>
+                  }
+                  @if (respondiendoA() === hilo.comentario.id_comentario) {
+                    <form class="pd-reply-form" (ngSubmit)="responder()">
+                      <label class="edu-field__label" [for]="'resp-' + hilo.comentario.id_comentario">
+                        {{ 'home.comments.replyLabel' | translate }}
+                      </label>
+                      <textarea
+                        [id]="'resp-' + hilo.comentario.id_comentario"
+                        name="respuesta"
+                        class="edu-control"
+                        rows="2"
+                        [maxlength]="maxComentario"
+                        [(ngModel)]="respuesta"
+                        [placeholder]="'home.comments.replyPlaceholder' | translate"
+                      ></textarea>
+                      <div class="pd-comment-form__foot">
+                        <button type="button" class="edu-btn edu-btn--ghost" (click)="cancelarRespuesta()">
+                          {{ 'home.comments.cancel' | translate }}
+                        </button>
+                        <button type="submit" class="edu-btn" [disabled]="!respuesta.trim() || enviandoRespuesta()">
+                          {{ (enviandoRespuesta() ? 'common.enviando' : 'home.comments.replySubmit') | translate }}
+                        </button>
+                      </div>
+                    </form>
+                  }
+                </li>
+              }
+            </ol>
           }
-          @if (p.url_youtube) {
-            <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_youtube)">
-              {{ 'home.downloadYoutube' | translate }}
-            </button>
+
+          @if (isLoggedIn()) {
+            <form class="pd-comment-form" (ngSubmit)="comentar()">
+              <label class="edu-field__label" for="pd-nuevo-comentario">{{ 'home.comments.label' | translate }}</label>
+              <textarea
+                id="pd-nuevo-comentario"
+                name="comentario"
+                class="edu-control"
+                rows="3"
+                [maxlength]="maxComentario"
+                [(ngModel)]="nuevoComentario"
+                [placeholder]="'home.comments.placeholder' | translate"
+              ></textarea>
+              <div class="pd-comment-form__foot">
+                <span class="pd-muted">{{ nuevoComentario.length }}/{{ maxComentario }}</span>
+                <button type="submit" class="edu-btn" [disabled]="!nuevoComentario.trim() || enviandoComentario()">
+                  {{ (enviandoComentario() ? 'common.enviando' : 'home.comments.submit') | translate }}
+                </button>
+              </div>
+            </form>
+          } @else {
+            <p class="pd-login-hint">
+              <i class="ti ti-lock" aria-hidden="true"></i>
+              <button type="button" class="pd-link" (click)="irALogin()">{{ 'home.comments.loginToComment' | translate }}</button>
+            </p>
           }
-          @if (p.url_spotify) {
-            <button type="button" class="portal-detail__resource" (click)="onProtectedAction(p.url_spotify)">
-              {{ 'home.downloadSpotify' | translate }}
-            </button>
+        </section>
+      </div>
+
+      <!-- Columna lateral -->
+      <aside class="pd-aside">
+        <section class="pd-card" aria-labelledby="pd-ficha">
+          <h2 id="pd-ficha" class="pd-card__title">{{ 'home.detail.context' | translate }}</h2>
+          <dl class="pd-facts">
+            @if (p.curso?.escuela?.nombre_escuela) {
+              <div>
+                <dt>{{ 'home.detail.school' | translate }}</dt>
+                <dd>{{ p.curso!.escuela!.nombre_escuela }}</dd>
+              </div>
+            }
+            @if (p.curso?.nombre_curso) {
+              <div>
+                <dt>{{ 'home.detail.course' | translate }}</dt>
+                <dd>
+                  {{ p.curso!.nombre_curso }}
+                  @if (p.curso!.periodo_academico) {
+                    <span class="pd-muted">· {{ p.curso!.periodo_academico }}</span>
+                  }
+                </dd>
+              </div>
+            }
+            @if (p.semillero) {
+              <div>
+                <dt>{{ 'home.detail.semillero' | translate }}</dt>
+                <dd>{{ p.semillero.nombre_semillero }}</dd>
+              </div>
+            }
+            @if (director(); as nombre) {
+              <div>
+                <dt>{{ 'home.directorLabel' | translate }}</dt>
+                <dd>{{ nombre }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+
+        @if (recursos().length > 0) {
+          <section class="pd-card" aria-labelledby="pd-recursos">
+            <h2 id="pd-recursos" class="pd-card__title">{{ 'home.detail.resources' | translate }}</h2>
+            <app-recursos-externos [proyecto]="p" />
+          </section>
+        }
+
+        <!-- Valoración (funcionalidad existente: PUT /proyectos/:id/calificacion) -->
+        <section class="pd-card" aria-labelledby="pd-rating">
+          <h2 id="pd-rating" class="pd-card__title">{{ 'home.rating.title' | translate }}</h2>
+          @if (promedio(); as prom) {
+            <div class="pd-rating">
+              <span class="pd-rating__value">{{ prom | number: '1.1-1' }}</span>
+              <span class="pd-rating__stars" aria-hidden="true">
+                @for (n of estrellas; track n) {
+                  <i class="ti" [class.ti-star-filled]="prom >= n - 0.25" [class.ti-star-half-filled]="prom >= n - 0.75 && prom < n - 0.25" [class.ti-star]="prom < n - 0.75"></i>
+                }
+              </span>
+              <span class="pd-muted">{{ 'home.rating.count' | translate: { count: calificaciones().length } }}</span>
+            </div>
+          } @else {
+            <p class="pd-muted">{{ 'home.rating.none' | translate }}</p>
           }
-          <button type="button" class="portal-detail__resource portal-detail__resource--muted" (click)="onRequireAuth()">
-            {{ 'home.comment' | translate }}
-          </button>
-          <button type="button" class="portal-detail__resource portal-detail__resource--muted" (click)="onRequireAuth()">
-            {{ 'home.rate' | translate }}
-          </button>
-        </div>
-      </section>
-    </article>
+
+          @if (isLoggedIn()) {
+            <div class="pd-rate">
+              <span class="pd-rate__label" id="pd-rate-label">
+                {{ (miCalificacion() ? 'home.rating.yours' : 'home.rating.rateIt') | translate }}
+              </span>
+              <div class="pd-rate__stars" role="radiogroup" aria-labelledby="pd-rate-label" (mouseleave)="hoverEstrella.set(0)">
+                @for (n of estrellas; track n) {
+                  <button
+                    type="button"
+                    role="radio"
+                    class="pd-rate__star"
+                    [class.pd-rate__star--on]="(hoverEstrella() || miCalificacion()) >= n"
+                    [attr.aria-checked]="miCalificacion() === n"
+                    [attr.aria-label]="etiquetaEstrella(n)"
+                    [disabled]="guardandoCalificacion()"
+                    (mouseenter)="hoverEstrella.set(n)"
+                    (focus)="hoverEstrella.set(n)"
+                    (blur)="hoverEstrella.set(0)"
+                    (click)="calificar(n)"
+                  >
+                    <i class="ti" [class.ti-star-filled]="(hoverEstrella() || miCalificacion()) >= n" [class.ti-star]="(hoverEstrella() || miCalificacion()) < n" aria-hidden="true"></i>
+                  </button>
+                }
+              </div>
+            </div>
+          } @else {
+            <p class="pd-login-hint">
+              <i class="ti ti-lock" aria-hidden="true"></i>
+              <button type="button" class="pd-link" (click)="irALogin()">{{ 'home.rating.loginToRate' | translate }}</button>
+            </p>
+          }
+        </section>
+      </aside>
+    </div>
   }
 </main>

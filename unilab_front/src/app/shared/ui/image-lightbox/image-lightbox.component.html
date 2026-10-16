@@ -1,0 +1,63 @@
+<div class="lb" (click)="onFondo($event)">
+  <div class="lb__bar">
+    @if (hayVarias()) {
+      <span class="lb__count" aria-live="polite">{{ index() + 1 }} / {{ images().length }}</span>
+    } @else {
+      <span></span>
+    }
+    <div class="lb__tools" role="toolbar" [attr.aria-label]="'common.zoom.tools' | translate">
+      <button type="button" class="lb__btn" (click)="alejar()" [disabled]="zoom() <= 1" [attr.aria-label]="'common.zoom.out' | translate">
+        <i class="ti ti-zoom-out" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="lb__btn lb__btn--pct" (click)="reiniciar()" [attr.aria-label]="'common.zoom.reset' | translate">
+        {{ porcentaje() }}%
+      </button>
+      <button type="button" class="lb__btn" (click)="acercar()" [disabled]="zoom() >= 4" [attr.aria-label]="'common.zoom.in' | translate">
+        <i class="ti ti-zoom-in" aria-hidden="true"></i>
+      </button>
+      <span class="lb__sep" aria-hidden="true"></span>
+      <button #cerrarBtn type="button" class="lb__btn" (click)="cerrar()" [attr.aria-label]="'common.close' | translate">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="lb__stage"
+    [class.lb__stage--zoom]="zoom() > 1"
+    [class.lb__stage--drag]="arrastrando()"
+    (wheel)="onWheel($event)"
+    (dblclick)="alternarZoom()"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)"
+  >
+    <img class="lb__img" [src]="actual()" [alt]="alt()" [style.transform]="transform()" draggable="false" />
+  </div>
+
+  @if (hayVarias()) {
+    <button type="button" class="lb__nav lb__nav--prev" (click)="anterior()" [attr.aria-label]="'home.carousel.prev' | translate">
+      <i class="ti ti-chevron-left" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="lb__nav lb__nav--next" (click)="siguiente()" [attr.aria-label]="'home.carousel.next' | translate">
+      <i class="ti ti-chevron-right" aria-hidden="true"></i>
+    </button>
+    <div class="lb__thumbs">
+      @for (src of images(); track src; let i = $index) {
+        <button
+          type="button"
+          class="lb__thumb"
+          [class.lb__thumb--on]="i === index()"
+          [attr.aria-current]="i === index() ? 'true' : null"
+          [attr.aria-label]="'home.carousel.goTo' | translate: { n: i + 1 }"
+          (click)="irA(i)"
+        >
+          <img [src]="src" alt="" />
+        </button>
+      }
+    </div>
+  }
+
+  <p class="lb__hint">{{ 'common.zoom.hint' | translate }}</p>
+</div>

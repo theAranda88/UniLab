@@ -31,6 +31,11 @@ export class ProyectosService {
     return this.auth.hasRole('Profesor');
   }
 
+  /** Administrador y Coordinador ven todos los proyectos y pueden revisarlos y publicarlos. */
+  esConsultaGlobal(): boolean {
+    return this.auth.hasAnyRole(['Administrador', 'Coordinador']);
+  }
+
   esCoordinadorDelProyecto(proyecto: Proyecto): boolean {
     const userId = this.auth.getCurrentUser()?.id_usuario;
     if (!userId) return false;
@@ -48,12 +53,17 @@ export class ProyectosService {
     return lider === userId;
   }
 
+  /** Revisa el profesor coordinador del proyecto; Admin y Coordinador también (el backend lo permite). */
+  private puedeGestionarRevision(proyecto: Proyecto): boolean {
+    return this.esConsultaGlobal() || this.esAsignadoAMi(proyecto);
+  }
+
   puedeRevisar(proyecto: Proyecto): boolean {
-    return this.esAsignadoAMi(proyecto) && proyecto.estado_proyecto === 'en_revision';
+    return this.puedeGestionarRevision(proyecto) && proyecto.estado_proyecto === 'en_revision';
   }
 
   puedePublicar(proyecto: Proyecto): boolean {
-    return this.esAsignadoAMi(proyecto) && proyecto.estado_proyecto === 'aprobado';
+    return this.puedeGestionarRevision(proyecto) && proyecto.estado_proyecto === 'aprobado';
   }
 
   puedeGestionarComoProfesor(proyecto: Proyecto): boolean {

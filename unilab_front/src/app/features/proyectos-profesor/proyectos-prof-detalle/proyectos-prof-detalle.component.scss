@@ -2,162 +2,151 @@
 @use '../../../../styles/eventos-ui' as ui;
 @use '../../../../styles/admin-pages' as pages;
 
-// Pantalla 18 · Revisión de proyecto (profesor)
+// Pantalla 18 · Ficha de proyecto en el panel (revisión del profesor, del administrador o del coordinador).
+// Dos columnas a todo el ancho: contenido a la izquierda, ficha y acciones fijas a la derecha.
 
-.proyectos-prof-detalle {
-  max-width: 880px;
-  margin: 0 auto;
+.ppd {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  // «← Volver»
-  > .btn-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 32px;
-    margin-bottom: t.$space-16;
-    padding: 0 t.$space-8;
-    border: none;
-    border-radius: t.$radius-md;
-    background: transparent;
-    color: t.$blue;
-    font-size: t.$font-size-label;
+.ppd__status {
+  @include t.surface-card;
+  margin: 0;
+  padding: 24px;
+  color: t.$text-secondary;
+
+  &--error {
+    border-color: t.$danger-border;
+    background: t.$danger-tint;
+    color: t.$danger-ink;
+  }
+}
+
+.ppd__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ppd__title {
+  margin: 0;
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: t.$font-weight-black;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: t.$ink;
+}
+
+.ppd__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ppd__main,
+.ppd__side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ppd__side {
+  position: sticky;
+  top: 84px;
+
+  @media (max-width: 1000px) {
+    position: static;
+  }
+}
+
+.ppd__media {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: t.$radius-xl;
+  background: t.$blue-tint;
+  box-shadow: t.$shadow-card;
+
+  app-project-image-carousel {
+    display: block;
+    height: 100%;
+  }
+}
+
+.ppd__card {
+  @include t.surface-card;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+
+  h2 {
+    margin: 0;
+    font-size: t.$font-size-base;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+  }
+}
+
+.ppd__desc {
+  margin: 0;
+  max-width: 72ch;
+  font-size: t.$font-size-base;
+  line-height: 1.7;
+  color: rgba(30, 30, 30, 0.8);
+  white-space: pre-line;
+}
+
+.ppd__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid t.$border-subtle;
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+
+  dt {
+    font-size: t.$font-size-xs;
     font-weight: t.$font-weight-bold;
-    cursor: pointer;
-    transition: background t.$transition-base;
-
-    &:hover {
-      background: t.$blue-tint;
-    }
-  }
-
-  &__header {
-    margin-bottom: t.$space-24;
-
-    h1 {
-      @include t.page-title;
-      margin: t.$space-12 0 t.$space-8;
-    }
-  }
-
-  &__meta {
-    margin: 0;
     color: t.$text-secondary;
+  }
+
+  dd {
+    margin: 0;
     font-size: t.$font-size-sm;
-
-    strong {
-      color: t.$ink;
-    }
+    font-weight: t.$font-weight-semibold;
+    color: t.$ink;
   }
+}
 
-  &__section {
-    @include t.surface-card;
-    margin-bottom: t.$space-16;
-    padding: t.$space-24;
+.ppd__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 
-    h2 {
-      margin: 0 0 t.$space-12;
-      font-size: t.$font-size-lg;
-      font-weight: t.$font-weight-extra-bold;
-      letter-spacing: -0.01em;
-      color: t.$ink;
-    }
-
-    p {
-      margin: 0;
-      font-size: t.$font-size-base;
-      line-height: t.$line-height-relaxed;
-      color: t.$text-secondary;
-    }
-  }
-
-  &__media {
+  .btn {
     width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: clamp(220px, 40vh, 480px);
-    border: 1px solid t.$border-subtle;
-    border-radius: t.$radius-lg;
-    background: t.$neutral-soft;
-    overflow: hidden;
-
-    app-project-image-carousel {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  // Enlaces como filas con ícono de salida
-  &__links ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: t.$space-8;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    li {
-      margin: 0;
-    }
-
-    a {
-      display: inline-flex;
-      align-items: center;
-      gap: t.$space-8;
-      min-height: 36px;
-      padding: 0 t.$space-12;
-      border: 1px solid t.$border-subtle;
-      border-radius: t.$radius-md;
-      background: t.$white;
-      color: t.$blue;
-      font-size: t.$font-size-label;
-      font-weight: t.$font-weight-bold;
-      text-decoration: none;
-      transition:
-        background t.$transition-base,
-        border-color t.$transition-base;
-
-      &::after {
-        content: '↗';
-        font-size: 12px;
-      }
-
-      &:hover {
-        border-color: t.$blue-border;
-        background: t.$blue-tint;
-      }
-    }
-  }
-
-  // Bloque «Decisión»
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: t.$space-8;
-    padding: t.$space-16 t.$space-24;
-    border: 1px solid t.$border-subtle;
-    border-radius: t.$radius-lg;
-    background: t.$white;
-    box-shadow: inset 3px 0 0 t.$accent;
-
-    &:empty {
-      display: none;
-    }
-  }
-
-  &__status {
-    margin: 0;
-    padding: t.$space-48 t.$space-24;
-    border-radius: t.$radius-lg;
-    text-align: center;
-    font-size: t.$font-size-sm;
-    @include t.surface-card;
-    color: t.$text-secondary;
-
-    &--error {
-      border-color: t.$danger-border;
-      background: t.$danger-tint;
-      box-shadow: none;
-      color: t.$danger-ink;
-    }
+    justify-content: center;
+    gap: 8px;
   }
 
   .btn-primary {

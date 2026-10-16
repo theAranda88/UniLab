@@ -13,8 +13,69 @@
 // ---------------------------------------------------------------------------
 .hero {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   background: $blue;
+}
+
+// Profundidad del fondo: luz suave arriba a la derecha, sombra abajo a la izquierda y una
+// retícula de puntos muy tenue que se desvanece hacia el texto.
+.hero__backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(60% 70% at 82% 18%, rgba(76, 130, 222, 0.5), transparent 70%),
+    radial-gradient(50% 60% at 8% 100%, rgba(2, 24, 66, 0.55), transparent 70%),
+    linear-gradient(160deg, #0a438f 0%, $blue 45%, #042b6d 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(100deg, transparent 30%, #000 75%);
+    -webkit-mask-image: linear-gradient(100deg, transparent 30%, #000 75%);
+  }
+}
+
+// Entrada escalonada del contenido al cargar (--d = retraso)
+.reveal {
+  animation: hero-reveal 700ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0ms) both;
+}
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Borde inferior curvo hacia la sección clara
+.hero__curve {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 5vw, 64px);
+  pointer-events: none;
+
+  path {
+    fill: $cream;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }
 
 .hero__inner {
@@ -25,10 +86,10 @@
   gap: 48px;
   max-width: $content-max-width;
   margin: 0 auto;
-  padding: 76px 24px 68px;
+  padding: 84px 24px 116px;
 
   @include respond-to($breakpoint-sm) {
-    padding: 48px 16px;
+    padding: 48px 16px 72px;
   }
 }
 
@@ -41,23 +102,32 @@
 
 .hero__tag {
   align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 11px;
+  display: inline-block;
+  // Altura automática: si el nombre institucional pasa a dos líneas, la etiqueta crece con él
+  // (antes height: 26px recortaba la segunda línea y las tildes de las mayúsculas).
+  max-width: 100%;
+  min-height: 26px;
+  padding: 6px 11px 5px;
   border-radius: $radius-sm;
   background: $accent;
   color: $ink;
   font-size: $font-size-2xs;
   font-weight: $font-weight-extra-bold;
+  line-height: 1.4;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+
+  @include respond-to($breakpoint-sm) {
+    letter-spacing: 0.06em;
+  }
 }
 
 .hero__title {
   margin: 0;
-  max-width: 20ch;
-  font-size: clamp(32px, 7vw, 52px);
+  max-width: 18ch;
+  font-size: clamp(34px, 6vw, 60px);
   font-weight: $font-weight-black;
   line-height: 1.03;
   letter-spacing: -0.035em;
@@ -109,16 +179,30 @@
     font-size: 18px;
   }
 
+  &:focus-visible {
+    outline: 2px solid $white;
+    outline-offset: 3px;
+  }
+
   &--accent {
     border: 1px solid $accent;
     background: $accent;
     color: $ink;
     font-weight: $font-weight-extra-bold;
+    transition: background 180ms ease;
+
+    i {
+      transition: transform 180ms ease;
+    }
 
     &:hover {
       border-color: $accent-pressed;
       background: $accent-pressed;
       color: $ink;
+
+      i {
+        transform: translateX(3px);
+      }
     }
   }
 
@@ -175,9 +259,13 @@
   gap: 9px;
   min-width: 0;
   padding: 20px 18px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: $radius-xl;
-  background: rgba(255, 255, 255, 0.07);
+  // Vidrio: los círculos que pasan por detrás se ven desenfocados y no compiten con la cifra
+  background: rgba(10, 52, 128, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .stat__value {
@@ -194,6 +282,7 @@
   height: 3px;
   border-radius: 2px;
   background: $accent;
+  transition: width 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .stat__label {
@@ -269,9 +358,9 @@
 .schools {
   max-width: $content-max-width;
   margin: 0 auto;
-  padding: 64px 24px;
+  padding: 56px 24px 72px;
   // Deja espacio para la cabecera fija al llegar con /#escuelas
-  scroll-margin-top: 72px;
+  scroll-margin-top: 68px;
 
   @include respond-to($breakpoint-sm) {
     padding: 48px 16px;
@@ -280,7 +369,8 @@
 
 .schools__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  // min() evita desbordar en pantallas más estrechas que la columna mínima
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 16px;
 }
 
@@ -404,6 +494,10 @@
     opacity 0.25s ease;
 }
 
+.school__no-programs {
+  font-style: italic;
+}
+
 .school__badge {
   align-self: flex-start;
   display: inline-flex;
@@ -426,79 +520,67 @@
 }
 
 // ---------------------------------------------------------------------------
-// Próximo evento
+// Proyectos recientes
 // ---------------------------------------------------------------------------
-.event {
-  background: $white;
+.recent {
   border-top: 1px solid $border-subtle;
-  border-bottom: 1px solid $border-subtle;
+  background: linear-gradient(180deg, $white 0%, $cream 100%);
 }
 
-.event__inner {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  align-items: center;
-  gap: 40px;
+.recent__inner {
   max-width: $content-max-width;
   margin: 0 auto;
-  padding: 56px 24px;
+  padding: 64px 24px 72px;
 
   @include respond-to($breakpoint-sm) {
     padding: 48px 16px;
   }
 }
 
-.event__copy {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
+.recent__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+}
 
-  h2 {
-    margin: 0;
-    font-size: 30px;
-    font-weight: $font-weight-black;
-    letter-spacing: -0.028em;
-    line-height: 1.1;
-    color: $ink;
-  }
+// ---------------------------------------------------------------------------
+// Eventos (vista previa; la página completa está en /eventos)
+// ---------------------------------------------------------------------------
+.events {
+  border-top: 1px solid $border-subtle;
+  background: $white;
+  // Deja espacio para la cabecera fija al llegar con /#eventos
+  scroll-margin-top: 68px;
+}
 
-  p {
-    margin: 0;
-    max-width: 50ch;
-    font-size: 15px;
-    line-height: 1.6;
-    color: rgba(30, 30, 30, 0.74);
+.events__inner {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 64px 24px 72px;
+
+  @include respond-to($breakpoint-sm) {
+    padding: 48px 16px 56px;
   }
 }
 
-.event__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 22px;
-  margin-top: 4px;
-  font-size: $font-size-sm;
-  color: rgba(30, 30, 30, 0.74);
-
-  span {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  i {
-    font-size: 17px;
-    color: $blue;
-  }
+.events__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
 }
 
-.event__btn {
-  align-self: flex-start;
+.events__more {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.events__all {
   display: inline-flex;
   align-items: center;
-  height: 44px;
-  margin-top: 10px;
-  padding: 0 20px;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 22px;
   border: 1px solid $blue;
   border-radius: $radius-md;
   background: $blue;
@@ -506,25 +588,25 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   text-decoration: none;
+  transition: background 180ms ease;
+
+  i {
+    font-size: 18px;
+    transition: transform 180ms ease;
+  }
 
   &:hover {
     background: $blue-pressed;
     color: $white;
     text-decoration: none;
+
+    i {
+      transform: translateX(3px);
+    }
   }
-}
 
-.event__media {
-  aspect-ratio: 16 / 10;
-  border: 1px solid $border-subtle;
-  border-radius: $radius-xl;
-  background: $blue-tint;
-  overflow: hidden;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring;
   }
 }

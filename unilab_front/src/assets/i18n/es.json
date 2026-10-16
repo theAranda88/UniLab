@@ -42,7 +42,9 @@
         "proyectos": "Proyectos",
         "recursos": "Recursos",
         "portal": "Eduinova"
-      }
+      },
+      "label": "Navegación del panel",
+      "soon": "Pronto"
     },
     "pages": {
       "dashboard": "Dashboard general",
@@ -50,7 +52,14 @@
       "eventos": "Eventos",
       "escuelas": "Escuelas y carreras",
       "usuarios": "Usuarios",
-      "asistencia": "Control de asistencia"
+      "asistencia": "Control de asistencia",
+      "cursos": "Cursos",
+      "semilleros": "Semilleros",
+      "proyectos": "Proyectos",
+      "pendientes": "Pendientes de aprobar",
+      "reportes": "Reportes",
+      "estadisticas": "Estadísticas",
+      "configuracion": "Configuración"
     },
     "cta": {
       "crearUsuario": "Crear usuario",
@@ -82,6 +91,13 @@
         "es": "Español",
         "en": "English"
       }
+    },
+    "crumbs": {
+      "crear": "Crear",
+      "editar": "Editar",
+      "reporte": "Reporte",
+      "jornada": "Jornada",
+      "detalle": "Detalle"
     }
   },
   "auth": {
@@ -94,7 +110,7 @@
       "passwordPlaceholder": "Ingresa tu contraseña",
       "showPassword": "Mostrar contraseña",
       "submitButton": "Ingresar",
-      "security": "Conexión segura · Universidad Autónoma del Cauca",
+      "security": "Conexión segura · Corporación Universitaria Autónoma del Cauca",
       "formInvalid": "Por favor completa todos los campos correctamente.",
       "invalidCredentials": "Credenciales inválidas. Por favor intenta de nuevo.",
       "emailRequired": "El correo electrónico es requerido",
@@ -106,7 +122,7 @@
       "heading": "Iniciar sesión",
       "welcome": "Bienvenido a",
       "welcomeBrand": "Eduinova",
-      "intro": "Plataforma de gestión académica de proyectos, escuelas y eventos de la Universidad Autónoma.",
+      "intro": "Plataforma de gestión académica de proyectos, escuelas y eventos de la Corporación Universitaria Autónoma del Cauca.",
       "feature1": "Proyectos de semilleros y su revisión",
       "feature2": "Eventos, jornadas y asistencia por QR",
       "feature3": "Escuelas y su producción académica",
@@ -146,9 +162,9 @@
       "caption": "Gestión académica",
       "home": "Ir al inicio del portal Eduinova",
       "backToPortal": "Volver al portal",
-      "universityName": "Universidad Autónoma",
-      "universityPlace": "del Cauca",
-      "universityAlt": "Universidad Autónoma del Cauca"
+      "universityName": "Corporación Universitaria",
+      "universityPlace": "Autónoma del Cauca",
+      "universityAlt": "Corporación Universitaria Autónoma del Cauca"
     },
     "registro": {
       "title": "Crear cuenta",
@@ -182,7 +198,10 @@
       "errors": {
         "required": "Este campo es obligatorio.",
         "email": "Escribe un correo válido, por ejemplo usuario@uniautonoma.edu.co."
-      }
+      },
+      "cerrado": "El registro de nuevas cuentas está cerrado temporalmente. Si ya tienes cuenta, inicia sesión.",
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Inicia sesión"
     },
     "recuperar": {
       "title": "Recuperar contraseña",
@@ -378,7 +397,15 @@
     "creando": "Creando...",
     "enviando": "Enviando...",
     "loadErrorTitle": "No se pudo cargar la información",
-    "reintentar": "Reintentar"
+    "reintentar": "Reintentar",
+    "zoom": {
+      "tools": "Herramientas de zoom",
+      "in": "Acercar",
+      "out": "Alejar",
+      "reset": "Restablecer zoom",
+      "open": "Ampliar imagen",
+      "hint": "Rueda del ratón o doble clic para acercar · arrastra para mover · Esc para cerrar"
+    }
   },
   "dialog": {
     "success": {
@@ -535,7 +562,15 @@
       "titulo": "Inscripciones",
       "sinInscripciones": "No hay inscripciones registradas"
     },
-    "sinEventosHint": "Cuando se publique un nuevo evento aparecerá aquí."
+    "sinEventosHint": "Cuando se publique un nuevo evento aparecerá aquí.",
+    "portalKicker": "Agenda académica",
+    "portalLead": "Congresos, jornadas y encuentros académicos. Consulta las fechas e inscríbete desde el detalle de cada evento.",
+    "costo": "Inscripción",
+    "momento": {
+      "en_curso": "En curso",
+      "proximo": "Próximamente",
+      "pasado": "Ya se realizó"
+    }
   },
   "jornadas": {
     "title": "Jornadas",
@@ -666,7 +701,8 @@
     "backToSchools": "← Volver",
     "carousel": {
       "prev": "Imagen anterior",
-      "next": "Imagen siguiente"
+      "next": "Imagen siguiente",
+      "goTo": "Ver imagen {{n}}"
     },
     "backToProjects": "← Volver a proyectos",
     "projectsListHint": "Proyectos publicados y avalados por la universidad. Selecciona uno para ver el detalle completo.",
@@ -720,14 +756,16 @@
       "label": "Navegación del portal",
       "inicio": "Inicio",
       "proyectos": "Proyectos",
-      "escuelasProyectos": "Escuelas y proyectos"
+      "escuelasProyectos": "Escuelas y proyectos",
+      "openMenu": "Abrir menú de navegación",
+      "closeMenu": "Cerrar menú de navegación"
     },
     "footerPortal": "Portal",
     "footerAccess": "Acceso",
     "createAccount": "Crear cuenta",
     "registerAttendance": "Registrar asistencia",
     "hero": {
-      "tag": "Universidad Autónoma del Cauca",
+      "tag": "Corporación Universitaria Autónoma del Cauca",
       "titleStart": "Los proyectos que",
       "titleLight": "construyen",
       "titleEnd": "nuestros estudiantes",
@@ -752,15 +790,101 @@
       "lead": "Cada escuela reúne los proyectos publicados de sus programas académicos.",
       "noProjects": "Sin proyectos publicados",
       "oneProject": "1 proyecto publicado",
-      "projects": "{{count}} proyectos publicados"
+      "projects": "{{count}} proyectos publicados",
+      "noPrograms": "Programas académicos por publicar."
     },
     "nextEvent": {
       "kicker": "Próximo evento",
       "paid": "Requiere pago de inscripción",
       "free": "Sin costo de inscripción",
-      "cta": "Ver el evento"
+      "cta": "Ver el evento",
+      "kickerNow": "Evento en curso"
     },
-    "noProjectsHint": "Cuando la escuela publique proyectos aparecerán aquí."
+    "noProjectsHint": "Cuando la escuela publique proyectos aparecerán aquí.",
+    "semillerosNav": "Semilleros",
+    "breadcrumb": "Ruta de navegación",
+    "recent": {
+      "kicker": "Proyectos",
+      "title": "Publicados recientemente",
+      "lead": "Los últimos proyectos publicados en el portal, de todas las escuelas."
+    },
+    "schoolPage": {
+      "kicker": "Escuela",
+      "publishedProjects": "Proyectos publicados",
+      "programs": "Programas académicos",
+      "programsTitle": "Programas académicos",
+      "projectsTitle": "Proyectos de la escuela",
+      "filterType": "Filtrar por tipo de proyecto",
+      "allTypes": "Todos",
+      "exploreOthers": "Explorar otras escuelas",
+      "otherSchools": "Otras escuelas"
+    },
+    "events": {
+      "kicker": "Eventos",
+      "title": "Agenda académica",
+      "lead": "Congresos, jornadas y encuentros de la comunidad universitaria. Primero los que están por venir.",
+      "viewAll": "Ver todos los eventos"
+    },
+    "directorLabel": "Director del proyecto",
+    "rating": {
+      "title": "Valoración",
+      "none": "Este proyecto aún no tiene calificaciones.",
+      "count": "{{count}} calificación(es)",
+      "rateIt": "Califica este proyecto",
+      "yours": "Tu calificación (puedes cambiarla)",
+      "starLabel": "{{n}} de 5 estrellas",
+      "loginToRate": "Inicia sesión para calificar",
+      "saved": "Tu calificación se guardó.",
+      "error": "No se pudo guardar la calificación."
+    },
+    "comments": {
+      "title": "Comentarios",
+      "empty": "Todavía no hay comentarios sobre este proyecto.",
+      "you": "Tú",
+      "member": "Miembro de la comunidad",
+      "label": "Escribe un comentario",
+      "placeholder": "Comparte tu opinión o una pregunta sobre el proyecto…",
+      "submit": "Publicar comentario",
+      "sent": "Comentario publicado.",
+      "error": "No se pudo publicar el comentario.",
+      "loginToComment": "Inicia sesión para comentar",
+      "reply": "Responder",
+      "replyLabel": "Tu respuesta",
+      "replyPlaceholder": "Escribe tu respuesta…",
+      "replySubmit": "Publicar respuesta",
+      "cancel": "Cancelar"
+    },
+    "resources": {
+      "aplicativo": {
+        "youtube": "Ver en YouTube",
+        "spotify": "Escuchar en Spotify",
+        "github": "Ver código en GitHub",
+        "google-drive": "Abrir en Google Drive",
+        "web": "Abrir aplicación"
+      },
+      "apk": {
+        "youtube": "Descargar APK",
+        "spotify": "Descargar APK",
+        "github": "Descargar APK desde GitHub",
+        "google-drive": "Descargar APK desde Google Drive",
+        "web": "Descargar APK"
+      },
+      "youtube": {
+        "youtube": "Ver en YouTube",
+        "spotify": "Ver vídeo",
+        "github": "Ver vídeo",
+        "google-drive": "Ver vídeo",
+        "web": "Ver vídeo"
+      },
+      "spotify": {
+        "youtube": "Escuchar audio",
+        "spotify": "Escuchar en Spotify",
+        "github": "Escuchar audio",
+        "google-drive": "Escuchar audio",
+        "web": "Escuchar audio"
+      },
+      "newTab": "(se abre en una pestaña nueva)"
+    }
   },
   "proyectosEstudiante": {
     "titulo": "Mis proyectos",
@@ -863,7 +987,11 @@
     "exitoAprobar": "Proyecto aprobado y publicado en el portal.",
     "exitoRechazar": "Proyecto rechazado.",
     "exitoPublicar": "Proyecto publicado en el portal.",
-    "sinAsignadosHint": "No hay proyectos con este estado entre los que coordinas."
+    "sinAsignadosHint": "No hay proyectos con este estado entre los que coordinas.",
+    "tituloTodos": "Proyectos de la plataforma",
+    "subtituloTodos": "Todos los proyectos registrados. Puedes revisar, aprobar y publicar los que están en revisión.",
+    "sinProyectos": "No hay proyectos con este estado",
+    "sinProyectosHint": "Cuando los estudiantes registren proyectos aparecerán aquí."
   },
   "session": {
     "expiredTitle": "Tu sesión se cerró",
@@ -883,5 +1011,226 @@
     "sinEventos": "No hay eventos con este estado",
     "sinEventosHint": "Cuando haya eventos con jornadas, su control de asistencia aparecerá aquí.",
     "errorCargar": "No se pudieron cargar los eventos."
+  },
+  "cursos": {
+    "titulo": "Cursos",
+    "descripcion": "Cursos de cada escuela. Los proyectos de los estudiantes se registran dentro de un curso.",
+    "crear": "Crear curso",
+    "editar": "Editar curso",
+    "nombre": "Nombre del curso",
+    "escuela": "Escuela",
+    "periodo": "Periodo académico",
+    "periodoPlaceholder": "Ej.: 2026-2",
+    "filtroEscuela": "Filtrar por escuela",
+    "todasEscuelas": "Todas",
+    "sinEscuelas": "Primero crea una escuela",
+    "sinEscuelasHint": "Cada curso pertenece a una escuela. Crea al menos una en «Escuelas y carreras».",
+    "sinCursos": "No hay cursos registrados",
+    "sinCursosHint": "Crea el primer curso para que los estudiantes puedan registrar proyectos en él.",
+    "errorCargar": "Error al cargar los cursos",
+    "errorCrear": "Error al crear el curso",
+    "errorActualizar": "Error al actualizar el curso",
+    "errorEliminar": "Error al eliminar el curso",
+    "eliminarTitulo": "Eliminar curso",
+    "eliminarMensaje": "¿Eliminar el curso «{{nombre}}»? No se puede eliminar si tiene proyectos asociados.",
+    "exitoCrear": "Curso creado correctamente.",
+    "exitoActualizar": "Curso actualizado correctamente.",
+    "exitoEliminar": "Curso eliminado.",
+    "descripcionConsulta": "Cursos de cada escuela en los que los estudiantes registran sus proyectos."
+  },
+  "semilleros": {
+    "titulo": "Semilleros de investigación",
+    "misSemilleros": "Mis semilleros",
+    "descripcion": "Semilleros de cada escuela, su profesor líder y las solicitudes de ingreso de estudiantes.",
+    "descripcionProfesor": "Semilleros en los que eres líder o profesor asignado. Como líder, apruebas solicitudes y autorizas publicaciones.",
+    "crear": "Crear semillero",
+    "editar": "Editar semillero",
+    "sinSemilleros": "No hay semilleros registrados",
+    "sinSemillerosHint": "Crea un semillero y asígnale un profesor líder para que los estudiantes puedan postularse.",
+    "sinSemillerosProfesor": "Aún no participas en ningún semillero",
+    "sinSemillerosProfesorHint": "Cuando un administrador te asigne a un semillero, aparecerá aquí.",
+    "inactivo": "Inactivo",
+    "eresLider": "Eres líder",
+    "lider": "Profesor líder",
+    "miembros": "Miembros",
+    "pendientes": "Pendientes",
+    "verDetalle": "Ver detalle",
+    "eliminarTitulo": "Eliminar semillero",
+    "eliminarMensaje": "¿Eliminar el semillero «{{nombre}}»? Dejará de aparecer para profesores y estudiantes.",
+    "exitoEliminar": "Semillero eliminado.",
+    "errorEliminar": "Error al eliminar el semillero",
+    "errorCargar": "Error al cargar los semilleros",
+    "nombre": "Nombre del semillero",
+    "descripcionCampo": "Descripción",
+    "descripcionMin": "Escribe una descripción de al menos 10 caracteres.",
+    "escuela": "Escuela",
+    "sinProfesores": "No hay profesores activos. Crea uno en «Usuarios».",
+    "activoCampo": "Semillero activo",
+    "activoHint": "Si lo desactivas, los estudiantes no podrán enviar nuevas solicitudes.",
+    "exitoCrear": "Semillero creado correctamente.",
+    "exitoActualizar": "Semillero actualizado correctamente.",
+    "errorCrear": "Error al crear el semillero",
+    "errorActualizar": "Error al actualizar el semillero",
+    "volverListado": "Volver a semilleros",
+    "profesores": "Profesores",
+    "quitar": "Retirar",
+    "asignarProfesor": "Asignar profesor",
+    "sinCandidatos": "Todos los profesores ya están asignados",
+    "asignar": "Asignar",
+    "estudiantes": "Estudiantes y solicitudes",
+    "ayudaLider": "Aprueba o rechaza las solicitudes pendientes. A los miembros aprobados puedes autorizarlos a publicar proyectos del semillero.",
+    "filtroEstado": "Filtrar por estado",
+    "estados": {
+      "pendiente": "Pendientes",
+      "aprobado": "Aprobados",
+      "rechazado": "Rechazados",
+      "todos": "Todos"
+    },
+    "sinMiembros": "Sin estudiantes en este estado",
+    "sinMiembrosHint": "Las solicitudes de los estudiantes aparecerán aquí.",
+    "solicitado": "solicitó el",
+    "puedePublicar": "Puede publicar",
+    "aprobar": "Aprobar",
+    "rechazar": "Rechazar",
+    "autorizarPublicacion": "Autorizar publicación",
+    "quitarProfesorTitulo": "Retirar profesor",
+    "quitarProfesorMensaje": "¿Retirar a {{nombre}} de este semillero?",
+    "exitoAsignarProfesor": "Profesor asignado.",
+    "exitoQuitarProfesor": "Profesor retirado del semillero.",
+    "exitoAprobar": "Solicitud aprobada.",
+    "exitoRechazar": "Solicitud rechazada.",
+    "exitoAutorizar": "El estudiante ya puede publicar proyectos del semillero.",
+    "errorAccion": "No se pudo completar la acción",
+    "portal": {
+      "titulo": "Semilleros de investigación",
+      "subtitulo": "Conoce los semilleros de la universidad y solicita unirte. El profesor líder revisará tu solicitud.",
+      "solicitudesCerradas": "Las solicitudes a semilleros están cerradas temporalmente. Puedes consultar los semilleros, pero no enviar solicitudes.",
+      "sinSemilleros": "No hay semilleros abiertos",
+      "sinSemillerosHint": "Cuando se cree un semillero aparecerá aquí.",
+      "miembros": "{{count}} miembro(s)",
+      "estado": {
+        "pendiente": "Solicitud pendiente",
+        "aprobado": "Eres miembro",
+        "rechazado": "Solicitud rechazada"
+      },
+      "solicitar": "Solicitar ingreso",
+      "volverASolicitar": "Volver a solicitar",
+      "exitoSolicitud": "Solicitud enviada. El profesor líder la revisará.",
+      "errorSolicitud": "No se pudo enviar la solicitud"
+    }
+  },
+  "reportes": {
+    "titulo": "Reportes",
+    "descripcion": "Resumen global de usuarios, proyectos, semilleros y eventos de la plataforma",
+    "generado": "actualizado",
+    "actualizar": "Actualizar",
+    "exportarExcel": "Exportar a Excel",
+    "exportando": "Exportando...",
+    "indicadores": "Indicadores principales",
+    "tiles": {
+      "usuarios": "Usuarios",
+      "usuariosSub": "{{n}} suspendido(s)",
+      "proyectos": "Proyectos",
+      "proyectosSub": "{{n}} publicado(s)",
+      "semilleros": "Semilleros",
+      "semillerosSub": "{{n}} activo(s)",
+      "eventos": "Eventos",
+      "eventosSub": "{{inscripciones}} inscripciones · {{asistencias}} asistencias",
+      "academico": "Escuelas",
+      "academicoSub": "{{n}} curso(s)"
+    },
+    "proyectosPorEscuela": "Proyectos por escuela",
+    "publicados": "Publicados",
+    "otrosEstados": "Otros estados",
+    "publicadosDe": "{{publicados}} de {{total}}",
+    "tipEscuela": "{{escuela}}: {{total}} proyectos, {{publicados}} publicados",
+    "sinDatos": "Sin datos todavía.",
+    "usuariosPorRol": "Usuarios por rol",
+    "proyectosPorEstado": "Proyectos por estado",
+    "eventosPorEstado": "Eventos por estado",
+    "membresiasPorEstado": "Solicitudes a semilleros",
+    "unidades": {
+      "usuarios": "usuarios",
+      "proyectos": "proyectos",
+      "eventos": "eventos",
+      "solicitudes": "solicitudes"
+    },
+    "estadosEvento": {
+      "planeado": "Planeado",
+      "activo": "Activo",
+      "finalizado": "Finalizado"
+    },
+    "errorCargar": "Error al cargar el reporte",
+    "errorExportar": "No se pudo exportar el reporte"
+  },
+  "configuracion": {
+    "titulo": "Configuración",
+    "descripcion": "Parámetros de la plataforma. Los cambios se aplican al guardar, sin redesplegar.",
+    "errorCargar": "Error al cargar la configuración",
+    "secciones": {
+      "acceso": "Registro y solicitudes",
+      "portal": "Portal público"
+    },
+    "registroAbierto": "Permitir registro de nuevas cuentas",
+    "registroAbiertoHint": "Estudiantes y externos pueden crear su cuenta (formulario y Google). Si lo desactivas, solo el administrador crea usuarios.",
+    "solicitudesSemilleros": "Permitir solicitudes a semilleros",
+    "solicitudesSemillerosHint": "Los estudiantes pueden pedir ingreso a un semillero desde el portal.",
+    "mensajePortal": "Aviso del portal",
+    "mensajePortalPlaceholder": "Ej.: Inscripciones abiertas para la Feria de Proyectos hasta el 30 de octubre.",
+    "mensajePortalHint": "Se muestra en una franja sobre todas las páginas del portal. Déjalo vacío para ocultarlo.",
+    "vistaPrevia": "Vista previa",
+    "descartar": "Descartar cambios",
+    "guardar": "Guardar cambios",
+    "exitoGuardar": "Configuración guardada.",
+    "errorGuardar": "No se pudo guardar la configuración"
+  },
+  "panel": {
+    "saludo": {
+      "manana": "Buenos días",
+      "tarde": "Buenas tardes",
+      "noche": "Buenas noches"
+    },
+    "indicadores": "Indicadores principales",
+    "atencion": "Requiere tu atención",
+    "alDia": "Todo al día: no hay tareas pendientes.",
+    "proximosEventos": "Próximos eventos",
+    "verTodos": "Ver todos",
+    "sinEventos": "No hay eventos programados próximamente.",
+    "acciones": {
+      "crearUsuario": "Crear usuario",
+      "crearEvento": "Crear evento",
+      "verReportes": "Ver reportes",
+      "verEstadisticas": "Ver estadísticas"
+    },
+    "kpi": {
+      "proyectosSub": "{{publicados}} publicados · {{revision}} en revisión",
+      "inscripciones": "{{n}} inscripciones",
+      "solicitudes": "{{n}} solicitud(es) pendiente(s)"
+    },
+    "pend": {
+      "proyectos": "{{n}} proyecto(s) en revisión",
+      "proyectosSub": "Puedes revisarlos y publicarlos desde Proyectos",
+      "solicitudes": "{{n}} solicitud(es) de ingreso pendiente(s)",
+      "solicitudesSub": "Las resuelve el profesor líder de cada semillero",
+      "pagos": "Pagos por confirmar"
+    },
+    "admin": {
+      "lead": "Así está la plataforma hoy. Lo que necesita tu atención aparece primero."
+    },
+    "coord": {
+      "lead": "Seguimiento de proyectos, semilleros y eventos de las escuelas.",
+      "enRevision": "Proyectos en revisión",
+      "sinRevision": "No hay proyectos esperando revisión."
+    },
+    "prof": {
+      "lead": "Estás al día con tus proyectos y semilleros.",
+      "leadPendientes": "Tienes {{proyectos}} proyecto(s) por revisar y {{solicitudes}} solicitud(es) de semillero por resolver.",
+      "porRevisarSub": "Enviados por tus estudiantes",
+      "semillerosSub": "Como líder o profesor asignado",
+      "solicitudes": "Solicitudes a semilleros",
+      "solicitudesSub": "En los semilleros que lideras",
+      "revisar": "Proyectos por revisar",
+      "revisarAccion": "Revisar"
+    }
   }
 }

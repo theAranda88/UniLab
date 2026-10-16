@@ -1,11 +1,12 @@
-@for (b of burbujas(); track $index) {
+@for (b of burbujas(); track $index; let i = $index) {
   <span
     #burbuja
-    class="bubble bubble--{{ b.tipo }}"
+    class="bubble bubble--{{ b.tipo }} bubble--capa-{{ capa(b) }}"
     [style.width.px]="b.size"
     [style.height.px]="b.size"
     [style.top.%]="b.top"
     [style.left.%]="b.left"
+    [style.--entrada-delay]="i * 70 + 'ms'"
   >
     <span class="bubble__body bubble__body--float-{{ b.float }}"></span>
   </span>

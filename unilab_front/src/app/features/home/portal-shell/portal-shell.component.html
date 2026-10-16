@@ -1,5 +1,5 @@
 <div class="portal">
-  <header class="portal__header">
+  <header class="portal__header" [class.portal__header--open]="menuAbierto()">
     <div class="portal__header-inner">
       <a class="portal__brand" routerLink="/" [attr.aria-label]="'auth.brand.home' | translate">
         <img src="assets/images/recursos/Logoeduinova.svg" alt="" class="portal__brand-mark" />
@@ -9,46 +9,105 @@
         </span>
       </a>
 
-      <nav class="portal__nav" [attr.aria-label]="'home.nav.label' | translate">
-        <a routerLink="/" class="portal__nav-link" [class.portal__nav-link--active]="activeSection() === 'inicio'">
-          {{ 'home.nav.inicio' | translate }}
-        </a>
-        <a
-          routerLink="/"
-          fragment="escuelas"
-          class="portal__nav-link"
-          [class.portal__nav-link--active]="activeSection() === 'proyectos'"
-        >
-          {{ 'home.nav.proyectos' | translate }}
-        </a>
-        <a
-          routerLink="/eventos"
-          class="portal__nav-link"
-          [class.portal__nav-link--active]="activeSection() === 'eventos'"
-        >
-          {{ 'home.eventsNav' | translate }}
-        </a>
+      <!-- Solo en pantallas estrechas: abre/cierra la navegación -->
+      <button
+        type="button"
+        class="portal__menu-toggle"
+        aria-controls="portal-nav"
+        [attr.aria-expanded]="menuAbierto()"
+        [attr.aria-label]="(menuAbierto() ? 'home.nav.closeMenu' : 'home.nav.openMenu') | translate"
+        (click)="toggleMenu()"
+      >
+        <i class="ti" [class.ti-menu-2]="!menuAbierto()" [class.ti-x]="menuAbierto()" aria-hidden="true"></i>
+      </button>
 
-        @if (isLoggedIn()) {
-          @if (isEstudiante()) {
+      <nav
+        id="portal-nav"
+        class="portal__nav"
+        [attr.aria-label]="'home.nav.label' | translate"
+        (click)="cerrarSiEnlace($event)"
+      >
+        <ul class="portal__links">
+          <li>
             <a
-              routerLink="/mis-proyectos"
+              routerLink="/"
               class="portal__nav-link"
-              [class.portal__nav-link--active]="activeSection() === 'mis-proyectos'"
+              [class.portal__nav-link--active]="activeSection() === 'inicio'"
+              [attr.aria-current]="activeSection() === 'inicio' ? 'page' : null"
+              (click)="irASeccion(null)"
             >
-              {{ 'home.projectsNav' | translate }}
+              {{ 'home.nav.inicio' | translate }}
             </a>
+          </li>
+          <li>
+            <a
+              routerLink="/"
+              fragment="escuelas"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'proyectos'"
+              [attr.aria-current]="activeSection() === 'proyectos' ? 'location' : null"
+              (click)="irASeccion('escuelas')"
+            >
+              {{ 'home.nav.proyectos' | translate }}
+            </a>
+          </li>
+          <li>
+            <!-- Lleva a la sección de eventos del inicio; la página completa está en «Ver todos los eventos» -->
+            <a
+              routerLink="/"
+              fragment="eventos"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'eventos'"
+              [attr.aria-current]="activeSection() === 'eventos' ? 'location' : null"
+              (click)="irASeccion('eventos')"
+            >
+              {{ 'home.eventsNav' | translate }}
+            </a>
+          </li>
+          @if (isLoggedIn() && isEstudiante()) {
+            <li>
+              <a
+                routerLink="/mis-proyectos"
+                class="portal__nav-link"
+                [class.portal__nav-link--active]="activeSection() === 'mis-proyectos'"
+                [attr.aria-current]="activeSection() === 'mis-proyectos' ? 'page' : null"
+              >
+                {{ 'home.projectsNav' | translate }}
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/semilleros"
+                class="portal__nav-link"
+                [class.portal__nav-link--active]="activeSection() === 'semilleros'"
+                [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
+              >
+                {{ 'home.semillerosNav' | translate }}
+              </a>
+            </li>
           }
-          @if (staffPanelRoute(); as panelRoute) {
-            <a [routerLink]="panelRoute" class="portal__cta">{{ 'home.goToPanel' | translate }}</a>
+        </ul>
+
+        <div class="portal__actions">
+          @if (isLoggedIn()) {
+            @if (staffPanelRoute(); as panelRoute) {
+              <a [routerLink]="panelRoute" class="portal__cta">{{ 'home.goToPanel' | translate }}</a>
+            }
+            <app-portal-profile-menu class="portal__profile" />
+          } @else {
+            <a routerLink="/login" class="portal__cta">{{ 'home.signIn' | translate }}</a>
           }
-          <app-portal-profile-menu class="portal__profile" />
-        } @else {
-          <a routerLink="/login" class="portal__cta">{{ 'home.signIn' | translate }}</a>
-        }
+        </div>
       </nav>
     </div>
   </header>
+
+  @if (mensajePortal()) {
+    <div class="portal__notice" role="status">
+      <i class="ti ti-speakerphone" aria-hidden="true"></i>
+      <span>{{ mensajePortal() }}</span>
+    </div>
+  }
 
   <div class="portal__content">
     <router-outlet />

@@ -27,33 +27,130 @@
   margin-top: t.$space-16;
 }
 
-.evento-flyer-hero {
-  background: t.$neutral-soft;
+// Cabecera: imagen del evento + datos clave (dos columnas en pantallas amplias)
+.evento-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   border-bottom: 1px solid t.$border-subtle;
 
-  img {
-    width: 100%;
-    max-height: 340px;
-    object-fit: cover;
-    display: block;
+  @media (max-width: 860px) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-.evento-header {
-  padding: t.$space-24 t.$space-24 t.$space-16;
+.evento-hero__media {
+  // En dos columnas ocupa toda la altura de la fila (sin hueco bajo la imagen)
+  min-height: 300px;
+
+  @media (max-width: 860px) {
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+.evento-hero__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 28px;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: 20px 16px;
+  }
+}
+
+.evento-hero__badges {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: t.$space-12;
+  gap: 8px;
+}
 
-  h1 {
-    flex: 1 1 100%;
-    order: 1;
-    margin: 0;
-    font-size: clamp(1.5rem, 2vw + 1rem, t.$font-size-2xl);
-    font-weight: t.$font-weight-black;
-    letter-spacing: t.$letter-spacing-display;
-    color: t.$ink;
+.evento-hero__title {
+  margin: 0;
+  font-size: clamp(1.6rem, 2vw + 1rem, 2.2rem);
+  font-weight: t.$font-weight-black;
+  line-height: 1.12;
+  letter-spacing: t.$letter-spacing-display;
+  color: t.$ink;
+  overflow-wrap: break-word;
+}
+
+.evento-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.evento-facts__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: t.$radius-lg;
+  background: t.$blue-tint;
+  color: t.$blue;
+  font-size: 20px;
+}
+
+.evento-facts__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  color: t.$ink;
+  overflow-wrap: anywhere;
+}
+
+.evento-facts__label {
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-bold;
+  color: t.$text-secondary;
+}
+
+.evento-facts__pago .evento-facts__icon {
+  background: t.$accent-tint;
+  color: t.$accent-ink;
+}
+
+// Momento del evento según sus fechas
+.momento {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: t.$radius-full;
+  font-size: t.$font-size-2xs;
+  font-weight: t.$font-weight-extra-bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &--en_curso {
+    background: t.$ok-tint;
+    color: t.$ok;
+  }
+
+  &--proximo {
+    background: t.$accent-tint;
+    color: t.$accent-ink;
+  }
+
+  &--pasado {
+    background: t.$neutral-tint;
+    color: t.$text-secondary;
   }
 }
 
@@ -82,60 +179,6 @@
     background: rgba(30, 30, 30, 0.85);
     border-color: rgba(30, 30, 30, 0.85);
     color: t.$white;
-  }
-}
-
-// C15 · Dato-grid (2 columnas explícitas)
-.evento-info {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  margin: 0 t.$space-24;
-  border: 1px solid t.$border-subtle;
-  border-radius: t.$radius-lg;
-  background: t.$border-subtle;
-  overflow: hidden;
-
-  @include t.respond-to(t.$breakpoint-sm) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .info-row {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: t.$space-12 t.$space-16;
-    background: t.$white;
-
-    strong {
-      @include t.kicker;
-      color: t.$text-secondary;
-    }
-
-    span {
-      font-size: t.$font-size-sm;
-      font-weight: t.$font-weight-semibold;
-      color: t.$ink;
-    }
-
-    // Fila «Requiere pago» (sin valor): se muestra como indicador
-    &:has(strong:only-child) {
-      flex-direction: row;
-      align-items: center;
-      background: t.$accent-tint;
-
-      strong {
-        color: t.$accent-ink;
-        text-transform: none;
-        letter-spacing: 0;
-        font-size: t.$font-size-label;
-      }
-    }
-
-    // Si queda una celda impar, ocupa el ancho completo
-    &:last-child:nth-child(odd) {
-      grid-column: 1 / -1;
-    }
   }
 }
 
@@ -411,7 +454,6 @@
 }
 
 @include t.respond-to(t.$breakpoint-sm) {
-  .evento-header,
   .descripcion-section,
   .inscripciones-section,
   .jornadas-section {
@@ -419,15 +461,75 @@
     padding-right: t.$space-16;
   }
 
-  .evento-info {
-    margin: 0 t.$space-16;
-  }
-
   .acciones {
     padding: t.$space-16;
 
     .btn {
       flex: 1 1 100%;
+    }
+  }
+}
+
+// Evidencia ampliable: la imagen es un botón que abre el visor con zoom
+.evidencia-zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+
+  &:focus-visible {
+    outline: 2px solid t.$blue;
+    outline-offset: -2px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+// En el panel (no en el portal): a todo el ancho del contenido, sin relleno extra
+// (el panel ya lo aporta) y con una cabecera más compacta.
+:host:not(.portal-themed) {
+  .evento-detalle-container {
+    max-width: none;
+    padding: 0;
+  }
+
+  .evento-content {
+    margin-top: 0;
+  }
+
+  .evento-hero {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+
+    @media (max-width: 860px) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .evento-hero__media {
+    min-height: 220px;
+    max-height: 300px;
+  }
+
+  .evento-hero__body {
+    gap: 12px;
+    padding: 22px 24px;
+  }
+
+  .evento-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+
+    @media (max-width: 560px) {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 }

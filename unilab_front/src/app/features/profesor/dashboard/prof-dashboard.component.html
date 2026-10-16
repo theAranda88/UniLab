@@ -1,51 +1,151 @@
-<div class="dashboard-page">
-  <div class="stats-row">
-    @for (stat of mock.stats; track stat.labelKey) {
-      <div class="stat-card">
-        <div class="stat-label">{{ stat.labelKey | translate }}</div>
-        <div class="stat-num" [class.accent]="stat.accent">{{ stat.num }}</div>
-        <div class="stat-sub">{{ stat.subKey | translate }}</div>
-      </div>
-    }
-  </div>
-
-  <div class="bottom-row">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">{{ mock.left.titleKey | translate }}</span>
-        <button class="card-link" type="button" disabled>{{ mock.left.linkKey | translate }} →</button>
-      </div>
-      @for (item of mock.left.items; track item.titleKey) {
-        <div class="list-item">
-          <div class="li-icon {{ item.iconVariant }}">
-            <i class="ti {{ item.icon }}" aria-hidden="true"></i>
-          </div>
-          <div class="li-main">
-            <div class="li-title">{{ item.titleKey | translate }}</div>
-            <div class="li-sub">{{ item.subKey | translate }}</div>
-          </div>
-          <span class="pill {{ item.pillVariant }}">{{ item.pillKey | translate }}</span>
-        </div>
-      }
+<div class="dash">
+  <section class="dash-hero">
+    <div class="dash-hero__text">
+      <span class="dash-hero__date">{{ fecha }}</span>
+      <h1 class="dash-hero__title">{{ saludo | translate }}@if (nombre) {, {{ nombre }}}</h1>
+      <p class="dash-hero__lead">
+        @if (!cargando() && (porRevisar().length > 0 || totalSolicitudes() > 0)) {
+          {{ 'panel.prof.leadPendientes' | translate: { proyectos: porRevisar().length, solicitudes: totalSolicitudes() } }}
+        } @else {
+          {{ 'panel.prof.lead' | translate }}
+        }
+      </p>
     </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">{{ right.titleKey | translate }}</span>
-        <button class="card-link" type="button" disabled>{{ right.linkKey | translate }} →</button>
-      </div>
-      @for (item of right.items; track item.titleKey) {
-        <div class="list-item">
-          <div class="li-icon {{ item.iconVariant }}">
-            <i class="ti {{ item.icon }}" aria-hidden="true"></i>
-          </div>
-          <div class="li-main">
-            <div class="li-title">{{ item.titleKey | translate }}</div>
-            <div class="li-sub">{{ item.subKey | translate }}</div>
-          </div>
-          <span class="pill {{ item.pillVariant }}">{{ item.pillKey | translate }}</span>
-        </div>
-      }
+    <div class="dash-hero__actions">
+      <a class="dash-action dash-action--primary" routerLink="/prof/pendientes">
+        <i class="ti ti-clock-check" aria-hidden="true"></i>{{ 'shell.nav.pendientesAprobar' | translate }}
+      </a>
+      <a class="dash-action" routerLink="/prof/semilleros">
+        <i class="ti ti-flask" aria-hidden="true"></i>{{ 'shell.nav.misSemilleros' | translate }}
+      </a>
     </div>
+  </section>
+
+  @if (cargando()) {
+    <app-skeleton variant="stats" [rows]="4" />
+  } @else {
+    <section class="dash-kpis" [attr.aria-label]="'panel.indicadores' | translate">
+      <a class="kpi" routerLink="/prof/proyectos">
+        <span class="kpi__top">
+          <span class="kpi__icon"><i class="ti ti-folders" aria-hidden="true"></i></span>
+          <i class="ti ti-arrow-up-right kpi__arrow" aria-hidden="true"></i>
+        </span>
+        <span class="kpi__value">{{ asignados().length }}</span>
+        <span class="kpi__label">{{ 'shell.nav.proyectosAsignados' | translate }}</span>
+        <span class="kpi__sub">{{ 'reportes.tiles.proyectosSub' | translate: { n: publicados() } }}</span>
+      </a>
+      <a class="kpi" [class.kpi--alerta]="porRevisar().length > 0" routerLink="/prof/pendientes">
+        <span class="kpi__top">
+          <span class="kpi__icon"><i class="ti ti-clock-check" aria-hidden="true"></i></span>
+          <i class="ti ti-arrow-up-right kpi__arrow" aria-hidden="true"></i>
+        </span>
+        <span class="kpi__value">{{ porRevisar().length }}</span>
+        <span class="kpi__label">{{ 'shell.nav.pendientesAprobar' | translate }}</span>
+        <span class="kpi__sub">{{ 'panel.prof.porRevisarSub' | translate }}</span>
+      </a>
+      <a class="kpi" routerLink="/prof/semilleros">
+        <span class="kpi__top">
+          <span class="kpi__icon"><i class="ti ti-flask" aria-hidden="true"></i></span>
+          <i class="ti ti-arrow-up-right kpi__arrow" aria-hidden="true"></i>
+        </span>
+        <span class="kpi__value">{{ misSemilleros().length }}</span>
+        <span class="kpi__label">{{ 'shell.nav.misSemilleros' | translate }}</span>
+        <span class="kpi__sub">{{ 'panel.prof.semillerosSub' | translate }}</span>
+      </a>
+      <a class="kpi" [class.kpi--alerta]="totalSolicitudes() > 0" routerLink="/prof/semilleros">
+        <span class="kpi__top">
+          <span class="kpi__icon"><i class="ti ti-user-question" aria-hidden="true"></i></span>
+          <i class="ti ti-arrow-up-right kpi__arrow" aria-hidden="true"></i>
+        </span>
+        <span class="kpi__value">{{ totalSolicitudes() }}</span>
+        <span class="kpi__label">{{ 'panel.prof.solicitudes' | translate }}</span>
+        <span class="kpi__sub">{{ 'panel.prof.solicitudesSub' | translate }}</span>
+      </a>
+    </section>
+  }
+
+  <div class="dash-grid">
+    <section class="dash-panel" aria-labelledby="dash-atencion">
+      <div class="dash-panel__head">
+        <h2 id="dash-atencion" class="dash-panel__title">
+          <i class="ti ti-bell-ringing" aria-hidden="true"></i>{{ 'panel.atencion' | translate }}
+        </h2>
+      </div>
+      <div class="dash-panel__body">
+        @if (cargando()) {
+          <app-skeleton variant="list" [rows]="3" />
+        } @else if (porRevisar().length === 0 && solicitudes().length === 0) {
+          <p class="dash-done"><i class="ti ti-circle-check" aria-hidden="true"></i>{{ 'panel.alDia' | translate }}</p>
+        } @else {
+          @if (porRevisar().length > 0) {
+            <p class="dash-panel__group">{{ 'panel.prof.revisar' | translate }}</p>
+            <ul class="dash-list">
+              @for (p of porRevisar().slice(0, 5); track p.id_proyecto) {
+                <li>
+                  <a class="dash-item" [routerLink]="['/prof/proyectos', p.id_proyecto]">
+                    <span class="dash-item__icon dash-item__icon--warning"><i class="ti ti-file-search" aria-hidden="true"></i></span>
+                    <span class="dash-item__text">
+                      <span class="dash-item__title">{{ p.titulo }}</span>
+                      <span class="dash-item__sub">{{ nombreEstudiante(p) }}@if (p.curso?.nombre_curso) { · {{ p.curso!.nombre_curso }} }</span>
+                    </span>
+                    <span class="dash-pill dash-pill--warning">{{ 'panel.prof.revisarAccion' | translate }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+          @if (solicitudes().length > 0) {
+            <p class="dash-panel__group">{{ 'panel.prof.solicitudes' | translate }}</p>
+            <ul class="dash-list">
+              @for (s of solicitudes(); track s.semillero.id_semillero) {
+                <li>
+                  <a class="dash-item" [routerLink]="['/prof/semilleros', s.semillero.id_semillero]">
+                    <span class="dash-item__icon dash-item__icon--info"><i class="ti ti-user-question" aria-hidden="true"></i></span>
+                    <span class="dash-item__text">
+                      <span class="dash-item__title">{{ s.semillero.nombre_semillero }}</span>
+                      <span class="dash-item__sub">{{ 'panel.pend.solicitudes' | translate: { n: s.pendientes } }}</span>
+                    </span>
+                    <i class="ti ti-chevron-right dash-item__go" aria-hidden="true"></i>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        }
+      </div>
+    </section>
+
+    <section class="dash-panel" aria-labelledby="dash-eventos">
+      <div class="dash-panel__head">
+        <h2 id="dash-eventos" class="dash-panel__title">
+          <i class="ti ti-calendar-event" aria-hidden="true"></i>{{ 'panel.proximosEventos' | translate }}
+        </h2>
+        <a class="dash-panel__link" routerLink="/prof/eventos">{{ 'panel.verTodos' | translate }} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <div class="dash-panel__body">
+        @if (cargando()) {
+          <app-skeleton variant="list" [rows]="3" />
+        } @else if (proximos().length === 0) {
+          <p class="dash-muted">{{ 'panel.sinEventos' | translate }}</p>
+        } @else {
+          <ul class="dash-list">
+            @for (p of proximos(); track p.evento.id_evento) {
+              <li>
+                <a class="dash-item" [routerLink]="['/prof/eventos', p.evento.id_evento]">
+                  <span class="dash-item__date" aria-hidden="true"><strong>{{ p.dia }}</strong><span>{{ p.mes }}</span></span>
+                  <span class="dash-item__text">
+                    <span class="dash-item__title">{{ p.evento.nombre_evento }}</span>
+                    <span class="dash-item__sub">{{ p.evento.lugar }}</span>
+                  </span>
+                  @if (p.enCurso) {
+                    <span class="dash-pill dash-pill--ok">{{ 'eventos.momento.en_curso' | translate }}</span>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
   </div>
 </div>

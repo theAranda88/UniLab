@@ -1,0 +1,72 @@
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { SemillerosService } from './semilleros.service';
+import { AuthService } from '../../core/auth/auth.service';
+
+const API = 'http://localhost:3000/api/semilleros';
+
+describe('SemillerosService', () => {
+  let service: SemillerosService;
+  let http: HttpTestingController;
+  let rol = 'Administrador';
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: AuthService,
+          useValue: { getCurrentUser: () => ({ id_usuario: 1, id_rol: rol }) },
+        },
+      ],
+    });
+    service = TestBed.inject(SemillerosService);
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => http.verify());
+
+  it('usa la ruta del panel según el rol', () => {
+    rol = 'Administrador';
+    expect(service.getBasePath()).toBe('/admin/semilleros');
+    rol = 'Coordinador';
+    expect(service.getBasePath()).toBe('/coord/semilleros');
+    rol = 'Profesor';
+    expect(service.getBasePath()).toBe('/prof/semilleros');
+  });
+
+  it('el estudiante solicita ingreso sin enviar su id (el backend usa el del token)', () => {
+    service.solicitarIngreso(4).subscribe();
+    const req = http.expectOne(`${API}/4/miembros`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({});
+    req.flush({});
+  });
+
+  it('resuelve una solicitud con el estado elegido', () => {
+    service.resolverSolicitud(4, 30, 'aprobado').subscribe();
+    const req = http.expectOne(`${API}/4/miembros/30`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ estado_solicitud: 'aprobado' });
+    req.flush({});
+  });
+
+  it('autoriza la publicación de un miembro', () => {
+    service.autorizarPublicacion(4, 30).subscribe();
+    const req = http.expectOne(`${API}/4/miembros/30/autorizar-publicacion`);
+    expect(req.request.method).toBe('PATCH');
+    req.flush({});
+  });
+
+  it('asigna y retira profesores', () => {
+    service.asignarProfesor(4, 9).subscribe();
+    const asignar = http.expectOne(`${API}/4/profesores`);
+    expect(asignar.request.body).toEqual({ id_profesor: 9 });
+    asignar.flush({});
+
+    service.quitarProfesor(4, 9).subscribe();
+    expect(http.expectOne(`${API}/4/profesores/9`).request.method).toBe('DELETE');
+  });
+});

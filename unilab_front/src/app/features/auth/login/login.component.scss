@@ -57,46 +57,12 @@
 }
 
 .login__field {
-  @include auth.field;
-  gap: 8px;
-
-  label {
-    font-size: t.$font-size-label;
-    font-weight: t.$font-weight-bold;
-    color: t.$blue;
-  }
-
-  input {
-    min-height: 52px;
-    padding: 0 14px;
-    border-radius: 12px;
-    font-size: 15px;
-  }
+  @include auth.field-lg;
 }
 
 // Campo con ícono a la izquierda
 .login__input {
-  position: relative;
-  display: flex;
-
-  > i {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: t.$text-secondary;
-    pointer-events: none;
-    transition: color 170ms ease;
-  }
-
-  input {
-    padding-left: 46px;
-  }
-
-  &:focus-within > i {
-    color: t.$blue;
-  }
+  @include auth.icon-input;
 }
 
 // «¿Olvidaste tu contraseña?» a la derecha, bajo la contraseña
@@ -220,5 +186,56 @@
 @media (max-width: 480px) {
   .login__card {
     padding: 28px 20px 24px;
+  }
+}
+
+// Escritorios de poca altura (p. ej. 1366×768 o 1280×720 maximizados: ~630–730 px útiles).
+// Se reduce el aire vertical, no la legibilidad: campos de 46px y textos del mismo tamaño.
+// Si aun así no cabe (zoom alto, ventana muy baja), la columna del formulario desplaza.
+@media (min-width: 961px) and (max-height: 820px) {
+  .login__main {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .login__card {
+    gap: 14px;
+    padding: 22px 36px 18px;
+  }
+
+  .login__header {
+    gap: 4px;
+
+    h2 {
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .login__back {
+    margin-bottom: 0;
+  }
+
+  .login__form {
+    gap: 12px;
+  }
+
+  .login__field {
+    gap: 6px;
+
+    input {
+      min-height: 46px;
+    }
+  }
+
+  .login__submit {
+    min-height: 48px;
+  }
+
+  .login__register {
+    margin: 0;
   }
 }

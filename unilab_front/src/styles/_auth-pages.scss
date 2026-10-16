@@ -50,6 +50,14 @@
     min-height: 44px;
     padding: 0 13px;
   }
+
+  // iOS amplía la página al enfocar campos de menos de 16px
+  @media (max-width: 600px) {
+    input,
+    select {
+      font-size: 16px;
+    }
+  }
 }
 
 @mixin hint {
@@ -236,5 +244,55 @@
   &:focus-visible {
     outline: none;
     box-shadow: t.$focus-ring;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Campo grande de /login y /recuperar-contrasena (label azul + control de 52px)
+// ---------------------------------------------------------------------------
+@mixin field-lg {
+  @include field;
+  gap: 8px;
+
+  label {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    color: t.$blue;
+  }
+
+  input {
+    min-height: 52px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 15px;
+
+    @media (max-width: 600px) {
+      font-size: 16px;
+    }
+  }
+}
+
+// Contenedor de input con ícono a la izquierda (el ícono se pinta de azul al enfocar)
+@mixin icon-input {
+  position: relative;
+  display: flex;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: t.$text-secondary;
+    pointer-events: none;
+    transition: color 170ms ease;
+  }
+
+  input {
+    padding-left: 46px;
+  }
+
+  &:focus-within > i {
+    color: t.$blue;
   }
 }

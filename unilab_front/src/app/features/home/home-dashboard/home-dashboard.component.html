@@ -1,32 +1,33 @@
 <!-- Hero -->
-<section class="hero">
+<section class="hero" data-seccion="inicio" aria-labelledby="hero-title">
+  <div class="hero__backdrop" aria-hidden="true"></div>
   <app-floating-bubbles [burbujas]="burbujas" />
 
   <div class="hero__inner">
     <div class="hero__copy">
-      <span class="hero__tag">{{ 'home.hero.tag' | translate }}</span>
-      <h1 class="hero__title">
+      <span class="hero__tag reveal" style="--d: 0ms">{{ 'home.hero.tag' | translate }}</span>
+      <h1 id="hero-title" class="hero__title reveal" style="--d: 80ms">
         {{ 'home.hero.titleStart' | translate }}
         <span>{{ 'home.hero.titleLight' | translate }}</span>
         {{ 'home.hero.titleEnd' | translate }}
       </h1>
-      <span class="hero__rule" aria-hidden="true"></span>
-      <p class="hero__lead">{{ 'home.hero.lead' | translate }}</p>
-      <div class="hero__actions">
+      <span class="hero__rule reveal" style="--d: 160ms" aria-hidden="true"></span>
+      <p class="hero__lead reveal" style="--d: 220ms">{{ 'home.hero.lead' | translate }}</p>
+      <div class="hero__actions reveal" style="--d: 300ms">
         <a routerLink="/" fragment="escuelas" class="hero__btn hero__btn--accent">
           {{ 'home.hero.exploreProjects' | translate }}
           <i class="ti ti-arrow-right" aria-hidden="true"></i>
         </a>
-        <a routerLink="/eventos" class="hero__btn hero__btn--outline">{{ 'home.hero.viewEvents' | translate }}</a>
+        <a routerLink="/" fragment="eventos" class="hero__btn hero__btn--outline">{{ 'home.hero.viewEvents' | translate }}</a>
       </div>
     </div>
 
-    <div class="hero__stats">
+    <div class="hero__stats reveal" style="--d: 380ms">
       <span class="hero__stats-title">{{ 'home.stats.title' | translate }}</span>
       <div class="hero__stats-grid">
-        @for (cifra of cifras(); track cifra.labelKey) {
+        @for (cifra of cifras(); track cifra.labelKey; let i = $index) {
           <div class="stat">
-            <span class="stat__value">{{ cifra.valor }}</span>
+            <span class="stat__value">{{ valoresVisibles().length > i ? valoresVisibles()[i] : cifra.valor }}</span>
             <span class="stat__bar" [style.width.%]="(cifra.valor / cifraMax()) * 100"></span>
             <span class="stat__label">{{ cifra.labelKey | translate }}</span>
             <span class="stat__note">{{ cifra.notaKey | translate }}</span>
@@ -35,14 +36,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Transición curva hacia la sección clara -->
+  <svg class="hero__curve" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,80 L0,36 C240,76 520,84 760,58 C1000,32 1220,6 1440,22 L1440,80 Z" />
+  </svg>
 </section>
 
 <!-- Escuelas -->
-<section class="schools" id="escuelas">
+<section class="schools" id="escuelas" data-seccion="proyectos" aria-labelledby="schools-title">
   <div class="section-head">
     <div class="section-head__title">
       <span class="section-head__kicker">{{ 'home.schools.kicker' | translate }}</span>
-      <h2>{{ 'home.schools.title' | translate }}</h2>
+      <h2 id="schools-title">{{ 'home.schools.title' | translate }}</h2>
       <span class="section-head__rule" aria-hidden="true"></span>
     </div>
     <p>{{ 'home.schools.lead' | translate }}</p>
@@ -57,7 +63,11 @@
           <i class="school__arrow ti ti-arrow-up-right" aria-hidden="true"></i>
         </div>
         <h3>{{ card.escuela.nombre_escuela }}</h3>
-        <p>{{ card.programas }}</p>
+        @if (card.programas) {
+          <p>{{ card.programas }}</p>
+        } @else {
+          <p class="school__no-programs">{{ 'home.schools.noPrograms' | translate }}</p>
+        }
         @if (card.proyectos === 0) {
           <span class="school__badge">{{ 'home.schools.noProjects' | translate }}</span>
         } @else {
@@ -70,34 +80,61 @@
   </div>
 </section>
 
-<!-- Próximo evento -->
-@if (proximoEvento(); as evento) {
-  <section class="event">
-    <div class="event__inner">
-      <div class="event__copy">
-        <span class="section-head__kicker">{{ 'home.nextEvent.kicker' | translate }}</span>
-        <h2>{{ evento.nombre_evento }}</h2>
-        <span class="section-head__rule section-head__rule--short" aria-hidden="true"></span>
-        <p>{{ evento.descripcion }}</p>
-        <div class="event__meta">
-          <span>
-            <i class="ti ti-calendar-event" aria-hidden="true"></i>
-            {{ formatearFecha(evento.fecha_inicio) }} – {{ formatearFecha(evento.fecha_fin) }}
-          </span>
-          <span><i class="ti ti-map-pin" aria-hidden="true"></i>{{ evento.lugar }}</span>
-          <span><i class="ti ti-presentation" aria-hidden="true"></i>{{ evento.tipo_evento }}</span>
-          <span>
-            <i class="ti" [class.ti-cash]="evento.requiere_pago" [class.ti-cash-off]="!evento.requiere_pago" aria-hidden="true"></i>
-            {{ (evento.requiere_pago ? 'home.nextEvent.paid' : 'home.nextEvent.free') | translate }}
-          </span>
+<!-- Proyectos recientes (solo si hay proyectos publicados) -->
+@if (proyectosRecientes().length > 0) {
+  <section class="recent" data-seccion="proyectos" aria-labelledby="recent-title">
+    <div class="recent__inner">
+      <div class="section-head">
+        <div class="section-head__title">
+          <span class="section-head__kicker">{{ 'home.recent.kicker' | translate }}</span>
+          <h2 id="recent-title">{{ 'home.recent.title' | translate }}</h2>
+          <span class="section-head__rule" aria-hidden="true"></span>
         </div>
-        <a [routerLink]="['/eventos', evento.id_evento]" class="event__btn">{{ 'home.nextEvent.cta' | translate }}</a>
+        <p>{{ 'home.recent.lead' | translate }}</p>
       </div>
-      <div class="event__media">
-        @if (evento.url_flyer) {
-          <img [src]="evento.url_flyer" [alt]="evento.nombre_evento" loading="lazy" />
+
+      <div class="recent__grid">
+        @for (proyecto of proyectosRecientes(); track proyecto.id_proyecto) {
+          <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
         }
       </div>
     </div>
   </section>
 }
+
+<!-- Eventos: vista previa en el inicio + acceso a la página completa -->
+<section class="events" id="eventos" data-seccion="eventos" aria-labelledby="events-title">
+  <div class="events__inner">
+    <div class="section-head">
+      <div class="section-head__title">
+        <span class="section-head__kicker">{{ 'home.events.kicker' | translate }}</span>
+        <h2 id="events-title">{{ 'home.events.title' | translate }}</h2>
+        <span class="section-head__rule" aria-hidden="true"></span>
+      </div>
+      <p>{{ 'home.events.lead' | translate }}</p>
+    </div>
+
+    @if (!eventosCargados()) {
+      <app-skeleton variant="cards" [rows]="3" />
+    } @else if (eventosDestacados().length === 0) {
+      <app-empty-state
+        icon="ti-calendar-event"
+        [title]="'eventos.sinEventos' | translate"
+        [message]="'eventos.sinEventosHint' | translate"
+      />
+    } @else {
+      <div class="events__grid">
+        @for (evento of eventosDestacados(); track evento.id_evento) {
+          <app-evento-card [evento]="evento" />
+        }
+      </div>
+    }
+
+    <div class="events__more">
+      <a routerLink="/eventos" class="events__all">
+        {{ 'home.events.viewAll' | translate }}
+        <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</section>

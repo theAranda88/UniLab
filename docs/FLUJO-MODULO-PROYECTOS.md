@@ -267,7 +267,7 @@ Confirme. El backend ejecuta `PATCH /api/proyectos/:id/estado` con `{ "estado_pr
 
 *Figura 12 — «Proyecto aprobado y publicado en el portal.» El botón de la ficha pasa a **Ver en portal público**.*
 
-Cierre el modal. Desde aquí puede abrir el portal público o volver al listado. El ciclo de autorización administrativa ya terminó.
+Cierre el modal. Desde aquí puede abrir el portal público («Ver en portal público») o volver a la lista desde «Proyectos asignados» en la barra lateral. El ciclo de autorización administrativa ya terminó.
 
 ---
 

@@ -1,0 +1,98 @@
+<div class="configuracion">
+  <header class="edu-page-header">
+    <div>
+      <h1 class="edu-page-header__title">{{ 'configuracion.titulo' | translate }}</h1>
+      <p class="edu-page-header__description">{{ 'configuracion.descripcion' | translate }}</p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <app-skeleton variant="list" [rows]="3" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">
+        {{ 'common.reintentar' | translate }}
+      </button>
+    </app-empty-state>
+  } @else {
+    <form class="configuracion__form" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      <section class="edu-card configuracion__section" aria-labelledby="conf-acceso">
+        <h2 id="conf-acceso" class="configuracion__h2">
+          {{ 'configuracion.secciones.acceso' | translate }}
+        </h2>
+
+        <label class="configuracion__switch">
+          <input type="checkbox" role="switch" formControlName="registro_abierto" />
+          <span class="configuracion__switch-text">
+            <strong>{{ 'configuracion.registroAbierto' | translate }}</strong>
+            <small>{{ 'configuracion.registroAbiertoHint' | translate }}</small>
+          </span>
+        </label>
+
+        <label class="configuracion__switch">
+          <input type="checkbox" role="switch" formControlName="semilleros_solicitudes_abiertas" />
+          <span class="configuracion__switch-text">
+            <strong>{{ 'configuracion.solicitudesSemilleros' | translate }}</strong>
+            <small>{{ 'configuracion.solicitudesSemillerosHint' | translate }}</small>
+          </span>
+        </label>
+      </section>
+
+      <section class="edu-card configuracion__section" aria-labelledby="conf-portal">
+        <h2 id="conf-portal" class="configuracion__h2">
+          {{ 'configuracion.secciones.portal' | translate }}
+        </h2>
+
+        <div class="edu-field">
+          <label class="edu-field__label" for="mensaje_portal">{{
+            'configuracion.mensajePortal' | translate
+          }}</label>
+          <textarea
+            id="mensaje_portal"
+            class="edu-control"
+            rows="3"
+            formControlName="mensaje_portal"
+            [attr.maxlength]="maxMensaje"
+            aria-describedby="mensaje_portal_hint"
+            [placeholder]="'configuracion.mensajePortalPlaceholder' | translate"
+          ></textarea>
+          <span id="mensaje_portal_hint" class="edu-field__hint">
+            {{ 'configuracion.mensajePortalHint' | translate }}
+            ({{ formulario.controls.mensaje_portal.value.length }}/{{ maxMensaje }})
+          </span>
+        </div>
+
+        @if (formulario.controls.mensaje_portal.value.trim(); as mensaje) {
+          <div class="configuracion__preview">
+            <span class="configuracion__preview-label">{{
+              'configuracion.vistaPrevia' | translate
+            }}</span>
+            <div class="edu-alert">
+              <i class="ti ti-speakerphone" aria-hidden="true"></i>
+              <span>{{ mensaje }}</span>
+            </div>
+          </div>
+        }
+      </section>
+
+      <div class="configuracion__actions">
+        <button
+          type="button"
+          class="edu-btn edu-btn--ghost"
+          (click)="descartar()"
+          [disabled]="guardando() || formulario.pristine"
+        >
+          {{ 'configuracion.descartar' | translate }}
+        </button>
+        <button type="submit" class="edu-btn" [disabled]="guardando() || formulario.pristine">
+          {{ (guardando() ? 'common.guardando' : 'configuracion.guardar') | translate }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

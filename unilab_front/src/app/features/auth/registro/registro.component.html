@@ -26,6 +26,18 @@
             {{ 'auth.registro.continueLogin' | translate }}
           </a>
         </footer>
+      } @else if (!registroAbierto()) {
+        <div class="registro__body">
+          <div class="registro__notice" role="status">
+            <i class="ti ti-lock" aria-hidden="true"></i>
+            <span>{{ 'auth.registro.cerrado' | translate }}</span>
+          </div>
+        </div>
+        <footer class="registro__actions">
+          <a routerLink="/login" class="registro__btn registro__btn--primary">
+            {{ 'auth.registro.continueLogin' | translate }}
+          </a>
+        </footer>
       } @else {
         <form [formGroup]="registerForm" (ngSubmit)="submitRegister()">
           <div class="registro__body">
@@ -68,7 +80,7 @@
                   <small class="registro__error">{{ errorKey('apellidos') | translate }}</small>
                 }
               </label>
-              <label class="registro__field">
+              <label class="registro__field registro__field--wide">
                 <span>{{ 'auth.registro.email' | translate }} <em>*</em></span>
                 <input type="email" formControlName="email" [attr.aria-invalid]="hasError('email')" autocomplete="email" />
                 @if (hasError('email')) {
@@ -135,16 +147,18 @@
               </div>
             </fieldset>
 
-            <div class="registro__notice">
+            <p class="registro__hint">
               <i class="ti ti-key" aria-hidden="true"></i>
               <span>{{ 'auth.registro.tempPasswordInfo' | translate }}</span>
-            </div>
+            </p>
           </div>
 
+          <!-- Pie fijo: las acciones siguen visibles aunque el formulario no quepa entero -->
           <footer class="registro__actions">
-            <a routerLink="/login" class="registro__btn registro__btn--secondary">
-              {{ 'common.cancelar' | translate }}
-            </a>
+            <p class="registro__login">
+              {{ 'auth.registro.haveAccount' | translate }}
+              <a routerLink="/login">{{ 'auth.registro.signIn' | translate }}</a>
+            </p>
             <button type="submit" class="registro__btn registro__btn--primary" [disabled]="loading()">
               {{ loading() ? ('common.loading' | translate) : ('auth.registro.submit' | translate) }}
             </button>

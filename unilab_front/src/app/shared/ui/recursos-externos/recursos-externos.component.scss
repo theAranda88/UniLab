@@ -1,0 +1,94 @@
+@use '../../../../styles/design-tokens' as *;
+
+// Enlaces externos de un proyecto con la identidad de su servicio (YouTube, Spotify, GitHub…)
+:host {
+  display: block;
+}
+
+// Recursos externos con la identidad de cada servicio
+.rx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rx {
+  --brand: #{$blue};
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-lg;
+  background: $white;
+  color: $ink;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color 170ms ease,
+    box-shadow 170ms ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+    box-shadow: 0 8px 20px -14px color-mix(in srgb, var(--brand) 80%, transparent);
+    text-decoration: none;
+
+    .rx__ext {
+      color: var(--brand);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring;
+  }
+}
+
+.rx__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand) 10%, white);
+  color: var(--brand);
+  font-size: 24px;
+}
+
+.rx__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rx__name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $ink;
+}
+
+.rx__domain {
+  overflow: hidden;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rx__ext {
+  flex: none;
+  font-size: 18px;
+  color: $text-secondary;
+  transition: color 170ms ease;
+}
+

@@ -11,11 +11,16 @@
 }
 
 .project-carousel__fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   background:
     radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.5) 0%, transparent 60%),
     $blue-tint-strong;
+  color: rgba(5, 54, 134, 0.4);
+  font-size: 40px;
 }
 
 .project-carousel__slide {
@@ -116,4 +121,38 @@
 .project-carousel__dot--active {
   background: $accent;
   transform: scale(1.35);
+}
+
+// Imagen ampliable: cursor de lupa y botón «Ampliar» (accesible por teclado)
+.project-carousel__track--zoom {
+  cursor: zoom-in;
+}
+
+.project-carousel__expand {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: $radius-md;
+  background: rgba(8, 16, 36, 0.6);
+  color: $white;
+  font-size: 19px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 160ms ease;
+
+  &:hover {
+    background: rgba(8, 16, 36, 0.8);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
 }

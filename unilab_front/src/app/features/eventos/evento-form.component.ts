@@ -5,14 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
 import { CreateEventoDto, UpdateEventoDto } from '../../core/models/evento.model';
-import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
 
 import { ToastService } from '../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-evento-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',
 })
@@ -36,25 +35,6 @@ export class EventoFormComponent implements OnInit {
   flyerPendiente = signal<File | null>(null);
   flyerPreview = signal<string | null>(null);
   subiendoFlyer = signal(false);
-
-  breadcrumbItems = computed<BreadcrumbItem[]>(() => {
-    const base = this.eventoService.getBasePath();
-    if (this.modoEdicion()) {
-      const id = this.idEvento();
-      const items: BreadcrumbItem[] = [
-        { labelKey: 'eventos.title', route: base },
-      ];
-      if (this.nombreEvento()) {
-        items.push({ label: this.nombreEvento(), route: id ? [base, String(id)] : undefined });
-      }
-      items.push({ labelKey: 'eventos.editar' });
-      return items;
-    }
-    return [
-      { labelKey: 'eventos.title', route: base },
-      { labelKey: 'eventos.crear' },
-    ];
-  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');

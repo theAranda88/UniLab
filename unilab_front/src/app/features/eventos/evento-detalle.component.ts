@@ -16,7 +16,13 @@ import { InscripcionFormComponent } from './inscripcion-form.component';
 import { JornadaFormComponent } from './jornada-form.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
-import { formatearFechaLocal, toDateInputValue } from '../../core/utils/date.util';
+import {
+  formatearFechaLocal,
+  formatearRangoFechas,
+  momentoEvento,
+  toDateInputValue,
+} from '../../core/utils/date.util';
+import { EventoMediaComponent } from '../../shared/ui/evento-media/evento-media.component';
 import { hasPortalTheme } from '../../core/utils/portal-theme.util';
 import type { UiVariant } from '../../shared/ui/ui-variant';
 
@@ -24,10 +30,12 @@ import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.com
 import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 
 import { ToastService } from '../../shared/ui/toast/toast.service';
+import { ImageLightboxComponent } from '../../shared/ui/image-lightbox/image-lightbox.component';
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
-  imports: [
+  imports: [ImageLightboxComponent, 
+    EventoMediaComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -517,6 +525,16 @@ export class EventoDetalleComponent implements OnInit {
     return formatearFechaLocal(fecha);
   }
 
+  formatearRango(inicio: string, fin: string): string {
+    return formatearRangoFechas(inicio, fin, this.translate.getCurrentLang() ?? 'es');
+  }
+
+  /** En curso / próximo / finalizado según las fechas del evento. */
+  readonly momento = computed(() => {
+    const e = this.evento();
+    return e ? momentoEvento(e.fecha_inicio, e.fecha_fin) : 'proximo';
+  });
+
   toDateInput(fecha: string): string {
     return toDateInputValue(fecha);
   }
@@ -531,5 +549,16 @@ export class EventoDetalleComponent implements OnInit {
 
   obtenerQRParaJornada(idJornada: number): string {
     return this.qrUrls()[idJornada] || '';
+  }
+
+  /** Visor con zoom de las evidencias (imágenes + posición inicial). */
+  readonly visor = signal<{ imagenes: string[]; inicio: number } | null>(null);
+
+  abrirVisor(imagenes: string[], inicio: number): void {
+    this.visor.set({ imagenes, inicio });
+  }
+
+  urlsEvidencias(idJornada: number): string[] {
+    return this.evidenciasDeJornada(idJornada).map((e) => e.url);
   }
 }

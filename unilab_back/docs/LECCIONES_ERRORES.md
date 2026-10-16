@@ -71,12 +71,42 @@
 - Al crear usuario por admin (`POST /usuarios`), la password es generada con `generarPasswordAleatoria()` y `primer_login = true`. La respuesta incluye la password en plano (una sola vez).
 
 ### ℹ️ Semillero — flujo de membresía
-- Solicitud (Estudiante) → `estado_solicitud: 'pendiente'`
-- Resolución (Profesor del semillero) → `aceptado` | `rechazado`
-- Autorización de publicación (Profesor) → `puede_publicar = true`
+- Solicitud (Estudiante, solo para sí mismo) → `estado_solicitud: 'pendiente'`. Bloqueada si `semilleros_solicitudes_abiertas = false` o el semillero está inactivo.
+- Resolución (solo el **profesor líder**) → `aprobado` | `rechazado`. Un rechazo revoca `puede_publicar`.
+- Tras un rechazo, el estudiante puede volver a postularse (la membresía vuelve a `pendiente`).
+- Autorización de publicación (profesor líder, solo a miembros `aprobado`) → `puede_publicar = true`.
 
 ### ℹ️ Proyecto — estados válidos
 `borrador` → `en_revision` → `aprobado` | `rechazado` → `publicado`
 
 ### ℹ️ Inscripciones — `estado_pago`
 Solo aplica cuando `evento.requiere_pago = true`. Si `requiere_pago = false`, `estado_pago` debe ser `null`.
+
+---
+
+## Seguridad y contratos con el front
+
+### ⚠️ `include: { usuario: true }` expone `password_hash`
+- **Qué pasa:** incluir un usuario completo en una relación devuelve todas sus columnas, incluido el hash de la contraseña. Pasó en `semillero.repository` (líder, profesores y miembros).
+- **Solución:** incluir siempre usuarios con `select` acotado (`id_usuario`, `nombres`, `apellidos`, `email`).
+
+### ⚠️ 403 para reglas de negocio rompe el front
+- **Qué pasa:** el interceptor HTTP del front redirige **cualquier 403** a «Acceso denegado». Un 403 por «registro cerrado» sacaba al visitante del formulario.
+- **Solución:** 403 solo para permisos de rol. Reglas de negocio y parámetros de configuración → **422** con mensaje claro.
+
+### ⚠️ Volver a insertar en tablas con `@@id` compuesto y soft-delete
+- **Qué pasa:** en `semillero_profesores`, retirar un profesor (soft-delete) y volver a asignarlo hacía fallar el `create` por clave duplicada.
+- **Solución:** buscar con `findUnique` por la clave compuesta; si existe con `deleted_at`, restaurarlo (`deleted_at: null`) en lugar de crear.
+
+---
+
+## Herramientas
+
+### ⚠️ `vitest` 4.x rompe `npm install` desde cero
+- **Qué pasa:** con npm 10, una instalación limpia (como la del Dockerfile, sin lockfile) falla con `Cannot read properties of null (reading 'edgesOut')`.
+- **Solución:** backend con `vitest@^3.2`; frontend con `vitest@~4.0.8` (Angular 21 necesita la 4). No subir sin probar `npm install` en una carpeta vacía.
+
+### ⚠️ Migraciones a mano sin base de datos
+- **Qué pasa:** sin PostgreSQL disponible no se puede usar `prisma migrate dev`.
+- **Solución:** escribir el SQL en `prisma/migrations/<timestamp>_<nombre>/migration.sql` siguiendo el estilo de las existentes, validar con `npx prisma validate` y `npx prisma generate`. El contenedor lo aplica al arrancar (`migrate deploy`).
+

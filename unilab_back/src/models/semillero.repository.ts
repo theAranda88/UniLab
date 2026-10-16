@@ -2,14 +2,19 @@ import { prisma } from './prisma.client';
 import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
+/** Datos de usuario expuestos en semilleros: nunca incluir password_hash ni google_sub. */
+const usuarioResumen = {
+  select: { id_usuario: true, nombres: true, apellidos: true, email: true },
+} as const;
+
 export const semilleroRepository = {
   findMany() {
     return prisma.semilleros.findMany({
       where: activo,
       include: {
         escuela: true,
-        profesor_lider: { include: { rol: true } },
-        profesores: { where: activo },
+        profesor_lider: usuarioResumen,
+        profesores: { where: activo, include: { profesor: usuarioResumen } },
         miembros: { where: activo },
       },
       orderBy: { id_semillero: 'asc' },
@@ -21,9 +26,13 @@ export const semilleroRepository = {
       where: { id_semillero: id, ...activo },
       include: {
         escuela: true,
-        profesor_lider: true,
-        profesores: { where: activo, include: { profesor: true } },
-        miembros: { where: activo, include: { estudiante: true } },
+        profesor_lider: usuarioResumen,
+        profesores: { where: activo, include: { profesor: usuarioResumen } },
+        miembros: {
+          where: activo,
+          include: { estudiante: usuarioResumen },
+          orderBy: { created_at: 'desc' },
+        },
       },
     });
   },
@@ -45,6 +54,12 @@ export const semilleroRepository = {
 
   agregarProfesor(data: Prisma.semillero_profesoresCreateInput) {
     return prisma.semillero_profesores.create({ data });
+  },
+
+  buscarProfesor(id_semillero: number, id_profesor: number) {
+    return prisma.semillero_profesores.findFirst({
+      where: { id_semillero, id_profesor, ...activo },
+    });
   },
 
   quitarProfesor(id_semillero: number, id_profesor: number) {

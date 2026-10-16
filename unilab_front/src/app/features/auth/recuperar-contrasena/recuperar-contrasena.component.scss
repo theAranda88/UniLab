@@ -1,70 +1,71 @@
 @use '../../../../styles/design-tokens' as t;
 @use '../../../../styles/auth-pages' as auth;
 
-// Página /recuperar-contrasena — misma tarjeta que «Cambiar contraseña» del prototipo.
+// Página /recuperar-contrasena — mismo sistema que /login y /registro:
+// panel de marca compartido (app-auth-brand) + tarjeta con el formulario.
 
 :host {
   display: block;
 }
 
 .recuperar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  min-height: 100dvh;
-  padding: 56px 24px;
-  background: t.$cream;
+  @include auth.split-layout;
+}
 
-  @include t.respond-to(t.$breakpoint-sm) {
-    padding: 32px 16px;
-  }
+.recuperar__main {
+  @include auth.split-main;
 }
 
 .recuperar__card {
-  @include auth.card(480px);
-  overflow: hidden;
+  @include auth.split-card(480px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3.2vh, 28px);
+  padding: clamp(28px, 5vh, 44px) 40px clamp(24px, 4vh, 32px);
+
+  @media (max-width: 480px) {
+    padding: 28px 20px 24px;
+  }
 }
 
 .recuperar__header {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 32px 36px 0;
+  gap: 10px;
 
-  h1 {
+  h2 {
     @include auth.card-title;
+    font-size: clamp(26px, 2.2vw, 32px);
+    color: t.$blue;
   }
 
   p {
     @include auth.card-subtitle;
+    font-size: 15px;
   }
+}
 
-  @include t.respond-to(t.$breakpoint-sm) {
-    padding: 28px 20px 0;
-  }
+.recuperar__back {
+  @include auth.back-link;
+  margin-bottom: 4px;
 }
 
 .recuperar__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: t.$radius-xl;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   background: t.$blue-tint;
   color: t.$blue;
-  font-size: 25px;
+  font-size: 24px;
 }
 
 .recuperar__body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px 36px 28px;
-
-  @include t.respond-to(t.$breakpoint-sm) {
-    padding: 24px 20px;
-  }
+  gap: 18px;
 }
 
 .recuperar__alert {
@@ -72,7 +73,7 @@
 }
 
 .recuperar__field {
-  @include auth.field;
+  @include auth.field-lg;
 
   em {
     font-style: normal;
@@ -82,6 +83,14 @@
   small {
     @include auth.hint;
   }
+
+  input[aria-invalid='true'] {
+    border-color: rgba(176, 42, 42, 0.55);
+  }
+}
+
+.recuperar__input {
+  @include auth.icon-input;
 }
 
 .recuperar__notice {
@@ -94,16 +103,41 @@
 
 .recuperar__submit {
   @include auth.submit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 54px;
+  border-radius: 12px;
+  font-size: 16px;
   text-decoration: none;
+
+  i {
+    font-size: 18px;
+    transition: transform 0.2s ease;
+  }
 
   &:hover {
     color: t.$white;
     text-decoration: none;
   }
+
+  &:hover:not(:disabled) i {
+    transform: translateX(3px);
+  }
 }
 
-.recuperar__links {
-  @include auth.text-links;
-  padding: 16px 36px 24px;
-  border-top: 1px solid rgba(30, 30, 30, 0.08);
+.recuperar__secure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  font-size: t.$font-size-xs;
+  color: t.$text-secondary;
+  text-align: center;
+
+  i {
+    font-size: 14px;
+  }
 }

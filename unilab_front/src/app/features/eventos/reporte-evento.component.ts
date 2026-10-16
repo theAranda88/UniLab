@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
 import { ReporteEvento } from '../../core/models/evento.model';
-import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
@@ -13,7 +12,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-reporte-evento',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, BreadcrumbComponent, EmptyStateComponent, SkeletonComponent],
+  imports: [CommonModule, TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './reporte-evento.component.html',
   styleUrl: './reporte-evento.component.scss',
 })
@@ -39,23 +38,6 @@ export class ReporteEventoComponent implements OnInit {
   mostrarColumnaAcciones = computed(
     () => this.puedeActualizarPago() && this.tienePagosPendientes(),
   );
-
-  breadcrumbItems = computed<BreadcrumbItem[]>(() => {
-    const rep = this.reporte();
-    const base = this.eventoService.getBasePath();
-    const id = this.idEvento();
-    if (!rep) {
-      return [
-        { labelKey: 'eventos.title', route: base },
-        { labelKey: 'reporte.titulo' },
-      ];
-    }
-    return [
-      { labelKey: 'eventos.title', route: base },
-      { label: rep.nombre_evento, route: [base, String(id)] },
-      { labelKey: 'reporte.titulo' },
-    ];
-  });
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -116,10 +98,6 @@ export class ReporteEventoComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
-  }
-
-  volver() {
-    this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
   }
 
   calcularPorcentajeAsistencia(inscrito: { total_asistencias: number }): string {

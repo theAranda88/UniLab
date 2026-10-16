@@ -1,22 +1,21 @@
 <div class="eventos-list-container">
 
   <div class="header">
-
-    <h1>{{ 'eventos.listar' | translate }}</h1>
-
+    <div class="header__titles">
+      @if (portalTheme()) {
+        <span class="header__kicker">{{ 'eventos.portalKicker' | translate }}</span>
+      }
+      <h1>{{ 'eventos.listar' | translate }}</h1>
+      @if (portalTheme()) {
+        <p class="header__lead">{{ 'eventos.portalLead' | translate }}</p>
+      }
+    </div>
     @if (puedeCrear()) {
-
       <button class="btn btn-primary" (click)="crearEvento()">
-
         {{ 'eventos.crear' | translate }}
-
       </button>
-
     }
-
   </div>
-
-
 
   @if (portalTheme()) {
 
@@ -136,71 +135,10 @@
   } @else {
 
     <div class="eventos-grid">
-
-      @for (evento of eventosFiltrados(); track evento.id_evento) {
-
-        <div
-
-          class="evento-card"
-
-          [class.evento-card--portal]="portalTheme()"
-
-          (click)="verDetalle(evento.id_evento)"
-
-        >
-
-          @if (evento.url_flyer) {
-            <div class="evento-flyer">
-              <img [src]="evento.url_flyer" [alt]="evento.nombre_evento" />
-            </div>
-          }
-
-          <div class="evento-header">
-
-            <h3>{{ evento.nombre_evento }}</h3>
-
-            <span class="estado" [class]="'estado-' + evento.estado">
-
-              {{ 'eventos.estado.' + evento.estado | translate }}
-
-            </span>
-
-          </div>
-
-          <div class="evento-body">
-
-            <p><strong>{{ 'eventos.tipo' | translate }}:</strong> {{ evento.tipo_evento }}</p>
-
-            <p><strong>{{ 'eventos.lugar' | translate }}:</strong> {{ evento.lugar }}</p>
-
-            <p><strong>{{ 'eventos.fecha' | translate }}:</strong> {{ formatearFecha(evento.fecha_inicio) }} - {{ formatearFecha(evento.fecha_fin) }}</p>
-
-            <p class="descripcion">{{ evento.descripcion | slice: 0: 100 }}...</p>
-
-            @if (evento.requiere_pago) {
-
-              <span class="badge badge-info">{{ 'eventos.requierePago' | translate }}</span>
-
-            }
-
-          </div>
-
-          <div class="evento-footer">
-
-            <button type="button" class="btn btn-link btn-portal-action" (click)="$event.stopPropagation(); verDetalle(evento.id_evento)">
-
-              {{ 'common.verDetalles' | translate }}
-
-            </button>
-
-          </div>
-
-        </div>
-
+      @for (item of eventosOrdenados(); track item.evento.id_evento) {
+        <app-evento-card [evento]="item.evento" [basePath]="eventoService.getBasePath()" />
       }
-
     </div>
-
   }
 
 </div>

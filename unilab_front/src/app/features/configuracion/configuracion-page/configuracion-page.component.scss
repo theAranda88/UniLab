@@ -1,0 +1,75 @@
+@use '../../../../styles/design-tokens' as t;
+
+// RA-013 · Configuración del sistema
+.configuracion {
+  max-width: 760px;
+  margin: 0 auto;
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-16;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-16;
+  }
+
+  &__h2 {
+    margin: 0;
+    font-size: t.$font-size-base;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+  }
+
+  &__switch {
+    display: flex;
+    align-items: flex-start;
+    gap: t.$space-12;
+    cursor: pointer;
+
+    input {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: t.$blue;
+      cursor: pointer;
+    }
+  }
+
+  &__switch-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: t.$font-size-sm;
+    color: t.$ink;
+
+    small {
+      font-size: t.$font-size-label;
+      line-height: t.$line-height-normal;
+      color: t.$text-secondary;
+    }
+  }
+
+  &__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__preview-label {
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-bold;
+    color: t.$text-secondary;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: t.$space-8;
+  }
+}

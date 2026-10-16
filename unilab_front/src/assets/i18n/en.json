@@ -42,7 +42,9 @@
         "proyectos": "Projects",
         "recursos": "Resources",
         "portal": "Eduinova"
-      }
+      },
+      "label": "Panel navigation",
+      "soon": "Soon"
     },
     "pages": {
       "dashboard": "General dashboard",
@@ -50,7 +52,14 @@
       "eventos": "Events",
       "escuelas": "Schools and programs",
       "usuarios": "Users",
-      "asistencia": "Attendance control"
+      "asistencia": "Attendance control",
+      "cursos": "Courses",
+      "semilleros": "Research groups",
+      "proyectos": "Projects",
+      "pendientes": "Pending approval",
+      "reportes": "Reports",
+      "estadisticas": "Statistics",
+      "configuracion": "Settings"
     },
     "cta": {
       "crearUsuario": "Create user",
@@ -82,6 +91,13 @@
         "es": "Español",
         "en": "English"
       }
+    },
+    "crumbs": {
+      "crear": "Create",
+      "editar": "Edit",
+      "reporte": "Report",
+      "jornada": "Session",
+      "detalle": "Detail"
     }
   },
   "auth": {
@@ -94,7 +110,7 @@
       "passwordPlaceholder": "Enter your password",
       "showPassword": "Show password",
       "submitButton": "Sign in",
-      "security": "Secure connection · Universidad Autónoma del Cauca",
+      "security": "Secure connection · Corporación Universitaria Autónoma del Cauca",
       "formInvalid": "Please complete all fields correctly.",
       "invalidCredentials": "Invalid credentials. Please try again.",
       "emailRequired": "Email is required",
@@ -106,7 +122,7 @@
       "heading": "Sign in",
       "welcome": "Welcome to",
       "welcomeBrand": "Eduinova",
-      "intro": "Academic management platform for projects, schools and events of Universidad Autónoma.",
+      "intro": "Academic management platform for projects, schools and events of the Corporación Universitaria Autónoma del Cauca.",
       "feature1": "Research group projects and their review",
       "feature2": "Events, sessions and QR attendance",
       "feature3": "Schools and their academic output",
@@ -146,9 +162,9 @@
       "caption": "Academic management",
       "home": "Go to the Eduinova portal home",
       "backToPortal": "Back to portal",
-      "universityName": "Universidad Autónoma",
-      "universityPlace": "del Cauca",
-      "universityAlt": "Universidad Autónoma del Cauca"
+      "universityName": "Corporación Universitaria",
+      "universityPlace": "Autónoma del Cauca",
+      "universityAlt": "Corporación Universitaria Autónoma del Cauca"
     },
     "registro": {
       "title": "Create account",
@@ -182,7 +198,10 @@
       "errors": {
         "required": "This field is required.",
         "email": "Enter a valid email, e.g. user@uniautonoma.edu.co."
-      }
+      },
+      "cerrado": "New account sign-up is temporarily closed. If you already have an account, sign in.",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
     },
     "recuperar": {
       "title": "Recover password",
@@ -378,7 +397,15 @@
     "creando": "Creating...",
     "enviando": "Sending...",
     "loadErrorTitle": "The information could not be loaded",
-    "reintentar": "Retry"
+    "reintentar": "Retry",
+    "zoom": {
+      "tools": "Zoom tools",
+      "in": "Zoom in",
+      "out": "Zoom out",
+      "reset": "Reset zoom",
+      "open": "Enlarge image",
+      "hint": "Mouse wheel or double-click to zoom · drag to move · Esc to close"
+    }
   },
   "dialog": {
     "success": {
@@ -535,7 +562,15 @@
       "titulo": "Registrations",
       "sinInscripciones": "No registrations found"
     },
-    "sinEventosHint": "New events will appear here once they are published."
+    "sinEventosHint": "New events will appear here once they are published.",
+    "portalKicker": "Academic calendar",
+    "portalLead": "Conferences, workshops and academic gatherings. Check the dates and register from each event's page.",
+    "costo": "Registration",
+    "momento": {
+      "en_curso": "Happening now",
+      "proximo": "Coming up",
+      "pasado": "Already held"
+    }
   },
   "jornadas": {
     "title": "Sessions",
@@ -666,7 +701,8 @@
     "backToSchools": "← Back",
     "carousel": {
       "prev": "Previous image",
-      "next": "Next image"
+      "next": "Next image",
+      "goTo": "Show image {{n}}"
     },
     "backToProjects": "← Back to projects",
     "projectsListHint": "Published and approved university projects. Select one to view full details.",
@@ -720,14 +756,16 @@
       "label": "Portal navigation",
       "inicio": "Home",
       "proyectos": "Projects",
-      "escuelasProyectos": "Schools and projects"
+      "escuelasProyectos": "Schools and projects",
+      "openMenu": "Open navigation menu",
+      "closeMenu": "Close navigation menu"
     },
     "footerPortal": "Portal",
     "footerAccess": "Access",
     "createAccount": "Create account",
     "registerAttendance": "Register attendance",
     "hero": {
-      "tag": "Universidad Autónoma del Cauca",
+      "tag": "Corporación Universitaria Autónoma del Cauca",
       "titleStart": "The projects",
       "titleLight": "built",
       "titleEnd": "by our students",
@@ -752,15 +790,101 @@
       "lead": "Each school gathers the published projects of its academic programs.",
       "noProjects": "No published projects",
       "oneProject": "1 published project",
-      "projects": "{{count}} published projects"
+      "projects": "{{count}} published projects",
+      "noPrograms": "Academic programs to be published."
     },
     "nextEvent": {
       "kicker": "Next event",
       "paid": "Registration fee required",
       "free": "Free registration",
-      "cta": "View event"
+      "cta": "View event",
+      "kickerNow": "Happening now"
     },
-    "noProjectsHint": "Projects will appear here once the school publishes them."
+    "noProjectsHint": "Projects will appear here once the school publishes them.",
+    "semillerosNav": "Research groups",
+    "breadcrumb": "Breadcrumb",
+    "recent": {
+      "kicker": "Projects",
+      "title": "Recently published",
+      "lead": "The latest projects published on the portal, across all schools."
+    },
+    "schoolPage": {
+      "kicker": "School",
+      "publishedProjects": "Published projects",
+      "programs": "Academic programs",
+      "programsTitle": "Academic programs",
+      "projectsTitle": "School projects",
+      "filterType": "Filter by project type",
+      "allTypes": "All",
+      "exploreOthers": "Explore other schools",
+      "otherSchools": "Other schools"
+    },
+    "events": {
+      "kicker": "Events",
+      "title": "Academic calendar",
+      "lead": "Conferences, workshops and gatherings of the university community. Upcoming ones first.",
+      "viewAll": "View all events"
+    },
+    "directorLabel": "Project director",
+    "rating": {
+      "title": "Rating",
+      "none": "This project has no ratings yet.",
+      "count": "{{count}} rating(s)",
+      "rateIt": "Rate this project",
+      "yours": "Your rating (you can change it)",
+      "starLabel": "{{n}} out of 5 stars",
+      "loginToRate": "Sign in to rate",
+      "saved": "Your rating was saved.",
+      "error": "The rating couldn't be saved."
+    },
+    "comments": {
+      "title": "Comments",
+      "empty": "There are no comments on this project yet.",
+      "you": "You",
+      "member": "Community member",
+      "label": "Write a comment",
+      "placeholder": "Share your thoughts or a question about the project…",
+      "submit": "Post comment",
+      "sent": "Comment posted.",
+      "error": "The comment couldn't be posted.",
+      "loginToComment": "Sign in to comment",
+      "reply": "Reply",
+      "replyLabel": "Your reply",
+      "replyPlaceholder": "Write your reply…",
+      "replySubmit": "Post reply",
+      "cancel": "Cancel"
+    },
+    "resources": {
+      "aplicativo": {
+        "youtube": "Watch on YouTube",
+        "spotify": "Listen on Spotify",
+        "github": "View code on GitHub",
+        "google-drive": "Open in Google Drive",
+        "web": "Open application"
+      },
+      "apk": {
+        "youtube": "Download APK",
+        "spotify": "Download APK",
+        "github": "Download APK from GitHub",
+        "google-drive": "Download APK from Google Drive",
+        "web": "Download APK"
+      },
+      "youtube": {
+        "youtube": "Watch on YouTube",
+        "spotify": "Watch video",
+        "github": "Watch video",
+        "google-drive": "Watch video",
+        "web": "Watch video"
+      },
+      "spotify": {
+        "youtube": "Listen to audio",
+        "spotify": "Listen on Spotify",
+        "github": "Listen to audio",
+        "google-drive": "Listen to audio",
+        "web": "Listen to audio"
+      },
+      "newTab": "(opens in a new tab)"
+    }
   },
   "proyectosEstudiante": {
     "titulo": "My projects",
@@ -863,7 +987,11 @@
     "exitoAprobar": "Project approved and published on the portal.",
     "exitoRechazar": "Project rejected.",
     "exitoPublicar": "Project published on the portal.",
-    "sinAsignadosHint": "There are no projects with this status among the ones you coordinate."
+    "sinAsignadosHint": "There are no projects with this status among the ones you coordinate.",
+    "tituloTodos": "Platform projects",
+    "subtituloTodos": "All registered projects. You can review, approve and publish those under review.",
+    "sinProyectos": "No projects with this status",
+    "sinProyectosHint": "Projects will appear here once students register them."
   },
   "session": {
     "expiredTitle": "Your session ended",
@@ -883,5 +1011,226 @@
     "sinEventos": "No events with this status",
     "sinEventosHint": "Once there are events with sessions, their attendance control will appear here.",
     "errorCargar": "Events could not be loaded."
+  },
+  "cursos": {
+    "titulo": "Courses",
+    "descripcion": "Courses of each school. Student projects are registered within a course.",
+    "crear": "Create course",
+    "editar": "Edit course",
+    "nombre": "Course name",
+    "escuela": "School",
+    "periodo": "Academic period",
+    "periodoPlaceholder": "e.g. 2026-2",
+    "filtroEscuela": "Filter by school",
+    "todasEscuelas": "All",
+    "sinEscuelas": "Create a school first",
+    "sinEscuelasHint": "Every course belongs to a school. Create at least one in “Schools and programs”.",
+    "sinCursos": "No courses yet",
+    "sinCursosHint": "Create the first course so students can register projects in it.",
+    "errorCargar": "Error loading courses",
+    "errorCrear": "Error creating the course",
+    "errorActualizar": "Error updating the course",
+    "errorEliminar": "Error deleting the course",
+    "eliminarTitulo": "Delete course",
+    "eliminarMensaje": "Delete the course “{{nombre}}”? Courses with projects can’t be deleted.",
+    "exitoCrear": "Course created.",
+    "exitoActualizar": "Course updated.",
+    "exitoEliminar": "Course deleted.",
+    "descripcionConsulta": "Courses of each school where students register their projects."
+  },
+  "semilleros": {
+    "titulo": "Research groups",
+    "misSemilleros": "My research groups",
+    "descripcion": "Research groups of each school, their lead professor and student membership requests.",
+    "descripcionProfesor": "Groups where you are the lead or an assigned professor. As lead, you approve requests and authorize publishing.",
+    "crear": "Create research group",
+    "editar": "Edit research group",
+    "sinSemilleros": "No research groups yet",
+    "sinSemillerosHint": "Create a group and assign a lead professor so students can apply.",
+    "sinSemillerosProfesor": "You’re not part of any research group yet",
+    "sinSemillerosProfesorHint": "When an administrator assigns you to a group, it will show up here.",
+    "inactivo": "Inactive",
+    "eresLider": "You’re the lead",
+    "lider": "Lead professor",
+    "miembros": "Members",
+    "pendientes": "Pending",
+    "verDetalle": "View details",
+    "eliminarTitulo": "Delete research group",
+    "eliminarMensaje": "Delete the research group “{{nombre}}”? It will no longer be visible to professors or students.",
+    "exitoEliminar": "Research group deleted.",
+    "errorEliminar": "Error deleting the research group",
+    "errorCargar": "Error loading research groups",
+    "nombre": "Group name",
+    "descripcionCampo": "Description",
+    "descripcionMin": "Write a description of at least 10 characters.",
+    "escuela": "School",
+    "sinProfesores": "There are no active professors. Create one in “Users”.",
+    "activoCampo": "Active group",
+    "activoHint": "If deactivated, students can’t send new requests.",
+    "exitoCrear": "Research group created.",
+    "exitoActualizar": "Research group updated.",
+    "errorCrear": "Error creating the research group",
+    "errorActualizar": "Error updating the research group",
+    "volverListado": "Back to research groups",
+    "profesores": "Professors",
+    "quitar": "Remove",
+    "asignarProfesor": "Assign professor",
+    "sinCandidatos": "All professors are already assigned",
+    "asignar": "Assign",
+    "estudiantes": "Students and requests",
+    "ayudaLider": "Approve or reject pending requests. You can authorize approved members to publish the group’s projects.",
+    "filtroEstado": "Filter by status",
+    "estados": {
+      "pendiente": "Pending",
+      "aprobado": "Approved",
+      "rechazado": "Rejected",
+      "todos": "All"
+    },
+    "sinMiembros": "No students with this status",
+    "sinMiembrosHint": "Student requests will show up here.",
+    "solicitado": "requested on",
+    "puedePublicar": "Can publish",
+    "aprobar": "Approve",
+    "rechazar": "Reject",
+    "autorizarPublicacion": "Authorize publishing",
+    "quitarProfesorTitulo": "Remove professor",
+    "quitarProfesorMensaje": "Remove {{nombre}} from this research group?",
+    "exitoAsignarProfesor": "Professor assigned.",
+    "exitoQuitarProfesor": "Professor removed from the group.",
+    "exitoAprobar": "Request approved.",
+    "exitoRechazar": "Request rejected.",
+    "exitoAutorizar": "The student can now publish the group’s projects.",
+    "errorAccion": "The action couldn’t be completed",
+    "portal": {
+      "titulo": "Research groups",
+      "subtitulo": "Explore the university’s research groups and ask to join. The lead professor will review your request.",
+      "solicitudesCerradas": "Research group requests are temporarily closed. You can browse the groups but not send requests.",
+      "sinSemilleros": "No open research groups",
+      "sinSemillerosHint": "New research groups will show up here.",
+      "miembros": "{{count}} member(s)",
+      "estado": {
+        "pendiente": "Request pending",
+        "aprobado": "You’re a member",
+        "rechazado": "Request rejected"
+      },
+      "solicitar": "Ask to join",
+      "volverASolicitar": "Ask again",
+      "exitoSolicitud": "Request sent. The lead professor will review it.",
+      "errorSolicitud": "The request couldn’t be sent"
+    }
+  },
+  "reportes": {
+    "titulo": "Reports",
+    "descripcion": "Platform-wide summary of users, projects, research groups and events",
+    "generado": "updated",
+    "actualizar": "Refresh",
+    "exportarExcel": "Export to Excel",
+    "exportando": "Exporting...",
+    "indicadores": "Key indicators",
+    "tiles": {
+      "usuarios": "Users",
+      "usuariosSub": "{{n}} suspended",
+      "proyectos": "Projects",
+      "proyectosSub": "{{n}} published",
+      "semilleros": "Research groups",
+      "semillerosSub": "{{n}} active",
+      "eventos": "Events",
+      "eventosSub": "{{inscripciones}} registrations · {{asistencias}} check-ins",
+      "academico": "Schools",
+      "academicoSub": "{{n}} course(s)"
+    },
+    "proyectosPorEscuela": "Projects by school",
+    "publicados": "Published",
+    "otrosEstados": "Other statuses",
+    "publicadosDe": "{{publicados}} of {{total}}",
+    "tipEscuela": "{{escuela}}: {{total}} projects, {{publicados}} published",
+    "sinDatos": "No data yet.",
+    "usuariosPorRol": "Users by role",
+    "proyectosPorEstado": "Projects by status",
+    "eventosPorEstado": "Events by status",
+    "membresiasPorEstado": "Research group requests",
+    "unidades": {
+      "usuarios": "users",
+      "proyectos": "projects",
+      "eventos": "events",
+      "solicitudes": "requests"
+    },
+    "estadosEvento": {
+      "planeado": "Planned",
+      "activo": "Active",
+      "finalizado": "Finished"
+    },
+    "errorCargar": "Error loading the report",
+    "errorExportar": "The report couldn’t be exported"
+  },
+  "configuracion": {
+    "titulo": "Settings",
+    "descripcion": "Platform parameters. Changes apply when saved, with no redeploy.",
+    "errorCargar": "Error loading settings",
+    "secciones": {
+      "acceso": "Sign-up and requests",
+      "portal": "Public portal"
+    },
+    "registroAbierto": "Allow new account sign-ups",
+    "registroAbiertoHint": "Students and external users can create their account (form and Google). If disabled, only administrators create users.",
+    "solicitudesSemilleros": "Allow research group requests",
+    "solicitudesSemillerosHint": "Students can ask to join a research group from the portal.",
+    "mensajePortal": "Portal notice",
+    "mensajePortalPlaceholder": "e.g. Project Fair registrations are open until October 30.",
+    "mensajePortalHint": "Shown in a banner above every portal page. Leave empty to hide it.",
+    "vistaPrevia": "Preview",
+    "descartar": "Discard changes",
+    "guardar": "Save changes",
+    "exitoGuardar": "Settings saved.",
+    "errorGuardar": "Settings couldn’t be saved"
+  },
+  "panel": {
+    "saludo": {
+      "manana": "Good morning",
+      "tarde": "Good afternoon",
+      "noche": "Good evening"
+    },
+    "indicadores": "Key indicators",
+    "atencion": "Needs your attention",
+    "alDia": "All caught up: nothing pending.",
+    "proximosEventos": "Upcoming events",
+    "verTodos": "View all",
+    "sinEventos": "No upcoming events scheduled.",
+    "acciones": {
+      "crearUsuario": "Create user",
+      "crearEvento": "Create event",
+      "verReportes": "View reports",
+      "verEstadisticas": "View statistics"
+    },
+    "kpi": {
+      "proyectosSub": "{{publicados}} published · {{revision}} under review",
+      "inscripciones": "{{n}} registrations",
+      "solicitudes": "{{n}} pending request(s)"
+    },
+    "pend": {
+      "proyectos": "{{n}} project(s) under review",
+      "proyectosSub": "You can review and publish them from Projects",
+      "solicitudes": "{{n}} pending membership request(s)",
+      "solicitudesSub": "Resolved by each group's lead professor",
+      "pagos": "Payments to confirm"
+    },
+    "admin": {
+      "lead": "Here is the platform today. What needs your attention comes first."
+    },
+    "coord": {
+      "lead": "Track the schools' projects, research groups and events.",
+      "enRevision": "Projects under review",
+      "sinRevision": "No projects waiting for review."
+    },
+    "prof": {
+      "lead": "You're up to date with your projects and research groups.",
+      "leadPendientes": "You have {{proyectos}} project(s) to review and {{solicitudes}} research group request(s) to resolve.",
+      "porRevisarSub": "Submitted by your students",
+      "semillerosSub": "As lead or assigned professor",
+      "solicitudes": "Research group requests",
+      "solicitudesSub": "In the groups you lead",
+      "revisar": "Projects to review",
+      "revisarAccion": "Review"
+    }
   }
 }
