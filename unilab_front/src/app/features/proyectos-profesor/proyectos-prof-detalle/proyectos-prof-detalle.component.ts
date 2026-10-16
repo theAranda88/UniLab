@@ -7,16 +7,19 @@ import { DialogService } from '../../../shared/ui/dialog/dialog.service';
 import { ProjectImageCarouselComponent } from '../../home/project-image-carousel/project-image-carousel.component';
 import type { Proyecto } from '../../../core/models/proyecto.model';
 import { urlsImagenesProyecto } from '../../../core/models/portal.model';
+import { RecursosExternosComponent } from '../../../shared/ui/recursos-externos/recursos-externos.component';
 
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-proyectos-prof-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, ProjectImageCarouselComponent],
+  imports: [CommonModule, RouterModule, TranslatePipe, ProjectImageCarouselComponent, RecursosExternosComponent],
   templateUrl: './proyectos-prof-detalle.component.html',
   styleUrl: './proyectos-prof-detalle.component.scss',
 })
 export class ProyectosProfDetalleComponent implements OnInit {
   readonly proyectosService = inject(ProyectosService);
+  private toast = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dialog = inject(DialogService);
@@ -53,7 +56,8 @@ export class ProyectosProfDetalleComponent implements OnInit {
 
     this.proyectosService.obtener(id).subscribe({
       next: (data) => {
-        if (!this.proyectosService.esAsignadoAMi(data)) {
+        // El profesor solo abre los proyectos que coordina; Admin/Coordinador, todos (en consulta)
+        if (!this.proyectosService.esConsultaGlobal() && !this.proyectosService.esAsignadoAMi(data)) {
           this.error.set('proyectosProfesor.sinPermiso');
           this.cargando.set(false);
           return;
@@ -66,10 +70,6 @@ export class ProyectosProfDetalleComponent implements OnInit {
         this.cargando.set(false);
       },
     });
-  }
-
-  volver(): void {
-    this.router.navigate([this.proyectosService.getBasePath()]);
   }
 
   nombreEstudiante(p: Proyecto): string {
@@ -130,7 +130,7 @@ export class ProyectosProfDetalleComponent implements OnInit {
       next: (actualizado) => {
         this.proyecto.set(actualizado);
         this.procesando.set(false);
-        void this.dialog.success({ messageKey: mensajeExitoKey });
+        this.toast.success(mensajeExitoKey);
       },
       error: (err: { message?: string }) => {
         this.procesando.set(false);

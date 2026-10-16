@@ -1,0 +1,37 @@
+@let ev = evento();
+<article class="evento-card" [class.evento-card--pasado]="momento() === 'pasado'">
+  <div class="evento-card__media">
+    <app-evento-media [url]="ev.url_flyer" [alt]="ev.nombre_evento" [fechaInicio]="ev.fecha_inicio" />
+    <span class="estado evento-card__estado" [class]="'estado evento-card__estado estado-' + ev.estado">
+      {{ 'eventos.estado.' + ev.estado | translate }}
+    </span>
+  </div>
+
+  <div class="evento-card__body">
+    <p class="evento-card__fecha">
+      <i class="ti ti-calendar-event" aria-hidden="true"></i>
+      <time [attr.datetime]="ev.fecha_inicio.slice(0, 10)">{{ fechas() }}</time>
+      <span class="momento momento--{{ momento() }}">{{ 'eventos.momento.' + momento() | translate }}</span>
+    </p>
+    <h3 class="evento-card__titulo">
+      <a class="evento-card__link" [routerLink]="[basePath(), ev.id_evento]">{{ ev.nombre_evento }}</a>
+    </h3>
+    @if (ev.descripcion) {
+      <p class="evento-card__desc">{{ ev.descripcion }}</p>
+    }
+    <ul class="evento-card__meta">
+      <li><i class="ti ti-map-pin" aria-hidden="true"></i>{{ ev.lugar }}</li>
+      <li><i class="ti ti-presentation" aria-hidden="true"></i>{{ ev.tipo_evento }}</li>
+      @if (ev.requiere_pago) {
+        <li class="evento-card__pago"><i class="ti ti-cash" aria-hidden="true"></i>{{ 'eventos.requierePago' | translate }}</li>
+      }
+    </ul>
+  </div>
+
+  <footer class="evento-card__foot" aria-hidden="true">
+    <span class="evento-card__cta">
+      {{ 'common.verDetalles' | translate }}
+      <i class="ti ti-arrow-right"></i>
+    </span>
+  </footer>
+</article>

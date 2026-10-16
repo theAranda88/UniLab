@@ -1,0 +1,154 @@
+<div class="jornada">
+
+  @if (cargando()) {
+    <app-skeleton variant="cards" [rows]="2" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
+  } @else if (jornada(); as jo) {
+    <header class="jornada__header">
+      <span class="jornada__kicker">{{ 'jornadas.kicker' | translate }}</span>
+      <h1>{{ jo.nombre_jornada }}</h1>
+      <p>
+        {{ formatearFecha(jo.fecha) }} · {{ formatearHora(jo.hora_inicio) }} – {{ formatearHora(jo.hora_fin) }}
+      </p>
+    </header>
+
+    <div class="jornada__grid">
+      <!-- QR -->
+      <section class="jornada__card jornada__qr">
+        <h2>{{ 'jornadas.codigoQR' | translate }}</h2>
+        <div class="jornada__qr-frame">
+          @if (qrUrl(); as qr) {
+            <img [src]="qr" [alt]="'jornadas.qrAlt' | translate: { nombre: jo.nombre_jornada }" />
+          } @else {
+            <span class="jornada__qr-loading">{{ 'common.cargando' | translate }}</span>
+          }
+        </div>
+        <p class="jornada__hint">{{ 'jornadas.qrHint' | translate }}</p>
+
+        <div class="jornada__datum">
+          <span>{{ 'jornadas.uuid' | translate }}</span>
+          <div class="jornada__copy">
+            <code>{{ jo.codigo_qr }}</code>
+            <button type="button" class="edu-icon-btn" (click)="copiarCodigo()" [attr.aria-label]="'jornadas.copiar' | translate" [attr.title]="'jornadas.copiar' | translate">
+              <i class="ti ti-copy" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="jornada__datum">
+          <span>{{ 'jornadas.enlace' | translate }}</span>
+          <code class="jornada__link">{{ enlace() }}</code>
+        </div>
+
+        <div class="jornada__actions">
+          @if (qrUrl(); as qr) {
+            <a class="edu-btn" [href]="qr" [attr.download]="nombreArchivoQr()">
+              <i class="ti ti-download" aria-hidden="true"></i>
+              {{ 'jornadas.descargarQr' | translate }}
+            </a>
+          }
+          <a class="edu-btn edu-btn--secondary" [href]="enlace()" target="_blank" rel="noopener">
+            <i class="ti ti-external-link" aria-hidden="true"></i>
+            {{ 'jornadas.verPantallaAsistente' | translate }}
+          </a>
+        </div>
+      </section>
+
+      <div class="jornada__side">
+        <!-- Evidencias -->
+        <section class="jornada__card">
+          <div class="jornada__card-head">
+            <h2>{{ 'jornadas.evidencias' | translate }}</h2>
+            <span class="edu-badge">{{ evidencias().length }} / 3</span>
+          </div>
+          <p class="jornada__hint">{{ 'jornadas.evidenciasHint' | translate }}</p>
+
+          <div class="jornada__evidencias">
+            @for (ev of evidencias(); track ev.id_evidencia; let i = $index) {
+              <figure class="jornada__evidencia">
+                <button
+                  type="button"
+                  class="evidencia-zoom"
+                  (click)="abrirVisor(urlsEvidencias(), i)"
+                  [attr.aria-label]="('common.zoom.open' | translate) + ': ' + ev.nombre_original"
+                >
+                  <img [src]="ev.url" [alt]="ev.nombre_original" />
+                </button>
+                @if (puedeGestionarEvidencias) {
+                  <button
+                    type="button"
+                    class="jornada__evidencia-remove"
+                    (click)="eliminarEvidencia(ev.id_evidencia)"
+                    [attr.aria-label]="'jornadas.eliminarEvidencia' | translate"
+                  >
+                    <i class="ti ti-trash" aria-hidden="true"></i>
+                  </button>
+                }
+              </figure>
+            }
+            @if (puedeGestionarEvidencias && evidenciasRestantes() > 0) {
+              <label class="jornada__upload">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  (change)="onEvidenciasSeleccionadas($event)"
+                  [disabled]="subiendo()"
+                />
+                <i class="ti" [class.ti-photo-up]="!subiendo()" [class.ti-loader]="subiendo()" aria-hidden="true"></i>
+                <span>{{ (subiendo() ? 'common.cargando' : 'jornadas.subirEvidencias') | translate }}</span>
+              </label>
+            }
+          </div>
+        </section>
+
+        <!-- Asistentes -->
+        <section class="jornada__card">
+          <div class="jornada__card-head">
+            <h2>{{ 'jornadas.asistentes' | translate }}</h2>
+            <span class="edu-badge edu-badge--info">
+              {{ 'jornadas.asistentesConteo' | translate: { asistentes: asistentes().length, inscritos: inscritos().length } }}
+            </span>
+          </div>
+
+          @if (asistentes().length === 0) {
+            <app-empty-state
+              [compact]="true"
+              icon="ti-user-off"
+              [title]="'jornadas.sinAsistentes' | translate"
+              [message]="'jornadas.sinAsistentesHint' | translate"
+            />
+          } @else {
+            <ul class="jornada__asistentes">
+              @for (a of asistentes(); track a.id_inscripcion) {
+                <li>
+                  <span class="edu-avatar">{{ iniciales(a.nombre_completo) }}</span>
+                  <span class="jornada__asistente">
+                    <strong>{{ a.nombre_completo }}</strong>
+                    <small>{{ a.email }}</small>
+                  </span>
+                  <span class="edu-badge edu-badge--success">
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                    {{ 'jornadas.presente' | translate }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+    </div>
+  }
+</div>
+
+@if (visor(); as v) {
+  <app-image-lightbox [images]="v.imagenes" [startIndex]="v.inicio" (closed)="visor.set(null)" />
+}

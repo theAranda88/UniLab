@@ -64,6 +64,7 @@ model usuarios {
   proyecto_vistas_creadas       proyecto_vistas[]       @relation("proyecto_vistas_creador")
   proyecto_imagenes_creadas     proyecto_imagenes[]     @relation("proyecto_imagenes_creador")
   semilleros_creados            semilleros[]            @relation("semilleros_creador")
+  configuracion_editada         configuracion_sistema[] @relation("configuracion_editor")
   semillero_profesores_creados  semillero_profesores[]  @relation("semillero_profesores_creador")
   semillero_miembros_creados    semillero_miembros[]    @relation("semillero_miembros_creador")
   eventos_creados               eventos[]               @relation("eventos_creador")
@@ -511,4 +512,19 @@ model asistencias {
   creador     usuarios?       @relation("asistencias_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
 
   @@unique([id_inscripcion, id_jornada], where: { deleted_at: null })
+}
+
+// =============================================================================
+// MÓDULO E — CONFIGURACIÓN DEL SISTEMA (RA-013)
+// =============================================================================
+
+/// Parámetros editables por el administrador sin redesplegar.
+/// Las claves válidas, su tipo y su valor por defecto viven en configuracion.service.ts.
+model configuracion_sistema {
+  clave      String   @id @db.VarChar(100)
+  valor      String   @db.Text
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+  updated_by Int?
+
+  editor usuarios? @relation("configuracion_editor", fields: [updated_by], references: [id_usuario], onDelete: Restrict)
 }

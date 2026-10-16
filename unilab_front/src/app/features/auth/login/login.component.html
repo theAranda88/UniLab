@@ -1,122 +1,106 @@
-@if (!embedded) {
-  <div class="login-container">
-    <ng-container *ngTemplateOutlet="loginCard" />
-  </div>
-} @else {
-  <ng-container *ngTemplateOutlet="loginCard" />
-}
+<div class="login">
+  <app-auth-brand />
 
-<ng-template #loginCard>
-  <div class="login-card">
-    @if (variant === 'default') {
-      <div class="login-card-bg" aria-hidden="true"></div>
-    }
+  <!-- Formulario -->
+  <main class="login__main">
+    <div class="login__card">
+      <header class="login__header">
+        <a routerLink="/" class="login__back">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i>
+          {{ 'auth.brand.backToPortal' | translate }}
+        </a>
+        <h2>{{ 'auth.login.heading' | translate }}</h2>
+        <p>{{ 'auth.login.subtitle' | translate }}</p>
+      </header>
 
-    <div class="login-card-content">
-      <div class="logo-area">
-        <img
-          [src]="variant === 'codex'
-            ? 'assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png'
-            : 'assets/images/uniautonoma_cauca.png'"
-          [alt]="'home.logoAlt' | translate"
-          class="logo-img"
-        />
-        <div class="logo-text">
-          @if (!(embedded && variant === 'codex')) {
-            <h1>{{ (variant === 'codex' ? 'home.authModal.title' : 'auth.login.title') | translate }}</h1>
-          }
-          <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
-        </div>
-      </div>
-
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login__form">
         @if (errorMessage()) {
-          <div class="alert alert-error">
-            {{ errorMessage() }}
+          <div class="login__alert" role="alert">
+            <i class="ti ti-alert-circle" aria-hidden="true"></i>
+            <span>{{ errorMessage() }}</span>
           </div>
         }
 
-        <div class="form-group">
+        <div class="login__field">
           <label for="email">{{ 'auth.login.email' | translate }}</label>
-          <input
-            id="email"
-            type="email"
-            class="form-control"
-            [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
-            formControlName="email"
-            [placeholder]="'auth.login.emailPlaceholder' | translate"
-          />
-          @if (variant === 'default') {
-            <small class="hint-text">{{ 'auth.login.emailHint' | translate }}</small>
-          }
+          <div class="login__input">
+            <i class="ti ti-mail" aria-hidden="true"></i>
+            <input
+              id="email"
+              type="email"
+              autocomplete="email"
+              [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
+              formControlName="email"
+              [placeholder]="'auth.login.emailPlaceholder' | translate"
+            />
+          </div>
           @if (email?.invalid && (email?.dirty || email?.touched)) {
-            <span class="error-text">
-              @if (email?.errors?.['required']) {
-                {{ 'auth.login.emailRequired' | translate }}
-              }
-            </span>
+            <small class="login__error">{{ 'auth.login.emailRequired' | translate }}</small>
           }
         </div>
 
-        <div class="form-group">
+        <div class="login__field">
           <label for="password">{{ 'auth.login.password' | translate }}</label>
-          <div class="password-wrapper">
+          <div class="login__input login__password">
+            <i class="ti ti-lock" aria-hidden="true"></i>
             <input
               id="password"
               [type]="showPassword() ? 'text' : 'password'"
-              class="form-control"
+              autocomplete="current-password"
               [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)"
               formControlName="password"
               [placeholder]="'auth.login.passwordPlaceholder' | translate"
             />
             <button
               type="button"
-              class="toggle-password"
+              class="login__toggle"
               (click)="showPassword.set(!showPassword())"
               [attr.aria-label]="'auth.login.showPassword' | translate"
+              [attr.aria-pressed]="showPassword()"
             >
               <i class="ti" [class.ti-eye]="!showPassword()" [class.ti-eye-off]="showPassword()" aria-hidden="true"></i>
             </button>
           </div>
           @if (password?.invalid && (password?.dirty || password?.touched)) {
-            <span class="error-text">
+            <small class="login__error">
               @if (password?.errors?.['required']) {
                 {{ 'auth.login.passwordRequired' | translate }}
               }
               @if (password?.errors?.['minlength']) {
                 {{ 'auth.login.passwordMinLength' | translate }}
               }
-            </span>
+            </small>
           }
+          <a routerLink="/recuperar-contrasena" class="login__forgot">{{ 'auth.login.forgot' | translate }}</a>
         </div>
 
-        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">
+        <button type="submit" class="login__submit" [disabled]="loginForm.invalid || loading()">
           {{ loading() ? ('common.loading' | translate) : ('auth.login.submitButton' | translate) }}
+          @if (!loading()) {
+            <i class="ti ti-arrow-right" aria-hidden="true"></i>
+          }
         </button>
 
-        <div class="login-divider">
+        <div class="login__divider">
           <span>{{ 'auth.login.orContinueWith' | translate }}</span>
         </div>
 
         <app-google-sign-in
-          [variant]="variant"
           [ariaLabel]="'auth.login.googleButton' | translate"
           [label]="'auth.login.googleButton' | translate"
           (credential)="onGoogleCredential($event)"
         />
       </form>
 
-      @if (variant === 'default') {
-        <div class="support-link">
-          {{ 'auth.login.support' | translate }}
-          <a href="#" (click)="$event.preventDefault()">{{ 'auth.login.supportLink' | translate }}</a>
-        </div>
-      }
+      <p class="login__register">
+        {{ 'auth.login.noAccount' | translate }}
+        <a routerLink="/registro">{{ 'auth.login.register' | translate }}</a>
+      </p>
 
-      <div class="footer-badge">
+      <p class="login__secure">
         <i class="ti ti-lock" aria-hidden="true"></i>
-        <span>{{ 'auth.login.security' | translate }}</span>
-      </div>
+        {{ 'auth.login.security' | translate }}
+      </p>
     </div>
-  </div>
-</ng-template>
+  </main>
+</div>

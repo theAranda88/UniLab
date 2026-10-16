@@ -16,6 +16,7 @@ const ROLES: RolNombre[] = [
   'Externo',
 ];
 
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-usuarios-form',
   standalone: true,
@@ -25,6 +26,7 @@ const ROLES: RolNombre[] = [
 })
 export class UsuariosFormComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
   private usuariosService = inject(UsuariosService);
   private escuelasService = inject(EscuelasService);
   private router = inject(Router);
@@ -170,6 +172,7 @@ export class UsuariosFormComponent implements OnInit {
       this.usuariosService.actualizar(this.idUsuario, payload).subscribe({
         next: () => {
           this.enviando.set(false);
+          this.toast.success('usuarios.exitoActualizar');
           this.router.navigate(['/admin/usuarios']);
         },
         error: () => {

@@ -1,51 +1,92 @@
-<div class="completar-perfil">
-  <div class="completar-perfil__card">
-    <h1>{{ 'auth.completarPerfil.title' | translate }}</h1>
-    <p class="completar-perfil__hint">{{ 'auth.completarPerfil.subtitle' | translate }}</p>
+<div class="perfil">
+  <div class="perfil__card">
+    <header class="perfil__header">
+      <h1>{{ 'auth.completarPerfil.title' | translate }}</h1>
+      <span class="perfil__rule" aria-hidden="true"></span>
+      <p>{{ 'auth.completarPerfil.subtitle' | translate }}</p>
+    </header>
 
-    @if (error()) {
-      <p class="completar-perfil__error">{{ error() | translate }}</p>
-    }
+    <form class="perfil__body" [formGroup]="form" (ngSubmit)="submit()">
+      @if (error()) {
+        <div class="perfil__alert" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i>
+          <span>{{ error() | translate }}</span>
+        </div>
+      }
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="completar-perfil__form">
-      <label>
-        {{ 'auth.completarPerfil.document' | translate }}
-        <input type="text" formControlName="documento_identidad" />
-      </label>
+      @if (rol(); as rolActual) {
+        <div class="perfil__role">
+          <span class="perfil__label">{{ 'auth.completarPerfil.roleAssigned' | translate }}</span>
+          <span class="perfil__segmented">
+            <span class="perfil__segment">{{ 'auth.registro.roles.' + rolActual | translate }}</span>
+          </span>
+        </div>
+      }
 
-      <label>
-        {{ 'auth.completarPerfil.phone' | translate }}
-        <input type="text" formControlName="telefono" />
-      </label>
-
-      @if (rol() === 'Estudiante') {
-        <label>
-          {{ 'auth.completarPerfil.studentCode' | translate }}
-          <input type="text" formControlName="codigo_estudiantil" />
+      <div class="perfil__grid">
+        <label class="perfil__field">
+          <span>{{ 'auth.completarPerfil.document' | translate }} <em>*</em></span>
+          <input type="text" formControlName="documento_identidad" [attr.aria-invalid]="hasError('documento_identidad')" />
+          @if (hasError('documento_identidad')) {
+            <small class="perfil__error">{{ 'auth.registro.errors.required' | translate }}</small>
+          }
         </label>
-        <label>
-          {{ 'auth.completarPerfil.school' | translate }}
-          <select formControlName="id_escuela">
-            <option [ngValue]="null">{{ 'auth.completarPerfil.selectSchool' | translate }}</option>
-            @for (escuela of escuelas(); track escuela.id_escuela) {
-              <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+        <label class="perfil__field">
+          <span>{{ 'auth.completarPerfil.phone' | translate }} <em>*</em></span>
+          <input type="tel" formControlName="telefono" [attr.aria-invalid]="hasError('telefono')" autocomplete="tel" />
+          @if (hasError('telefono')) {
+            <small class="perfil__error">{{ 'auth.registro.errors.required' | translate }}</small>
+          }
+        </label>
+      </div>
+
+      @if (rol() === 'Estudiante' || rol() === 'Externo') {
+        <fieldset class="perfil__role-fields">
+          <legend>
+            {{ 'auth.registro.roleFields' | translate: { role: ('auth.registro.roles.' + rol() | translate) } }}
+          </legend>
+          <div class="perfil__grid">
+            @if (rol() === 'Estudiante') {
+              <label class="perfil__field">
+                <span>{{ 'auth.completarPerfil.studentCode' | translate }} <em>*</em></span>
+                <input type="text" formControlName="codigo_estudiantil" [attr.aria-invalid]="hasError('codigo_estudiantil')" />
+                @if (hasError('codigo_estudiantil')) {
+                  <small class="perfil__error">{{ 'auth.registro.errors.required' | translate }}</small>
+                }
+              </label>
+              <label class="perfil__field">
+                <span>{{ 'auth.completarPerfil.school' | translate }} <em>*</em></span>
+                <select formControlName="id_escuela" [attr.aria-invalid]="hasError('id_escuela')">
+                  <option [ngValue]="null">{{ 'auth.completarPerfil.selectSchool' | translate }}</option>
+                  @for (escuela of escuelas(); track escuela.id_escuela) {
+                    <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+                  }
+                </select>
+                @if (hasError('id_escuela')) {
+                  <small class="perfil__error">{{ 'auth.registro.errors.required' | translate }}</small>
+                }
+              </label>
+            } @else {
+              <label class="perfil__field">
+                <span>{{ 'auth.completarPerfil.institution' | translate }} <em>*</em></span>
+                <input type="text" formControlName="institucion" [attr.aria-invalid]="hasError('institucion')" />
+                @if (hasError('institucion')) {
+                  <small class="perfil__error">{{ 'auth.registro.errors.required' | translate }}</small>
+                }
+              </label>
+              <label class="perfil__field">
+                <span>{{ 'auth.completarPerfil.occupation' | translate }} <em>*</em></span>
+                <input type="text" formControlName="ocupacion" [attr.aria-invalid]="hasError('ocupacion')" />
+                @if (hasError('ocupacion')) {
+                  <small class="perfil__error">{{ 'auth.registro.errors.required' | translate }}</small>
+                }
+              </label>
             }
-          </select>
-        </label>
+          </div>
+        </fieldset>
       }
 
-      @if (rol() === 'Externo') {
-        <label>
-          {{ 'auth.completarPerfil.institution' | translate }}
-          <input type="text" formControlName="institucion" />
-        </label>
-        <label>
-          {{ 'auth.completarPerfil.occupation' | translate }}
-          <input type="text" formControlName="ocupacion" />
-        </label>
-      }
-
-      <button type="submit" class="btn btn-primary" [disabled]="loading() || form.invalid">
+      <button type="submit" class="perfil__submit" [disabled]="loading()">
         {{ loading() ? ('common.loading' | translate) : ('auth.completarPerfil.submit' | translate) }}
       </button>
     </form>

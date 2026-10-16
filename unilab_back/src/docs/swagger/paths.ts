@@ -1151,5 +1151,72 @@ export const paths = {
       },
     },
   },
-};
 
+  // ─── REPORTES (RA-012) ──────────────────────────────────────────────────────
+  '/reportes/resumen': {
+    get: {
+      tags: ['Reportes'],
+      summary: 'Resumen global de la plataforma (Admin, Coordinador)',
+      description:
+        'Totales y desgloses: usuarios por rol, proyectos por estado y por escuela, membresías de semilleros y eventos por estado.',
+      responses: { 200: { description: 'Resumen global' }, 401: err[401], 403: err[403] },
+    },
+  },
+  '/reportes/resumen/export/excel': {
+    get: {
+      tags: ['Reportes'],
+      summary: 'Exportar resumen global a Excel (Admin, Coordinador)',
+      responses: {
+        200: {
+          description: 'Libro .xlsx con una hoja por desglose',
+          content: {
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+              schema: { type: 'string', format: 'binary' },
+            },
+          },
+        },
+        401: err[401],
+        403: err[403],
+      },
+    },
+  },
+
+  // ─── CONFIGURACIÓN (RA-013) ─────────────────────────────────────────────────
+  '/configuracion': {
+    get: {
+      tags: ['Configuración'],
+      summary: 'Parámetros del sistema (Admin)',
+      description: 'Devuelve todos los parámetros, con su valor por defecto si nunca se guardaron.',
+      responses: { 200: { description: 'Parámetros actuales' }, 401: err[401], 403: err[403] },
+    },
+    patch: {
+      tags: ['Configuración'],
+      summary: 'Actualizar parámetros del sistema (Admin)',
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                registro_abierto: { type: 'boolean' },
+                semilleros_solicitudes_abiertas: { type: 'boolean' },
+                mensaje_portal: { type: 'string', maxLength: 280 },
+              },
+            },
+          },
+        },
+      },
+      responses: { 200: { description: 'Parámetros actualizados' }, 400: err[400], 401: err[401], 403: err[403] },
+    },
+  },
+  '/public/configuracion': {
+    get: {
+      tags: ['Público'],
+      summary: 'Parámetros públicos del sistema',
+      security: [],
+      responses: { 200: { description: 'Parámetros actuales' } },
+    },
+  },
+};

@@ -1,413 +1,472 @@
 @use '../../../styles/design-tokens' as t;
 @use '../../../styles/eventos-ui' as ui;
-@use '../../../styles/portal-codex-theme' as portal;
-@use '../../../styles/portal-codex-tokens' as p;
 
+// Pantalla 15 · Asistencia QR
+// Flujo móvil (escaneo): fondo claro con las formas del login (círculo amarillo y azul)
+// + tarjeta blanca centrada con el logo de Eduinova.
+// Flujo de escritorio (ingreso manual del código): tarjeta sobre crema.
+
+// ---------------------------------------------------------------------------
+// Flujo móvil
+// ---------------------------------------------------------------------------
 .mobile-asistencia {
+  position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: t.$space-24;
-  background: linear-gradient(180deg, t.$light-gray 0%, t.$white 100%);
+  padding: t.$space-24 t.$space-16;
+  background: linear-gradient(135deg, #fcfdff 0%, #f2f6fc 100%);
   text-align: center;
-  position: relative;
+  overflow: hidden;
+
+  // Círculo amarillo arriba a la derecha
+  &::before {
+    content: '';
+    position: absolute;
+    top: -140px;
+    right: -90px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #fbe27a, t.$accent);
+    opacity: 0.85;
+  }
+
+  // Forma azul abajo a la izquierda
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -180px;
+    left: -140px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: linear-gradient(150deg, #2c64c4, t.$blue);
+  }
 }
 
 .mobile-asistencia__content {
   position: relative;
   z-index: 2;
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 32px 28px;
+  border: 1px solid t.$border-subtle;
+  border-radius: 20px;
+  background: t.$white;
+  box-shadow:
+    0 1px 2px rgba(30, 30, 30, 0.04),
+    0 20px 48px -28px rgba(5, 54, 134, 0.35);
+
+  // Barra de acento superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 48px;
+    height: 4px;
+    border-radius: 0 0 3px 3px;
+    background: t.$accent;
+    transform: translateX(-50%);
+  }
 }
 
-.quime-img {
-  width: 160px;
+.mobile-logo {
+  display: block;
+  width: 64px;
   height: auto;
-  object-fit: contain;
-  margin-bottom: t.$space-24;
+  margin-bottom: 20px;
+}
+
+// ---------------------------------------------------------------------------
+// Éxito: check animado + «¡Listo!» + volver al portal
+// ---------------------------------------------------------------------------
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.success__mark {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+
+  svg {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+}
+
+// Círculo que se dibuja y luego se rellena de azul
+.success__ring {
+  fill: t.$blue;
+  fill-opacity: 0;
+  stroke: t.$blue;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 327;
+  stroke-dashoffset: 327;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  animation:
+    success-draw 0.6s ease-out forwards,
+    success-fill 0.35s ease-out 0.55s forwards;
+}
+
+// Check blanco que se dibuja encima
+.success__check {
+  fill: none;
+  stroke: t.$white;
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: success-draw 0.4s ease-out 0.8s forwards;
+}
+
+// Destello: 8 puntos azules y amarillos que salen del centro
+.success__spark {
+  --angle: calc(var(--i) * 45deg);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: t.$accent;
+  opacity: 0;
+  animation: success-spark 0.7s ease-out 0.9s forwards;
+
+  &:nth-child(even) {
+    width: 7px;
+    height: 7px;
+    margin: -3.5px 0 0 -3.5px;
+    background: t.$blue;
+  }
+}
+
+.success__title {
+  margin: 0;
+  font-size: 34px;
+  font-weight: t.$font-weight-black;
+  letter-spacing: -0.03em;
+  color: t.$blue;
+  opacity: 0;
+  animation: success-rise 0.45s ease-out 1s forwards;
+}
+
+.success__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: t.$accent-tint;
+  color: t.$accent-ink-strong;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-extra-bold;
+  opacity: 0;
+  animation: success-rise 0.45s ease-out 1.12s forwards;
+
+  i {
+    font-size: 17px;
+  }
+}
+
+.success__text {
+  margin: 14px 0 0;
+  max-width: 30ch;
+  font-size: t.$font-size-sm;
+  line-height: t.$line-height-normal;
+  color: t.$text-secondary;
+  opacity: 0;
+  animation: success-rise 0.45s ease-out 1.24s forwards;
+}
+
+.success__btn {
+  @include ui.btn-primary;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: t.$font-weight-extra-bold;
+  text-decoration: none;
+  opacity: 0;
+  animation: success-rise 0.45s ease-out 1.4s forwards;
+
+  &:hover {
+    color: t.$white;
+    text-decoration: none;
+  }
+
+  i {
+    font-size: 18px;
+  }
+}
+
+@keyframes success-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes success-fill {
+  to {
+    fill-opacity: 1;
+  }
+}
+
+@keyframes success-spark {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateY(-78px) scale(0.4);
+  }
+}
+
+@keyframes success-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Sin animaciones: se muestra el estado final
+@media (prefers-reduced-motion: reduce) {
+  .success__ring,
+  .success__check,
+  .success__title,
+  .success__badge,
+  .success__text,
+  .success__btn {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .success__ring {
+    fill-opacity: 1;
+  }
+
+  .success__spark {
+    display: none;
+  }
 }
 
 .mobile-status {
-  max-width: 320px;
+  width: 100%;
 
   i {
-    font-size: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
     margin-bottom: t.$space-16;
-    display: block;
+    border-radius: 50%;
+    font-size: 34px;
+    background: t.$blue-tint;
+    color: t.$blue;
   }
 
   h1 {
+    margin: 0 0 t.$space-8;
     font-size: t.$font-size-xl;
-    color: t.$primary-blue;
-    margin-bottom: t.$space-8;
+    font-weight: t.$font-weight-black;
+    letter-spacing: t.$letter-spacing-display;
+    color: t.$ink;
   }
 
   p {
+    margin: 0;
     font-size: t.$font-size-sm;
-    color: t.$text-light;
-    line-height: t.$line-height-relaxed;
-  }
-
-  &.success i {
-    color: t.$success;
-  }
-
-  &.error i {
-    color: t.$error;
+    line-height: t.$line-height-normal;
+    color: t.$text-secondary;
   }
 
   &.loading i {
-    color: t.$light-blue;
-    animation: spin 1s linear infinite;
+    animation: edu-spin 0.9s linear infinite;
   }
 
-  .btn-volver {
-    margin-top: t.$space-16;
-    padding: t.$space-8 t.$space-20;
-    border: 1px solid t.$border-gray;
-    border-radius: t.$radius-md;
-    background: t.$white;
-    color: t.$primary-blue;
-    font-weight: t.$font-weight-semibold;
-    cursor: pointer;
+  &.success i {
+    background: t.$ok-tint;
+    color: t.$ok;
   }
 
-  &__alert {
-    margin-bottom: t.$space-12;
-    padding: t.$space-8 t.$space-12;
-    border-radius: t.$radius-md;
-    font-size: t.$font-size-sm;
-    line-height: t.$line-height-relaxed;
-
-    &--error {
-      background: rgba(t.$error, 0.12);
-      color: t.$error;
-      border: 1px solid rgba(t.$error, 0.35);
-    }
-  }
-
-  &.documento-step {
-    max-width: min(100%, 22rem);
-    width: 100%;
+  &.error i {
+    background: t.$danger-tint;
+    color: t.$danger;
   }
 }
 
-.documento-card {
+.btn-volver {
+  @include ui.btn-secondary;
   width: 100%;
-  padding: t.$space-20 t.$space-16;
-  border-radius: t.$radius-xl;
-  border: 1px solid t.$border-gray;
-  background: t.$white;
-  box-shadow: t.$shadow-md;
+  margin-top: t.$space-24;
+}
+
+// Paso de documento
+.documento-card {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-8;
   text-align: left;
 
   h1 {
     text-align: center;
-    margin-bottom: t.$space-8;
   }
 
   &__hint {
+    margin: 0 0 t.$space-8 !important;
     text-align: center;
-    margin-bottom: t.$space-16;
-  }
-
-  &__label {
-    display: block;
-    margin-bottom: t.$space-8;
-    font-size: t.$font-size-sm;
-    font-weight: t.$font-weight-semibold;
-    color: t.$text-dark;
   }
 
   &__alert {
-    margin-bottom: t.$space-12;
-    padding: t.$space-8 t.$space-12;
-    border-radius: t.$radius-md;
-    font-size: t.$font-size-sm;
-    background: rgba(t.$error, 0.1);
-    color: t.$error;
-    border: 1px solid rgba(t.$error, 0.25);
-    text-align: center;
-  }
-
-  .documento-input {
-    @include ui.form-control;
-    width: 100%;
-    margin-bottom: t.$space-16;
-    text-align: center;
-    font-size: t.$font-size-base;
-  }
-
-  .btn-confirmar {
-    width: 100%;
-    @include ui.btn-primary;
     padding: t.$space-12 t.$space-16;
+    border: 1px solid t.$danger-border;
+    border-radius: t.$radius-lg;
+    background: t.$danger-tint;
+    color: t.$danger-ink;
     font-size: t.$font-size-sm;
   }
-}
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+  &__label {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    color: t.$ink;
   }
 }
 
+.documento-input {
+  @include ui.form-control;
+  min-height: 48px;
+  font-size: t.$font-size-base;
+}
+
+.btn-confirmar {
+  @include ui.btn-primary;
+  width: 100%;
+  min-height: 48px;
+  margin-top: t.$space-8;
+  font-size: 15px;
+}
+
+// ---------------------------------------------------------------------------
+// Flujo de escritorio
+// ---------------------------------------------------------------------------
 .asistencia-qr-container {
-  max-width: 600px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: t.$space-32 t.$space-16;
+}
 
-  .qr-card {
-    background-color: t.$white;
-    border-radius: t.$radius-lg;
-    padding: t.$space-24;
-    border: 1px solid t.$border-gray;
+.qr-card {
+  @include t.surface-card;
+  width: 100%;
+  max-width: 480px;
+  padding: t.$space-32;
 
-    h1 {
-      margin: 0 0 t.$space-24 0;
-      font-size: t.$font-size-2xl;
-      color: t.$primary-blue;
-      text-align: center;
-    }
+  h1 {
+    margin: 0 0 t.$space-24;
+    font-size: t.$font-size-2xl;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+  }
 
-    .qr-input-section {
-      margin-bottom: t.$space-24;
-
-      label {
-        display: block;
-        margin-bottom: t.$space-8;
-        font-weight: t.$font-weight-semibold;
-        color: t.$text-dark;
-      }
-
-      .qr-input {
-        @include ui.form-control;
-        text-align: center;
-        font-family: monospace;
-      }
-    }
-
-    .mensaje {
-      padding: t.$space-12;
-      border-radius: t.$radius-md;
-      margin-bottom: t.$space-16;
-      font-weight: t.$font-weight-medium;
-
-      &.mensaje-success {
-        background-color: rgba(t.$success, 0.1);
-        color: t.$success;
-        border: 1px solid rgba(t.$success, 0.2);
-      }
-
-      &.mensaje-error {
-        background-color: rgba(t.$error, 0.1);
-        color: t.$error;
-        border: 1px solid rgba(t.$error, 0.2);
-      }
-    }
-
-    .actions {
-      display: flex;
-      gap: t.$space-12;
-      margin-bottom: t.$space-24;
-
-      .btn {
-        flex: 1;
-
-        &.btn-primary {
-          @include ui.btn-primary;
-        }
-
-        &.btn-secondary {
-          @include ui.btn-secondary;
-        }
-      }
-    }
-
-    .info-box {
-      background-color: rgba(t.$light-blue, 0.08);
-      border-left: 4px solid t.$light-blue;
-      padding: t.$space-12;
-      border-radius: t.$radius-md;
-
-      p {
-        margin: 0;
-        color: t.$primary-blue;
-        font-size: t.$font-size-sm;
-        line-height: t.$line-height-relaxed;
-      }
-    }
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-24 t.$space-16;
   }
 }
 
-:host.portal-themed {
-  display: block;
+.qr-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: t.$space-16;
 
-  &.asistencia-qr--mobile .mobile-asistencia {
-    min-height: min(70vh, calc(100dvh - 5rem));
-    background: radial-gradient(circle at center, #010816 0%, #000205 100%);
-    color: p.$portal-text-secondary;
-    overflow: hidden;
-
-    .quime-img {
-      filter: drop-shadow(0 8px 24px rgba(212, 175, 55, 0.2));
-    }
-
-    .mobile-status {
-      animation: portal-status-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-
-      h1 {
-        font-family: p.$portal-font-display;
-        color: p.$portal-text-primary;
-      }
-
-      p {
-        color: p.$portal-text-secondary;
-      }
-
-      &.success i {
-        color: #6ee7b7;
-        filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.35));
-      }
-
-      &.error i {
-        color: #fca5a5;
-      }
-
-      &.loading i {
-        color: p.$portal-gold-muted;
-      }
-
-      .btn-volver {
-        @include portal.portal-btn-secondary;
-        margin-top: t.$space-20;
-      }
-
-      &.documento-step {
-        max-width: min(94vw, 24rem);
-        width: 100%;
-      }
-
-      .documento-card {
-        @include portal.portal-card;
-        width: 100%;
-        padding: t.$space-24 t.$space-20;
-        text-align: left;
-        animation: portal-status-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-
-        h1 {
-          text-align: center;
-          margin-bottom: t.$space-8;
-        }
-
-        &__hint {
-          text-align: center;
-          margin-bottom: t.$space-20;
-          color: p.$portal-text-secondary;
-          font-size: t.$font-size-sm;
-          line-height: t.$line-height-relaxed;
-        }
-
-        &__label {
-          @include portal.portal-label;
-          margin-bottom: t.$space-8;
-        }
-
-        &__alert {
-          @include portal.portal-alert-error;
-          margin-bottom: t.$space-16;
-          text-align: center;
-          border-left: none;
-        }
-
-        .documento-input {
-          @include portal.portal-form-control;
-          width: 100%;
-          margin-bottom: t.$space-20;
-          text-align: center;
-          font-size: t.$font-size-base;
-          letter-spacing: 0.02em;
-        }
-
-        .btn-confirmar {
-          @include portal.portal-btn-success;
-          width: 100%;
-          padding: t.$space-12 t.$space-16;
-          font-size: t.$font-size-sm;
-          font-weight: t.$font-weight-semibold;
-        }
-      }
-    }
-  }
-
-  .asistencia-qr-container {
-    @include portal.portal-page;
-    max-width: min(36rem, 94vw);
-
-    .qr-card {
-      @include portal.portal-card;
-      padding: t.$space-24;
-
-      h1 {
-        @include portal.portal-page-title;
-        text-align: center;
-        font-size: clamp(1.25rem, 1.5vw + 0.85rem, t.$font-size-2xl);
-        margin-bottom: t.$space-24;
-      }
-
-      .qr-input-section label {
-        @include portal.portal-label;
-      }
-
-      .qr-input {
-        @include portal.portal-form-control;
-        text-align: center;
-        font-family: p.$portal-font-mono;
-      }
-
-      .mensaje-success {
-        @include portal.portal-alert-info;
-        border-left: none;
-      }
-
-      .mensaje-error {
-        @include portal.portal-alert-error;
-        border-left: none;
-      }
-
-      .actions {
-        .btn.btn-primary {
-          @include portal.portal-btn-success;
-        }
-
-        .btn.btn-secondary {
-          @include portal.portal-btn-secondary;
-        }
-      }
-
-      .info-box {
-        @include portal.portal-alert-warning;
-
-        p {
-          color: inherit;
-        }
-      }
-    }
+  label {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    color: t.$ink;
   }
 }
 
-@keyframes portal-status-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.98);
+.qr-input {
+  @include ui.form-control;
+  font-family: ui-monospace, monospace;
+}
+
+.mensaje {
+  margin-bottom: t.$space-16;
+  padding: t.$space-12 t.$space-16;
+  border-radius: t.$radius-lg;
+  font-size: t.$font-size-sm;
+
+  &.mensaje-success {
+    background: t.$ok-tint;
+    border: 1px solid t.$ok-border;
+    color: t.$ok;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+
+  &.mensaje-error {
+    background: t.$danger-tint;
+    border: 1px solid t.$danger-border;
+    color: t.$danger-ink;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+
+  .btn-primary {
+    @include ui.btn-primary;
+    flex: 1;
+  }
+
+  .btn-secondary {
+    @include ui.btn-secondary;
+  }
+}
+
+.info-box {
+  margin-top: t.$space-24;
+  padding: t.$space-12 t.$space-16;
+  border-radius: t.$radius-lg;
+  background: t.$blue-tint;
+  color: t.$blue;
+  font-size: t.$font-size-label;
+
+  p {
+    margin: 0;
   }
 }

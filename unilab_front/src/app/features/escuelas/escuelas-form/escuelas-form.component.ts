@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EscuelasService } from '../escuelas.service';
 
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-escuelas-form',
   standalone: true,
@@ -14,6 +15,7 @@ import { EscuelasService } from '../escuelas.service';
 })
 export class EscuelasFormComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
   private escuelasService = inject(EscuelasService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -70,6 +72,7 @@ export class EscuelasFormComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.enviando.set(false);
+        this.toast.success(this.modoEdicion() ? 'escuelas.exitoActualizar' : 'escuelas.exitoCrear');
         this.router.navigate([base]);
       },
       error: () => {

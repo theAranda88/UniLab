@@ -1,5 +1,6 @@
 @use '../../../../styles/design-tokens' as t;
-@use '../../../../styles/portal-codex-tokens' as p;
+
+// C23 · Breadcrumb — panel y portal comparten diseño.
 
 .breadcrumb {
   margin-bottom: t.$space-16;
@@ -18,51 +19,32 @@
     display: inline-flex;
     align-items: center;
     gap: t.$space-4;
-    font-size: t.$font-size-xs;
-    color: t.$text-light;
+    margin: 0;
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-semibold;
+    color: t.$text-secondary;
 
     a {
-      color: t.$light-blue;
+      padding: 2px t.$space-4;
+      border-radius: t.$radius-xs;
+      color: t.$blue;
       text-decoration: none;
-      font-weight: t.$font-weight-medium;
+      transition: background t.$transition-base;
 
       &:hover {
-        color: t.$primary-blue;
-        text-decoration: underline;
+        background: t.$blue-tint;
+        text-decoration: none;
       }
     }
 
     &.active span {
-      color: t.$text-dark;
-      font-weight: t.$font-weight-semibold;
+      color: t.$ink;
+      font-weight: t.$font-weight-bold;
     }
   }
 
   .separator {
-    font-size: 12px;
-    color: t.$gray-400;
-  }
-}
-
-:host.breadcrumb-host--portal .breadcrumb {
-  .breadcrumb-item {
-    color: p.$portal-text-muted;
-
-    a {
-      color: p.$portal-gold-muted;
-
-      &:hover {
-        color: p.$portal-gold-light;
-      }
-    }
-
-    &.active span {
-      color: p.$portal-text-primary;
-      font-weight: t.$font-weight-semibold;
-    }
-  }
-
-  .separator {
-    color: p.$portal-gold-dim;
+    font-size: 14px;
+    color: rgba(30, 30, 30, 0.35);
   }
 }

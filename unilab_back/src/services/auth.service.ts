@@ -9,6 +9,7 @@ import {
 import { usuarioRepository } from '../models/usuario.repository';
 import { escuelaRepository } from '../models/escuela.repository';
 import type { JwtPayload } from '../middlewares/auth/types';
+import { configuracionService } from './configuracion.service';
 
 function mapUsuarioSesion(usuario: {
   id_usuario: number;
@@ -45,6 +46,12 @@ async function resolverEscuelaPorDefecto(): Promise<number> {
     throw new AppError('No hay escuelas registradas para asignar perfil de estudiante', 422);
   }
   return escuela.id_escuela;
+}
+
+async function verificarRegistroAbierto(): Promise<void> {
+  if (!(await configuracionService.obtener('registro_abierto'))) {
+    throw new AppError('El registro de nuevas cuentas está cerrado temporalmente', 422);
+  }
 }
 
 async function crearUsuarioDesdeGoogle(payload: Awaited<ReturnType<typeof verificarGoogleIdToken>>) {
@@ -122,6 +129,7 @@ export const authService = {
         }
         usuario = await usuarioRepository.update(porEmail.id_usuario, { google_sub: payload.sub });
       } else {
+        await verificarRegistroAbierto();
         usuario = await crearUsuarioDesdeGoogle(payload);
       }
     }
@@ -208,6 +216,8 @@ export const authService = {
     institucion?: string;
     ocupacion?: string;
   }) {
+    await verificarRegistroAbierto();
+
     const existente = await usuarioRepository.findByEmail(data.email);
     if (existente) throw new AppError('El email ya está registrado', 409);
 

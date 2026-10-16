@@ -3,57 +3,83 @@
     <h1>{{ 'escuelas.titulo' | translate }}</h1>
     @if (puedeGestionar) {
       <button type="button" class="btn btn-primary" (click)="crear()">
+        <i class="ti ti-plus" aria-hidden="true"></i>
         {{ 'escuelas.crear' | translate }}
       </button>
     }
   </div>
 
   @if (cargando()) {
-    <p class="escuelas-list__loading">{{ 'common.cargando' | translate }}</p>
+    <app-skeleton variant="cards" [rows]="3" />
   } @else if (error()) {
-    <p class="escuelas-list__error">{{ error() | translate }}</p>
-  } @else if (escuelas().length === 0) {
-    <p class="escuelas-list__empty">{{ 'escuelas.sinEscuelas' | translate }}</p>
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
+  } @else if (cards().length === 0) {
+    <app-empty-state
+      icon="ti-school"
+      [title]="'escuelas.sinEscuelas' | translate"
+      [message]="'escuelas.sinEscuelasHint' | translate"
+    >
+      @if (puedeGestionar) {
+        <button type="button" class="edu-btn" (click)="crear()">{{ 'escuelas.crear' | translate }}</button>
+      }
+    </app-empty-state>
   } @else {
-    <div class="escuelas-list__table-wrap">
-      <table class="escuelas-list__table">
-        <thead>
-          <tr>
-            <th>{{ 'escuelas.nombre' | translate }}</th>
-            <th>{{ 'escuelas.id' | translate }}</th>
-            @if (puedeGestionar) {
-              <th>{{ 'common.acciones' | translate }}</th>
-            }
-          </tr>
-        </thead>
-        <tbody>
-          @for (escuela of escuelas(); track trackById($index, escuela)) {
-            <tr>
-              <td>{{ escuela.nombre_escuela }}</td>
-              <td>{{ escuela.id_escuela }}</td>
-              @if (puedeGestionar) {
-                <td class="escuelas-list__actions">
-                  <button type="button" class="btn btn-link" (click)="editar(escuela.id_escuela)">
-                    {{ 'common.editar' | translate }}
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-link btn-link--danger"
-                    [disabled]="eliminandoId() === escuela.id_escuela"
-                    (click)="eliminar(escuela)"
-                  >
-                    {{
-                      eliminandoId() === escuela.id_escuela
-                        ? ('common.cargando' | translate)
-                        : ('common.eliminar' | translate)
-                    }}
-                  </button>
-                </td>
+    <div class="escuelas-list__grid">
+      @for (card of cards(); track trackById($index, card)) {
+        <article class="escuela-card">
+          <header class="escuela-card__head">
+            <span class="escuela-card__icon"><i class="ti ti-school" aria-hidden="true"></i></span>
+            <h3>{{ card.escuela.nombre_escuela }}</h3>
+          </header>
+
+          @if (card.cursos.length > 0) {
+            <ul class="escuela-card__cursos">
+              @for (curso of card.cursos; track curso) {
+                <li>{{ curso }}</li>
               }
-            </tr>
+            </ul>
+          } @else {
+            <p class="escuela-card__sin-cursos">{{ 'escuelas.sinCursos' | translate }}</p>
           }
-        </tbody>
-      </table>
+
+          <footer class="escuela-card__foot">
+            <span class="escuela-card__count">
+              {{ (card.proyectos === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: card.proyectos } }}
+            </span>
+            @if (puedeGestionar) {
+              <button
+                type="button"
+                class="edu-icon-btn"
+                (click)="editar(card.escuela.id_escuela)"
+                [attr.aria-label]="'common.editar' | translate"
+                [attr.title]="'common.editar' | translate"
+              >
+                <i class="ti ti-pencil" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="edu-icon-btn edu-icon-btn--danger"
+                [disabled]="eliminandoId() === card.escuela.id_escuela"
+                (click)="eliminar(card.escuela)"
+                [attr.aria-label]="'common.eliminar' | translate"
+                [attr.title]="'common.eliminar' | translate"
+              >
+                <i class="ti ti-trash" aria-hidden="true"></i>
+              </button>
+            }
+            <a class="escuela-card__link" [routerLink]="['/escuelas', card.escuela.id_escuela]">
+              {{ 'escuelas.verProyectos' | translate }} →
+            </a>
+          </footer>
+        </article>
+      }
     </div>
   }
 </div>

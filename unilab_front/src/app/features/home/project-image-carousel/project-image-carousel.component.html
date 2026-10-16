@@ -1,18 +1,38 @@
 <div class="project-carousel" (click)="$event.stopPropagation()">
-  @if (images.length === 0) {
-    <div class="project-carousel__fallback" aria-hidden="true"></div>
+  @if (visibles().length === 0) {
+    <div class="project-carousel__fallback" aria-hidden="true">
+      <i class="ti ti-photo-off"></i>
+    </div>
   } @else {
-    <div class="project-carousel__track" [style.--active-index]="activeIndex()">
-      @for (src of images; track src; let i = $index) {
+    <div
+      class="project-carousel__track"
+      [class.project-carousel__track--zoom]="zoomable"
+      [style.--active-index]="activeIndex()"
+      (click)="abrirVisor($event)"
+    >
+      @for (src of visibles(); track src; let i = $index) {
         <img
           class="project-carousel__slide"
           [class.project-carousel__slide--active]="activeIndex() === i"
           [src]="src"
-          [alt]="alt"
+          [alt]="activeIndex() === i ? alt : ''"
           loading="lazy"
+          (error)="marcarRota(src)"
         />
       }
     </div>
+
+    @if (zoomable) {
+      <button
+        type="button"
+        class="project-carousel__expand"
+        (click)="abrirVisor($event)"
+        [attr.aria-label]="'common.zoom.open' | translate"
+        [attr.title]="'common.zoom.open' | translate"
+      >
+        <i class="ti ti-arrows-maximize" aria-hidden="true"></i>
+      </button>
+    }
 
     @if (hasMultiple()) {
       <button
@@ -32,16 +52,21 @@
         ›
       </button>
       <div class="project-carousel__dots">
-        @for (src of images; track src; let i = $index) {
+        @for (src of visibles(); track src; let i = $index) {
           <button
             type="button"
             class="project-carousel__dot"
             [class.project-carousel__dot--active]="activeIndex() === i"
+            [attr.aria-current]="activeIndex() === i ? 'true' : null"
             (click)="goTo(i, $event)"
-            [attr.aria-label]="'Slide ' + (i + 1)"
+            [attr.aria-label]="'home.carousel.goTo' | translate: { n: i + 1 }"
           ></button>
         }
       </div>
     }
   }
 </div>
+
+@if (visorAbierto()) {
+  <app-image-lightbox [images]="visibles()" [alt]="alt" [startIndex]="activeIndex()" (closed)="cerrarVisor()" />
+}

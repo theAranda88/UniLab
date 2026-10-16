@@ -1,90 +1,87 @@
 @use '../../../../styles/design-tokens' as t;
 @use '../../../../styles/eventos-ui' as ui;
-@use '../../../../styles/portal-codex-theme' as portal;
-@use '../../../../styles/portal-codex-tokens' as p;
+
+// C21 · Dialog de confirmación / aviso. Panel y portal comparten diseño.
 
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  z-index: t.$z-index-modal + 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: t.$z-index-modal + 10;
   padding: t.$space-16;
+  background: t.$overlay;
+  backdrop-filter: blur(2px);
 }
 
 .dialog-card {
-  background: t.$white;
-  border-radius: t.$radius-lg;
-  box-shadow: t.$shadow-lg;
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   padding: t.$space-24;
-  text-align: center;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-xl;
+  background: t.$white;
+  box-shadow: t.$shadow-overlay;
+  text-align: left;
+  animation: eduFadeUp 200ms ease;
 }
 
 .dialog-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto t.$space-16;
+  width: 48px;
+  height: 48px;
+  margin-bottom: t.$space-16;
+  border-radius: t.$radius-xl;
+  background: t.$blue-tint;
+  color: t.$blue;
 
   i {
-    font-size: 24px;
+    font-size: 23px;
   }
 }
 
-.dialog-confirm .dialog-icon {
-  background: rgba(36, 59, 142, 0.1);
-  color: t.$primary-blue;
+// Confirmación destructiva: ícono en rojo
+.dialog-confirm:has(.btn-danger) .dialog-icon,
+.dialog-error .dialog-icon {
+  background: rgba(176, 42, 42, 0.08);
+  color: t.$danger;
 }
 
 .dialog-success .dialog-icon {
-  background: rgba(56, 142, 60, 0.12);
-  color: t.$success;
+  background: t.$ok-tint;
+  color: t.$ok;
 }
 
 .dialog-warning .dialog-icon {
-  background: rgba(245, 124, 0, 0.12);
-  color: t.$warning;
-}
-
-.dialog-error .dialog-icon {
-  background: rgba(211, 47, 47, 0.12);
-  color: t.$error;
-}
-
-.dialog-info .dialog-icon {
-  background: rgba(28, 157, 216, 0.12);
-  color: t.$light-blue;
+  background: t.$accent-tint;
+  color: t.$accent-ink;
 }
 
 .dialog-title {
   margin: 0 0 t.$space-8;
   font-size: t.$font-size-lg;
-  font-weight: t.$font-weight-semibold;
-  color: t.$text-dark;
+  font-weight: t.$font-weight-extra-bold;
+  letter-spacing: -0.01em;
+  color: t.$ink;
 }
 
 .dialog-message {
-  margin: 0 0 t.$space-20;
+  margin: 0 0 t.$space-24;
   font-size: t.$font-size-sm;
-  color: t.$text-light;
+  color: t.$text-secondary;
   line-height: t.$line-height-normal;
 }
 
 .dialog-actions {
   display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: t.$space-8;
-  justify-content: center;
 
   .btn {
-    min-width: 110px;
-
     &.btn-primary {
       @include ui.btn-primary;
     }
@@ -93,70 +90,23 @@
       @include ui.btn-secondary;
     }
 
+    // Botón destructivo sólido: la acción ya fue confirmada por el usuario
     &.btn-danger {
-      @include ui.btn-danger;
+      @include ui.btn-base;
+      border-color: t.$danger;
+      background: t.$danger;
+      color: t.$white;
+
+      &:hover:not(:disabled) {
+        background: t.$danger-ink;
+        border-color: t.$danger-ink;
+      }
     }
   }
-}
 
-:host.dialog-host--portal {
-  .dialog-overlay {
-    background: p.$portal-bg-overlay;
-    backdrop-filter: blur(6px);
-  }
-
-  .dialog-card {
-    background: linear-gradient(160deg, rgba(10, 22, 40, 0.98), rgba(4, 12, 28, 0.99));
-    border: 1px solid p.$portal-border;
-    box-shadow: p.$portal-shadow-modal;
-    border-radius: t.$radius-xl;
-  }
-
-  .dialog-title {
-    font-family: p.$portal-font-display;
-    color: p.$portal-text-primary;
-  }
-
-  .dialog-message {
-    color: p.$portal-text-secondary;
-  }
-
-  .dialog-confirm .dialog-icon {
-    background: rgba(212, 175, 55, 0.12);
-    color: p.$portal-gold-light;
-  }
-
-  .dialog-success .dialog-icon {
-    background: rgba(16, 185, 129, 0.15);
-    color: #6ee7b7;
-  }
-
-  .dialog-warning .dialog-icon {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fcd34d;
-  }
-
-  .dialog-error .dialog-icon {
-    background: rgba(127, 29, 29, 0.35);
-    color: #fca5a5;
-  }
-
-  .dialog-info .dialog-icon {
-    background: rgba(59, 130, 246, 0.15);
-    color: #93c5fd;
-  }
-
-  .dialog-actions {
-    .btn.btn-primary {
-      @include portal.portal-btn-primary;
-    }
-
-    .btn.btn-secondary {
-      @include portal.portal-btn-secondary;
-    }
-
-    .btn.btn-danger {
-      @include portal.portal-btn-danger;
+  @include t.respond-to(t.$breakpoint-sm) {
+    .btn {
+      flex: 1 1 100%;
     }
   }
 }

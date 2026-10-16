@@ -1,43 +1,74 @@
 <div class="evento-detalle-container">
   @if (cargando()) {
-    <p class="loading">{{ 'common.cargando' | translate }}</p>
+    <app-skeleton variant="cards" [rows]="1" />
   } @else if (error()) {
-    <p class="error">{{ error() | translate }}</p>
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    />
   } @else if (evento()) {
-    <app-breadcrumb [items]="breadcrumbItems()" [variant]="uiVariant()" />
+    @if (portalTheme()) {
+      <app-breadcrumb [items]="breadcrumbItems()" [variant]="uiVariant()" />
+    }
 
     <div class="evento-content">
-      <div class="evento-header">
-        <h1>{{ evento()!.nombre_evento }}</h1>
-        <span class="estado" [class]="'estado-' + evento()!.estado">
-          {{ 'eventos.estado.' + evento()!.estado | translate }}
-        </span>
-      </div>
+      @let ev = evento()!;
+      <div class="evento-hero">
+        <div class="evento-hero__media">
+          <app-evento-media
+            [url]="ev.url_flyer"
+            [alt]="ev.nombre_evento"
+            [fechaInicio]="ev.fecha_inicio"
+            variante="hero"
+            [prioridad]="true"
+          />
+        </div>
 
-      @if (evento()!.url_flyer) {
-        <div class="evento-flyer-hero">
-          <img [src]="evento()!.url_flyer!" [alt]="evento()!.nombre_evento" />
-        </div>
-      }
-
-      <div class="evento-info">
-        <div class="info-row">
-          <strong>{{ 'eventos.tipo' | translate }}:</strong>
-          <span>{{ evento()!.tipo_evento }}</span>
-        </div>
-        <div class="info-row">
-          <strong>{{ 'eventos.lugar' | translate }}:</strong>
-          <span>{{ evento()!.lugar }}</span>
-        </div>
-        <div class="info-row">
-          <strong>{{ 'eventos.fecha' | translate }}:</strong>
-          <span>{{ formatearFecha(evento()!.fecha_inicio) }} - {{ formatearFecha(evento()!.fecha_fin) }}</span>
-        </div>
-        @if (evento()!.requiere_pago) {
-          <div class="info-row">
-            <strong>{{ 'eventos.requierePago' | translate }}</strong>
+        <div class="evento-hero__body">
+          <div class="evento-hero__badges">
+            <span class="estado" [class]="'estado estado-' + ev.estado">
+              {{ 'eventos.estado.' + ev.estado | translate }}
+            </span>
+            <span class="momento momento--{{ momento() }}">{{ 'eventos.momento.' + momento() | translate }}</span>
           </div>
-        }
+
+          <h1 class="evento-hero__title">{{ ev.nombre_evento }}</h1>
+
+          <ul class="evento-facts">
+            <li>
+              <span class="evento-facts__icon"><i class="ti ti-calendar-event" aria-hidden="true"></i></span>
+              <span class="evento-facts__text">
+                <span class="evento-facts__label">{{ 'eventos.fecha' | translate }}</span>
+                <time [attr.datetime]="ev.fecha_inicio.slice(0, 10)">{{ formatearRango(ev.fecha_inicio, ev.fecha_fin) }}</time>
+              </span>
+            </li>
+            <li>
+              <span class="evento-facts__icon"><i class="ti ti-map-pin" aria-hidden="true"></i></span>
+              <span class="evento-facts__text">
+                <span class="evento-facts__label">{{ 'eventos.lugar' | translate }}</span>
+                <span>{{ ev.lugar }}</span>
+              </span>
+            </li>
+            <li>
+              <span class="evento-facts__icon"><i class="ti ti-presentation" aria-hidden="true"></i></span>
+              <span class="evento-facts__text">
+                <span class="evento-facts__label">{{ 'eventos.tipo' | translate }}</span>
+                <span>{{ ev.tipo_evento }}</span>
+              </span>
+            </li>
+            <li [class.evento-facts__pago]="ev.requiere_pago">
+              <span class="evento-facts__icon">
+                <i class="ti" [class.ti-cash]="ev.requiere_pago" [class.ti-cash-off]="!ev.requiere_pago" aria-hidden="true"></i>
+              </span>
+              <span class="evento-facts__text">
+                <span class="evento-facts__label">{{ 'eventos.costo' | translate }}</span>
+                <span>{{ (ev.requiere_pago ? 'eventos.requierePago' : 'home.nextEvent.free') | translate }}</span>
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="descripcion-section">
@@ -156,6 +187,15 @@
               <div class="jornada-card">
                 <div class="jornada-header">
                   <h4>{{ jornada.nombre_jornada }}</h4>
+                  @if (eventoService.puedeListarInscripciones()) {
+                    <a
+                      class="jornada-ver"
+                      [routerLink]="[eventoService.getBasePath(), evento()!.id_evento, 'jornadas', jornada.id_jornada]"
+                    >
+                      <i class="ti ti-qrcode" aria-hidden="true"></i>
+                      {{ 'jornadas.verJornada' | translate }}
+                    </a>
+                  }
                   @if (puedeCrear()) {
                     <div class="jornada-actions">
                       <button
@@ -206,9 +246,16 @@
                       <h4 class="evidencias-title">{{ 'jornadas.evidencias' | translate }}</h4>
                       <p class="form-hint">{{ 'jornadas.evidenciasHint' | translate }}</p>
                       <div class="evidencias-grid">
-                        @for (ev of evidenciasDeJornada(jornada.id_jornada); track ev.id_evidencia) {
+                        @for (ev of evidenciasDeJornada(jornada.id_jornada); track ev.id_evidencia; let i = $index) {
                           <figure class="evidencia-item">
-                            <img [src]="ev.url" [alt]="ev.nombre_original" />
+                            <button
+                              type="button"
+                              class="evidencia-zoom"
+                              (click)="abrirVisor(urlsEvidencias(jornada.id_jornada), i)"
+                              [attr.aria-label]="('common.zoom.open' | translate) + ': ' + ev.nombre_original"
+                            >
+                              <img [src]="ev.url" [alt]="ev.nombre_original" />
+                            </button>
                             <button
                               type="button"
                               class="evidencia-item__remove"
@@ -271,3 +318,7 @@
     </div>
   }
 </div>
+
+@if (visor(); as v) {
+  <app-image-lightbox [images]="v.imagenes" [startIndex]="v.inicio" (closed)="visor.set(null)" />
+}

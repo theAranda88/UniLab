@@ -1,85 +1,131 @@
 @use '../../../../styles/design-tokens' as t;
-@use '../../../../styles/eventos-ui' as ui;
+@use '../../../../styles/admin-pages' as pages;
 
+// Pantalla 07 · Usuarios — lista (C16 tabla + C09 chips + paginación)
 .usuarios-list {
-  @include ui.eventos-page;
+  @include pages.list-page;
+  @include pages.filter-chips;
 
   &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: t.$space-16;
-    margin-bottom: t.$space-24;
-    flex-wrap: wrap;
+    align-items: flex-end;
 
     h1 {
-      margin: 0;
-      font-size: t.$font-size-2xl;
-      color: t.$primary-blue;
+      margin-bottom: t.$space-4;
     }
 
-    .btn-primary {
-      @include ui.btn-primary;
+    .btn-primary i {
+      font-size: 18px;
     }
   }
 
-  &__loading,
-  &__empty {
-    color: t.$text-light;
+  &__count {
+    margin: 0;
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
   }
 
-  &__error {
-    color: t.$error;
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-8;
+    margin-bottom: t.$space-20;
   }
 
-  &__table-wrap {
-    @include ui.eventos-card;
-    overflow-x: auto;
+  &__person {
+    display: flex;
+    align-items: center;
+    gap: t.$space-12;
+    min-width: 220px;
   }
 
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-      padding: t.$space-12 t.$space-16;
-      text-align: left;
-      border-bottom: 1px solid t.$border-gray;
-    }
-
-    th {
-      font-weight: 600;
-      color: t.$text-light;
-      font-size: t.$font-size-sm;
-    }
+  &__person-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
-  &__row--inactive td {
-    opacity: 0.65;
+  &__name {
+    font-weight: t.$font-weight-bold;
+    color: t.$ink;
+  }
+
+  &__muted {
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+  }
+
+  &__th-actions {
+    width: 1%;
   }
 
   &__actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: t.$space-8;
+    flex-wrap: nowrap;
+    gap: 2px;
+  }
 
-    .btn-link {
-      border: none;
-      background: transparent;
-      color: t.$primary-blue;
-      font-size: t.$font-size-sm;
-      font-weight: t.$font-weight-semibold;
-      cursor: pointer;
-      padding: 0;
-
-      &:hover:not(:disabled) {
-        text-decoration: underline;
-      }
-
-      &--danger {
-        color: t.$error;
-      }
+  &__row--inactive {
+    .edu-avatar {
+      background: t.$neutral-tint;
+      color: t.$text-muted;
     }
+
+    .usuarios-list__name {
+      color: t.$text-muted;
+    }
+  }
+
+  // Paginación
+  &__pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: t.$space-12;
+    padding: t.$space-12 t.$space-16;
+    border-top: 1px solid t.$border-subtle;
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+  }
+
+  &__pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-4;
+  }
+}
+
+.page-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 t.$space-12;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-md;
+  background: t.$white;
+  color: t.$ink;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-bold;
+  cursor: pointer;
+  transition: background t.$transition-base;
+
+  &:hover:not(:disabled) {
+    background: t.$blue-tint;
+    color: t.$blue;
+  }
+
+  &--active {
+    border-color: t.$blue;
+    background: t.$blue;
+    color: t.$white;
+
+    &:hover:not(:disabled) {
+      background: t.$blue;
+      color: t.$white;
+    }
+  }
+
+  &:disabled {
+    color: t.$text-disabled;
+    cursor: not-allowed;
   }
 }

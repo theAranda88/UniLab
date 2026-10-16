@@ -1,88 +1,140 @@
-<main
-  class="codex-portal__main"
-  [class.codex-portal__main--active]="dashboardActive()"
-  [class.codex-portal__main--navigating]="flippingCardId() !== null"
->
-  <div class="codex-portal__hologram-wrap">
-    <div class="codex-portal__hologram" [style.transform]="hologramTransform()">
-      <div class="codex-portal__layer codex-portal__layer--bg">
-        <div class="codex-portal__ring">
-          <svg class="codex-portal__ring-svg" viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="50" r="45" stroke="#d4af37" stroke-width="0.3" fill="none" />
-            <circle cx="50" cy="50" r="28" stroke="#d4af37" stroke-width="0.3" fill="none" />
-            <line x1="50" y1="0" x2="50" y2="100" stroke="#d4af37" stroke-width="0.2" />
-            <line x1="0" y1="50" x2="100" y2="50" stroke="#d4af37" stroke-width="0.2" />
-            <polygon points="50,5 95,50 50,95 5,50" stroke="#d4af37" stroke-width="0.15" fill="none" />
-          </svg>
-        </div>
+<!-- Hero -->
+<section class="hero" data-seccion="inicio" aria-labelledby="hero-title">
+  <div class="hero__backdrop" aria-hidden="true"></div>
+  <app-floating-bubbles [burbujas]="burbujas" />
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <span class="hero__tag reveal" style="--d: 0ms">{{ 'home.hero.tag' | translate }}</span>
+      <h1 id="hero-title" class="hero__title reveal" style="--d: 80ms">
+        {{ 'home.hero.titleStart' | translate }}
+        <span>{{ 'home.hero.titleLight' | translate }}</span>
+        {{ 'home.hero.titleEnd' | translate }}
+      </h1>
+      <span class="hero__rule reveal" style="--d: 160ms" aria-hidden="true"></span>
+      <p class="hero__lead reveal" style="--d: 220ms">{{ 'home.hero.lead' | translate }}</p>
+      <div class="hero__actions reveal" style="--d: 300ms">
+        <a routerLink="/" fragment="escuelas" class="hero__btn hero__btn--accent">
+          {{ 'home.hero.exploreProjects' | translate }}
+          <i class="ti ti-arrow-right" aria-hidden="true"></i>
+        </a>
+        <a routerLink="/" fragment="eventos" class="hero__btn hero__btn--outline">{{ 'home.hero.viewEvents' | translate }}</a>
       </div>
-      <div class="codex-portal__layer codex-portal__layer--sketch" aria-hidden="true">
-        <svg class="codex-portal__sketch-svg" viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
-          <path d="M 200 50 C 250 50, 300 100, 300 150 C 300 200, 250 250, 200 250 C 150 250, 100 200, 100 150 Z" stroke-dasharray="3 3" />
-          <path d="M 120 120 L 280 280" stroke-width="0.5" />
-          <path d="M 280 120 L 120 280" stroke-width="0.5" />
-        </svg>
-      </div>
-      <div class="codex-portal__layer codex-portal__layer--logo">
-        @if (!logoError()) {
-          <img
-            class="codex-portal__logo-img"
-            src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
-            [alt]="'home.logoAlt' | translate"
-            (error)="onLogoError()"
-          />
-        } @else {
-          <div class="codex-portal__logo-fallback">
-            <span>{{ 'home.logoFallback' | translate }}</span>
+    </div>
+
+    <div class="hero__stats reveal" style="--d: 380ms">
+      <span class="hero__stats-title">{{ 'home.stats.title' | translate }}</span>
+      <div class="hero__stats-grid">
+        @for (cifra of cifras(); track cifra.labelKey; let i = $index) {
+          <div class="stat">
+            <span class="stat__value">{{ valoresVisibles().length > i ? valoresVisibles()[i] : cifra.valor }}</span>
+            <span class="stat__bar" [style.width.%]="(cifra.valor / cifraMax()) * 100"></span>
+            <span class="stat__label">{{ cifra.labelKey | translate }}</span>
+            <span class="stat__note">{{ cifra.notaKey | translate }}</span>
           </div>
         }
       </div>
     </div>
   </div>
 
-  <div class="codex-portal__control-area">
-    <div class="codex-portal__grid">
-      @for (card of escuelaCards(); track trackByEscuelaId($index, card)) {
-        <button
-          type="button"
-          class="codex-portal__card dashboard-element"
-          [class.codex-portal__card--flipping]="flippingCardId() === card.escuela.id_escuela"
-          [style.--emerge-delay]="card.emergeDelay + 's'"
-          appCardTilt
-          (click)="onCardClick(card)"
-        >
-          <div class="codex-portal__card-inner">
-            <span class="codex-portal__card-sub">
-              @if (card.i18nKey === 'generic') {
-                {{ 'home.cards.generic.subtitle' | translate }}
-              } @else {
-                {{ 'home.cards.' + card.i18nKey + '.subtitle' | translate }}
-              }
-            </span>
-            <h3 class="codex-portal__card-title">
-              @if (card.useApiName) {
-                {{ card.escuela.nombre_escuela }}
-              } @else {
-                {{ 'home.escuelas.' + card.i18nKey | translate }}
-              }
-            </h3>
-            @if (card.i18nKey !== 'generic') {
-              <span class="codex-portal__card-cursive">
-                {{ 'home.cards.' + card.i18nKey + '.cursive' | translate }}
-              </span>
-            }
-            <span
-              class="codex-portal__card-badge"
-              [class.codex-portal__card-badge--emerald]="(card.escuela.total_proyectos_publicados ?? 0) > 0"
-            >
-              {{
-                'home.schoolProjectBadge'
-                  | translate: { count: card.escuela.total_proyectos_publicados ?? 0 }
-              }}
-            </span>
-          </div>
-        </button>
-      }
+  <!-- Transición curva hacia la sección clara -->
+  <svg class="hero__curve" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,80 L0,36 C240,76 520,84 760,58 C1000,32 1220,6 1440,22 L1440,80 Z" />
+  </svg>
+</section>
+
+<!-- Escuelas -->
+<section class="schools" id="escuelas" data-seccion="proyectos" aria-labelledby="schools-title">
+  <div class="section-head">
+    <div class="section-head__title">
+      <span class="section-head__kicker">{{ 'home.schools.kicker' | translate }}</span>
+      <h2 id="schools-title">{{ 'home.schools.title' | translate }}</h2>
+      <span class="section-head__rule" aria-hidden="true"></span>
+    </div>
+    <p>{{ 'home.schools.lead' | translate }}</p>
+  </div>
+
+  <div class="schools__grid">
+    @for (card of escuelaCards(); track card.escuela.id_escuela) {
+      <a class="school" [routerLink]="['/escuelas', card.escuela.id_escuela]" [style.--school-color]="card.color">
+        <i class="school__watermark ph-duotone {{ card.icono }}" aria-hidden="true"></i>
+        <div class="school__top">
+          <span class="school__icon"><i class="ph-duotone {{ card.icono }}" aria-hidden="true"></i></span>
+          <i class="school__arrow ti ti-arrow-up-right" aria-hidden="true"></i>
+        </div>
+        <h3>{{ card.escuela.nombre_escuela }}</h3>
+        @if (card.programas) {
+          <p>{{ card.programas }}</p>
+        } @else {
+          <p class="school__no-programs">{{ 'home.schools.noPrograms' | translate }}</p>
+        }
+        @if (card.proyectos === 0) {
+          <span class="school__badge">{{ 'home.schools.noProjects' | translate }}</span>
+        } @else {
+          <span class="school__badge school__badge--active">
+            {{ (card.proyectos === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: card.proyectos } }}
+          </span>
+        }
+      </a>
+    }
+  </div>
+</section>
+
+<!-- Proyectos recientes (solo si hay proyectos publicados) -->
+@if (proyectosRecientes().length > 0) {
+  <section class="recent" data-seccion="proyectos" aria-labelledby="recent-title">
+    <div class="recent__inner">
+      <div class="section-head">
+        <div class="section-head__title">
+          <span class="section-head__kicker">{{ 'home.recent.kicker' | translate }}</span>
+          <h2 id="recent-title">{{ 'home.recent.title' | translate }}</h2>
+          <span class="section-head__rule" aria-hidden="true"></span>
+        </div>
+        <p>{{ 'home.recent.lead' | translate }}</p>
+      </div>
+
+      <div class="recent__grid">
+        @for (proyecto of proyectosRecientes(); track proyecto.id_proyecto) {
+          <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Eventos: vista previa en el inicio + acceso a la página completa -->
+<section class="events" id="eventos" data-seccion="eventos" aria-labelledby="events-title">
+  <div class="events__inner">
+    <div class="section-head">
+      <div class="section-head__title">
+        <span class="section-head__kicker">{{ 'home.events.kicker' | translate }}</span>
+        <h2 id="events-title">{{ 'home.events.title' | translate }}</h2>
+        <span class="section-head__rule" aria-hidden="true"></span>
+      </div>
+      <p>{{ 'home.events.lead' | translate }}</p>
+    </div>
+
+    @if (!eventosCargados()) {
+      <app-skeleton variant="cards" [rows]="3" />
+    } @else if (eventosDestacados().length === 0) {
+      <app-empty-state
+        icon="ti-calendar-event"
+        [title]="'eventos.sinEventos' | translate"
+        [message]="'eventos.sinEventosHint' | translate"
+      />
+    } @else {
+      <div class="events__grid">
+        @for (evento of eventosDestacados(); track evento.id_evento) {
+          <app-evento-card [evento]="evento" />
+        }
+      </div>
+    }
+
+    <div class="events__more">
+      <a routerLink="/eventos" class="events__all">
+        {{ 'home.events.viewAll' | translate }}
+        <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </a>
     </div>
   </div>
-</main>
+</section>
