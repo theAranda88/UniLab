@@ -1,61 +1,6 @@
-@use '../../../styles/design-tokens' as t;
-@use '../../../styles/eventos-ui' as ui;
+@use '../../../styles/admin-pages' as pages;
 
-.alert-error {
-  background: #ffebee;
-  color: t.$error;
-  padding: t.$space-12;
-  border-radius: t.$radius-md;
-  border-left: 4px solid t.$error;
-  margin-bottom: t.$space-16;
-  font-size: t.$font-size-sm;
-}
-
-.form {
-  .form-group {
-    margin-bottom: t.$space-16;
-
-    label {
-      display: block;
-      margin-bottom: t.$space-4;
-      font-weight: t.$font-weight-semibold;
-      font-size: t.$font-size-sm;
-      color: t.$text-dark;
-    }
-
-    .hint {
-      display: block;
-      margin-top: t.$space-4;
-      font-size: t.$font-size-xs;
-      color: t.$text-light;
-    }
-
-    .form-control {
-      @include ui.form-control;
-    }
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: t.$space-12;
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: t.$space-12;
-    margin-top: t.$space-20;
-
-    .btn {
-      flex: 1;
-
-      &.btn-primary {
-        @include ui.btn-primary;
-      }
-
-      &.btn-secondary {
-        @include ui.btn-secondary;
-      }
-    }
-  }
+// Pantalla 14 · Jornada — crear / editar (modal)
+:host {
+  @include pages.modal-form;
 }

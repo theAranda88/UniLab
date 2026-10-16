@@ -1,11 +1,7 @@
 @if (scanFlow()) {
   <div class="mobile-asistencia">
-    @if (portalTheme()) {
-      <app-spiderweb-canvas />
-    }
-
     <div class="mobile-asistencia__content">
-      <img src="assets/images/quime-02.png" alt="Quime" class="quime-img" />
+      <img src="assets/images/recursos/Logoeduinova.svg" alt="Eduinova" class="mobile-logo" />
 
       @if (registrando()) {
         <div class="mobile-status loading">
@@ -49,10 +45,29 @@
           </div>
         </div>
       } @else if (registroCompletado()) {
-        <div class="mobile-status success">
-          <i class="ti ti-circle-check" aria-hidden="true"></i>
-          <h1>{{ 'asistencia.mobile.exitoTitulo' | translate }}</h1>
-          <p>{{ 'asistencia.registrada' | translate }}</p>
+        <div class="success" role="status">
+          <!-- Check animado: el círculo se dibuja, luego el check y un destello de puntos -->
+          <div class="success__mark" aria-hidden="true">
+            @for (i of particulas; track i) {
+              <span class="success__spark" [style.--i]="i"></span>
+            }
+            <svg viewBox="0 0 120 120">
+              <circle class="success__ring" cx="60" cy="60" r="52" />
+              <path class="success__check" d="M38 62 l15 15 l30 -32" />
+            </svg>
+          </div>
+
+          <h1 class="success__title">{{ 'asistencia.mobile.listo' | translate }}</h1>
+          <span class="success__badge">
+            <i class="ti ti-calendar-check" aria-hidden="true"></i>
+            {{ 'asistencia.mobile.confirmada' | translate }}
+          </span>
+          <p class="success__text">{{ 'asistencia.mobile.confirmadaDetalle' | translate }}</p>
+
+          <a routerLink="/" class="success__btn">
+            <i class="ti ti-home" aria-hidden="true"></i>
+            {{ 'asistencia.mobile.volverInicio' | translate }}
+          </a>
         </div>
       } @else if (mensajeKey() || mensajeCustom()) {
         <div class="mobile-status error">

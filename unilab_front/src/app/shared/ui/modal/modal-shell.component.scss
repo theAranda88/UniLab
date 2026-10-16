@@ -1,35 +1,40 @@
 @use '../../../../styles/design-tokens' as t;
-@use '../../../../styles/portal-codex-tokens' as p;
+
+// C20 · Modal — formularios cortos. Panel y portal comparten diseño.
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  z-index: t.$z-index-modal-backdrop;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: t.$z-index-modal-backdrop;
   padding: t.$space-16;
+  background: t.$overlay;
+  backdrop-filter: blur(2px);
 }
 
 .modal-content {
-  background: t.$white;
-  border-radius: t.$radius-lg;
-  box-shadow: t.$shadow-lg;
+  position: relative;
+  z-index: t.$z-index-modal;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 520px;
   max-height: 90vh;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-xl;
+  background: t.$white;
+  box-shadow: t.$shadow-overlay;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  z-index: t.$z-index-modal;
+  animation: eduFadeUp 200ms ease;
 
   &.modal-sm {
     max-width: 400px;
   }
 
   &.modal-lg {
-    max-width: 640px;
+    max-width: 680px;
   }
 }
 
@@ -37,81 +42,79 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: t.$space-16 t.$space-20;
-  border-bottom: 1px solid t.$border-gray;
+  gap: t.$space-12;
+  padding: t.$space-20 t.$space-24 t.$space-16;
+  border-bottom: 1px solid t.$border-subtle;
 
   h2 {
     margin: 0;
     font-size: t.$font-size-lg;
-    font-weight: t.$font-weight-semibold;
-    color: t.$primary-blue;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: -0.01em;
+    color: t.$ink;
   }
 
   .close-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
     border: none;
     border-radius: t.$radius-md;
     background: transparent;
-    color: t.$text-light;
+    color: t.$text-secondary;
+    font-size: 18px;
     cursor: pointer;
-    transition: background t.$transition-base;
+    transition:
+      background t.$transition-base,
+      color t.$transition-base;
 
     &:hover:not(:disabled) {
-      background: t.$light-gray;
-      color: t.$text-dark;
+      background: t.$blue-tint;
+      color: t.$blue;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: t.$focus-ring;
     }
 
     &:disabled {
-      opacity: 0.4;
+      color: t.$text-disabled;
       cursor: not-allowed;
     }
   }
 }
 
 .modal-body {
-  padding: t.$space-20;
+  padding: t.$space-20 t.$space-24 t.$space-24;
   overflow-y: auto;
 }
 
-:host.modal-host--portal .modal-overlay {
-  background: p.$portal-bg-overlay;
-  backdrop-filter: blur(6px);
-}
-
-:host.modal-host--portal .modal-content {
-  background: linear-gradient(160deg, rgba(10, 22, 40, 0.98), rgba(4, 12, 28, 0.99));
-  border: 1px solid p.$portal-border;
-  box-shadow: p.$portal-shadow-modal;
-  border-radius: t.$radius-xl;
-}
-
-:host.modal-host--portal .modal-header {
-  border-bottom-color: p.$portal-border-subtle;
-  padding: t.$space-20 t.$space-24 t.$space-16;
-
-  h2 {
-    font-family: p.$portal-font-display;
-    font-size: clamp(1.125rem, 1vw + 0.85rem, 1.375rem);
-    font-weight: 700;
-    color: p.$portal-text-primary;
+// Móvil: pantalla completa
+@include t.respond-to(t.$breakpoint-sm) {
+  .modal-overlay {
+    align-items: stretch;
+    padding: 0;
   }
 
-  .close-btn {
-    color: p.$portal-text-muted;
-    border: 1px solid p.$portal-border-subtle;
-
-    &:hover:not(:disabled) {
-      background: rgba(212, 175, 55, 0.1);
-      color: p.$portal-gold-light;
-      border-color: p.$portal-border;
-    }
+  .modal-content,
+  .modal-content.modal-sm,
+  .modal-content.modal-lg {
+    max-width: none;
+    max-height: none;
+    border: none;
+    border-radius: 0;
   }
-}
 
-:host.modal-host--portal .modal-body {
-  padding: t.$space-20 t.$space-24 t.$space-24;
+  .modal-header {
+    padding: t.$space-16;
+  }
+
+  .modal-body {
+    flex: 1;
+    padding: t.$space-16;
+  }
 }

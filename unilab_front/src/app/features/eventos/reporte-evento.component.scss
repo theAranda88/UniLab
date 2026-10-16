@@ -1,261 +1,214 @@
+@use '../../../styles/design-tokens' as t;
+@use '../../../styles/eventos-ui' as ui;
+
+// Pantalla 16 · Reporte de evento — stat-card + tabla ancha con scroll horizontal.
+
 .reporte-container {
-  max-width: 1400px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 2rem;
+}
 
-  .reporte-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
+.reporte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: t.$space-16;
+  margin-bottom: t.$space-24;
 
-    h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: var(--primary-color, #333);
-    }
+  h1 {
+    @include t.page-title;
+  }
+}
 
-    .acciones {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+}
 
-      .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
+.btn {
+  &.btn-primary {
+    @include ui.btn-primary;
+  }
 
-        &.btn-primary {
-          background-color: var(--primary-color, #007bff);
-          color: white;
+  &.btn-secondary {
+    @include ui.btn-secondary;
+  }
 
-          &:hover {
-            background-color: var(--primary-dark, #0056b3);
-          }
-        }
+  &.btn-ghost {
+    @include ui.btn-base;
+    background: transparent;
+    color: t.$blue;
 
-        &.btn-secondary {
-          background-color: #6c757d;
-          color: white;
-
-          &:hover {
-            background-color: #5a6268;
-          }
-        }
-      }
+    &:hover:not(:disabled) {
+      background: t.$blue-tint;
     }
   }
 
-  .loading,
-  .error {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.1rem;
+  &.btn-sm {
+    @include ui.btn-sm;
   }
 
-  .error {
-    color: #dc3545;
-    background-color: #f8d7da;
-    border-radius: 4px;
+  i {
+    font-size: 18px;
+  }
+}
+
+.loading,
+.error {
+  margin: 0;
+  padding: t.$space-48 t.$space-24;
+  border-radius: t.$radius-lg;
+  text-align: center;
+  font-size: t.$font-size-sm;
+}
+
+.loading {
+  @include t.surface-card;
+  color: t.$text-secondary;
+}
+
+.error {
+  border: 1px solid t.$danger-border;
+  background: t.$danger-tint;
+  color: t.$danger-ink;
+}
+
+.reporte-content {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-24;
+}
+
+// C11 · Stat-card
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: t.$space-16;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.stat-card {
+  @include t.surface-card;
+  position: relative;
+  overflow: hidden;
+  padding: t.$space-20 t.$space-20 t.$space-24;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: t.$space-20;
+    right: t.$space-20;
+    bottom: t.$space-12;
+    height: 3px;
+    border-radius: 2px;
+    background: t.$blue;
   }
 
-  .reporte-content {
-    .resumen {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+  h3 {
+    margin: 0 0 t.$space-8;
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-semibold;
+    letter-spacing: 0;
+    color: t.$text-secondary;
+  }
 
-      .stat-card {
-        background-color: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  .stat-value {
+    margin: 0;
+    font-size: 32px;
+    font-weight: t.$font-weight-black;
+    letter-spacing: t.$letter-spacing-display;
+    line-height: 1;
+    color: t.$ink;
+  }
+}
 
-        h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1rem;
-          color: #666;
-          text-transform: uppercase;
-          font-weight: 600;
-        }
+// C16 · Tabla
+.tabla-container {
+  @include t.surface-card;
+  overflow-x: auto;
+}
 
-        .stat-value {
-          margin: 0;
-          font-size: 2.5rem;
-          color: var(--primary-color, #007bff);
-          font-weight: 700;
-        }
-      }
+.reporte-tabla {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+  font-size: t.$font-size-sm;
+
+  th,
+  td {
+    padding: t.$space-12 t.$space-16;
+    border-bottom: 1px solid t.$border-subtle;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background: t.$neutral-soft;
+    color: t.$text-secondary;
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-bold;
+    white-space: nowrap;
+  }
+
+  td {
+    color: t.$ink;
+  }
+
+  td:first-child {
+    font-weight: t.$font-weight-bold;
+  }
+
+  tbody tr {
+    transition: background t.$transition-base;
+
+    &:hover {
+      background: rgba(5, 54, 134, 0.035);
     }
 
-    .tabla-container {
-      background-color: white;
-      border-radius: 8px;
-      overflow-x: auto;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-      .reporte-tabla {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.95rem;
-
-        thead {
-          background-color: #f8f9fa;
-          border-bottom: 2px solid #dee2e6;
-
-          th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            white-space: nowrap;
-          }
-        }
-
-        tbody {
-          tr {
-            border-bottom: 1px solid #dee2e6;
-            transition: background-color 0.2s ease;
-
-            &:hover {
-              background-color: #f8f9fa;
-            }
-
-            td {
-              padding: 1rem;
-
-              .badge {
-                display: inline-block;
-                padding: 0.25rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.85rem;
-                font-weight: 600;
-
-                &.tipo-estudiante {
-                  background-color: #e3f2fd;
-                  color: #1976d2;
-                }
-
-                &.tipo-profesor {
-                  background-color: #f3e5f5;
-                  color: #7b1fa2;
-                }
-
-                &.tipo-externo {
-                  background-color: #fff3e0;
-                  color: #e65100;
-                }
-              }
-
-              .badge-pago {
-                display: inline-block;
-                padding: 0.25rem 0.75rem;
-                border-radius: 4px;
-                font-size: 0.85rem;
-                font-weight: 600;
-
-                &.pago-pendiente {
-                  background-color: #fff3cd;
-                  color: #856404;
-                }
-
-                &.pago-confirmado {
-                  background-color: #d4edda;
-                  color: #155724;
-                }
-
-                &.pago-exento {
-                  background-color: #d1ecf1;
-                  color: #0c5460;
-                }
-
-                &.pago-null {
-                  background-color: #e2e3e5;
-                  color: #383d41;
-                }
-
-                &.pago-sin-procesar {
-                  background-color: #e2e3e5;
-                  color: #383d41;
-                }
-              }
-
-              .porcentaje {
-                display: block;
-                font-weight: 700;
-                color: var(--primary-color, #007bff);
-                margin-bottom: 0.5rem;
-              }
-
-              .asistencias-detalle {
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-
-                .jornada-asistencia {
-                  font-size: 0.85rem;
-                  padding: 0.25rem 0.5rem;
-                  background-color: #f5f5f5;
-                  border-radius: 3px;
-                  font-family: 'Courier New', monospace;
-
-                  &.presente {
-                    color: #28a745;
-                    font-weight: 600;
-                  }
-
-                  &:not(.presente) {
-                    color: #dc3545;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    &:last-child td {
+      border-bottom: none;
     }
   }
 }
 
-@media (max-width: 768px) {
-  .reporte-container {
-    padding: 1rem;
+// C10 · Badges
+.badge,
+.badge-pago {
+  @include ui.estado-pill;
+  background: t.$neutral-tint;
+  color: rgba(30, 30, 30, 0.7);
+}
 
-    .reporte-header {
-      flex-direction: column;
-      align-items: stretch;
-
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      .acciones {
-        .btn {
-          flex: 1;
-        }
-      }
-    }
-
-    .reporte-content {
-      .tabla-container {
-        font-size: 0.85rem;
-
-        .reporte-tabla {
-          thead th {
-            padding: 0.75rem 0.5rem;
-          }
-
-          tbody td {
-            padding: 0.75rem 0.5rem;
-          }
-        }
-      }
-    }
+.badge {
+  &.tipo-estudiante,
+  &.tipo-profesor {
+    background: t.$blue-tint-strong;
+    border-color: t.$blue-border;
+    color: t.$blue;
   }
+}
+
+.badge-pago {
+  &.pago-pendiente {
+    background: t.$accent-tint;
+    border-color: t.$accent-border;
+    color: t.$accent-ink;
+  }
+
+  &.pago-confirmado {
+    background: t.$blue-tint-strong;
+    border-color: t.$blue-border;
+    color: t.$blue;
+  }
+}
+
+.porcentaje {
+  font-weight: t.$font-weight-extra-bold;
+  color: t.$blue;
+  font-variant-numeric: tabular-nums;
 }

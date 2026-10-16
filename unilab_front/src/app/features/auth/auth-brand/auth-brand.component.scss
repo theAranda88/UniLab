@@ -1,0 +1,299 @@
+@use '../../../../styles/design-tokens' as t;
+
+// Lado de identidad de /login y /registro sobre fondo claro:
+// logos, «Bienvenido a EDUINOVA», frase corta y la mascota.
+// Formas suaves en azul y amarillo institucional.
+
+:host {
+  // Sin overflow hidden: el arco puede pasar por detrás de la tarjeta (el layout recorta)
+  position: relative;
+  z-index: 0;
+  display: flex;
+  min-width: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Formas de fondo
+// ---------------------------------------------------------------------------
+.brand__shape {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+
+  // Círculo amarillo cortado arriba
+  &--sun {
+    top: -170px;
+    left: 54%;
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(160deg, #fbe27a, t.$accent);
+    opacity: 0.85;
+  }
+
+  // Arco azul muy claro detrás de la mascota
+  &--arc {
+    top: 10%;
+    left: 36%;
+    width: 88%;
+    aspect-ratio: 1;
+    background: linear-gradient(200deg, rgba(5, 54, 134, 0.04) 10%, rgba(5, 54, 134, 0.12) 75%);
+  }
+
+  // Ola azul institucional abajo a la izquierda
+  // Tamaño acotado y anclado a la esquina: nunca alcanza el texto, en ningún ancho de pantalla
+  &--wave {
+    bottom: 0;
+    left: 0;
+    width: clamp(200px, 20vw, 320px);
+    aspect-ratio: 1;
+    background: linear-gradient(150deg, #2c64c4, t.$blue);
+    transform: translate(-36%, 46%);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Contenido
+// ---------------------------------------------------------------------------
+.brand__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: clamp(28px, 6vh, 64px) clamp(28px, 5vw, 80px);
+}
+
+// Solo los dos logos con un divisor
+.brand__logos {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.brand__logo {
+  display: inline-flex;
+  border-radius: t.$radius-md;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
+  }
+
+  img {
+    display: block;
+    height: 64px;
+    width: auto;
+  }
+}
+
+.brand__divider {
+  width: 1px;
+  height: 52px;
+  background: rgba(5, 54, 134, 0.22);
+}
+
+.brand__uni {
+  display: block;
+  height: 64px;
+  width: auto;
+}
+
+.brand__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: min(420px, 46%);
+  margin: auto 0;
+}
+
+.brand__tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(227, 201, 36, 0.85);
+  color: t.$ink;
+  font-size: t.$font-size-2xs;
+  font-weight: t.$font-weight-extra-bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.brand__welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+
+  span {
+    font-size: clamp(32px, 3.4vw, 50px);
+    font-weight: t.$font-weight-normal;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: t.$blue;
+  }
+}
+
+// La única palabra «EDUINOVA»: letras SVG del logotipo, en azul con la «i» amarilla
+.brand__wordmark {
+  display: block;
+  width: clamp(230px, 27vw, 400px);
+  height: auto;
+}
+
+// Nunito Black en azul institucional para que la frase se lea con claridad
+.brand__intro {
+  margin: 0;
+  font-size: clamp(15px, 1.25vw, 18px);
+  font-weight: t.$font-weight-black;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: t.$blue;
+}
+
+// Mascota
+.brand__mascot {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  height: min(74%, 620px);
+  aspect-ratio: 3 / 4;
+  pointer-events: none;
+
+  img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+    filter: drop-shadow(0 22px 26px rgba(5, 54, 134, 0.22));
+  }
+}
+
+// Pequeño círculo claro junto a la cabeza
+.brand__mascot-dot {
+  position: absolute;
+  top: 2%;
+  left: -6%;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(5, 54, 134, 0.07);
+}
+
+// ---------------------------------------------------------------------------
+// Responsive
+// ---------------------------------------------------------------------------
+@media (max-width: 1180px) {
+  .brand__mascot {
+    left: 54%;
+    height: min(56%, 460px);
+  }
+
+  .brand__copy {
+    max-width: 52%;
+  }
+}
+
+// Pantallas bajas: sin la forma azul para que no se acerque al texto
+@media (max-height: 720px) {
+  .brand__shape--wave {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .brand__inner {
+    gap: 28px;
+    padding: 28px 20px 8px;
+  }
+
+  .brand__logos {
+    justify-content: center;
+  }
+
+  .brand__logo img,
+  .brand__uni {
+    height: 46px;
+  }
+
+  .brand__divider {
+    height: 40px;
+  }
+
+  .brand__copy {
+    align-items: center;
+    max-width: 100%;
+    margin: 0;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .brand__tag {
+    align-self: center;
+  }
+
+  .brand__welcome {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand__wordmark {
+    width: clamp(200px, 60vw, 300px);
+  }
+
+  .brand__intro {
+    max-width: 40ch;
+    font-size: 14px;
+  }
+
+  .brand__mascot,
+  .brand__shape--arc,
+  .brand__shape--wave {
+    display: none;
+  }
+
+  .brand__shape--sun {
+    top: -210px;
+    left: auto;
+    right: -90px;
+  }
+}
+
+// Teléfonos: el formulario es lo prioritario. La marca se reduce a logos + «Bienvenido a
+// EDUINOVA»; la etiqueta y la frase descriptiva se ocultan para subir el formulario.
+@media (max-width: 600px) {
+  .brand__inner {
+    gap: 16px;
+    padding: 20px 16px 4px;
+  }
+
+  .brand__logo img,
+  .brand__uni {
+    height: 38px;
+  }
+
+  .brand__divider {
+    height: 32px;
+  }
+
+  .brand__tag,
+  .brand__intro {
+    display: none;
+  }
+
+  .brand__welcome {
+    gap: 6px;
+
+    span {
+      font-size: 24px;
+    }
+  }
+
+  .brand__wordmark {
+    width: clamp(170px, 52vw, 230px);
+  }
+}

@@ -1,0 +1,6 @@
+@use '../../../../styles/admin-pages' as pages;
+
+// RA-003 · Curso — crear / editar
+.cursos-form {
+  @include pages.form-page(640px);
+}

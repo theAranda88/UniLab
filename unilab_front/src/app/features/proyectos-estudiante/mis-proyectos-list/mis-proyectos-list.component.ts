@@ -8,16 +8,17 @@ import { hasPortalTheme } from '../../../core/utils/portal-theme.util';
 import type { Proyecto } from '../../../core/models/proyecto.model';
 import { urlsImagenesProyecto } from '../../../core/models/portal.model';
 
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+
 @Component({
   selector: 'app-mis-proyectos-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './mis-proyectos-list.component.html',
   styleUrl: './mis-proyectos-list.component.scss',
   host: {
     '[class.portal-themed]': 'portalTheme()',
-    class: 'portal-route-page',
-    '[class.portal-route-page--entered]': 'entered()',
   },
 })
 export class MisProyectosListComponent implements OnInit {
@@ -27,7 +28,6 @@ export class MisProyectosListComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   readonly portalTheme = signal(false);
-  readonly entered = signal(false);
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
   readonly proyectos = signal<Proyecto[]>([]);
@@ -60,7 +60,6 @@ export class MisProyectosListComponent implements OnInit {
 
   ngOnInit(): void {
     this.portalTheme.set(hasPortalTheme(this.route));
-    window.setTimeout(() => this.entered.set(true), 120);
     this.cargar();
   }
 

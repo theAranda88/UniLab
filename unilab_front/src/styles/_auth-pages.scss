@@ -1,0 +1,298 @@
+// Piezas comunes de las páginas de autenticación (login, registro, recuperar contraseña).
+// Referencia: prototipo «Eduinova Autenticacion».
+@use './design-tokens' as t;
+@use './eventos-ui' as ui;
+
+// Tarjeta blanca centrada
+@mixin card($max-width: 420px) {
+  width: 100%;
+  max-width: $max-width;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-xl;
+  background: t.$white;
+  box-shadow:
+    0 1px 2px rgba(30, 30, 30, 0.04),
+    0 16px 40px -16px rgba(5, 54, 134, 0.28);
+}
+
+// Título de tarjeta (26 / 900)
+@mixin card-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: t.$font-weight-black;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: t.$ink;
+}
+
+@mixin card-subtitle {
+  margin: 0;
+  font-size: t.$font-size-sm;
+  line-height: t.$line-height-normal;
+  color: t.$text-muted;
+}
+
+// Campo: label + control + ayuda/error
+@mixin field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  > span:first-child {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    color: t.$ink;
+  }
+
+  input,
+  select {
+    @include ui.form-control;
+    min-height: 44px;
+    padding: 0 13px;
+  }
+
+  // iOS amplía la página al enfocar campos de menos de 16px
+  @media (max-width: 600px) {
+    input,
+    select {
+      font-size: 16px;
+    }
+  }
+}
+
+@mixin hint {
+  font-size: t.$font-size-xs;
+  color: t.$text-secondary;
+}
+
+@mixin error-text {
+  font-size: t.$font-size-xs;
+  font-weight: t.$font-weight-semibold;
+  color: t.$danger;
+}
+
+// Alerta de error con ícono
+@mixin alert-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(176, 42, 42, 0.24);
+  border-radius: t.$radius-lg;
+  background: rgba(176, 42, 42, 0.06);
+
+  i {
+    flex: none;
+    margin-top: 1px;
+    font-size: 18px;
+    color: t.$danger;
+  }
+
+  span {
+    font-size: t.$font-size-label;
+    line-height: t.$line-height-normal;
+    color: rgba(30, 30, 30, 0.75);
+  }
+}
+
+// Aviso amarillo (contraseña temporal)
+@mixin notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border: 1px solid rgba(227, 201, 36, 0.5);
+  border-radius: t.$radius-lg;
+  background: rgba(227, 201, 36, 0.16);
+
+  i {
+    flex: none;
+    margin-top: 1px;
+    font-size: 18px;
+    color: t.$accent-ink;
+  }
+
+  span {
+    font-size: t.$font-size-label;
+    line-height: t.$line-height-normal;
+    color: rgba(30, 30, 30, 0.78);
+  }
+}
+
+// Contraseña temporal destacada
+@mixin temp-password {
+  padding: t.$space-16;
+  border: 1px dashed t.$blue-border;
+  border-radius: t.$radius-md;
+  background: t.$white;
+  color: t.$blue;
+  font-family: ui-monospace, monospace;
+  font-size: t.$font-size-xl;
+  font-weight: t.$font-weight-bold;
+  letter-spacing: 0.08em;
+  text-align: center;
+  user-select: all;
+}
+
+// Botón principal de ancho completo (48px)
+@mixin submit {
+  @include ui.btn-primary;
+  width: 100%;
+  min-height: 48px;
+  font-size: 15px;
+  font-weight: t.$font-weight-extra-bold;
+}
+
+// Enlaces de texto centrados bajo el formulario
+@mixin text-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  font-size: t.$font-size-label;
+  color: t.$text-muted;
+
+  a {
+    font-weight: t.$font-weight-bold;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Layout dividido de /login y /registro: panel de marca + formulario.
+// En escritorio ocupa exactamente la pantalla (sin scroll de página); si el
+// formulario no cabe, solo su columna desplaza. En móvil se apila.
+// ---------------------------------------------------------------------------
+@mixin split-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  height: 100dvh;
+  overflow: hidden;
+  // Blanco con un tinte mínimo del azul institucional
+  background: linear-gradient(135deg, #fcfdff 0%, #f2f6fc 100%);
+
+  @media (max-width: 960px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+}
+
+@mixin split-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(16px, 3vh, 40px) clamp(16px, 3vw, 56px);
+
+  @media (max-width: 960px) {
+    align-items: flex-start;
+    overflow: visible;
+    padding: 24px 16px 48px;
+  }
+}
+
+// Tarjeta del formulario: margin auto la centra sin recortar si es más alta
+@mixin split-card($max-width: 440px) {
+  @include card($max-width);
+  margin: auto;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow:
+    0 1px 2px rgba(30, 30, 30, 0.04),
+    0 20px 48px -28px rgba(5, 54, 134, 0.28);
+
+  @media (max-width: 960px) {
+    margin: 0 auto;
+  }
+}
+
+// Enlace «← Volver al portal» arriba de la tarjeta (mismo estilo que el «← Volver» del portal)
+@mixin back-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  margin-left: -8px;
+  padding: 0 8px;
+  border-radius: t.$radius-md;
+  color: t.$blue;
+  font-size: t.$font-size-label;
+  font-weight: t.$font-weight-bold;
+  text-decoration: none;
+  transition: background 170ms ease;
+
+  i {
+    font-size: 16px;
+    transition: transform 170ms ease;
+  }
+
+  &:hover {
+    background: t.$blue-tint;
+    text-decoration: none;
+
+    i {
+      transform: translateX(-2px);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Campo grande de /login y /recuperar-contrasena (label azul + control de 52px)
+// ---------------------------------------------------------------------------
+@mixin field-lg {
+  @include field;
+  gap: 8px;
+
+  label {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    color: t.$blue;
+  }
+
+  input {
+    min-height: 52px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 15px;
+
+    @media (max-width: 600px) {
+      font-size: 16px;
+    }
+  }
+}
+
+// Contenedor de input con ícono a la izquierda (el ícono se pinta de azul al enfocar)
+@mixin icon-input {
+  position: relative;
+  display: flex;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: t.$text-secondary;
+    pointer-events: none;
+    transition: color 170ms ease;
+  }
+
+  input {
+    padding-left: 46px;
+  }
+
+  &:focus-within > i {
+    color: t.$blue;
+  }
+}

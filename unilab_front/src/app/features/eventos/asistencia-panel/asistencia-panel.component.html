@@ -1,0 +1,91 @@
+<div class="asistencia">
+  <header class="asistencia__header">
+    <h1>{{ 'asistenciaPanel.titulo' | translate }}</h1>
+    <p>{{ 'asistenciaPanel.descripcion' | translate }}</p>
+  </header>
+
+  <div class="asistencia__filters" role="group" [attr.aria-label]="'eventos.filtroEstado' | translate">
+    @for (estado of estados; track estado) {
+      <button
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="filtro() === estado"
+        (click)="filtro.set(estado)"
+      >
+        {{ (estado ? 'eventos.estado.' + estado : 'eventos.filtroTodos') | translate }}
+      </button>
+    }
+  </div>
+
+  @if (cargando()) {
+    <app-skeleton variant="list" [rows]="4" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
+  } @else if (filtrados().length === 0) {
+    <app-empty-state
+      icon="ti-qrcode"
+      [title]="'asistenciaPanel.sinEventos' | translate"
+      [message]="'asistenciaPanel.sinEventosHint' | translate"
+    />
+  } @else {
+    <div class="asistencia__list">
+      @for (item of filtrados(); track item.evento.id_evento) {
+        <article class="evento">
+          <header class="evento__head">
+            <div class="evento__title">
+              <span class="estado estado-{{ item.evento.estado }}">
+                {{ 'eventos.estado.' + item.evento.estado | translate }}
+              </span>
+              <h2>
+                <a [routerLink]="[base, item.evento.id_evento]">{{ item.evento.nombre_evento }}</a>
+              </h2>
+              <p>
+                <i class="ti ti-calendar-event" aria-hidden="true"></i>
+                {{ formatearFecha(item.evento.fecha_inicio) }} – {{ formatearFecha(item.evento.fecha_fin) }}
+                <span aria-hidden="true">·</span>
+                <i class="ti ti-map-pin" aria-hidden="true"></i>
+                {{ item.evento.lugar }}
+              </p>
+            </div>
+            <div class="evento__actions">
+              <a class="edu-btn edu-btn--secondary edu-btn--sm" [routerLink]="[base, item.evento.id_evento, 'asistencia']">
+                <i class="ti ti-keyboard" aria-hidden="true"></i>
+                {{ 'asistenciaPanel.registrarManual' | translate }}
+              </a>
+              <a class="edu-btn edu-btn--sm" [routerLink]="[base, item.evento.id_evento, 'reporte']">
+                <i class="ti ti-chart-bar" aria-hidden="true"></i>
+                {{ 'reporte.titulo' | translate }}
+              </a>
+            </div>
+          </header>
+
+          @if (item.jornadas.length === 0) {
+            <p class="evento__empty">{{ 'jornadas.sinJornadas' | translate }}</p>
+          } @else {
+            <ul class="evento__jornadas">
+              @for (jo of item.jornadas; track jo.id_jornada) {
+                <li>
+                  <span class="evento__jornada-icon"><i class="ti ti-qrcode" aria-hidden="true"></i></span>
+                  <span class="evento__jornada-text">
+                    <strong>{{ jo.nombre_jornada }}</strong>
+                    <small>{{ formatearFecha(jo.fecha) }} · {{ formatearHora(jo.hora_inicio) }} – {{ formatearHora(jo.hora_fin) }}</small>
+                  </span>
+                  <a class="evento__jornada-link" [routerLink]="[base, item.evento.id_evento, 'jornadas', jo.id_jornada]">
+                    {{ 'asistenciaPanel.verQr' | translate }} →
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </article>
+      }
+    </div>
+  }
+</div>

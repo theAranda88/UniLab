@@ -1,108 +1,83 @@
-<div class="proyectos-prof-detalle">
-  <button type="button" class="btn btn-link" (click)="volver()">
-    {{ 'proyectosProfesor.volver' | translate }}
-  </button>
-
+<div class="ppd">
   @if (cargando()) {
-    <p class="proyectos-prof-detalle__status">{{ 'common.cargando' | translate }}</p>
+    <p class="ppd__status">{{ 'common.cargando' | translate }}</p>
   } @else if (error()) {
-    <p class="proyectos-prof-detalle__status proyectos-prof-detalle__status--error">
-      {{ error()! | translate }}
-    </p>
+    <p class="ppd__status ppd__status--error">{{ error()! | translate }}</p>
   } @else if (proyecto(); as p) {
-    <header class="proyectos-prof-detalle__header">
-      <div>
-        <span class="estado-badge estado-badge--{{ p.estado_proyecto }}">
-          {{ 'proyectosEstudiante.estados.' + p.estado_proyecto | translate }}
-        </span>
-        <h1>{{ p.titulo }}</h1>
-        <p class="proyectos-prof-detalle__meta">
-          {{ 'proyectosProfesor.estudiante' | translate }}:
-          <strong>{{ nombreEstudiante(p) }}</strong>
-          · {{ p.curso?.nombre_curso }}
-          @if (p.semillero) {
-            · {{ p.semillero.nombre_semillero }}
-          }
-        </p>
-      </div>
+    <header class="ppd__head">
+      <span class="estado-badge estado-badge--{{ p.estado_proyecto }}">
+        {{ 'proyectosEstudiante.estados.' + p.estado_proyecto | translate }}
+      </span>
+      <h1 class="ppd__title">{{ p.titulo }}</h1>
     </header>
 
-    @if (imagenes().length > 0) {
-      <section class="proyectos-prof-detalle__section">
-        <h2>{{ 'proyectosProfesor.imagenes' | translate }}</h2>
-        <div class="proyectos-prof-detalle__media">
-          <app-project-image-carousel [images]="imagenes()" [alt]="p.titulo" />
-        </div>
-      </section>
-    }
-
-    <section class="proyectos-prof-detalle__section">
-      <h2>{{ 'proyectosProfesor.descripcion' | translate }}</h2>
-      <p>{{ p.descripcion }}</p>
-    </section>
-
-    <section class="proyectos-prof-detalle__section proyectos-prof-detalle__links">
-      <h2>{{ 'proyectosProfesor.enlaces' | translate }}</h2>
-      <ul>
-        <li>
-          <a [href]="p.url_aplicativo" target="_blank" rel="noopener noreferrer">
-            {{ 'proyectosProfesor.urlAplicativo' | translate }}
-          </a>
-        </li>
-        @if (p.url_apk) {
-          <li>
-            <a [href]="p.url_apk" target="_blank" rel="noopener noreferrer">APK</a>
-          </li>
+    <div class="ppd__grid">
+      <!-- Contenido -->
+      <div class="ppd__main">
+        @if (imagenes().length > 0) {
+          <div class="ppd__media">
+            <app-project-image-carousel [zoomable]="true" [images]="imagenes()" [alt]="p.titulo" />
+          </div>
         }
-        @if (p.url_youtube) {
-          <li>
-            <a [href]="p.url_youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
-          </li>
+
+        <section class="ppd__card">
+          <h2>{{ 'proyectosProfesor.descripcion' | translate }}</h2>
+          <p class="ppd__desc">{{ p.descripcion }}</p>
+        </section>
+      </div>
+
+      <!-- Ficha + acciones (fija al desplazarse) -->
+      <aside class="ppd__side">
+        <section class="ppd__card">
+          <dl class="ppd__facts">
+            <div>
+              <dt>{{ 'proyectosProfesor.estudiante' | translate }}</dt>
+              <dd>{{ nombreEstudiante(p) }}</dd>
+            </div>
+            @if (p.curso?.nombre_curso) {
+              <div>
+                <dt>{{ 'home.detail.course' | translate }}</dt>
+                <dd>{{ p.curso!.nombre_curso }}</dd>
+              </div>
+            }
+            @if (p.semillero) {
+              <div>
+                <dt>{{ 'home.detail.semillero' | translate }}</dt>
+                <dd>{{ p.semillero.nombre_semillero }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+
+        <section class="ppd__card">
+          <h2>{{ 'proyectosProfesor.enlaces' | translate }}</h2>
+          <app-recursos-externos [proyecto]="p" />
+        </section>
+
+        @if (puedeRevisar() || puedePublicar() || p.estado_proyecto === 'publicado') {
+          <div class="ppd__actions">
+            @if (puedeRevisar()) {
+              <button type="button" class="btn btn-primary" [disabled]="procesando()" (click)="aprobar()">
+                {{ 'proyectosProfesor.aprobar' | translate }}
+              </button>
+              <button type="button" class="btn btn-danger" [disabled]="procesando()" (click)="rechazar()">
+                {{ 'proyectosProfesor.rechazar' | translate }}
+              </button>
+            }
+            @if (puedePublicar()) {
+              <button type="button" class="btn btn-primary" [disabled]="procesando()" (click)="publicar()">
+                {{ 'proyectosProfesor.publicar' | translate }}
+              </button>
+            }
+            @if (p.estado_proyecto === 'publicado') {
+              <button type="button" class="btn btn-secondary" (click)="verPublico()">
+                <i class="ti ti-world" aria-hidden="true"></i>
+                {{ 'proyectosProfesor.verEnPortal' | translate }}
+              </button>
+            }
+          </div>
         }
-        @if (p.url_spotify) {
-          <li>
-            <a [href]="p.url_spotify" target="_blank" rel="noopener noreferrer">Spotify</a>
-          </li>
-        }
-      </ul>
-    </section>
-
-    <div class="proyectos-prof-detalle__actions">
-      @if (puedeRevisar()) {
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="procesando()"
-          (click)="aprobar()"
-        >
-          {{ 'proyectosProfesor.aprobar' | translate }}
-        </button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          [disabled]="procesando()"
-          (click)="rechazar()"
-        >
-          {{ 'proyectosProfesor.rechazar' | translate }}
-        </button>
-      }
-
-      @if (puedePublicar()) {
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="procesando()"
-          (click)="publicar()"
-        >
-          {{ 'proyectosProfesor.publicar' | translate }}
-        </button>
-      }
-
-      @if (p.estado_proyecto === 'publicado') {
-        <button type="button" class="btn btn-secondary" (click)="verPublico()">
-          {{ 'proyectosProfesor.verEnPortal' | translate }}
-        </button>
-      }
+      </aside>
     </div>
   }
 </div>

@@ -30,6 +30,12 @@ export interface CambiarPasswordResponse {
   mensaje: string;
 }
 
+export interface RecuperarPasswordResponse {
+  email: string;
+  password_temporal: string;
+  mensaje: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -83,6 +89,11 @@ export class AuthService {
     return this.http.post<CambiarPasswordResponse>(`${this.apiUrl}/cambiar-password`, {
       nueva_password: nuevaPassword,
     });
+  }
+
+  /** Olvidó contraseña: el backend genera una contraseña temporal para el correo indicado. */
+  recuperarPassword(email: string): Observable<RecuperarPasswordResponse> {
+    return this.http.post<RecuperarPasswordResponse>(`${this.apiUrl}/cambiar-password`, { email });
   }
 
   logout(): void {

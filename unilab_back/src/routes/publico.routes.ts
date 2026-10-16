@@ -15,6 +15,7 @@ const escuelaQuerySchema = z.object({
   id_escuela: z.coerce.number().int().positive().optional(),
 });
 
+router.get('/configuracion', publicoController.obtenerConfiguracion);
 router.get('/escuelas', publicoController.listarEscuelas);
 router.get(
   '/cursos',

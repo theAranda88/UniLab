@@ -1,0 +1,133 @@
+@use '../../../../styles/design-tokens' as t;
+
+// RF-015 · Semillero — detalle
+.semillero-detalle {
+  max-width: t.$content-max-width;
+  margin: 0 auto;
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: t.$space-4;
+    margin-bottom: t.$space-16;
+    color: t.$blue;
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-bold;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: t.$space-16;
+    align-items: start;
+
+    @media (max-width: 960px) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-12;
+  }
+
+  &__h2 {
+    display: flex;
+    align-items: center;
+    gap: t.$space-8;
+    margin: 0;
+    font-size: t.$font-size-lg;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+  }
+
+  &__count,
+  &__chip-count {
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-bold;
+    color: t.$text-secondary;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__filters {
+    margin-bottom: t.$space-4;
+  }
+
+  &__people {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__person {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: t.$space-12;
+    padding: t.$space-12 0;
+    border-bottom: 1px solid t.$border-subtle;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__person-text {
+    display: flex;
+    flex: 1 1 180px;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__person-name {
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-bold;
+    color: t.$ink;
+  }
+
+  &__muted {
+    margin: 0;
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+    overflow-wrap: anywhere;
+  }
+
+  &__status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-4;
+  }
+
+  &__member-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-4;
+    margin-left: auto;
+  }
+
+  &__add {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: t.$space-12;
+    border-top: 1px solid t.$border-subtle;
+  }
+
+  &__add-row {
+    display: flex;
+    gap: t.$space-8;
+
+    .edu-control {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}

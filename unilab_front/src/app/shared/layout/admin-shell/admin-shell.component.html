@@ -1,89 +1,203 @@
 <div class="shell">
-  <aside class="sidebar">
+  @if (drawerOpen()) {
+    <button type="button" class="drawer-overlay" (click)="drawerOpen.set(false)" [attr.aria-label]="'common.close' | translate"></button>
+  }
+  <aside class="sidebar" [class.sidebar--open]="drawerOpen()" id="shell-sidebar">
     <div class="logo-area">
       <img
-        src="assets/images/Gemini_Generated_Image_tmoxxftmoxxftmox.png"
-        alt="UniLab"
+        src="assets/images/recursos/Logoeduinova.svg"
+        alt="Eduinova"
         class="logo-img"
       />
       <div class="logo-text">
-        <span class="logo-title">{{ 'shell.brand.title' | translate }}</span>
+        <img src="assets/images/recursos/Ttulo.svg" [alt]="'shell.brand.title' | translate" class="logo-title" />
         <span class="logo-sub">{{ 'shell.brand.subtitle' | translate }}</span>
       </div>
     </div>
 
-    <nav class="nav">
+    <nav class="nav" [attr.aria-label]="'shell.nav.label' | translate">
       @for (section of navSections(); track section.sectionKey) {
-        <div class="nav-section">
-          <div class="nav-label">{{ section.sectionKey | translate }}</div>
-          @for (item of section.items; track item.labelKey + item.route) {
-            <div
-              class="nav-item"
-              [class.active]="item.enabled && isActive(item.route)"
-              [class.disabled]="!item.enabled"
-              [attr.title]="!item.enabled ? ('shell.nav.comingSoon' | translate) : null"
-              (click)="navTo(item.route, item.enabled)"
-              (keyup.enter)="navTo(item.route, item.enabled)"
-              [tabindex]="item.enabled ? 0 : -1"
-              role="button"
-            >
-              <i class="ti {{ item.icon }}" aria-hidden="true"></i>
-              <span>{{ item.labelKey | translate }}</span>
-              @if (item.badge) {
-                <span class="badge">{{ item.badge }}</span>
+        @let abierto = grupoAbierto() === section.sectionKey;
+        <div class="nav-group" [class.nav-group--open]="abierto" [class.nav-group--current]="grupoActivo(section)">
+          <button
+            type="button"
+            class="nav-group__toggle"
+            [attr.aria-expanded]="abierto"
+            [attr.aria-controls]="'grupo-' + $index"
+            (click)="toggleGrupo(section.sectionKey)"
+          >
+            <span class="nav-group__icon"><i class="ti {{ section.icon }}" aria-hidden="true"></i></span>
+            <span class="nav-group__label">{{ section.sectionKey | translate }}</span>
+            <i class="ti ti-chevron-down nav-group__chevron" aria-hidden="true"></i>
+          </button>
+
+          <!-- Contenedor con grid-template-rows 0fr → 1fr: se despliega con animación sin medir alturas -->
+          <div class="nav-group__panel" [id]="'grupo-' + $index" [attr.inert]="abierto ? null : ''">
+            <ul class="nav-group__list">
+              @for (item of section.items; track item.labelKey + item.route) {
+                <li>
+                  @if (item.enabled) {
+                    <a
+                      class="nav-item"
+                      [class.active]="isActive(item.route)"
+                      [routerLink]="[shellPrefix(), item.route]"
+                      [attr.aria-current]="isActive(item.route) ? 'page' : null"
+                    >
+                      <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+                      <span class="nav-item__label">{{ item.labelKey | translate }}</span>
+                      @if (item.badge) {
+                        <span class="badge">{{ item.badge }}</span>
+                      }
+                    </a>
+                  } @else {
+                    <span class="nav-item nav-item--soon" [attr.title]="'shell.nav.comingSoon' | translate">
+                      <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+                      <span class="nav-item__label">{{ item.labelKey | translate }}</span>
+                      <span class="soon-tag">{{ 'shell.nav.soon' | translate }}</span>
+                    </span>
+                  }
+                </li>
               }
-            </div>
-          }
+            </ul>
+          </div>
         </div>
       }
     </nav>
 
-    <div class="nav-section nav-section--portal">
-      <div class="nav-label">{{ 'shell.nav.sections.portal' | translate }}</div>
+    <div class="sidebar-bottom">
       <a class="nav-item nav-item--portal" routerLink="/">
         <i class="ti ti-world" aria-hidden="true"></i>
-        <span>{{ 'shell.nav.portalPublic' | translate }}</span>
+        <span class="nav-item__label">{{ 'shell.nav.portalPublic' | translate }}</span>
+        <i class="ti ti-external-link nav-item__ext" aria-hidden="true"></i>
       </a>
-    </div>
 
-    <div class="sidebar-footer">
-      <div class="user-pill">
-        <div class="avatar">{{ iniciales() }}</div>
-        <div>
-          <div class="user-name">{{ shellRole() }}</div>
-          <div class="user-role">{{ roleSubKey() | translate }}</div>
-        </div>
+      <div class="user-card">
+        <span class="user-card__avatar" aria-hidden="true">{{ iniciales() }}</span>
+        <span class="user-card__text">
+          <span class="user-card__name">{{ nombreUsuario() }}</span>
+          <span class="user-card__role">{{ 'roles.' + shellRole() | translate }}</span>
+        </span>
+        <button
+          type="button"
+          class="user-card__logout"
+          (click)="logout()"
+          [attr.aria-label]="'dashboard.logout' | translate"
+          [attr.title]="'dashboard.logout' | translate"
+        >
+          <i class="ti ti-logout" aria-hidden="true"></i>
+        </button>
       </div>
-      <button type="button" class="logout-btn" (click)="logout()">
-        {{ 'dashboard.logout' | translate }}
-      </button>
     </div>
   </aside>
 
   <div class="main">
     <header class="topbar">
-      <span class="page-title">{{ pageTitleKey() | translate }}</span>
+      <button
+        type="button"
+        class="tb-btn tb-btn--menu"
+        (click)="toggleDrawer()"
+        [attr.aria-expanded]="drawerOpen()"
+        aria-controls="shell-sidebar"
+        [attr.aria-label]="'shell.menu' | translate"
+      >
+        <i class="ti ti-menu-2" aria-hidden="true"></i>
+      </button>
+      <!-- Solo el nombre de la sección: dónde estás lo indica la barra lateral -->
+      <span class="page-title">{{ tituloKey() | translate }}</span>
       <div class="topbar-actions">
         <a class="tb-btn tb-btn--portal" routerLink="/" [title]="'shell.nav.portalPublic' | translate">
           <i class="ti ti-world" aria-hidden="true"></i>
           <span>{{ 'shell.nav.portalPublic' | translate }}</span>
         </a>
-        <button class="tb-btn" type="button" aria-label="Notificaciones">
-          <i class="ti ti-bell" aria-hidden="true"></i>
-        </button>
-        <button class="tb-btn" type="button" aria-label="Configuración">
-          <i class="ti ti-settings" aria-hidden="true"></i>
-        </button>
-        <button
-          class="tb-btn primary"
-          type="button"
-          [disabled]="shellRole() !== 'Administrador'"
-          [title]="shellRole() !== 'Administrador' ? ('shell.nav.comingSoon' | translate) : null"
-          (click)="crearUsuario()"
-        >
-          <i class="ti ti-plus" aria-hidden="true"></i>
-          <span>{{ ctaKey() | translate }}</span>
-        </button>
+        <!-- Notificaciones -->
+        <div class="tb-menu">
+          <button
+            class="tb-btn"
+            type="button"
+            (click)="toggleMenu('notificaciones')"
+            [attr.aria-expanded]="openMenu() === 'notificaciones'"
+            [attr.aria-label]="'shell.notifications.title' | translate"
+          >
+            <i class="ti ti-bell" aria-hidden="true"></i>
+            @if (notifications().length > 0) {
+              <span class="tb-count">{{ notifications().length > 9 ? '9+' : notifications().length }}</span>
+            }
+          </button>
+          @if (openMenu() === 'notificaciones') {
+            <div class="tb-dropdown tb-dropdown--wide" role="menu">
+              <div class="tb-dropdown__head">
+                <span>{{ 'shell.notifications.title' | translate }}</span>
+                <button type="button" class="tb-dropdown__refresh" (click)="cargarNotificaciones()" [attr.aria-label]="'common.reintentar' | translate">
+                  <i class="ti ti-refresh" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (cargandoNotificaciones()) {
+                <p class="tb-dropdown__empty">{{ 'common.cargando' | translate }}</p>
+              } @else if (notifications().length === 0) {
+                <p class="tb-dropdown__empty">
+                  <i class="ti ti-bell-off" aria-hidden="true"></i>
+                  {{ 'shell.notifications.empty' | translate }}
+                </p>
+              } @else {
+                @for (item of notifications(); track $index) {
+                  <button type="button" class="tb-notif" role="menuitem" (click)="abrirNotificacion(item)">
+                    <span class="tb-notif__icon"><i class="ti {{ item.icon }}" aria-hidden="true"></i></span>
+                    <span class="tb-notif__text">
+                      <strong>{{ item.title }}</strong>
+                      <small>{{ item.detailKey | translate: item.detailParams }}</small>
+                    </span>
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Configuración: idioma -->
+        <div class="tb-menu">
+          <button
+            class="tb-btn"
+            type="button"
+            (click)="toggleMenu('ajustes')"
+            [attr.aria-expanded]="openMenu() === 'ajustes'"
+            [attr.aria-label]="'shell.settings.title' | translate"
+          >
+            <i class="ti ti-settings" aria-hidden="true"></i>
+          </button>
+          @if (openMenu() === 'ajustes') {
+            <div class="tb-dropdown" role="menu">
+              <div class="tb-dropdown__head">
+                <span>{{ 'shell.settings.language' | translate }}</span>
+              </div>
+              @for (idioma of idiomas; track idioma) {
+                <button
+                  type="button"
+                  class="tb-option"
+                  role="menuitemradio"
+                  [attr.aria-checked]="idiomaActual() === idioma"
+                  (click)="cambiarIdioma(idioma)"
+                >
+                  {{ 'shell.settings.languages.' + idioma | translate }}
+                  @if (idiomaActual() === idioma) {
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                  }
+                </button>
+              }
+              <div class="tb-dropdown__sep"></div>
+              <button type="button" class="tb-option tb-option--danger" role="menuitem" (click)="logout()">
+                <i class="ti ti-logout" aria-hidden="true"></i>
+                {{ 'dashboard.logout' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (shellRole() === 'Administrador') {
+          <button class="tb-btn primary" type="button" (click)="crearUsuario()">
+            <i class="ti ti-plus" aria-hidden="true"></i>
+            <span>{{ ctaKey() | translate }}</span>
+          </button>
+        }
       </div>
     </header>
 

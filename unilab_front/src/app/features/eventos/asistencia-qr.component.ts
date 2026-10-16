@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
@@ -11,12 +11,11 @@ import {
   obtenerDocumentoInscripcion,
 } from '../../core/utils/inscripcion-documento.util';
 import { hasPortalTheme, shouldUsePortalUi } from '../../core/utils/portal-theme.util';
-import { SpiderwebCanvasComponent } from '../home/spiderweb-canvas/spiderweb-canvas.component';
 
 @Component({
   selector: 'app-asistencia-qr',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, SpiderwebCanvasComponent],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './asistencia-qr.component.html',
   styleUrl: './asistencia-qr.component.scss',
   host: {
@@ -46,6 +45,9 @@ export class AsistenciaQrComponent implements OnInit {
   registroCompletado = signal(false);
   sinQrParam = signal(false);
   portalTheme = signal(false);
+
+  /** Índices de los puntos del destello en la pantalla de éxito. */
+  readonly particulas = [0, 1, 2, 3, 4, 5, 6, 7];
 
   mobileMode = computed(() => !!this.route.snapshot.data['mobileMode']);
   shellMode = computed(() => !!this.route.snapshot.data['shellMode']);

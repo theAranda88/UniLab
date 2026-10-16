@@ -32,24 +32,33 @@
   </div>
 
   @if (cargando()) {
-    <p class="mis-proyectos__status">{{ 'common.cargando' | translate }}</p>
+    <app-skeleton variant="cards" [rows]="3" />
   } @else if (error()) {
-    <p class="mis-proyectos__status mis-proyectos__status--error">{{ error()! | translate }}</p>
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
   } @else if (misProyectos().length === 0) {
-    <div class="mis-proyectos__empty">
-      <p>{{ 'proyectosEstudiante.sinProyectos' | translate }}</p>
+    <app-empty-state
+      icon="ti-folders"
+      [title]="'proyectosEstudiante.sinProyectos' | translate"
+      [message]="'proyectosEstudiante.sinProyectosHint' | translate"
+    >
       @if (puedeCrear()) {
-        <button type="button" class="btn btn-secondary" (click)="crear()">
+        <button type="button" class="edu-btn" (click)="crear()">
           {{ 'proyectosEstudiante.crearPrimero' | translate }}
         </button>
       }
-    </div>
+    </app-empty-state>
   } @else {
     <div class="mis-proyectos__grid">
-      @for (proyecto of misProyectos(); track proyecto.id_proyecto; let i = $index) {
+      @for (proyecto of misProyectos(); track proyecto.id_proyecto) {
         <article
           class="proyecto-card"
-          [style.animation-delay.ms]="i * 80"
           (click)="gestionar(proyecto.id_proyecto)"
         >
           <div class="proyecto-card__media">

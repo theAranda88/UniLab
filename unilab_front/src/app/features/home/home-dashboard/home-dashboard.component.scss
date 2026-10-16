@@ -1,305 +1,612 @@
 @use '../../../../styles/design-tokens' as *;
 
+// Pantalla 21 · Portal — inicio. Prototipo «Eduinova Portal › home».
+// El hero tiene círculos flotantes que reaccionan al mouse (física en el .ts).
+
 :host {
   display: block;
   flex: 1;
 }
 
-.codex-portal__main--navigating {
-  .codex-portal__hologram-wrap,
-  .codex-portal__card:not(.codex-portal__card--flipping) {
-    opacity: 0.25;
-    transform: scale(0.96);
-    filter: blur(2px);
-    transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
-    pointer-events: none;
-  }
-}
-
-.codex-portal__card--flipping {
-  animation: card-flip-out 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  pointer-events: none;
-  z-index: 30;
-}
-
-@keyframes card-flip-out {
-  0% { transform: perspective(1000px) rotateX(0) rotateY(0) scale(1); opacity: 1; }
-  40% { transform: perspective(1000px) rotateY(180deg) scale(1.05); opacity: 1; }
-  100% { transform: perspective(1000px) rotateY(360deg) scale(0.85); opacity: 0; }
-}
-
-.codex-portal__main {
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
+.hero {
   position: relative;
-  z-index: 10;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(#{$space-24}, 4vh, #{$space-48});
-  max-width: min(120rem, 96vw);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 clamp(#{$space-12}, 3vw, #{$space-32});
-
-  @media (min-width: 1024px) {
-    flex-direction: row;
-    align-items: center;
-  }
+  isolation: isolate;
+  overflow: hidden;
+  background: $blue;
 }
 
-.codex-portal__hologram-wrap {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $space-24 0;
-
-  @media (min-width: 1024px) {
-    width: 50%;
-  }
-}
-
-.codex-portal__hologram {
-  position: relative;
-  width: clamp(260px, 42vw, 520px);
-  max-width: 88vw;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-style: preserve-3d;
-  transition: transform 0.1s ease-out;
-}
-
-.codex-portal__layer {
+// Profundidad del fondo: luz suave arriba a la derecha, sombra abajo a la izquierda y una
+// retícula de puntos muy tenue que se desvanece hacia el texto.
+.hero__backdrop {
   position: absolute;
+  z-index: -1;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background:
+    radial-gradient(60% 70% at 82% 18%, rgba(76, 130, 222, 0.5), transparent 70%),
+    radial-gradient(50% 60% at 8% 100%, rgba(2, 24, 66, 0.55), transparent 70%),
+    linear-gradient(160deg, #0a438f 0%, $blue 45%, #042b6d 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(100deg, transparent 30%, #000 75%);
+    -webkit-mask-image: linear-gradient(100deg, transparent 30%, #000 75%);
+  }
+}
+
+// Entrada escalonada del contenido al cargar (--d = retraso)
+.reveal {
+  animation: hero-reveal 700ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0ms) both;
+}
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Borde inferior curvo hacia la sección clara
+.hero__curve {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(28px, 5vw, 64px);
   pointer-events: none;
+
+  path {
+    fill: $cream;
+  }
 }
 
-.codex-portal__layer--bg {
-  transform: translateZ(-60px);
-  border-radius: 50%;
-  border: 1px solid rgba(212, 175, 55, 0.05);
-  background-size: 40px 40px;
-  background-image:
-    linear-gradient(to right, rgba(212, 175, 55, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }
 
-.codex-portal__ring {
-  width: 91.666%;
-  height: 91.666%;
-  border-radius: 50%;
-  border: 1px dashed rgba(217, 119, 6, 0.1);
-  display: flex;
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   align-items: center;
-  justify-content: center;
-  animation: rotate-cw 40s linear infinite;
+  gap: 48px;
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 84px 24px 116px;
+
+  @include respond-to($breakpoint-sm) {
+    padding: 48px 16px 72px;
+  }
 }
 
-.codex-portal__ring-svg {
-  width: 80%;
-  height: 80%;
-  opacity: 0.25;
-}
-
-.codex-portal__layer--sketch {
-  width: 80%;
-  height: 80%;
-  transform: translateZ(-20px);
-  opacity: 0.35;
-  color: rgba(217, 119, 6, 0.2);
-}
-
-.codex-portal__sketch-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.codex-portal__layer--logo {
-  width: 75%;
-  height: 75%;
-  transform: translateZ(40px);
-  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.45)) drop-shadow(0 0 35px rgba(212, 175, 55, 0.2));
-}
-
-.codex-portal__logo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.35));
-}
-
-.codex-portal__logo-fallback {
+.hero__copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: $space-8;
-  color: rgba(251, 191, 36, 0.8);
+  gap: 22px;
+  min-width: 0;
+}
 
-  svg {
-    width: 12rem;
-    height: 12rem;
+.hero__tag {
+  align-self: flex-start;
+  display: inline-block;
+  // Altura automática: si el nombre institucional pasa a dos líneas, la etiqueta crece con él
+  // (antes height: 26px recortaba la segunda línea y las tildes de las mayúsculas).
+  max-width: 100%;
+  min-height: 26px;
+  padding: 6px 11px 5px;
+  border-radius: $radius-sm;
+  background: $accent;
+  color: $ink;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-extra-bold;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+
+  @include respond-to($breakpoint-sm) {
+    letter-spacing: 0.06em;
   }
+}
+
+.hero__title {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(34px, 6vw, 60px);
+  font-weight: $font-weight-black;
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+  color: $white;
+  overflow-wrap: break-word;
 
   span {
-    font-family: 'Cinzel', serif;
-    font-size: $font-size-xs;
-    letter-spacing: 0.2em;
-    color: #fbbf24;
+    font-weight: $font-weight-light;
   }
 }
 
-.codex-portal__control-area {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  @media (min-width: 1024px) {
-    width: 52%;
-    flex: 1;
-    min-width: 0;
-  }
+.hero__rule {
+  width: 72px;
+  height: 3px;
+  border-radius: 2px;
+  background: $accent;
 }
 
-.codex-portal__grid {
-  position: relative;
-  z-index: 10;
+.hero__lead {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 17px;
+  line-height: 1.65;
+  color: $text-on-blue-secondary;
+}
+
+.hero__actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(#{$space-12}, 1.5vw, #{$space-16});
-  width: 100%;
-  padding: $space-16 0;
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  gap: 12px;
+  margin-top: 6px;
 }
 
-.codex-portal__grid--hidden {
-  opacity: 0;
-  transform: scale(0.95);
-  pointer-events: none;
-  z-index: 0;
-}
+.hero__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: $radius-md;
+  font-size: 15px;
+  text-decoration: none;
 
-.codex-portal__main--active .dashboard-element {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.dashboard-element {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: var(--emerge-delay, 0s);
-}
-
-.codex-portal__card {
-  flex: 0 1 100%;
-  max-width: 100%;
-  min-height: clamp(9.5rem, 22vw, 11.5rem);
-  aspect-ratio: 4 / 5;
-  border: 1px solid rgba(212, 175, 55, 0.18);
-  border-radius: $radius-xl;
-  padding: clamp(#{$space-12}, 1.5vw, #{$space-20});
-  background: rgba(4, 12, 28, 0.82);
-  backdrop-filter: blur(16px);
-  cursor: pointer;
-  text-align: left;
-  transform-style: preserve-3d;
-  transition:
-    transform 0.18s ease-out,
-    border-color 0.4s ease,
-    box-shadow 0.4s ease,
-    background 0.4s ease;
-
-  @media (min-width: 640px) {
-    flex: 0 1 calc(50% - #{$space-12});
-    max-width: calc(50% - #{$space-12});
+  &:hover {
+    text-decoration: none;
   }
 
-  @media (min-width: 1024px) {
-    flex: 0 1 calc(33.333% - #{$space-16});
-    max-width: calc(33.333% - #{$space-16});
+  i {
+    font-size: 18px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $white;
+    outline-offset: 3px;
+  }
+
+  &--accent {
+    border: 1px solid $accent;
+    background: $accent;
+    color: $ink;
+    font-weight: $font-weight-extra-bold;
+    transition: background 180ms ease;
+
+    i {
+      transition: transform 180ms ease;
+    }
+
+    &:hover {
+      border-color: $accent-pressed;
+      background: $accent-pressed;
+      color: $ink;
+
+      i {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  &--outline {
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: transparent;
+    color: $white;
+    font-weight: $font-weight-bold;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: $white;
+    }
   }
 }
 
-.codex-portal__card-inner {
-  transform: translateZ(10px);
+// El portal en números
+.hero__stats {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: $space-8;
-  height: 100%;
+  gap: 14px;
+  min-width: 0;
 }
 
-.codex-portal__card-sub {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(0.53125rem, 0.32vw + 0.42rem, 0.6875rem);
-  letter-spacing: 0.19em;
+.hero__stats-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-extra-bold;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(245, 158, 11, 0.58);
+  color: $accent;
+
+  &::after {
+    content: '';
+    flex: 1;
+    min-width: 24px;
+    height: 1px;
+    background: rgba(227, 201, 36, 0.42);
+  }
 }
 
-.codex-portal__card-title {
-  margin: 0;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.0625rem, 1vw + 0.72rem, 1.5rem);
-  font-weight: 700;
-  color: rgba(254, 243, 199, 1);
-  letter-spacing: 0.04em;
-  line-height: 1.22;
-  flex: 1;
+// Grupo fijo de 4 → columnas explícitas
+.hero__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.codex-portal__card-cursive {
-  font-family: 'Pinyon Script', cursive;
-  font-size: clamp(0.875rem, 0.45vw + 0.65rem, 1rem);
-  color: rgba(245, 158, 11, 0.55);
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  padding: 20px 18px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: $radius-xl;
+  // Vidrio: los círculos que pasan por detrás se ven desenfocados y no compiten con la cifra
+  background: rgba(10, 52, 128, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.codex-portal__card-badge {
-  margin-top: auto;
-  align-self: flex-start;
-  font-family: ui-monospace, monospace;
-  font-size: clamp(0.65625rem, 0.32vw + 0.48rem, 0.75rem);
-  font-weight: 700;
-  padding: $space-4 $space-8;
-  border-radius: $radius-sm;
-  background: rgba(245, 158, 11, 0.1);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+.stat__value {
+  font-size: clamp(34px, 5.4vw, 46px);
+  font-weight: $font-weight-black;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: $white;
 }
 
-.codex-portal__card-badge--emerald {
-  background: rgba(16, 185, 129, 0.1);
-  color: #34d399;
-  border-color: rgba(16, 185, 129, 0.2);
+.stat__bar {
+  min-width: 8%;
+  height: 3px;
+  border-radius: 2px;
+  background: $accent;
+  transition: width 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@keyframes rotate-cw {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.stat__label {
+  font-size: 12.5px;
+  font-weight: $font-weight-bold;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.84);
 }
 
-@include respond-to($breakpoint-md) {
-  .codex-portal__control-area {
-    min-height: auto;
+.stat__note {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+// ---------------------------------------------------------------------------
+// Encabezado de sección
+// ---------------------------------------------------------------------------
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 28px;
+
+  p {
+    margin: 0;
+    max-width: 42ch;
+    font-size: $font-size-sm;
+    line-height: 1.6;
+    color: $text-secondary;
+  }
+}
+
+.section-head__title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-right: auto;
+
+  h2 {
+    margin: 0;
+    font-size: 34px;
+    font-weight: $font-weight-black;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: $ink;
+  }
+}
+
+.section-head__kicker {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-extra-bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $blue;
+}
+
+.section-head__rule {
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: $accent;
+
+  &--short {
+    width: 48px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Escuelas
+// ---------------------------------------------------------------------------
+.schools {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 56px 24px 72px;
+  // Deja espacio para la cabecera fija al llegar con /#escuelas
+  scroll-margin-top: 68px;
+
+  @include respond-to($breakpoint-sm) {
+    padding: 48px 16px;
+  }
+}
+
+.schools__grid {
+  display: grid;
+  // min() evita desbordar en pantallas más estrechas que la columna mínima
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+
+.school {
+  --school-color: #{$blue};
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-xl;
+  background: $white;
+  box-shadow: $shadow-card;
+  color: $ink;
+  text-align: left;
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+
+  // Franja superior con el color de la escuela
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--school-color);
   }
 
-  .codex-portal__grid {
-    position: relative;
-    inset: auto;
+  &:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--school-color) 35%, transparent);
+    box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--school-color) 55%, transparent);
+    text-decoration: none;
+
+    .school__icon {
+      transform: rotate(-6deg) scale(1.06);
+    }
+
+    .school__watermark {
+      transform: rotate(-10deg) scale(1.08);
+      opacity: 0.12;
+    }
+
+    .school__arrow {
+      transform: translate(2px, -2px);
+      color: var(--school-color);
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring, $shadow-card;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-extra-bold;
+    line-height: 1.28;
+    color: $ink;
+  }
+
+  p {
+    flex: 1;
+    margin: 0;
+    font-size: $font-size-label;
+    line-height: $line-height-normal;
+    color: $text-secondary;
+  }
+}
+
+.school__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.school__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--school-color) 12%, white);
+  color: var(--school-color);
+  font-size: 32px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--school-color) 18%, transparent);
+  transition: transform 0.3s ease;
+}
+
+// Ícono gigante de fondo como marca de agua
+.school__watermark {
+  position: absolute;
+  z-index: -1;
+  right: -22px;
+  bottom: -26px;
+  font-size: 150px;
+  color: var(--school-color);
+  opacity: 0.06;
+  pointer-events: none;
+  transition:
+    transform 0.4s ease,
+    opacity 0.4s ease;
+}
+
+.school__arrow {
+  font-size: 20px;
+  color: $text-secondary;
+  opacity: 0.5;
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.school__no-programs {
+  font-style: italic;
+}
+
+.school__badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid rgba(30, 30, 30, 0.12);
+  border-radius: $radius-sm;
+  background: $neutral-tint;
+  color: $text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+
+  &--active {
+    border-color: $accent-border;
+    background: $accent-tint;
+    color: $accent-ink;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Proyectos recientes
+// ---------------------------------------------------------------------------
+.recent {
+  border-top: 1px solid $border-subtle;
+  background: linear-gradient(180deg, $white 0%, $cream 100%);
+}
+
+.recent__inner {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 64px 24px 72px;
+
+  @include respond-to($breakpoint-sm) {
+    padding: 48px 16px;
+  }
+}
+
+.recent__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+}
+
+// ---------------------------------------------------------------------------
+// Eventos (vista previa; la página completa está en /eventos)
+// ---------------------------------------------------------------------------
+.events {
+  border-top: 1px solid $border-subtle;
+  background: $white;
+  // Deja espacio para la cabecera fija al llegar con /#eventos
+  scroll-margin-top: 68px;
+}
+
+.events__inner {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 64px 24px 72px;
+
+  @include respond-to($breakpoint-sm) {
+    padding: 48px 16px 56px;
+  }
+}
+
+.events__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+}
+
+.events__more {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.events__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 22px;
+  border: 1px solid $blue;
+  border-radius: $radius-md;
+  background: $blue;
+  color: $white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+  transition: background 180ms ease;
+
+  i {
+    font-size: 18px;
+    transition: transform 180ms ease;
+  }
+
+  &:hover {
+    background: $blue-pressed;
+    color: $white;
+    text-decoration: none;
+
+    i {
+      transform: translateX(3px);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring;
   }
 }

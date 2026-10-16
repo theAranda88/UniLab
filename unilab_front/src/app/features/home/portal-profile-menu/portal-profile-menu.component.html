@@ -4,9 +4,15 @@
     class="portal-profile__trigger"
     [attr.aria-expanded]="open()"
     aria-haspopup="true"
+    [attr.aria-label]="nombreCompleto()"
     (click)="toggle()"
   >
     <span class="portal-profile__avatar">{{ iniciales() }}</span>
+    <span class="portal-profile__who">
+      <strong>{{ nombreCorto() }}</strong>
+      <small>{{ rolKey() | translate }}</small>
+    </span>
+    <i class="ti ti-chevron-down portal-profile__chevron" aria-hidden="true"></i>
   </button>
 
   @if (open()) {
@@ -23,6 +29,13 @@
         <span class="portal-profile__label">{{ 'home.profileMenu.signedInAs' | translate }}</span>
         <span class="portal-profile__value">{{ rolKey() | translate }}</span>
       </div>
+
+      @if (panelRoute(); as ruta) {
+        <a [routerLink]="ruta" class="portal-profile__panel-link" role="menuitem" (click)="close()">
+          <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
+          {{ 'home.enterPortal' | translate }}
+        </a>
+      }
 
       <button type="button" class="portal-profile__logout" role="menuitem" (click)="logout()">
         {{ 'home.profileMenu.logout' | translate }}

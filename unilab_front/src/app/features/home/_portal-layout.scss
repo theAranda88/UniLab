@@ -1,58 +1,26 @@
 @use '../../../styles/design-tokens' as *;
 
-// Contenedor fluido: móvil → laptop → monitor → TV
+// Contenedor de las páginas internas del portal (escuela, proyecto).
+
 .portal-sub {
-  max-width: min(96rem, 94vw);
-  padding-inline: clamp(#{$space-12}, 2.5vw, #{$space-32});
-  padding-block: clamp(#{$space-16}, 2vh, #{$space-32});
+  max-width: $content-max-width;
+  padding: $space-32 $space-24 $space-48;
+
+  @include respond-to($breakpoint-sm) {
+    padding: $space-24 $space-16 $space-32;
+  }
 }
 
 .portal-sub--detalle {
-  max-width: min(56rem, 92vw);
+  max-width: 920px;
 }
 
 .portal-sub__title {
-  font-size: clamp(1.75rem, 2.5vw + 1rem, 2.75rem);
+  font-size: clamp(1.75rem, 2vw + 1rem, $font-size-3xl);
 }
 
+// Lista de longitud variable → auto-fill
 .portal-sub__grid {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-  gap: clamp(#{$space-12}, 1.5vw, #{$space-24});
-}
-
-@include respond-to-min($breakpoint-xl) {
-  .portal-sub__grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  }
-}
-
-@include respond-to-min($breakpoint-2xl) {
-  .portal-sub {
-    max-width: min(110rem, 92vw);
-  }
-
-  .portal-sub__grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  }
-}
-
-@media (min-width: 1920px) {
-  .portal-sub {
-    max-width: min(120rem, 88vw);
-  }
-
-  .portal-sub__grid {
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  }
-}
-
-@media (min-width: 2560px) {
-  .portal-sub__grid {
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    max-width: 100%;
-  }
-
-  .portal-sub__title {
-    font-size: clamp(2.25rem, 1.5vw + 1.5rem, 3.25rem);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: $space-20;
 }

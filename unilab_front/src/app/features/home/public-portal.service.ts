@@ -25,8 +25,9 @@ export class PublicPortalService {
     return this.http.get<Curso[]>(`${API}/cursos`, { params });
   }
 
-  listarProyectos(idEscuela: number): Observable<ProyectoPublico[]> {
-    const params = new HttpParams().set('id_escuela', idEscuela.toString());
+  /** Proyectos publicados; sin `idEscuela`, los de todas las escuelas. */
+  listarProyectos(idEscuela?: number): Observable<ProyectoPublico[]> {
+    const params = idEscuela ? new HttpParams().set('id_escuela', idEscuela.toString()) : undefined;
     return this.http.get<ProyectoPublico[]>(`${API}/proyectos`, { params });
   }
 

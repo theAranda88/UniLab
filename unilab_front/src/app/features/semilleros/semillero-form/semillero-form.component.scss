@@ -1,0 +1,42 @@
+@use '../../../../styles/admin-pages' as pages;
+@use '../../../../styles/design-tokens' as t;
+
+// RA-010 · Semillero — crear / editar
+.semillero-form {
+  @include pages.form-page(720px);
+
+  &__hint {
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+  }
+
+  &__check {
+    display: flex;
+    align-items: flex-start;
+    gap: t.$space-12;
+    padding: t.$space-12 t.$space-16;
+    border: 1px solid t.$border-subtle;
+    border-radius: t.$radius-lg;
+    cursor: pointer;
+
+    input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: t.$blue;
+    }
+
+    span {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: t.$font-size-sm;
+      color: t.$ink;
+    }
+
+    small {
+      font-size: t.$font-size-label;
+      color: t.$text-secondary;
+    }
+  }
+}

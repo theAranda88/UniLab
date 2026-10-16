@@ -1,69 +1,126 @@
 // ==========================================
-// UNILAB DESIGN TOKENS
+// EDUINOVA DESIGN TOKENS
+// Referencia: docs/design/01-fundamentos.md
 // ==========================================
 
-// Colors - Primary
-$primary-blue: #243b8e;
-$primary-blue-dark: #1a2959;
-$primary-blue-light: #3d5fa8;
+// ------------------------------------------
+// Paleta institucional (5 colores)
+// ------------------------------------------
+$blue: #053686; // Primario: identidad, navegación activa, acciones
+$blue-pressed: #032a6a; // Hover / active del primario
+$ink: #1e1e1e; // Texto principal
+$accent: #e3c924; // Amarillo institucional: solo indicadores
+$accent-pressed: #d4bb17;
+$cream: #fffdf5; // Fondo de la aplicación
+$white: #ffffff; // Superficies
 
-// Colors - Secondary
-$light-blue: #1c9dd8;
-$light-blue-dark: #1578ad;
-$light-blue-light: #40b3e0;
+// ------------------------------------------
+// Derivados (transparencias de la paleta)
+// ------------------------------------------
+$blue-tint: rgba(5, 54, 134, 0.07); // hover de navegación / botón secundario
+$blue-tint-strong: rgba(5, 54, 134, 0.09); // ítem activo, badge informativo
+$blue-border: rgba(5, 54, 134, 0.22);
+$accent-tint: rgba(227, 201, 36, 0.22);
+$accent-border: rgba(227, 201, 36, 0.55);
+$accent-ink: #6b5a00; // texto legible sobre amarillo tinte
+$accent-ink-strong: #3d3400;
+$neutral-tint: rgba(30, 30, 30, 0.06);
+$neutral-soft: rgba(30, 30, 30, 0.04);
 
-// Colors - Accent
-$yellow: #fcc202;
-$yellow-dark: #e5a901;
-$yellow-light: #fdd234;
+$text-primary: $ink;
+$text-secondary: rgba(30, 30, 30, 0.72); // nunca por debajo de 0.62 para texto
+$text-muted: rgba(30, 30, 30, 0.6);
+$text-disabled: rgba(30, 30, 30, 0.38);
+$text-on-blue: #ffffff;
+$text-on-blue-secondary: rgba(255, 255, 255, 0.88);
 
-// Colors - Semantic
-$success: #388e3c;
-$warning: #f57c00;
-$error: #d32f2f;
-$info: #1976d2;
+$border-subtle: rgba(30, 30, 30, 0.1);
+$border-control: rgba(30, 30, 30, 0.16);
+$overlay: rgba(30, 30, 30, 0.45);
 
-// Colors - Neutral
-$white: #ffffff;
-$light-gray: #f5f5f5;
-$gray-100: #e8e8e8;
-$gray-200: #e0e0e0;
-$gray-300: #d0d0d0;
-$gray-400: #bdbdbd;
+// ------------------------------------------
+// Semánticos (única excepción a la paleta)
+// ------------------------------------------
+$danger: #b02a2a;
+$danger-ink: #8e1f1f;
+$danger-tint: rgba(176, 42, 42, 0.08);
+$danger-border: rgba(176, 42, 42, 0.3);
+$ok: #1f6d3f;
+$ok-tint: rgba(31, 109, 63, 0.08);
+$ok-border: rgba(31, 109, 63, 0.3);
+
+// ------------------------------------------
+// Alias heredados (nombres usados por las pantallas actuales)
+// ------------------------------------------
+$primary-blue: $blue;
+$primary-blue-dark: $blue-pressed;
+$primary-blue-light: #2d5aa3;
+
+$light-blue: $blue;
+$light-blue-dark: $blue-pressed;
+$light-blue-light: #2d5aa3;
+
+$yellow: $accent;
+$yellow-dark: $accent-pressed;
+$yellow-light: #efdc6a;
+
+$success: $ok;
+$warning: $accent-ink;
+$error: $danger;
+$info: $blue;
+
+$light-gray: $cream;
+$gray-100: #f6f5f0;
+$gray-200: #efeee8;
+$gray-300: #e3e2dc;
+$gray-400: #d1d1cf;
 $gray-500: #9e9e9e;
-$gray-600: #757575;
-$gray-700: #616161;
-$gray-800: #424242;
-$text-dark: #333333;
-$text-light: #666666;
-$border-gray: #e0e0e0;
+$gray-600: #6a6a6a;
+$gray-700: #555555;
+$gray-800: #353535;
+$text-dark: $ink;
+$text-light: $text-secondary;
+$border-gray: $border-subtle;
 
-// Typography
-$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-  Arial, sans-serif;
+// ------------------------------------------
+// Tipografía — Nunito
+// ------------------------------------------
+$font-family-base: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial,
+  sans-serif;
 
-$font-size-xs: 12px;
-$font-size-sm: 14px;
-$font-size-base: 16px;
-$font-size-lg: 18px;
-$font-size-xl: 20px;
-$font-size-2xl: 24px;
-$font-size-3xl: 32px;
+$font-size-2xs: 11px; // kicker
+$font-size-xs: 12px; // badges
+$font-size-label: 13px; // labels, tablas, navegación
+$font-size-sm: 14px; // interfaz
+$font-size-base: 16px; // cuerpo
+$font-size-lg: 18px; // H4
+$font-size-xl: 22px; // H3
+$font-size-2xl: 28px; // H2
+$font-size-3xl: 36px; // H1
+$font-size-section: 34px; // títulos de sección del portal
+$font-size-display: 60px; // hero del portal
 
-$font-weight-light: 300;
+$font-weight-light: 200;
 $font-weight-normal: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
 $font-weight-extra-bold: 800;
+$font-weight-black: 900;
+
+$letter-spacing-title: -0.02em;
+$letter-spacing-display: -0.03em;
+$letter-spacing-kicker: 0.08em;
 
 // Line Heights
-$line-height-tight: 1.2;
+$line-height-tight: 1.15;
 $line-height-normal: 1.5;
-$line-height-relaxed: 1.75;
+$line-height-relaxed: 1.6;
 $line-height-loose: 2;
 
-// Spacing
+// ------------------------------------------
+// Espaciado (múltiplos de 4)
+// ------------------------------------------
 $space-2: 2px;
 $space-4: 4px;
 $space-8: 8px;
@@ -79,36 +136,54 @@ $space-48: 48px;
 $space-56: 56px;
 $space-64: 64px;
 
-// Border Radius
-$radius-xs: 2px;
-$radius-sm: 4px;
-$radius-base: 6px;
+// ------------------------------------------
+// Radios
+// ------------------------------------------
+$radius-xs: 4px;
+$radius-sm: 6px; // badges
+$radius-base: 8px; // inputs y botones
 $radius-md: 8px;
-$radius-lg: 12px;
-$radius-xl: 16px;
-$radius-full: 9999px;
+$radius-lg: 10px; // cards
+$radius-xl: 12px; // modales
+$radius-full: 9999px; // avatares y chips
 
-// Shadows
-$shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-$shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-$shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-$shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-$shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+// ------------------------------------------
+// Elevación (3 niveles)
+// ------------------------------------------
+$shadow-card: 0 1px 2px rgba(30, 30, 30, 0.04), 0 10px 26px -12px rgba(5, 54, 134, 0.22);
+$shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.22);
+$shadow-toast: 0 16px 40px rgba(0, 0, 0, 0.25);
+$focus-ring: 0 0 0 3px rgba(5, 54, 134, 0.12);
+$focus-ring-danger: 0 0 0 3px rgba(176, 42, 42, 0.12);
 
-// Transitions
-$transition-fast: 0.1s ease;
-$transition-base: 0.2s ease;
-$transition-slow: 0.3s ease;
-$transition-slower: 0.5s ease;
+$shadow-xs: none;
+$shadow-sm: $shadow-card;
+$shadow-base: $shadow-card;
+$shadow-md: $shadow-card;
+$shadow-lg: $shadow-overlay;
+$shadow-xl: $shadow-overlay;
 
+// ------------------------------------------
+// Movimiento (150–250 ms, ease)
+// ------------------------------------------
+$transition-fast: 150ms ease;
+$transition-base: 180ms ease;
+$transition-slow: 250ms ease;
+$transition-slower: 250ms ease;
+
+// ------------------------------------------
 // Breakpoints
+// ------------------------------------------
 $breakpoint-xs: 320px;
 $breakpoint-sm: 480px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 $breakpoint-xl: 1280px;
-$breakpoint-2xl: 1536px;
+$breakpoint-2xl: 1440px;
+
+// Layout
+$sidebar-width: 220px;
+$content-max-width: 1180px;
 
 // Z-index
 $z-index-dropdown: 1000;
@@ -118,6 +193,7 @@ $z-index-modal-backdrop: 1300;
 $z-index-modal: 1400;
 $z-index-popover: 1500;
 $z-index-tooltip: 1600;
+$z-index-toast: 1700;
 
 // ==========================================
 // Mixins
@@ -154,4 +230,43 @@ $z-index-tooltip: 1600;
   -webkit-line-clamp: $lines;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+// Tipografía
+@mixin kicker {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $letter-spacing-kicker;
+  text-transform: uppercase;
+  color: $blue;
+}
+
+@mixin page-title {
+  margin: 0;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extra-bold;
+  letter-spacing: $letter-spacing-title;
+  line-height: $line-height-tight;
+  color: $ink;
+}
+
+@mixin page-description {
+  margin: $space-4 0 0;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  line-height: $line-height-normal;
+}
+
+// Superficies
+@mixin surface-card {
+  background: $white;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+@mixin focus-visible-ring {
+  outline: none;
+  border-color: $blue;
+  box-shadow: $focus-ring;
 }

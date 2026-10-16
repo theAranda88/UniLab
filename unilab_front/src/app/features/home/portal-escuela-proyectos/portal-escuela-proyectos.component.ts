@@ -1,113 +1,101 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe } from '@ngx-translate/core';
+import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
-import { CardTiltDirective } from '../directives/card-tilt.directive';
-import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
+import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import {
-  resolveEscuelaCardConfig,
-  urlsImagenesProyecto,
+  estiloEscuela,
+  type Curso,
   type Escuela,
   type ProyectoPublico,
 } from '../../../core/models/portal.model';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 
+/**
+ * Pantalla 22 · Portal — una escuela, sus programas y sus proyectos publicados.
+ * Escucha el parámetro de ruta: al pasar de una escuela a otra el componente se reutiliza.
+ */
 @Component({
   selector: 'app-portal-escuela-proyectos',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, CardTiltDirective, ProjectImageCarouselComponent],
+  imports: [RouterLink, TranslatePipe, ProyectoCardComponent, EmptyStateComponent, SkeletonComponent],
   templateUrl: './portal-escuela-proyectos.component.html',
   styleUrl: './portal-escuela-proyectos.component.scss',
-  host: {
-    class: 'portal-route-page',
-    '[class.portal-route-page--entered]': 'entered()',
-    '[class.portal-route-page--exiting]': 'exiting()',
-  },
 })
-export class PortalEscuelaProyectosComponent implements OnInit {
+export class PortalEscuelaProyectosComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private portal = inject(PublicPortalService);
-  private translate = inject(TranslateService);
 
-  readonly escuela = signal<Escuela | null>(null);
-  readonly themeKey = signal<string>('software');
+  readonly escuelas = signal<Escuela[]>([]);
+  readonly idEscuela = signal<number | null>(null);
   readonly proyectos = signal<ProyectoPublico[]>([]);
+  readonly cursos = signal<Curso[]>([]);
   readonly loading = signal(true);
   readonly loadError = signal(false);
-  readonly flippingProjectId = signal<number | null>(null);
-  readonly entered = signal(false);
-  readonly exiting = signal(false);
+  readonly filtroTipo = signal<string | null>(null);
 
-  ngOnInit(): void {
-    window.setTimeout(() => this.entered.set(true), 120);
+  readonly escuela = computed(() => this.escuelas().find((e) => e.id_escuela === this.idEscuela()) ?? null);
+  readonly estilo = computed(() => estiloEscuela(this.escuela()?.nombre_escuela ?? ''));
 
-    const idEscuela = Number(this.route.snapshot.paramMap.get('idEscuela'));
-    this.portal.listarEscuelas().subscribe({
-      next: (escuelas) => {
-        const found = escuelas.find((e) => e.id_escuela === idEscuela);
-        if (!found) {
-          this.router.navigate(['/']);
+  readonly otrasEscuelas = computed(() =>
+    this.escuelas()
+      .filter((e) => e.id_escuela !== this.idEscuela())
+      .map((e) => ({ escuela: e, estilo: estiloEscuela(e.nombre_escuela) })),
+  );
+
+  /** Tipos de proyecto presentes en esta escuela (el filtro solo aparece si hay más de uno). */
+  readonly tipos = computed(() => [...new Set(this.proyectos().map((p) => p.tipo_proyecto))]);
+
+  readonly proyectosFiltrados = computed(() => {
+    const tipo = this.filtroTipo();
+    return tipo ? this.proyectos().filter((p) => p.tipo_proyecto === tipo) : this.proyectos();
+  });
+
+  constructor() {
+    this.portal
+      .listarEscuelas()
+      .pipe(takeUntilDestroyed())
+      .subscribe((escuelas) => {
+        this.escuelas.set(escuelas);
+        // Escuela inexistente → vuelve al inicio
+        if (escuelas.length && !escuelas.some((e) => e.id_escuela === this.idEscuela())) {
+          void this.router.navigate(['/']);
+        }
+      });
+
+    this.route.paramMap
+      .pipe(
+        map((params) => Number(params.get('idEscuela'))),
+        tap((id) => {
+          this.idEscuela.set(id);
+          this.loading.set(true);
+          this.loadError.set(false);
+          this.filtroTipo.set(null);
+        }),
+        switchMap((id) =>
+          forkJoin({
+            proyectos: this.portal.listarProyectos(id),
+            cursos: this.portal.listarCursos(id).pipe(catchError(() => of([] as Curso[]))),
+          }).pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((datos) => {
+        this.loading.set(false);
+        if (!datos) {
+          this.loadError.set(true);
           return;
         }
-        this.escuela.set(found);
-        const config = resolveEscuelaCardConfig(found.nombre_escuela);
-        if (config) this.themeKey.set(config.themeKey);
-      },
-    });
-
-    this.portal.listarProyectos(idEscuela).subscribe({
-      next: (data) => {
-        this.proyectos.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loadError.set(true);
-        this.loading.set(false);
-      },
-    });
-  }
-
-  onProjectClick(proyecto: ProyectoPublico): void {
-    if (this.flippingProjectId()) return;
-    this.flippingProjectId.set(proyecto.id_proyecto);
-    window.setTimeout(() => {
-      this.router.navigate(['/proyectos', proyecto.id_proyecto]);
-    }, 750);
-  }
-
-  goBack(): void {
-    if (this.exiting()) return;
-    this.exiting.set(true);
-    window.setTimeout(() => this.router.navigate(['/']), 620);
-  }
-
-  imagenesProyecto(proyecto: ProyectoPublico): string[] {
-    return urlsImagenesProyecto(proyecto);
-  }
-
-  getResumen(descripcion: string): string {
-    return descripcion.length > 140 ? `${descripcion.slice(0, 140)}…` : descripcion;
-  }
-
-  getCoordinador(proyecto: ProyectoPublico): string {
-    const coord = proyecto.coordinadores?.[0]?.profesor;
-    if (coord) return `${coord.nombres} ${coord.apellidos}`;
-    return this.translate.instant('home.unknownLeader');
-  }
-
-  getOrigen(proyecto: ProyectoPublico): string {
-    if (proyecto.semillero) {
-      return this.translate.instant('home.projectOrigin.semillero', {
-        nombre: proyecto.semillero.nombre_semillero,
+        this.proyectos.set(datos.proyectos);
+        this.cursos.set(datos.cursos);
       });
-    }
-    return this.translate.instant('home.projectOrigin.curso', {
-      curso: proyecto.curso?.nombre_curso ?? '',
-    });
   }
 
-  trackByProyectoId(_: number, item: ProyectoPublico): number {
-    return item.id_proyecto;
+  setFiltroTipo(tipo: string | null): void {
+    this.filtroTipo.set(tipo);
   }
 }

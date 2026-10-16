@@ -1,0 +1,78 @@
+<div class="cursos-form">
+  <div class="cursos-form__card">
+    <h1>{{ (modoEdicion() ? 'cursos.editar' : 'cursos.crear') | translate }}</h1>
+
+    @if (cargando()) {
+      <p class="cursos-form__loading">{{ 'common.cargando' | translate }}</p>
+    } @else {
+      @if (error()) {
+        <p class="cursos-form__error" role="alert">{{ error()! | translate }}</p>
+      }
+
+      <form [formGroup]="formulario" (ngSubmit)="submit()" class="cursos-form__body" novalidate>
+        <div class="form-group">
+          <label for="nombre_curso">{{ 'cursos.nombre' | translate }} *</label>
+          <input
+            id="nombre_curso"
+            type="text"
+            formControlName="nombre_curso"
+            class="form-control"
+            autocomplete="off"
+            [class.is-invalid]="invalido('nombre_curso')"
+            [attr.aria-invalid]="invalido('nombre_curso')"
+          />
+          @if (invalido('nombre_curso')) {
+            <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="id_escuela">{{ 'cursos.escuela' | translate }} *</label>
+            <select
+              id="id_escuela"
+              formControlName="id_escuela"
+              class="form-control"
+              [class.is-invalid]="invalido('id_escuela')"
+              [attr.aria-invalid]="invalido('id_escuela')"
+            >
+              <option [ngValue]="0" disabled>{{ 'common.seleccionar' | translate }}</option>
+              @for (escuela of escuelas(); track escuela.id_escuela) {
+                <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+              }
+            </select>
+            @if (invalido('id_escuela')) {
+              <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="periodo_academico">{{ 'cursos.periodo' | translate }} *</label>
+            <input
+              id="periodo_academico"
+              type="text"
+              formControlName="periodo_academico"
+              class="form-control"
+              autocomplete="off"
+              [placeholder]="'cursos.periodoPlaceholder' | translate"
+              [class.is-invalid]="invalido('periodo_academico')"
+              [attr.aria-invalid]="invalido('periodo_academico')"
+            />
+            @if (invalido('periodo_academico')) {
+              <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="cursos-form__actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            {{ 'common.cancelar' | translate }}
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+            {{ enviando() ? ('common.guardando' | translate) : ('common.guardar' | translate) }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

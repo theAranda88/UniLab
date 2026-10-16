@@ -1,0 +1,39 @@
+@use '../../../styles/design-tokens' as *;
+
+// Enlace «← Volver» y error de las páginas internas del portal (escuela, proyecto).
+
+.portal-sub__back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin-bottom: $space-16;
+  padding: 0 $space-8;
+  border: none;
+  border-radius: $radius-md;
+  background: none;
+  color: $blue;
+  font-size: $font-size-label;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background $transition-base;
+
+  &:hover {
+    background: $blue-tint;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring;
+  }
+}
+
+.portal-sub__error {
+  padding: $space-12 $space-16;
+  border: 1px solid $danger-border;
+  border-radius: $radius-lg;
+  background: $danger-tint;
+  color: $danger-ink;
+  font-size: $font-size-sm;
+}

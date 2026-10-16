@@ -1,57 +1,127 @@
-<main class="portal-sub portal-sub--escuela" [class.portal-sub--entered]="entered()">
-  <div class="portal-sub__content">
-    <header class="portal-sub__header">
-      <button type="button" class="portal-sub__back" (click)="goBack()">{{ 'home.backToSchools' | translate }}</button>
-      @if (escuela(); as esc) {
-        <span class="portal-sub__eyebrow">
-          {{ 'home.cards.' + themeKey() + '.subtitle' | translate }}
-        </span>
-        <h1 class="portal-sub__title">{{ 'home.escuelas.' + themeKey() | translate }}</h1>
-        <p class="portal-sub__subtitle">{{ 'home.projectsListHint' | translate }}</p>
-      }
-    </header>
+<main class="school-page" [style.--school-color]="estilo().color">
+  <!-- Cabecera de la escuela -->
+  <header class="school-hero">
+    <i class="school-hero__watermark ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+    <div class="school-hero__inner">
+      <nav class="school-hero__crumbs" [attr.aria-label]="'home.breadcrumb' | translate">
+        <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
+        <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        <a routerLink="/" fragment="escuelas">{{ 'home.schools.kicker' | translate }}</a>
+      </nav>
 
-    @if (loading()) {
-      <p class="portal-sub__loading">{{ 'common.loading' | translate }}</p>
-    } @else if (loadError()) {
-      <p class="portal-sub__error">{{ 'home.loadProjectsError' | translate }}</p>
-    } @else if (proyectos().length === 0) {
-      <p class="portal-sub__empty">{{ 'home.noProjects' | translate }}</p>
-    } @else {
-      <div class="portal-sub__grid">
-        @for (proyecto of proyectos(); track trackByProyectoId($index, proyecto); let i = $index) {
-          <button
-            type="button"
-            class="portal-project-card"
-            [class.portal-project-card--flipping]="flippingProjectId() === proyecto.id_proyecto"
-            [style.--card-delay]="i * 0.06 + 's'"
-            appCardTilt
-            (click)="onProjectClick(proyecto)"
-          >
-            <div class="portal-project-card__inner">
-              <div class="portal-project-card__media">
-                <app-project-image-carousel
-                  [images]="imagenesProyecto(proyecto)"
-                  [alt]="proyecto.titulo"
-                />
-              </div>
-              <div class="portal-project-card__head">
-                <span class="portal-project-card__type">{{ 'home.projectTypes.' + proyecto.tipo_proyecto | translate }}</span>
-                <span class="portal-project-card__views">
-                  {{ 'home.views' | translate: { count: proyecto.contador_vistas } }}
-                </span>
-              </div>
-              <h2 class="portal-project-card__title">{{ proyecto.titulo }}</h2>
-              <p class="portal-project-card__desc">{{ getResumen(proyecto.descripcion) }}</p>
-              <div class="portal-project-card__meta">
-                <span>{{ 'home.director' | translate }} <strong>{{ getCoordinador(proyecto) }}</strong></span>
-                <span class="portal-project-card__origin">{{ getOrigen(proyecto) }}</span>
-              </div>
-              <span class="portal-project-card__cta">{{ 'home.exploreDeep' | translate }}</span>
-            </div>
-          </button>
+      <div class="school-hero__head">
+        <span class="school-hero__icon"><i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i></span>
+        <div class="school-hero__titles">
+          <span class="school-hero__kicker">{{ 'home.schoolPage.kicker' | translate }}</span>
+          @if (escuela(); as esc) {
+            <h1 class="school-hero__title">{{ esc.nombre_escuela }}</h1>
+          } @else {
+            <span class="school-hero__title-skeleton edu-skeleton" aria-hidden="true"></span>
+          }
+        </div>
+      </div>
+
+      <p class="school-hero__lead">{{ 'home.projectsListHint' | translate }}</p>
+
+      @if (!loading() && !loadError()) {
+        <dl class="school-hero__facts">
+          <div>
+            <dt>{{ 'home.schoolPage.publishedProjects' | translate }}</dt>
+            <dd>{{ proyectos().length }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'home.schoolPage.programs' | translate }}</dt>
+            <dd>{{ cursos().length }}</dd>
+          </div>
+        </dl>
+      }
+    </div>
+  </header>
+
+  <div class="school-page__content">
+    <!-- Programas (cursos) de la escuela -->
+    @if (cursos().length > 0) {
+      <section class="school-programs" aria-labelledby="programs-title">
+        <h2 id="programs-title" class="school-page__h2">{{ 'home.schoolPage.programsTitle' | translate }}</h2>
+        <ul class="school-programs__list">
+          @for (curso of cursos(); track curso.id_curso) {
+            <li>
+              <i class="ti ti-book-2" aria-hidden="true"></i>
+              {{ curso.nombre_curso }}
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <!-- Proyectos -->
+    <section class="school-projects" aria-labelledby="projects-title">
+      <div class="school-projects__head">
+        <h2 id="projects-title" class="school-page__h2">{{ 'home.schoolPage.projectsTitle' | translate }}</h2>
+        @if (tipos().length > 1) {
+          <div class="edu-chips" role="group" [attr.aria-label]="'home.schoolPage.filterType' | translate">
+            <button
+              type="button"
+              class="edu-chip"
+              [class.edu-chip--active]="filtroTipo() === null"
+              [attr.aria-pressed]="filtroTipo() === null"
+              (click)="setFiltroTipo(null)"
+            >
+              {{ 'home.schoolPage.allTypes' | translate }}
+            </button>
+            @for (tipo of tipos(); track tipo) {
+              <button
+                type="button"
+                class="edu-chip"
+                [class.edu-chip--active]="filtroTipo() === tipo"
+                [attr.aria-pressed]="filtroTipo() === tipo"
+                (click)="setFiltroTipo(tipo)"
+              >
+                {{ 'home.projectTypes.' + tipo | translate }}
+              </button>
+            }
+          </div>
         }
       </div>
+
+      @if (loading()) {
+        <app-skeleton variant="cards" [rows]="3" />
+      } @else if (loadError()) {
+        <app-empty-state
+          icon="ti-cloud-off"
+          tone="error"
+          [title]="'common.loadErrorTitle' | translate"
+          [message]="'home.loadProjectsError' | translate"
+        />
+      } @else if (proyectos().length === 0) {
+        <app-empty-state icon="ti-folders" [title]="'home.noProjects' | translate" [message]="'home.noProjectsHint' | translate">
+          <a class="edu-btn edu-btn--secondary" routerLink="/" fragment="escuelas">{{ 'home.schoolPage.exploreOthers' | translate }}</a>
+        </app-empty-state>
+      } @else {
+        <div class="school-projects__grid">
+          @for (proyecto of proyectosFiltrados(); track proyecto.id_proyecto) {
+            <app-proyecto-card [proyecto]="proyecto" />
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Otras escuelas -->
+    @if (otrasEscuelas().length > 0) {
+      <section class="other-schools" aria-labelledby="other-title">
+        <h2 id="other-title" class="school-page__h2">{{ 'home.schoolPage.otherSchools' | translate }}</h2>
+        <ul class="other-schools__list">
+          @for (item of otrasEscuelas(); track item.escuela.id_escuela) {
+            <li>
+              <a class="other-school" [routerLink]="['/escuelas', item.escuela.id_escuela]" [style.--school-color]="item.estilo.color">
+                <span class="other-school__icon"><i class="ph-duotone {{ item.estilo.icono }}" aria-hidden="true"></i></span>
+                <span class="other-school__name">{{ item.escuela.nombre_escuela }}</span>
+                <i class="ti ti-arrow-right other-school__arrow" aria-hidden="true"></i>
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
     }
   </div>
 </main>

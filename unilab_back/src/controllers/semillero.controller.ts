@@ -20,7 +20,11 @@ export const semilleroController = {
   }),
 
   actualizar: asyncHandler(async (req: Request, res: Response) => {
-    const semillero = await semilleroService.actualizar(Number(req.params.id), req.body);
+    const semillero = await semilleroService.actualizar(
+      Number(req.params.id),
+      req.body,
+      req.user!.id_usuario,
+    );
     res.status(200).json(semillero);
   }),
 
@@ -45,8 +49,11 @@ export const semilleroController = {
   }),
 
   solicitarMembresia: asyncHandler(async (req: Request, res: Response) => {
-    const idEstudiante = req.body.id_estudiante ?? req.user!.id_usuario;
-    const membresia = await semilleroService.solicitarMembresia(Number(req.params.id), idEstudiante);
+    // El estudiante solo puede postularse a sí mismo.
+    const membresia = await semilleroService.solicitarMembresia(
+      Number(req.params.id),
+      req.user!.id_usuario,
+    );
     res.status(201).json(membresia);
   }),
 

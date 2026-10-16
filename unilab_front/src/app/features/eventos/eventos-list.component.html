@@ -1,22 +1,21 @@
 <div class="eventos-list-container">
 
   <div class="header">
-
-    <h1>{{ 'eventos.listar' | translate }}</h1>
-
+    <div class="header__titles">
+      @if (portalTheme()) {
+        <span class="header__kicker">{{ 'eventos.portalKicker' | translate }}</span>
+      }
+      <h1>{{ 'eventos.listar' | translate }}</h1>
+      @if (portalTheme()) {
+        <p class="header__lead">{{ 'eventos.portalLead' | translate }}</p>
+      }
+    </div>
     @if (puedeCrear()) {
-
       <button class="btn btn-primary" (click)="crearEvento()">
-
         {{ 'eventos.crear' | translate }}
-
       </button>
-
     }
-
   </div>
-
-
 
   @if (portalTheme()) {
 
@@ -113,91 +112,33 @@
 
 
   @if (cargando()) {
-
-    <p class="loading">{{ 'common.cargando' | translate }}</p>
-
+    <app-skeleton variant="cards" [rows]="3" />
   } @else if (error()) {
-
-    <p class="error">{{ error() | translate }}</p>
-
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargarEventos()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
   } @else if (eventosFiltrados().length === 0) {
-
-    <p class="no-data">{{ 'eventos.sinEventos' | translate }}</p>
-
+    <app-empty-state
+      icon="ti-calendar-event"
+      [title]="'eventos.sinEventos' | translate"
+      [message]="'eventos.sinEventosHint' | translate"
+    >
+      @if (puedeCrear()) {
+        <button type="button" class="edu-btn" (click)="crearEvento()">{{ 'eventos.crear' | translate }}</button>
+      }
+    </app-empty-state>
   } @else {
 
     <div class="eventos-grid">
-
-      @for (evento of eventosFiltrados(); track evento.id_evento; let i = $index) {
-
-        <div
-
-          class="evento-card"
-
-          [class.evento-card--portal]="portalTheme()"
-
-          [class.evento-card--emerge]="portalTheme()"
-
-          [style.--emerge-delay]="portalTheme() ? i * 0.08 + 's' : null"
-
-          [appCardTilt]="portalTheme()"
-
-          (click)="verDetalle(evento.id_evento)"
-
-        >
-
-          @if (evento.url_flyer) {
-            <div class="evento-flyer">
-              <img [src]="evento.url_flyer" [alt]="evento.nombre_evento" />
-            </div>
-          }
-
-          <div class="evento-header">
-
-            <h3>{{ evento.nombre_evento }}</h3>
-
-            <span class="estado" [class]="'estado-' + evento.estado">
-
-              {{ 'eventos.estado.' + evento.estado | translate }}
-
-            </span>
-
-          </div>
-
-          <div class="evento-body">
-
-            <p><strong>{{ 'eventos.tipo' | translate }}:</strong> {{ evento.tipo_evento }}</p>
-
-            <p><strong>{{ 'eventos.lugar' | translate }}:</strong> {{ evento.lugar }}</p>
-
-            <p><strong>{{ 'eventos.fecha' | translate }}:</strong> {{ formatearFecha(evento.fecha_inicio) }} - {{ formatearFecha(evento.fecha_fin) }}</p>
-
-            <p class="descripcion">{{ evento.descripcion | slice: 0: 100 }}...</p>
-
-            @if (evento.requiere_pago) {
-
-              <span class="badge badge-info">{{ 'eventos.requierePago' | translate }}</span>
-
-            }
-
-          </div>
-
-          <div class="evento-footer">
-
-            <button type="button" class="btn btn-link btn-portal-action" (click)="$event.stopPropagation(); verDetalle(evento.id_evento)">
-
-              {{ 'common.verDetalles' | translate }}
-
-            </button>
-
-          </div>
-
-        </div>
-
+      @for (item of eventosOrdenados(); track item.evento.id_evento) {
+        <app-evento-card [evento]="item.evento" [basePath]="eventoService.getBasePath()" />
       }
-
     </div>
-
   }
 
 </div>

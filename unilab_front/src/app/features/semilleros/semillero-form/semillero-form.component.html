@@ -1,0 +1,105 @@
+<div class="semillero-form">
+  <div class="semillero-form__card">
+    <h1>{{ (modoEdicion() ? 'semilleros.editar' : 'semilleros.crear') | translate }}</h1>
+
+    @if (cargando()) {
+      <p class="semillero-form__loading">{{ 'common.cargando' | translate }}</p>
+    } @else {
+      @if (error()) {
+        <p class="semillero-form__error" role="alert">{{ error()! | translate }}</p>
+      }
+
+      <form [formGroup]="formulario" (ngSubmit)="submit()" class="semillero-form__body" novalidate>
+        <div class="form-group">
+          <label for="nombre_semillero">{{ 'semilleros.nombre' | translate }} *</label>
+          <input
+            id="nombre_semillero"
+            type="text"
+            formControlName="nombre_semillero"
+            class="form-control"
+            autocomplete="off"
+            [attr.aria-invalid]="invalido('nombre_semillero')"
+          />
+          @if (invalido('nombre_semillero')) {
+            <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">{{ 'semilleros.descripcionCampo' | translate }} *</label>
+          <textarea
+            id="descripcion"
+            rows="4"
+            formControlName="descripcion"
+            class="form-control"
+            [attr.aria-invalid]="invalido('descripcion')"
+          ></textarea>
+          @if (invalido('descripcion')) {
+            <span class="error-text">{{ 'semilleros.descripcionMin' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="id_escuela">{{ 'semilleros.escuela' | translate }} *</label>
+            <select
+              id="id_escuela"
+              formControlName="id_escuela"
+              class="form-control"
+              [attr.aria-invalid]="invalido('id_escuela')"
+            >
+              <option [ngValue]="0" disabled>{{ 'common.seleccionar' | translate }}</option>
+              @for (escuela of escuelas(); track escuela.id_escuela) {
+                <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+              }
+            </select>
+            @if (invalido('id_escuela')) {
+              <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="id_profesor_lider">{{ 'semilleros.lider' | translate }} *</label>
+            <select
+              id="id_profesor_lider"
+              formControlName="id_profesor_lider"
+              class="form-control"
+              [attr.aria-invalid]="invalido('id_profesor_lider')"
+            >
+              <option [ngValue]="0" disabled>{{ 'common.seleccionar' | translate }}</option>
+              @for (profesor of profesores(); track profesor.id_usuario) {
+                <option [ngValue]="profesor.id_usuario">
+                  {{ profesor.nombres }} {{ profesor.apellidos }}
+                </option>
+              }
+            </select>
+            @if (invalido('id_profesor_lider')) {
+              <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+            } @else if (profesores().length === 0) {
+              <span class="semillero-form__hint">{{ 'semilleros.sinProfesores' | translate }}</span>
+            }
+          </div>
+        </div>
+
+        @if (modoEdicion()) {
+          <label class="semillero-form__check">
+            <input type="checkbox" formControlName="activo" />
+            <span>
+              <strong>{{ 'semilleros.activoCampo' | translate }}</strong>
+              <small>{{ 'semilleros.activoHint' | translate }}</small>
+            </span>
+          </label>
+        }
+
+        <div class="semillero-form__actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            {{ 'common.cancelar' | translate }}
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+            {{ enviando() ? ('common.guardando' | translate) : ('common.guardar' | translate) }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
