@@ -1,0 +1,15 @@
+<ul class="rx-list">
+  @for (r of recursos(); track r.url) {
+    <li>
+      <a class="rx" [href]="r.url" target="_blank" rel="noopener noreferrer" [style.--brand]="r.color">
+        <span class="rx__icon"><i class="ti {{ r.icono }}" aria-hidden="true"></i></span>
+        <span class="rx__text">
+          <span class="rx__name">{{ 'home.resources.' + r.rol + '.' + r.servicio | translate }}</span>
+          <span class="rx__domain">{{ r.dominio }}</span>
+        </span>
+        <i class="ti ti-external-link rx__ext" aria-hidden="true"></i>
+        <span class="sr-only">{{ 'home.resources.newTab' | translate }}</span>
+      </a>
+    </li>
+  }
+</ul>

@@ -1,0 +1,151 @@
+@use '../../../../styles/design-tokens' as t;
+
+:host {
+  display: block;
+}
+
+// Bloque base con brillo suave
+.sk {
+  display: block;
+  border-radius: t.$radius-sm;
+  background: linear-gradient(90deg, t.$neutral-tint 25%, rgba(30, 30, 30, 0.1) 37%, t.$neutral-tint 63%);
+  background-size: 400% 100%;
+  animation: edu-shimmer 1.4s ease infinite;
+
+  &--line {
+    height: 12px;
+  }
+
+  &--w30 {
+    width: 30%;
+  }
+
+  &--w40 {
+    width: 40%;
+  }
+
+  &--w50 {
+    width: 50%;
+  }
+
+  &--w60 {
+    width: 60%;
+  }
+
+  &--w70 {
+    width: 70%;
+  }
+
+  &--w90 {
+    width: 90%;
+  }
+
+  &--pill {
+    width: 72px;
+    height: 22px;
+  }
+
+  &--number {
+    width: 64px;
+    height: 32px;
+  }
+
+  &--square {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: t.$radius-lg;
+  }
+
+  &--media {
+    height: 140px;
+    border-radius: 0;
+  }
+}
+
+.sk-table {
+  @include t.surface-card;
+  overflow: hidden;
+
+  &__head {
+    padding: t.$space-16;
+    background: t.$neutral-soft;
+    border-bottom: 1px solid t.$border-subtle;
+
+    .sk {
+      width: 50%;
+    }
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: t.$space-24;
+    padding: t.$space-16;
+    border-bottom: 1px solid t.$border-subtle;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.sk-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: t.$space-20;
+}
+
+.sk-card {
+  @include t.surface-card;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-12;
+  padding-bottom: t.$space-20;
+  overflow: hidden;
+
+  .sk--line {
+    margin: 0 t.$space-20;
+  }
+}
+
+.sk-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: t.$space-16;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sk-stat {
+  @include t.surface-card;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-12;
+  padding: t.$space-20;
+}
+
+.sk-list__row {
+  display: flex;
+  align-items: center;
+  gap: t.$space-12;
+  padding: t.$space-12 0;
+  border-bottom: 1px solid t.$border-subtle;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.sk-list__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-8;
+}

@@ -56,6 +56,26 @@ export interface ProyectoPublico {
   estudiante_creador?: UsuarioResumen;
   coordinadores?: { profesor: UsuarioResumen }[];
   autores?: ProyectoAutor[];
+  /** Filas tal como las devuelve el detalle público (sin datos del autor). */
+  comentarios?: ComentarioProyecto[];
+  calificaciones?: CalificacionProyecto[];
+}
+
+export interface ComentarioProyecto {
+  id_comentario: number;
+  id_proyecto: number;
+  id_usuario: number;
+  id_comentario_padre: number | null;
+  contenido: string;
+  fecha_comentario: string;
+}
+
+export interface CalificacionProyecto {
+  id_calificacion: number;
+  id_proyecto: number;
+  id_usuario: number;
+  /** 1 a 5 */
+  puntuacion: number;
 }
 
 export function urlsImagenesProyecto(proyecto: Pick<ProyectoPublico, 'imagenes' | 'url_imagen'>): string[] {
@@ -95,17 +115,40 @@ export const ESCUELA_CARD_CONFIGS: EscuelaCardConfig[] = [
   { themeKey: 'negocios', nameMatch: 'Negocios' },
 ];
 
-export interface EscuelaCardViewModel {
-  escuela: Escuela;
-  /** Clave i18n para tema conocido; `generic` si no hay match en ESCUELA_CARD_CONFIGS */
-  i18nKey: EscuelaThemeKey | 'generic';
-  /** Si true, el título se muestra desde `nombre_escuela` del API */
-  useApiName: boolean;
-  emergeDelay: number;
+/** Minúsculas y sin tildes: «Ingenieria» o «INGENIERÍA» coinciden con «Ingeniería». */
+function normalizarNombre(texto: string): string {
+  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
 export function resolveEscuelaCardConfig(nombreEscuela: string): EscuelaCardConfig | null {
-  return ESCUELA_CARD_CONFIGS.find((c) => nombreEscuela.includes(c.nameMatch)) ?? null;
+  const nombre = normalizarNombre(nombreEscuela ?? '');
+  return ESCUELA_CARD_CONFIGS.find((c) => nombre.includes(normalizarNombre(c.nameMatch))) ?? null;
+}
+
+export interface EscuelaEstilo {
+  /** Clase de ícono Phosphor duotone (p. ej. `ph-scales`). */
+  icono: string;
+  /** Color de identidad de la escuela. */
+  color: string;
+}
+
+/** Ícono y color por escuela; `generic` es el respaldo para escuelas nuevas sin estilo propio. */
+const ESCUELA_ESTILOS: Record<EscuelaThemeKey | 'generic', EscuelaEstilo> = {
+  software: { icono: 'ph-code', color: '#2563eb' },
+  ingenieria: { icono: 'ph-gear-six', color: '#ea580c' },
+  negocios: { icono: 'ph-chart-line-up', color: '#059669' },
+  educacion: { icono: 'ph-chalkboard-teacher', color: '#7c3aed' },
+  derecho: { icono: 'ph-scales', color: '#b91c1c' },
+  generic: { icono: 'ph-graduation-cap', color: '#053686' },
+};
+
+/**
+ * Estilo visual de una escuela. El backend no guarda ícono ni color, así que se deduce del
+ * nombre; cualquier escuela que no coincida (p. ej. una recién creada) recibe el estilo
+ * institucional genérico, siempre el mismo para que no cambie entre visitas.
+ */
+export function estiloEscuela(nombreEscuela: string): EscuelaEstilo {
+  return ESCUELA_ESTILOS[resolveEscuelaCardConfig(nombreEscuela)?.themeKey ?? 'generic'];
 }
 
 export interface RegisterRequest {

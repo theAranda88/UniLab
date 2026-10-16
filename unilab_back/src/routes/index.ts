@@ -6,6 +6,8 @@ import proyectoRoutes from './proyecto.routes';
 import semilleroRoutes from './semillero.routes';
 import eventoRoutes, { inscripcionRouter, jornadaRouter } from './evento.routes';
 import publicoRoutes from './publico.routes';
+import reporteRoutes from './reporte.routes';
+import configuracionRoutes from './configuracion.routes';
 
 const router = Router();
 
@@ -18,5 +20,7 @@ router.use('/semilleros', semilleroRoutes);
 router.use('/eventos', eventoRoutes);
 router.use('/inscripciones', inscripcionRouter);
 router.use('/jornadas', jornadaRouter);
+router.use('/reportes', reporteRoutes);
+router.use('/configuracion', configuracionRoutes);
 
 export default router;

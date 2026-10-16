@@ -5,17 +5,24 @@
         {{
           soloPendientes()
             ? ('proyectosProfesor.pendientesTitulo' | translate)
-            : ('proyectosProfesor.titulo' | translate)
+            : ((consultaGlobal ? 'proyectosProfesor.tituloTodos' : 'proyectosProfesor.titulo') | translate)
         }}
       </h1>
       <p class="proyectos-prof-list__subtitle">
-        {{ 'proyectosProfesor.subtitulo' | translate }}
+        {{ (consultaGlobal ? 'proyectosProfesor.subtituloTodos' : 'proyectosProfesor.subtitulo') | translate }}
       </p>
     </div>
     @if (pendientesCount() > 0 && !soloPendientes()) {
-      <a routerLink="/prof/pendientes" class="btn btn-secondary">
-        {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
-      </a>
+      @if (consultaGlobal) {
+        <!-- Admin/Coordinador no tienen «Pendientes de aprobar»: filtra aquí mismo -->
+        <button type="button" class="btn btn-secondary" (click)="setFiltroEstado('en_revision')">
+          {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
+        </button>
+      } @else {
+        <a routerLink="/prof/pendientes" class="btn btn-secondary">
+          {{ 'proyectosProfesor.verPendientes' | translate: { count: pendientesCount() } }}
+        </a>
+      }
     }
   </div>
 
@@ -42,13 +49,22 @@
   </div>
 
   @if (cargando()) {
-    <p class="proyectos-prof-list__status">{{ 'common.cargando' | translate }}</p>
+    <app-skeleton variant="table" [rows]="5" />
   } @else if (error()) {
-    <p class="proyectos-prof-list__status proyectos-prof-list__status--error">
-      {{ error()! | translate }}
-    </p>
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
   } @else if (proyectosAsignados().length === 0) {
-    <p class="proyectos-prof-list__status">{{ 'proyectosProfesor.sinAsignados' | translate }}</p>
+    <app-empty-state
+      icon="ti-folders"
+      [title]="(consultaGlobal ? 'proyectosProfesor.sinProyectos' : 'proyectosProfesor.sinAsignados') | translate"
+      [message]="(consultaGlobal ? 'proyectosProfesor.sinProyectosHint' : 'proyectosProfesor.sinAsignadosHint') | translate"
+    />
   } @else {
     <div class="proyectos-prof-list__table-wrap">
       <table class="proyectos-prof-list__table">

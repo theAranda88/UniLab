@@ -1,0 +1,110 @@
+@use '../../../../styles/design-tokens' as t;
+
+// Imagen de evento o composición de respaldo. El contenedor que la usa fija la proporción.
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: t.$blue;
+}
+
+.media__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+// Respaldo: azul institucional con los mismos círculos del portal y la fecha como protagonista
+.media__fallback {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(120% 90% at 85% 10%, rgba(76, 130, 222, 0.55), transparent 60%),
+    linear-gradient(150deg, #0a438f 0%, t.$blue 55%, #042a6b 100%);
+}
+
+.media__ring {
+  position: absolute;
+  border-radius: 50%;
+
+  &--a {
+    top: -30%;
+    right: -12%;
+    width: 70%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(227, 201, 36, 0.35);
+  }
+
+  &--b {
+    bottom: -45%;
+    left: -15%;
+    width: 80%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+  }
+}
+
+.media__dot {
+  position: absolute;
+  top: 22%;
+  left: 18%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: t.$accent;
+  box-shadow: 0 0 18px rgba(227, 201, 36, 0.5);
+}
+
+.media__date {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 92px;
+  padding: 12px 18px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: t.$radius-lg;
+  background: rgba(255, 255, 255, 0.1);
+  color: t.$white;
+  text-align: center;
+  backdrop-filter: blur(4px);
+
+  strong {
+    font-size: 40px;
+    font-weight: t.$font-weight-black;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  span {
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: t.$accent;
+  }
+}
+
+.media__icon {
+  position: relative;
+  font-size: 44px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+:host(.media--hero) .media__date {
+  min-width: 120px;
+  padding: 16px 24px 14px;
+
+  strong {
+    font-size: 56px;
+  }
+}

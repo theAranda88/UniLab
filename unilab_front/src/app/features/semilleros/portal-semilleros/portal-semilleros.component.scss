@@ -1,0 +1,111 @@
+@use '../../../../styles/design-tokens' as t;
+
+// RF-015 · Semilleros (estudiante, dentro del portal)
+.portal-semilleros {
+  max-width: t.$content-max-width;
+  margin: 0 auto;
+  padding: t.$space-32 t.$space-24 t.$space-48;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-24 t.$space-16 t.$space-32;
+  }
+
+  &__header {
+    margin-bottom: t.$space-20;
+
+    h1 {
+      @include t.page-title;
+      margin-bottom: t.$space-4;
+    }
+  }
+
+  &__subtitle {
+    @include t.page-description;
+    max-width: 40rem;
+  }
+
+  &__alert {
+    margin-bottom: t.$space-16;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: t.$space-16;
+  }
+}
+
+.portal-semillero {
+  @include t.surface-card;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-12;
+  padding: t.$space-20;
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    gap: t.$space-12;
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: t.$radius-lg;
+    background: t.$blue-tint-strong;
+    color: t.$blue;
+    font-size: 20px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: t.$font-size-base;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+    overflow-wrap: anywhere;
+  }
+
+  &__escuela {
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: t.$font-size-sm;
+    line-height: t.$line-height-normal;
+    color: t.$text-secondary;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: t.$space-4;
+    margin: 0;
+    font-size: t.$font-size-label;
+    color: t.$text-secondary;
+
+    strong {
+      color: t.$ink;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: t.$space-8;
+    margin-top: auto;
+    padding-top: t.$space-12;
+    border-top: 1px solid t.$border-subtle;
+  }
+
+  &__cta {
+    margin-left: auto;
+  }
+}

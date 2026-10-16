@@ -1,0 +1,43 @@
+@let p = proyecto();
+<article class="pcard">
+  <div class="pcard__media">
+    <app-project-image-carousel [images]="imagenes()" [alt]="p.titulo" />
+    <span class="pcard__type">
+      <i class="ti {{ icono() }}" aria-hidden="true"></i>
+      {{ 'home.projectTypes.' + p.tipo_proyecto | translate }}
+    </span>
+  </div>
+
+  <div class="pcard__body">
+    @if (mostrarEscuela() && p.curso?.escuela?.nombre_escuela) {
+      <span class="pcard__school">{{ p.curso!.escuela!.nombre_escuela }}</span>
+    }
+    <h3 class="pcard__title">
+      <a class="pcard__link" [routerLink]="['/proyectos', p.id_proyecto]">{{ p.titulo }}</a>
+    </h3>
+    <p class="pcard__desc">{{ p.descripcion }}</p>
+
+    @if (director(); as nombre) {
+      <dl class="pcard__meta">
+        <div>
+          <dt>{{ 'home.director' | translate }}</dt>
+          <dd>{{ nombre }}</dd>
+        </div>
+      </dl>
+    }
+    @if (origen(); as texto) {
+      <p class="pcard__origin">{{ texto }}</p>
+    }
+
+    <footer class="pcard__foot">
+      <span class="pcard__views">
+        <i class="ti ti-eye" aria-hidden="true"></i>
+        {{ 'home.views' | translate: { count: p.contador_vistas } }}
+      </span>
+      <span class="pcard__cta" aria-hidden="true">
+        {{ 'home.exploreDeep' | translate }}
+        <i class="ti ti-arrow-right"></i>
+      </span>
+    </footer>
+  </div>
+</article>

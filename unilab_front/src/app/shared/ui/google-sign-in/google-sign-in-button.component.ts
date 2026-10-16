@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  HostBinding,
   Input,
   NgZone,
   OnDestroy,
@@ -53,19 +52,12 @@ declare global {
   styleUrl: './google-sign-in-button.component.scss',
 })
 export class GoogleSignInButtonComponent implements AfterViewInit, OnDestroy {
-  /** Alineado al login: `default` (azul UniLab) · `codex` (portal dorado) */
-  @Input() variant: 'default' | 'codex' = 'default';
   @Input() ariaLabel = 'Sign in with Google';
   @Input() label = 'Continuar con Google';
   @Output() credential = new EventEmitter<string>();
 
   @ViewChild('host', { static: true }) host!: ElementRef<HTMLDivElement>;
   @ViewChild('wrap', { static: true }) wrap!: ElementRef<HTMLDivElement>;
-
-  @HostBinding('class.google-sign-in--codex')
-  get isCodex(): boolean {
-    return this.variant === 'codex';
-  }
 
   private ngZone = inject(NgZone);
   private i18n = inject(I18nService);
@@ -104,7 +96,7 @@ export class GoogleSignInButtonComponent implements AfterViewInit, OnDestroy {
     }
 
     return new Promise((resolve, reject) => {
-      const existing = document.querySelector('script[data-unilab-gis]');
+      const existing = document.querySelector('script[data-eduinova-gis]');
       if (existing) {
         existing.addEventListener('load', () => resolve());
         existing.addEventListener('error', () => reject());
@@ -115,7 +107,7 @@ export class GoogleSignInButtonComponent implements AfterViewInit, OnDestroy {
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
-      script.dataset['unilabGis'] = 'true';
+      script.dataset['eduinovaGis'] = 'true';
       script.onload = () => resolve();
       script.onerror = () => reject();
       document.head.appendChild(script);
@@ -144,10 +136,10 @@ export class GoogleSignInButtonComponent implements AfterViewInit, OnDestroy {
     }
 
     google.renderButton(this.host.nativeElement, {
-      theme: this.variant === 'codex' ? 'filled_black' : 'outline',
+      theme: 'outline',
       size: 'large',
       text: 'continue_with',
-      shape: this.variant === 'codex' ? 'pill' : 'rectangular',
+      shape: 'rectangular',
       logo_alignment: 'left',
       width,
       locale,

@@ -5,13 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
 import { CreateEventoDto, UpdateEventoDto } from '../../core/models/evento.model';
-import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
 
+import { ToastService } from '../../shared/ui/toast/toast.service';
 @Component({
   selector: 'app-evento-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',
 })
@@ -22,6 +22,7 @@ export class EventoFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
+  private toast = inject(ToastService);
 
   formulario!: FormGroup;
   enviando = signal(false);
@@ -34,25 +35,6 @@ export class EventoFormComponent implements OnInit {
   flyerPendiente = signal<File | null>(null);
   flyerPreview = signal<string | null>(null);
   subiendoFlyer = signal(false);
-
-  breadcrumbItems = computed<BreadcrumbItem[]>(() => {
-    const base = this.eventoService.getBasePath();
-    if (this.modoEdicion()) {
-      const id = this.idEvento();
-      const items: BreadcrumbItem[] = [
-        { labelKey: 'eventos.title', route: base },
-      ];
-      if (this.nombreEvento()) {
-        items.push({ label: this.nombreEvento(), route: id ? [base, String(id)] : undefined });
-      }
-      items.push({ labelKey: 'eventos.editar' });
-      return items;
-    }
-    return [
-      { labelKey: 'eventos.title', route: base },
-      { labelKey: 'eventos.crear' },
-    ];
-  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -173,10 +155,7 @@ export class EventoFormComponent implements OnInit {
         next: async () => {
           this.subirFlyerSiHay(this.idEvento()!, async () => {
             this.enviando.set(false);
-            await this.dialog.success({
-              titleKey: 'dialog.success.title',
-              messageKey: 'eventos.exitoActualizar',
-            });
+            this.toast.success('eventos.exitoActualizar');
             this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
           });
         },
@@ -191,10 +170,7 @@ export class EventoFormComponent implements OnInit {
         next: async (evento) => {
           this.subirFlyerSiHay(evento.id_evento, async () => {
             this.enviando.set(false);
-            await this.dialog.success({
-              titleKey: 'dialog.success.title',
-              messageKey: 'eventos.exitoCrear',
-            });
+            this.toast.success('eventos.exitoCrear');
             this.router.navigate([this.eventoService.getBasePath(), evento.id_evento]);
           });
         },

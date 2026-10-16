@@ -86,6 +86,11 @@ export const cursoSchema = z.object({
   periodo_academico: z.string().min(1),
 });
 
+export const cursoUpdateSchema = cursoSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'Debe enviar al menos un campo para actualizar' },
+);
+
 export const autorizacionCursoSchema = z.object({
   id_estudiante: z.number().int().positive(),
 });
@@ -182,14 +187,19 @@ export const semilleroSchema = z.object({
   id_profesor_lider: z.number().int().positive(),
 });
 
+export const semilleroUpdateSchema = semilleroSchema
+  .extend({ activo: z.boolean() })
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Debe enviar al menos un campo para actualizar',
+  });
+
 export const asignarProfesorSemilleroSchema = z.object({
   id_profesor: z.number().int().positive(),
   es_lider: z.boolean().optional(),
 });
 
-export const solicitudMembresiaSchema = z.object({
-  id_estudiante: z.number().int().positive().optional(),
-});
+export const solicitudMembresiaSchema = z.object({});
 
 export const resolverMembresiaSchema = z.object({
   estado_solicitud: z.enum(['aprobado', 'rechazado']),
@@ -258,3 +268,21 @@ export const idEstudianteParamSchema = z.object({
   id: z.coerce.number().int().positive(),
   idEstudiante: z.coerce.number().int().positive(),
 });
+
+export const idProfesorParamSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  idProfesor: z.coerce.number().int().positive(),
+});
+
+/** Claves válidas: CONFIGURACION_POR_DEFECTO en configuracion.service.ts. */
+export const configuracionUpdateSchema = z
+  .object({
+    registro_abierto: z.boolean(),
+    semilleros_solicitudes_abiertas: z.boolean(),
+    mensaje_portal: z.string().trim().max(280),
+  })
+  .partial()
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Debe enviar al menos un parámetro para actualizar',
+  });

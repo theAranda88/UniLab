@@ -5,10 +5,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ProyectosService } from '../../proyectos-estudiante/proyectos.service';
 import type { Proyecto, TipoProyecto } from '../../../core/models/proyecto.model';
 
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+
 @Component({
   selector: 'app-proyectos-prof-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, EmptyStateComponent, SkeletonComponent],
   templateUrl: './proyectos-prof-list.component.html',
   styleUrl: './proyectos-prof-list.component.scss',
 })
@@ -22,6 +25,8 @@ export class ProyectosProfListComponent implements OnInit {
   readonly proyectos = signal<Proyecto[]>([]);
   readonly filtroEstado = signal<string>('');
   readonly soloPendientes = signal(false);
+  /** Admin/Coordinador: ven todos los proyectos; el profesor, solo los que coordina. */
+  readonly consultaGlobal = this.proyectosService.esConsultaGlobal();
 
   readonly estadosFiltro = [
     '',
@@ -33,7 +38,9 @@ export class ProyectosProfListComponent implements OnInit {
   ] as const;
 
   readonly proyectosAsignados = computed(() => {
-    let list = this.proyectos().filter((p) => this.proyectosService.esAsignadoAMi(p));
+    let list = this.consultaGlobal
+      ? this.proyectos()
+      : this.proyectos().filter((p) => this.proyectosService.esAsignadoAMi(p));
 
     const estado = this.filtroEstado();
     if (estado) {
@@ -47,7 +54,8 @@ export class ProyectosProfListComponent implements OnInit {
     () =>
       this.proyectos().filter(
         (p) =>
-          this.proyectosService.esAsignadoAMi(p) && p.estado_proyecto === 'en_revision',
+          (this.consultaGlobal || this.proyectosService.esAsignadoAMi(p)) &&
+          p.estado_proyecto === 'en_revision',
       ).length,
   );
 

@@ -1,12 +1,12 @@
 {
   "app": {
-    "title": "UniLab",
+    "title": "Eduinova",
     "subtitle": "Plataforma de Gestión Académica"
   },
   "shell": {
     "brand": {
-      "title": "Plataforma Universitaria",
-      "subtitle": "Panel de gestión"
+      "title": "Eduinova",
+      "subtitle": "Gestión académica"
     },
     "nav": {
       "comingSoon": "Próximamente",
@@ -41,15 +41,25 @@
         "miGestion": "Mi gestión",
         "proyectos": "Proyectos",
         "recursos": "Recursos",
-        "portal": "UniLab"
-      }
+        "portal": "Eduinova"
+      },
+      "label": "Navegación del panel",
+      "soon": "Pronto"
     },
     "pages": {
       "dashboard": "Dashboard general",
       "miPanel": "Mi panel",
       "eventos": "Eventos",
       "escuelas": "Escuelas y carreras",
-      "usuarios": "Usuarios"
+      "usuarios": "Usuarios",
+      "asistencia": "Control de asistencia",
+      "cursos": "Cursos",
+      "semilleros": "Semilleros",
+      "proyectos": "Proyectos",
+      "pendientes": "Pendientes de aprobar",
+      "reportes": "Reportes",
+      "estadisticas": "Estadísticas",
+      "configuracion": "Configuración"
     },
     "cta": {
       "crearUsuario": "Crear usuario",
@@ -57,25 +67,50 @@
       "autorizarEstudiante": "Autorizar estudiante"
     },
     "roles": {
-      "admin": { "sub": "Acceso completo" },
-      "coord": { "sub": "Vista analítica" },
-      "prof": { "sub": "Gestión académica" }
+      "admin": {
+        "sub": "Acceso completo"
+      },
+      "coord": {
+        "sub": "Vista analítica"
+      },
+      "prof": {
+        "sub": "Gestión académica"
+      }
+    },
+    "menu": "Abrir menú",
+    "notifications": {
+      "title": "Notificaciones",
+      "empty": "No tienes notificaciones pendientes.",
+      "pagoPendiente": "Pago pendiente de {{nombre}}",
+      "proyectoRevision": "Proyecto en revisión, espera tu decisión"
+    },
+    "settings": {
+      "title": "Configuración",
+      "language": "Idioma",
+      "languages": {
+        "es": "Español",
+        "en": "English"
+      }
+    },
+    "crumbs": {
+      "crear": "Crear",
+      "editar": "Editar",
+      "reporte": "Reporte",
+      "jornada": "Jornada",
+      "detalle": "Detalle"
     }
   },
   "auth": {
     "login": {
-      "title": "UniLab",
-      "subtitle": "Ingrese sus credenciales universitarias para gestionar sus solicitudes académicas.",
-      "email": "Correo Electrónico",
-      "emailPlaceholder": "Ej: estudiante@uniautónoma.edu",
-      "emailHint": "Ingresa tu correo electrónico institucional.",
+      "subtitle": "Ingresa con tu correo institucional para acceder a la plataforma.",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "nombre@uniautonoma.edu.co",
+      "emailHint": "Debe ser tu correo institucional.",
       "password": "Contraseña",
-      "passwordPlaceholder": "••••••••",
+      "passwordPlaceholder": "Ingresa tu contraseña",
       "showPassword": "Mostrar contraseña",
-      "submitButton": "Ingresar al Portal →",
-      "support": "¿Problemas para ingresar?",
-      "supportLink": "Contactar Soporte",
-      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL",
+      "submitButton": "Ingresar",
+      "security": "Conexión segura · Corporación Universitaria Autónoma del Cauca",
       "formInvalid": "Por favor completa todos los campos correctamente.",
       "invalidCredentials": "Credenciales inválidas. Por favor intenta de nuevo.",
       "emailRequired": "El correo electrónico es requerido",
@@ -83,11 +118,21 @@
       "passwordMinLength": "Mínimo 6 caracteres",
       "orContinueWith": "o continúa con",
       "googleButton": "Continuar con Google",
-      "googleError": "No se pudo iniciar sesión con Google"
+      "googleError": "No se pudo iniciar sesión con Google",
+      "heading": "Iniciar sesión",
+      "welcome": "Bienvenido a",
+      "welcomeBrand": "Eduinova",
+      "intro": "Plataforma de gestión académica de proyectos, escuelas y eventos de la Corporación Universitaria Autónoma del Cauca.",
+      "feature1": "Proyectos de semilleros y su revisión",
+      "feature2": "Eventos, jornadas y asistencia por QR",
+      "feature3": "Escuelas y su producción académica",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Regístrate"
     },
     "completarPerfil": {
-      "title": "Completa tu perfil",
-      "subtitle": "Necesitamos algunos datos adicionales para activar tu cuenta.",
+      "title": "Completar perfil",
+      "subtitle": "Necesitamos unos datos más para asociar tu cuenta a tu escuela.",
       "document": "Documento de identidad",
       "phone": "Teléfono",
       "studentCode": "Código estudiantil",
@@ -96,25 +141,81 @@
       "institution": "Institución",
       "occupation": "Ocupación",
       "submit": "Guardar y continuar",
-      "error": "No se pudo completar el perfil"
+      "error": "No se pudo completar el perfil",
+      "roleAssigned": "Rol asignado"
     },
     "cambiarPassword": {
-      "title": "Cambiar Contraseña",
-      "subtitle": "Este es tu primer ingreso. Por favor, establece una contraseña nueva y segura para tu cuenta.",
-      "nuevaPassword": "Nueva Contraseña",
-      "confirmarPassword": "Confirmar Contraseña",
+      "title": "Cambiar contraseña",
+      "subtitle": "Es tu primer ingreso. Define una contraseña propia para continuar.",
+      "nuevaPassword": "Nueva contraseña",
+      "confirmarPassword": "Confirmar contraseña",
       "passwordPlaceholder": "••••••••",
-      "passwordHint": "Mínimo 8 caracteres. Usa mayúsculas, números y caracteres especiales.",
+      "passwordHint": "Mínimo 8 caracteres.",
       "showPassword": "Mostrar contraseña",
-      "submitButton": "Actualizar Contraseña",
-      "passwordsMismatch": "Las contraseñas no coinciden",
+      "submitButton": "Guardar contraseña",
+      "passwordsMismatch": "Las contraseñas no coinciden.",
       "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
-      "security": "CONEXIÓN SEGURA · SSL INSTITUCIONAL",
-      "securityBadge": "🔒"
+      "security": "Tu contraseña se almacena cifrada",
+      "required": "Este campo es obligatorio."
+    },
+    "brand": {
+      "caption": "Gestión académica",
+      "home": "Ir al inicio del portal Eduinova",
+      "backToPortal": "Volver al portal",
+      "universityName": "Corporación Universitaria",
+      "universityPlace": "Autónoma del Cauca",
+      "universityAlt": "Corporación Universitaria Autónoma del Cauca"
+    },
+    "registro": {
+      "title": "Crear cuenta",
+      "subtitle": "Regístrate para publicar proyectos o asistir a eventos.",
+      "tab": "Registrarse",
+      "accountType": "Tipo de cuenta",
+      "roles": {
+        "Estudiante": "Estudiante",
+        "Externo": "Externo",
+        "Administrador": "Administrador",
+        "Coordinador": "Coordinador",
+        "Profesor": "Profesor"
+      },
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "email": "Correo electrónico",
+      "document": "Documento de identidad",
+      "phone": "Teléfono",
+      "roleFields": "Campos de {{role}}",
+      "studentCode": "Código estudiantil",
+      "school": "Escuela",
+      "selectSchool": "Seleccione una escuela",
+      "institution": "Institución",
+      "occupation": "Ocupación",
+      "tempPasswordInfo": "Al crear la cuenta se genera una contraseña temporal. Guárdala: solo se muestra una vez.",
+      "tempPasswordHint": "Cuenta creada. Esta es tu contraseña temporal: guárdala, solo se muestra una vez. Deberás cambiarla en tu primer ingreso.",
+      "submit": "Crear cuenta",
+      "continueLogin": "Continuar al inicio de sesión",
+      "formInvalid": "Completa los campos requeridos.",
+      "formInvalidFields": "Revisa los campos marcados: {{campos}}.",
+      "errors": {
+        "required": "Este campo es obligatorio.",
+        "email": "Escribe un correo válido, por ejemplo usuario@uniautonoma.edu.co."
+      },
+      "cerrado": "El registro de nuevas cuentas está cerrado temporalmente. Si ya tienes cuenta, inicia sesión.",
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Inicia sesión"
+    },
+    "recuperar": {
+      "title": "Recuperar contraseña",
+      "subtitle": "Ingresa el correo de tu cuenta y generaremos una contraseña temporal para que puedas volver a entrar.",
+      "emailHint": "El correo con el que te registraste.",
+      "submit": "Generar contraseña temporal",
+      "tempPasswordHint": "Esta es tu contraseña temporal: guárdala, solo se muestra una vez. Al ingresar deberás definir una nueva.",
+      "goLogin": "Ir a iniciar sesión",
+      "backToLogin": "Volver a iniciar sesión",
+      "formInvalid": "Ingresa un correo electrónico válido."
     }
   },
   "dashboard": {
-    "title": "UniLab - Dashboard",
+    "title": "Eduinova - Dashboard",
     "welcome": "Bienvenido,",
     "logout": "Cerrar Sesión",
     "heading": "Bienvenido al Sistema",
@@ -138,16 +239,26 @@
       "left": {
         "title": "Últimos proyectos",
         "link": "Ver todos",
-        "item1": { "title": "App de gestión ambiental", "sub": "Ing. Software · Carlos R." },
-        "item2": { "title": "Podcast: Finanzas para todos", "sub": "Negocios · Ana M." },
-        "item3": { "title": "App de seguimiento deportivo", "sub": "Educación · Luis T." }
+        "item1": {
+          "title": "App de gestión ambiental",
+          "sub": "Ing. Software · Carlos R."
+        },
+        "item2": {
+          "title": "Podcast: Finanzas para todos",
+          "sub": "Negocios · Ana M."
+        },
+        "item3": {
+          "title": "App de seguimiento deportivo",
+          "sub": "Educación · Luis T."
+        }
       },
       "right": {
         "title": "Inscripciones pendientes",
         "link": "Gestionar",
         "empty": "No hay pagos pendientes",
         "pagoPendiente": "pago pendiente",
-        "confirmar": "Confirmar"
+        "confirmar": "Confirmar",
+        "emptyHint": "Todas las inscripciones con pago están al día."
       },
       "pills": {
         "publicado": "Publicado",
@@ -168,16 +279,34 @@
       "left": {
         "title": "Proyectos por escuela",
         "link": "Ver detalle",
-        "item1": { "title": "Esc. Software y Tecnología", "sub": "54 proyectos · 4.4 ★" },
-        "item2": { "title": "Esc. Ingeniería y Sosten.", "sub": "38 proyectos · 4.1 ★" },
-        "item3": { "title": "Esc. de Negocios", "sub": "31 proyectos · 4.3 ★" }
+        "item1": {
+          "title": "Esc. Software y Tecnología",
+          "sub": "54 proyectos · 4.4 ★"
+        },
+        "item2": {
+          "title": "Esc. Ingeniería y Sosten.",
+          "sub": "38 proyectos · 4.1 ★"
+        },
+        "item3": {
+          "title": "Esc. de Negocios",
+          "sub": "31 proyectos · 4.3 ★"
+        }
       },
       "right": {
         "title": "Semilleros activos",
         "link": "Ver todos",
-        "item1": { "title": "Semillero de IA y Datos", "sub": "12 estudiantes · 3 proyectos" },
-        "item2": { "title": "Semillero Ambiental", "sub": "8 estudiantes · 2 proyectos" },
-        "item3": { "title": "Semillero de Derecho", "sub": "5 estudiantes · 1 proyecto" }
+        "item1": {
+          "title": "Semillero de IA y Datos",
+          "sub": "12 estudiantes · 3 proyectos"
+        },
+        "item2": {
+          "title": "Semillero Ambiental",
+          "sub": "8 estudiantes · 2 proyectos"
+        },
+        "item3": {
+          "title": "Semillero de Derecho",
+          "sub": "5 estudiantes · 1 proyecto"
+        }
       },
       "pills": {
         "up23": "↑ 23%",
@@ -200,16 +329,34 @@
       "left": {
         "title": "Estudiantes por autorizar",
         "link": "Ver todos",
-        "item1": { "title": "Sofía Martínez", "sub": "Semillero IA · solicitud de publicar" },
-        "item2": { "title": "Andrés Cárdenas", "sub": "Física I · solicitud de subir proyecto" },
-        "item3": { "title": "Valentina Cruz", "sub": "Cálculo II · ya autorizada" }
+        "item1": {
+          "title": "Sofía Martínez",
+          "sub": "Semillero IA · solicitud de publicar"
+        },
+        "item2": {
+          "title": "Andrés Cárdenas",
+          "sub": "Física I · solicitud de subir proyecto"
+        },
+        "item3": {
+          "title": "Valentina Cruz",
+          "sub": "Cálculo II · ya autorizada"
+        }
       },
       "right": {
         "title": "Proyectos en revisión",
         "link": "Revisar",
-        "item1": { "title": "Sistema de riego inteligente", "sub": "Ing. Civil · enviado hoy" },
-        "item2": { "title": "App de rutas verdes", "sub": "Ing. Ambiental · enviado ayer" },
-        "item3": { "title": "Dashboard financiero", "sub": "Contabilidad · revisado" }
+        "item1": {
+          "title": "Sistema de riego inteligente",
+          "sub": "Ing. Civil · enviado hoy"
+        },
+        "item2": {
+          "title": "App de rutas verdes",
+          "sub": "Ing. Ambiental · enviado ayer"
+        },
+        "item3": {
+          "title": "Dashboard financiero",
+          "sub": "Contabilidad · revisado"
+        }
       },
       "pills": {
         "pendiente": "Pendiente",
@@ -240,7 +387,7 @@
     "nombre": "Nombre",
     "nombreCompleto": "Nombre Completo",
     "documento": "Documento",
-    "email": "Correo Electrónico",
+    "email": "Correo electrónico",
     "telefono": "Teléfono",
     "genero": "Género",
     "masculino": "Masculino",
@@ -248,7 +395,17 @@
     "otro": "Otro",
     "seleccionar": "Seleccionar",
     "creando": "Creando...",
-    "enviando": "Enviando..."
+    "enviando": "Enviando...",
+    "loadErrorTitle": "No se pudo cargar la información",
+    "reintentar": "Reintentar",
+    "zoom": {
+      "tools": "Herramientas de zoom",
+      "in": "Acercar",
+      "out": "Alejar",
+      "reset": "Restablecer zoom",
+      "open": "Ampliar imagen",
+      "hint": "Rueda del ratón o doble clic para acercar · arrastra para mover · Esc para cerrar"
+    }
   },
   "dialog": {
     "success": {
@@ -290,7 +447,13 @@
     "errorActualizar": "Error al actualizar la escuela",
     "errorEliminar": "Error al eliminar la escuela",
     "eliminarTitulo": "Eliminar escuela",
-    "eliminarMensaje": "¿Eliminar la escuela \"{{nombre}}\"? También se eliminarán sus cursos de forma lógica."
+    "eliminarMensaje": "¿Eliminar la escuela \"{{nombre}}\"? También se eliminarán sus cursos de forma lógica.",
+    "exitoCrear": "Escuela creada correctamente.",
+    "exitoActualizar": "Escuela actualizada correctamente.",
+    "exitoEliminar": "Escuela eliminada.",
+    "sinEscuelasHint": "Crea la primera escuela para asociarle cursos y proyectos.",
+    "sinCursos": "Sin cursos registrados.",
+    "verProyectos": "Ver proyectos"
   },
   "usuarios": {
     "titulo": "Usuarios",
@@ -336,7 +499,21 @@
       "Profesor": "Profesor",
       "Estudiante": "Estudiante",
       "Externo": "Externo"
-    }
+    },
+    "exitoActualizar": "Usuario actualizado correctamente.",
+    "exitoSuspender": "Usuario suspendido.",
+    "exitoReactivar": "Usuario reactivado.",
+    "exitoEliminar": "Usuario eliminado.",
+    "contador": "{{visibles}} de {{total}} registros",
+    "filtroRol": "Filtrar por rol",
+    "todosRoles": "Todos los roles",
+    "sinUsuariosHint": "Crea el primer usuario para darle acceso a la plataforma.",
+    "sinUsuariosFiltro": "No hay usuarios con este rol",
+    "sinUsuariosFiltroHint": "Prueba con otro rol o quita el filtro.",
+    "paginacion": "Paginación de usuarios",
+    "paginaDe": "Página {{pagina}} de {{total}}",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente"
   },
   "eventos": {
     "title": "Eventos",
@@ -384,6 +561,15 @@
     "inscripciones": {
       "titulo": "Inscripciones",
       "sinInscripciones": "No hay inscripciones registradas"
+    },
+    "sinEventosHint": "Cuando se publique un nuevo evento aparecerá aquí.",
+    "portalKicker": "Agenda académica",
+    "portalLead": "Congresos, jornadas y encuentros académicos. Consulta las fechas e inscríbete desde el detalle de cada evento.",
+    "costo": "Inscripción",
+    "momento": {
+      "en_curso": "En curso",
+      "proximo": "Próximamente",
+      "pasado": "Ya se realizó"
     }
   },
   "jornadas": {
@@ -416,7 +602,27 @@
     "sinEvidencias": "Sin evidencias cargadas",
     "evidenciasExito": "Evidencias subidas correctamente",
     "evidenciasError": "No se pudieron subir las evidencias",
-    "eliminarEvidencia": "Eliminar"
+    "eliminarEvidencia": "Eliminar",
+    "kicker": "Jornada",
+    "noEncontrada": "La jornada no existe o fue eliminada.",
+    "errorCargar": "No se pudo cargar la jornada.",
+    "codigoCopiado": "Código copiado al portapapeles.",
+    "codigoNoCopiado": "No se pudo copiar el código.",
+    "evidenciasSubidas": "Evidencias subidas correctamente.",
+    "evidenciaEliminada": "Evidencia eliminada.",
+    "qrAlt": "Código QR de asistencia de {{nombre}}",
+    "qrHint": "QR real y escaneable: apunta al enlace de asistencia de esta jornada.",
+    "uuid": "Código de la jornada",
+    "copiar": "Copiar código",
+    "enlace": "Enlace de asistencia",
+    "descargarQr": "Descargar QR",
+    "verPantallaAsistente": "Ver pantalla del asistente",
+    "asistentes": "Asistencia registrada",
+    "asistentesConteo": "{{asistentes}} de {{inscritos}} inscritos",
+    "sinAsistentes": "Aún no hay asistencias",
+    "sinAsistentesHint": "Las asistencias aparecen aquí cuando los inscritos escanean el QR.",
+    "presente": "Presente",
+    "verJornada": "Ver jornada"
   },
   "inscripcion": {
     "titulo": "Inscribirse al Evento",
@@ -430,7 +636,7 @@
     "exito": "¡Te has inscrito correctamente al evento!",
     "yaInscrito": "Ya estás inscrito",
     "errorRegistrar": "No se pudo completar la inscripción.",
-    "sinCuenta": "No necesitas cuenta UniLab para inscribirte a este evento."
+    "sinCuenta": "No necesitas cuenta Eduinova para inscribirte a este evento."
   },
   "asistencia": {
     "titulo": "Registrar Asistencia",
@@ -457,7 +663,11 @@
       "registrando": "Registrando tu asistencia...",
       "exitoTitulo": "¡Registro exitoso!",
       "errorTitulo": "No se pudo registrar",
-      "preparando": "Preparando registro de asistencia..."
+      "preparando": "Preparando registro de asistencia...",
+      "listo": "¡Listo!",
+      "confirmada": "Asistencia confirmada",
+      "confirmadaDetalle": "Tu asistencia al evento quedó registrada correctamente.",
+      "volverInicio": "Volver al inicio"
     }
   },
   "reporte": {
@@ -478,9 +688,6 @@
   },
   "home": {
     "subtitle": "Portal de proyectos académicos",
-    "portalTagline": "Portal de Proyectos Investigativos",
-    "systemStatus": "SISTEMA:",
-    "systemName": "CÓDICE DE PROYECTOS INTEGRADO",
     "signIn": "Iniciar sesión",
     "goToPanel": "Ir al panel",
     "eventsNav": "Eventos",
@@ -491,12 +698,11 @@
       "logout": "Cerrar sesión"
     },
     "enterPortal": "Ir a mi panel",
-    "logoAlt": "Logo Oficial Uniautónoma del Cauca",
-    "logoFallback": "COGNITIO ET SCIENTIA",
     "backToSchools": "← Volver",
     "carousel": {
       "prev": "Imagen anterior",
-      "next": "Imagen siguiente"
+      "next": "Imagen siguiente",
+      "goTo": "Ver imagen {{n}}"
     },
     "backToProjects": "← Volver a proyectos",
     "projectsListHint": "Proyectos publicados y avalados por la universidad. Selecciona uno para ver el detalle completo.",
@@ -528,9 +734,8 @@
     "academicProgram": "PROGRAMA ACADÉMICO",
     "director": "Director:",
     "unknownLeader": "Equipo investigador",
-    "exploreDeep": "EXPLORAR A FONDO →",
-    "connectedSystem": "SISTEMA CONECTADO CON EL BANCO DE PROYECTOS UNIAUTÓNOMA",
-    "footer": "© 2026 CORPORACIÓN UNIVERSITARIA AUTÓNOMA DEL CAUCA • EX COLOSSUS AD ARDUA",
+    "exploreDeep": "Explorar",
+    "footer": "Eduinova · Portal de proyectos académicos, semilleros y eventos.",
     "mobileMenu": "Seleccionar escuela",
     "facultyProjects": "Proyectos de {{escuela}}",
     "coursesTitle": "Cursos",
@@ -540,64 +745,145 @@
     "loadProjectsError": "No se pudieron cargar los proyectos. Intenta de nuevo en unos momentos.",
     "loadProjectError": "No se pudo cargar el detalle del proyecto.",
     "views": "{{count}} vistas",
-    "schoolProjectBadge": "{{count}} PROY.",
     "openApp": "Abrir aplicativo",
     "downloadApk": "Descargar APK",
     "downloadYoutube": "Ver en YouTube",
     "downloadSpotify": "Escuchar en Spotify",
     "comment": "Comentar",
     "rate": "Calificar",
-    "escuelas": {
-      "derecho": "Ciencias Jurídicas",
-      "educacion": "Ciencias de la Educación",
-      "ingenieria": "Ingeniería y Sostenibilidad",
-      "negocios": "Ciencias Administrativas",
-      "software": "Ingeniería de Software"
+    "caption": "Portal de proyectos",
+    "nav": {
+      "label": "Navegación del portal",
+      "inicio": "Inicio",
+      "proyectos": "Proyectos",
+      "escuelasProyectos": "Escuelas y proyectos",
+      "openMenu": "Abrir menú de navegación",
+      "closeMenu": "Cerrar menú de navegación"
     },
-    "cards": {
-      "derecho": {
-        "subtitle": "// JURIDICAL SCIENCES",
-        "cursive": "la Giustizia"
-      },
-      "educacion": {
-        "subtitle": "// ACADEMIC DEVELOPMENT",
-        "cursive": "la Pedagogia"
-      },
-      "ingenieria": {
-        "subtitle": "// INFRASTRUCTURE",
-        "cursive": "l'Architettura"
-      },
-      "negocios": {
-        "subtitle": "// SOCIAL RESEARCH",
-        "cursive": "l'Umanità"
-      },
-      "software": {
-        "subtitle": "// COMPUTE & CORE",
-        "cursive": "l'Ingegneria"
-      },
-      "generic": {
-        "subtitle": "// ACADEMIC UNIT"
-      }
+    "footerPortal": "Portal",
+    "footerAccess": "Acceso",
+    "createAccount": "Crear cuenta",
+    "registerAttendance": "Registrar asistencia",
+    "hero": {
+      "tag": "Corporación Universitaria Autónoma del Cauca",
+      "titleStart": "Los proyectos que",
+      "titleLight": "construyen",
+      "titleEnd": "nuestros estudiantes",
+      "lead": "Explora los proyectos publicados por escuela, conoce los semilleros de investigación y participa en los eventos académicos.",
+      "exploreProjects": "Explorar proyectos",
+      "viewEvents": "Ver eventos"
     },
-    "authModal": {
-      "title": "Acceso al Templo del Conocimiento",
-      "loginTab": "Iniciar sesión",
-      "registerTab": "Registrarse",
-      "student": "Estudiante",
-      "external": "Externo",
-      "firstName": "Nombres",
-      "lastName": "Apellidos",
-      "document": "Documento de identidad",
-      "phone": "Teléfono",
-      "studentCode": "Código estudiantil",
-      "school": "Escuela",
-      "selectSchool": "Seleccione una escuela",
-      "institution": "Institución",
-      "occupation": "Ocupación",
-      "registerSubmit": "Crear cuenta",
-      "formInvalid": "Complete los campos requeridos.",
-      "tempPasswordHint": "Guarde esta contraseña temporal. Solo se muestra una vez:",
-      "continueLogin": "Continuar al inicio de sesión"
+    "stats": {
+      "title": "El portal en números",
+      "projects": "Proyectos publicados",
+      "projectsNote": "Fichas públicas en el portal",
+      "schools": "Escuelas registradas",
+      "schoolsNote": "Con su producción académica",
+      "courses": "Cursos registrados",
+      "coursesNote": "Programas asociados a escuelas",
+      "events": "Eventos abiertos",
+      "eventsNote": "Con inscripción en el portal"
+    },
+    "schools": {
+      "kicker": "Escuelas",
+      "title": "Explora por escuela",
+      "lead": "Cada escuela reúne los proyectos publicados de sus programas académicos.",
+      "noProjects": "Sin proyectos publicados",
+      "oneProject": "1 proyecto publicado",
+      "projects": "{{count}} proyectos publicados",
+      "noPrograms": "Programas académicos por publicar."
+    },
+    "nextEvent": {
+      "kicker": "Próximo evento",
+      "paid": "Requiere pago de inscripción",
+      "free": "Sin costo de inscripción",
+      "cta": "Ver el evento",
+      "kickerNow": "Evento en curso"
+    },
+    "noProjectsHint": "Cuando la escuela publique proyectos aparecerán aquí.",
+    "semillerosNav": "Semilleros",
+    "breadcrumb": "Ruta de navegación",
+    "recent": {
+      "kicker": "Proyectos",
+      "title": "Publicados recientemente",
+      "lead": "Los últimos proyectos publicados en el portal, de todas las escuelas."
+    },
+    "schoolPage": {
+      "kicker": "Escuela",
+      "publishedProjects": "Proyectos publicados",
+      "programs": "Programas académicos",
+      "programsTitle": "Programas académicos",
+      "projectsTitle": "Proyectos de la escuela",
+      "filterType": "Filtrar por tipo de proyecto",
+      "allTypes": "Todos",
+      "exploreOthers": "Explorar otras escuelas",
+      "otherSchools": "Otras escuelas"
+    },
+    "events": {
+      "kicker": "Eventos",
+      "title": "Agenda académica",
+      "lead": "Congresos, jornadas y encuentros de la comunidad universitaria. Primero los que están por venir.",
+      "viewAll": "Ver todos los eventos"
+    },
+    "directorLabel": "Director del proyecto",
+    "rating": {
+      "title": "Valoración",
+      "none": "Este proyecto aún no tiene calificaciones.",
+      "count": "{{count}} calificación(es)",
+      "rateIt": "Califica este proyecto",
+      "yours": "Tu calificación (puedes cambiarla)",
+      "starLabel": "{{n}} de 5 estrellas",
+      "loginToRate": "Inicia sesión para calificar",
+      "saved": "Tu calificación se guardó.",
+      "error": "No se pudo guardar la calificación."
+    },
+    "comments": {
+      "title": "Comentarios",
+      "empty": "Todavía no hay comentarios sobre este proyecto.",
+      "you": "Tú",
+      "member": "Miembro de la comunidad",
+      "label": "Escribe un comentario",
+      "placeholder": "Comparte tu opinión o una pregunta sobre el proyecto…",
+      "submit": "Publicar comentario",
+      "sent": "Comentario publicado.",
+      "error": "No se pudo publicar el comentario.",
+      "loginToComment": "Inicia sesión para comentar",
+      "reply": "Responder",
+      "replyLabel": "Tu respuesta",
+      "replyPlaceholder": "Escribe tu respuesta…",
+      "replySubmit": "Publicar respuesta",
+      "cancel": "Cancelar"
+    },
+    "resources": {
+      "aplicativo": {
+        "youtube": "Ver en YouTube",
+        "spotify": "Escuchar en Spotify",
+        "github": "Ver código en GitHub",
+        "google-drive": "Abrir en Google Drive",
+        "web": "Abrir aplicación"
+      },
+      "apk": {
+        "youtube": "Descargar APK",
+        "spotify": "Descargar APK",
+        "github": "Descargar APK desde GitHub",
+        "google-drive": "Descargar APK desde Google Drive",
+        "web": "Descargar APK"
+      },
+      "youtube": {
+        "youtube": "Ver en YouTube",
+        "spotify": "Ver vídeo",
+        "github": "Ver vídeo",
+        "google-drive": "Ver vídeo",
+        "web": "Ver vídeo"
+      },
+      "spotify": {
+        "youtube": "Escuchar audio",
+        "spotify": "Escuchar en Spotify",
+        "github": "Escuchar audio",
+        "google-drive": "Escuchar audio",
+        "web": "Escuchar audio"
+      },
+      "newTab": "(se abre en una pestaña nueva)"
     }
   },
   "proyectosEstudiante": {
@@ -663,7 +949,8 @@
       "aprobado": "Aprobado",
       "publicado": "Publicado",
       "rechazado": "Rechazado"
-    }
+    },
+    "sinProyectosHint": "Crea tu primer proyecto para enviarlo a revisión de tu profesor asignado."
   },
   "proyectosProfesor": {
     "titulo": "Proyectos asignados",
@@ -692,13 +979,258 @@
     "publicar": "Publicar en portal",
     "verEnPortal": "Ver en portal público",
     "aprobarTitulo": "Aprobar y publicar proyecto",
-    "aprobarMensaje": "El proyecto quedará visible en el portal público de UniLab. ¿Confirmas la aprobación?",
+    "aprobarMensaje": "El proyecto quedará visible en el portal público de Eduinova. ¿Confirmas la aprobación?",
     "rechazarTitulo": "Rechazar proyecto",
     "rechazarMensaje": "El estudiante no podrá publicar este proyecto. ¿Confirmas el rechazo?",
     "publicarTitulo": "Publicar proyecto",
-    "publicarMensaje": "El proyecto será visible en el portal público de UniLab.",
+    "publicarMensaje": "El proyecto será visible en el portal público de Eduinova.",
     "exitoAprobar": "Proyecto aprobado y publicado en el portal.",
     "exitoRechazar": "Proyecto rechazado.",
-    "exitoPublicar": "Proyecto publicado en el portal."
+    "exitoPublicar": "Proyecto publicado en el portal.",
+    "sinAsignadosHint": "No hay proyectos con este estado entre los que coordinas.",
+    "tituloTodos": "Proyectos de la plataforma",
+    "subtituloTodos": "Todos los proyectos registrados. Puedes revisar, aprobar y publicar los que están en revisión.",
+    "sinProyectos": "No hay proyectos con este estado",
+    "sinProyectosHint": "Cuando los estudiantes registren proyectos aparecerán aquí."
+  },
+  "session": {
+    "expiredTitle": "Tu sesión se cerró",
+    "expiredMessage": "La sesión expiró por inactividad. Vuelve a iniciar sesión para continuar donde estabas.",
+    "signIn": "Iniciar sesión"
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "message": "La dirección puede haber cambiado o el recurso fue eliminado.",
+    "back": "Volver al portal"
+  },
+  "asistenciaPanel": {
+    "titulo": "Control de asistencia",
+    "descripcion": "Registro por QR y reporte de participantes de cada evento.",
+    "registrarManual": "Registrar por código",
+    "verQr": "Ver QR",
+    "sinEventos": "No hay eventos con este estado",
+    "sinEventosHint": "Cuando haya eventos con jornadas, su control de asistencia aparecerá aquí.",
+    "errorCargar": "No se pudieron cargar los eventos."
+  },
+  "cursos": {
+    "titulo": "Cursos",
+    "descripcion": "Cursos de cada escuela. Los proyectos de los estudiantes se registran dentro de un curso.",
+    "crear": "Crear curso",
+    "editar": "Editar curso",
+    "nombre": "Nombre del curso",
+    "escuela": "Escuela",
+    "periodo": "Periodo académico",
+    "periodoPlaceholder": "Ej.: 2026-2",
+    "filtroEscuela": "Filtrar por escuela",
+    "todasEscuelas": "Todas",
+    "sinEscuelas": "Primero crea una escuela",
+    "sinEscuelasHint": "Cada curso pertenece a una escuela. Crea al menos una en «Escuelas y carreras».",
+    "sinCursos": "No hay cursos registrados",
+    "sinCursosHint": "Crea el primer curso para que los estudiantes puedan registrar proyectos en él.",
+    "errorCargar": "Error al cargar los cursos",
+    "errorCrear": "Error al crear el curso",
+    "errorActualizar": "Error al actualizar el curso",
+    "errorEliminar": "Error al eliminar el curso",
+    "eliminarTitulo": "Eliminar curso",
+    "eliminarMensaje": "¿Eliminar el curso «{{nombre}}»? No se puede eliminar si tiene proyectos asociados.",
+    "exitoCrear": "Curso creado correctamente.",
+    "exitoActualizar": "Curso actualizado correctamente.",
+    "exitoEliminar": "Curso eliminado.",
+    "descripcionConsulta": "Cursos de cada escuela en los que los estudiantes registran sus proyectos."
+  },
+  "semilleros": {
+    "titulo": "Semilleros de investigación",
+    "misSemilleros": "Mis semilleros",
+    "descripcion": "Semilleros de cada escuela, su profesor líder y las solicitudes de ingreso de estudiantes.",
+    "descripcionProfesor": "Semilleros en los que eres líder o profesor asignado. Como líder, apruebas solicitudes y autorizas publicaciones.",
+    "crear": "Crear semillero",
+    "editar": "Editar semillero",
+    "sinSemilleros": "No hay semilleros registrados",
+    "sinSemillerosHint": "Crea un semillero y asígnale un profesor líder para que los estudiantes puedan postularse.",
+    "sinSemillerosProfesor": "Aún no participas en ningún semillero",
+    "sinSemillerosProfesorHint": "Cuando un administrador te asigne a un semillero, aparecerá aquí.",
+    "inactivo": "Inactivo",
+    "eresLider": "Eres líder",
+    "lider": "Profesor líder",
+    "miembros": "Miembros",
+    "pendientes": "Pendientes",
+    "verDetalle": "Ver detalle",
+    "eliminarTitulo": "Eliminar semillero",
+    "eliminarMensaje": "¿Eliminar el semillero «{{nombre}}»? Dejará de aparecer para profesores y estudiantes.",
+    "exitoEliminar": "Semillero eliminado.",
+    "errorEliminar": "Error al eliminar el semillero",
+    "errorCargar": "Error al cargar los semilleros",
+    "nombre": "Nombre del semillero",
+    "descripcionCampo": "Descripción",
+    "descripcionMin": "Escribe una descripción de al menos 10 caracteres.",
+    "escuela": "Escuela",
+    "sinProfesores": "No hay profesores activos. Crea uno en «Usuarios».",
+    "activoCampo": "Semillero activo",
+    "activoHint": "Si lo desactivas, los estudiantes no podrán enviar nuevas solicitudes.",
+    "exitoCrear": "Semillero creado correctamente.",
+    "exitoActualizar": "Semillero actualizado correctamente.",
+    "errorCrear": "Error al crear el semillero",
+    "errorActualizar": "Error al actualizar el semillero",
+    "volverListado": "Volver a semilleros",
+    "profesores": "Profesores",
+    "quitar": "Retirar",
+    "asignarProfesor": "Asignar profesor",
+    "sinCandidatos": "Todos los profesores ya están asignados",
+    "asignar": "Asignar",
+    "estudiantes": "Estudiantes y solicitudes",
+    "ayudaLider": "Aprueba o rechaza las solicitudes pendientes. A los miembros aprobados puedes autorizarlos a publicar proyectos del semillero.",
+    "filtroEstado": "Filtrar por estado",
+    "estados": {
+      "pendiente": "Pendientes",
+      "aprobado": "Aprobados",
+      "rechazado": "Rechazados",
+      "todos": "Todos"
+    },
+    "sinMiembros": "Sin estudiantes en este estado",
+    "sinMiembrosHint": "Las solicitudes de los estudiantes aparecerán aquí.",
+    "solicitado": "solicitó el",
+    "puedePublicar": "Puede publicar",
+    "aprobar": "Aprobar",
+    "rechazar": "Rechazar",
+    "autorizarPublicacion": "Autorizar publicación",
+    "quitarProfesorTitulo": "Retirar profesor",
+    "quitarProfesorMensaje": "¿Retirar a {{nombre}} de este semillero?",
+    "exitoAsignarProfesor": "Profesor asignado.",
+    "exitoQuitarProfesor": "Profesor retirado del semillero.",
+    "exitoAprobar": "Solicitud aprobada.",
+    "exitoRechazar": "Solicitud rechazada.",
+    "exitoAutorizar": "El estudiante ya puede publicar proyectos del semillero.",
+    "errorAccion": "No se pudo completar la acción",
+    "portal": {
+      "titulo": "Semilleros de investigación",
+      "subtitulo": "Conoce los semilleros de la universidad y solicita unirte. El profesor líder revisará tu solicitud.",
+      "solicitudesCerradas": "Las solicitudes a semilleros están cerradas temporalmente. Puedes consultar los semilleros, pero no enviar solicitudes.",
+      "sinSemilleros": "No hay semilleros abiertos",
+      "sinSemillerosHint": "Cuando se cree un semillero aparecerá aquí.",
+      "miembros": "{{count}} miembro(s)",
+      "estado": {
+        "pendiente": "Solicitud pendiente",
+        "aprobado": "Eres miembro",
+        "rechazado": "Solicitud rechazada"
+      },
+      "solicitar": "Solicitar ingreso",
+      "volverASolicitar": "Volver a solicitar",
+      "exitoSolicitud": "Solicitud enviada. El profesor líder la revisará.",
+      "errorSolicitud": "No se pudo enviar la solicitud"
+    }
+  },
+  "reportes": {
+    "titulo": "Reportes",
+    "descripcion": "Resumen global de usuarios, proyectos, semilleros y eventos de la plataforma",
+    "generado": "actualizado",
+    "actualizar": "Actualizar",
+    "exportarExcel": "Exportar a Excel",
+    "exportando": "Exportando...",
+    "indicadores": "Indicadores principales",
+    "tiles": {
+      "usuarios": "Usuarios",
+      "usuariosSub": "{{n}} suspendido(s)",
+      "proyectos": "Proyectos",
+      "proyectosSub": "{{n}} publicado(s)",
+      "semilleros": "Semilleros",
+      "semillerosSub": "{{n}} activo(s)",
+      "eventos": "Eventos",
+      "eventosSub": "{{inscripciones}} inscripciones · {{asistencias}} asistencias",
+      "academico": "Escuelas",
+      "academicoSub": "{{n}} curso(s)"
+    },
+    "proyectosPorEscuela": "Proyectos por escuela",
+    "publicados": "Publicados",
+    "otrosEstados": "Otros estados",
+    "publicadosDe": "{{publicados}} de {{total}}",
+    "tipEscuela": "{{escuela}}: {{total}} proyectos, {{publicados}} publicados",
+    "sinDatos": "Sin datos todavía.",
+    "usuariosPorRol": "Usuarios por rol",
+    "proyectosPorEstado": "Proyectos por estado",
+    "eventosPorEstado": "Eventos por estado",
+    "membresiasPorEstado": "Solicitudes a semilleros",
+    "unidades": {
+      "usuarios": "usuarios",
+      "proyectos": "proyectos",
+      "eventos": "eventos",
+      "solicitudes": "solicitudes"
+    },
+    "estadosEvento": {
+      "planeado": "Planeado",
+      "activo": "Activo",
+      "finalizado": "Finalizado"
+    },
+    "errorCargar": "Error al cargar el reporte",
+    "errorExportar": "No se pudo exportar el reporte"
+  },
+  "configuracion": {
+    "titulo": "Configuración",
+    "descripcion": "Parámetros de la plataforma. Los cambios se aplican al guardar, sin redesplegar.",
+    "errorCargar": "Error al cargar la configuración",
+    "secciones": {
+      "acceso": "Registro y solicitudes",
+      "portal": "Portal público"
+    },
+    "registroAbierto": "Permitir registro de nuevas cuentas",
+    "registroAbiertoHint": "Estudiantes y externos pueden crear su cuenta (formulario y Google). Si lo desactivas, solo el administrador crea usuarios.",
+    "solicitudesSemilleros": "Permitir solicitudes a semilleros",
+    "solicitudesSemillerosHint": "Los estudiantes pueden pedir ingreso a un semillero desde el portal.",
+    "mensajePortal": "Aviso del portal",
+    "mensajePortalPlaceholder": "Ej.: Inscripciones abiertas para la Feria de Proyectos hasta el 30 de octubre.",
+    "mensajePortalHint": "Se muestra en una franja sobre todas las páginas del portal. Déjalo vacío para ocultarlo.",
+    "vistaPrevia": "Vista previa",
+    "descartar": "Descartar cambios",
+    "guardar": "Guardar cambios",
+    "exitoGuardar": "Configuración guardada.",
+    "errorGuardar": "No se pudo guardar la configuración"
+  },
+  "panel": {
+    "saludo": {
+      "manana": "Buenos días",
+      "tarde": "Buenas tardes",
+      "noche": "Buenas noches"
+    },
+    "indicadores": "Indicadores principales",
+    "atencion": "Requiere tu atención",
+    "alDia": "Todo al día: no hay tareas pendientes.",
+    "proximosEventos": "Próximos eventos",
+    "verTodos": "Ver todos",
+    "sinEventos": "No hay eventos programados próximamente.",
+    "acciones": {
+      "crearUsuario": "Crear usuario",
+      "crearEvento": "Crear evento",
+      "verReportes": "Ver reportes",
+      "verEstadisticas": "Ver estadísticas"
+    },
+    "kpi": {
+      "proyectosSub": "{{publicados}} publicados · {{revision}} en revisión",
+      "inscripciones": "{{n}} inscripciones",
+      "solicitudes": "{{n}} solicitud(es) pendiente(s)"
+    },
+    "pend": {
+      "proyectos": "{{n}} proyecto(s) en revisión",
+      "proyectosSub": "Puedes revisarlos y publicarlos desde Proyectos",
+      "solicitudes": "{{n}} solicitud(es) de ingreso pendiente(s)",
+      "solicitudesSub": "Las resuelve el profesor líder de cada semillero",
+      "pagos": "Pagos por confirmar"
+    },
+    "admin": {
+      "lead": "Así está la plataforma hoy. Lo que necesita tu atención aparece primero."
+    },
+    "coord": {
+      "lead": "Seguimiento de proyectos, semilleros y eventos de las escuelas.",
+      "enRevision": "Proyectos en revisión",
+      "sinRevision": "No hay proyectos esperando revisión."
+    },
+    "prof": {
+      "lead": "Estás al día con tus proyectos y semilleros.",
+      "leadPendientes": "Tienes {{proyectos}} proyecto(s) por revisar y {{solicitudes}} solicitud(es) de semillero por resolver.",
+      "porRevisarSub": "Enviados por tus estudiantes",
+      "semillerosSub": "Como líder o profesor asignado",
+      "solicitudes": "Solicitudes a semilleros",
+      "solicitudesSub": "En los semilleros que lideras",
+      "revisar": "Proyectos por revisar",
+      "revisarAccion": "Revisar"
+    }
   }
 }

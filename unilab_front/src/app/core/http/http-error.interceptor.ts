@@ -12,6 +12,7 @@ import { catchError } from 'rxjs/operators';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -62,20 +63,43 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 }
 
 // Versión standalone para Angular 15+
+/** Evita mostrar varios avisos si fallan varias peticiones a la vez. */
+let avisoSesionVisible = false;
+
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const authService = inject(AuthService);
+  const dialog = inject(DialogService);
   const isPublicApi = req.url.includes('/api/public/');
+  // Login, registro, Google y recuperación responden 401/403 como error de formulario.
+  const isAuthApi = req.url.includes('/api/auth/');
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'Ocurrió un error';
 
-      if (error.status === 401 && !isPublicApi) {
+      if (error.status === 401 && !isPublicApi && !isAuthApi) {
         errorMessage = 'No autorizado. Por favor inicia sesión.';
-        const authService = inject(AuthService);
+        const teniaSesion = authService.isAuthenticated();
         authService.logout();
-        router.navigateByUrl('/', { replaceUrl: true });
-      } else if (error.status === 403) {
+        if (teniaSesion && !avisoSesionVisible) {
+          avisoSesionVisible = true;
+          const returnUrl = router.url;
+          void dialog
+            .warning({
+              titleKey: 'session.expiredTitle',
+              messageKey: 'session.expiredMessage',
+              confirmKey: 'session.signIn',
+              dismissible: false,
+            })
+            .then(() => {
+              avisoSesionVisible = false;
+              void router.navigate(['/login'], { queryParams: { returnUrl } });
+            });
+        } else if (!teniaSesion) {
+          void router.navigateByUrl('/login', { replaceUrl: true });
+        }
+      } else if (error.status === 403 && !isAuthApi) {
         errorMessage = 'No tienes permiso para acceder a este recurso.';
         router.navigate(['/unauthorized']);
       } else if (error.status === 404) {

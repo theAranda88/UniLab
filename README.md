@@ -1,8 +1,8 @@
-# UniLab
+# UniLab · Eduinova
 
-Plataforma universitaria para gestionar **proyectos académicos**, semilleros y eventos (Uniautónoma del Cauca).
+Plataforma de la **Corporación Universitaria Autónoma del Cauca** para gestionar proyectos académicos, escuelas y cursos, semilleros de investigación y eventos.
 
-Monorepo: `unilab_back/` (API) y `unilab_front/` (portal y paneles). **Se trabaja con Docker.**
+Monorepo: `unilab_back/` (API) y `unilab_front/` (portal público y paneles). **Se trabaja con Docker.**
 
 ## Arranque (Docker)
 
@@ -11,17 +11,47 @@ Desde esta raíz:
 ```bash
 cp .env.example .env
 docker compose up -d --build
-docker compose exec api npx prisma db seed
+docker compose exec api npx prisma db seed   # primera vez o BD vacía
 ```
+
+Las migraciones de Prisma se aplican solas al arrancar el contenedor `api`.
 
 | Servicio | URL |
 |----------|-----|
-| Frontend | http://localhost:8080 |
+| Portal y paneles | http://localhost:8080 |
 | API | http://localhost:3000/api |
 | Swagger | http://localhost:3000/api-docs |
 | PostgreSQL | `localhost:5433` (`postgres` / `postgres`, BD `unilab`) |
 
-Cuentas de prueba (contraseña `Password123!`): `admin@unilab.edu`, `profesor1@unilab.edu`, `estudiante1@unilab.edu`.
+> Si ya tienes una base de datos levantada en otro puerto (p. ej. 5434), arranca con `POSTGRES_PORT=5434 docker compose up -d` para que Compose no la recree.
+
+Cuentas de prueba (contraseña `Password123!`):
+
+| Rol | Correo | Entra a |
+|-----|--------|---------|
+| Administrador | `admin@unilab.edu` | `/admin` |
+| Coordinador | `coordinador@unilab.edu` | `/coord` |
+| Profesor | `profesor1@unilab.edu` | `/prof` |
+| Estudiante | `estudiante1@unilab.edu` | portal (`/mis-proyectos`, `/semilleros`) |
+| Externo | `externo@unilab.edu` | portal |
+
+## Qué incluye
+
+| Módulo | Portal público | Panel |
+|--------|----------------|-------|
+| Escuelas y cursos | Escuelas con sus programas y proyectos | Admin/Coord: escuelas · Admin: cursos (CRUD) · Profesor: cursos (consulta) |
+| Proyectos | Proyectos recientes, ficha con enlaces, calificación y comentarios | Estudiante: crea y envía a revisión · Profesor (sus proyectos), Admin y Coord (todos): revisan y publican |
+| Semilleros | Estudiante: solicita ingreso | Admin: CRUD y profesores · Profesor líder: resuelve solicitudes y autoriza publicación · Coord: consulta |
+| Eventos | Agenda en el inicio, listado y detalle, inscripción y asistencia por QR | Admin: eventos, jornadas, evidencias · Coord: reportes y asistencia |
+| Reportes | — | Admin/Coord: resumen global y exportación a Excel |
+| Configuración | Aviso del portal, registro abierto/cerrado | Admin: parámetros sin redesplegar |
+
+## Pruebas
+
+```bash
+cd unilab_back  && npm test                    # unitarias, sin base de datos
+cd unilab_front && npm test -- --watch=false   # Vitest vía ng test
+```
 
 ## Estructura
 
@@ -30,12 +60,14 @@ unilab/
   docker-compose.yml   ← API + PostgreSQL + frontend
   unilab_back/         ← Node / Express / Prisma
   unilab_front/        ← Angular
-  docs/                ← Flujos de eventos y proyectos
+  docs/                ← Flujos, requisitos (SRS) y pendientes de backend
 ```
 
-## Más detalle
+## Documentación
 
 - Backend: [unilab_back/README.md](unilab_back/README.md)
 - Frontend: [unilab_front/README.md](unilab_front/README.md)
+- Requisitos: [docs/UniLab_SRS_v1.docx](docs/UniLab_SRS_v1.docx)
+- **Pendientes para backend:** [docs/PENDIENTES-BACKEND.md](docs/PENDIENTES-BACKEND.md)
 - Flujo de eventos: [docs/FLUJO-MODULO-EVENTOS.md](docs/FLUJO-MODULO-EVENTOS.md)
 - Flujo de proyectos: [docs/FLUJO-MODULO-PROYECTOS.md](docs/FLUJO-MODULO-PROYECTOS.md)

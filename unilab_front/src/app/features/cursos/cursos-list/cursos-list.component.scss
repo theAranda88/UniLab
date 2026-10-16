@@ -1,0 +1,24 @@
+@use '../../../../styles/design-tokens' as t;
+
+// RA-003 · Cursos — listado
+.cursos-list {
+  max-width: t.$content-max-width;
+  margin: 0 auto;
+
+  &__filters {
+    margin-bottom: t.$space-16;
+  }
+
+  &__nombre {
+    font-weight: t.$font-weight-bold;
+  }
+
+  &__th-actions {
+    width: 1%;
+  }
+
+  &__actions {
+    display: flex;
+    gap: t.$space-4;
+  }
+}

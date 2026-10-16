@@ -1,8 +1,14 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { publicoService } from '../services/publico.service';
+import { configuracionService } from '../services/configuracion.service';
 
 export const publicoController = {
+  /** Todos los parámetros actuales son de lectura pública (portal, registro, semilleros). */
+  obtenerConfiguracion: asyncHandler(async (_req: Request, res: Response) => {
+    res.status(200).json(await configuracionService.obtenerTodo());
+  }),
+
   listarEscuelas: asyncHandler(async (_req: Request, res: Response) => {
     res.status(200).json(await publicoService.listarEscuelas());
   }),

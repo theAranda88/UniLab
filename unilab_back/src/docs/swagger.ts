@@ -76,6 +76,8 @@ export const swaggerSpec = swaggerJsdoc({
       { name: 'Proyectos', description: 'Proyectos académicos' },
       { name: 'Semilleros', description: 'Semilleros de investigación' },
       { name: 'Eventos', description: 'Eventos, inscripciones y asistencia' },
+      { name: 'Reportes', description: 'Reportes globales de la plataforma' },
+      { name: 'Configuración', description: 'Parámetros del sistema editables sin despliegue' },
       { name: 'Público', description: 'Portal público — escuelas, cursos y proyectos publicados (sin auth)' },
     ],
     components: {

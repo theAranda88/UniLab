@@ -1,137 +1,144 @@
 @use '../../../../styles/design-tokens' as t;
-@use '../../../../styles/portal-codex-theme' as portal;
-@use '../../../../styles/portal-codex-tokens' as p;
+@use '../../../../styles/eventos-ui' as ui;
+@use '../../../../styles/admin-pages' as pages;
+
+// Pantalla 19 · Mis proyectos (estudiante, dentro del portal)
 
 .mis-proyectos {
-  max-width: min(72rem, 94vw);
+  max-width: t.$content-max-width;
   margin: 0 auto;
-  padding: t.$space-24 t.$space-16 t.$space-48;
+  padding: t.$space-32 t.$space-24 t.$space-48;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-24 t.$space-16 t.$space-32;
+  }
+
+  @include pages.filter-chips;
 }
 
 .mis-proyectos__header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: t.$space-16;
-  margin-bottom: t.$space-24;
+  align-items: flex-end;
   flex-wrap: wrap;
+  gap: t.$space-16;
+  margin-bottom: t.$space-20;
 
   h1 {
-    margin: 0 0 t.$space-8;
-    font-family: p.$portal-font-display;
-    font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
-    color: p.$portal-text-primary;
+    @include t.page-title;
+    margin-bottom: t.$space-4;
   }
 }
 
 .mis-proyectos__subtitle {
-  margin: 0;
-  color: p.$portal-text-secondary;
-  font-size: t.$font-size-sm;
-  max-width: 36rem;
+  @include t.page-description;
+  max-width: 40rem;
 }
 
 .filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: t.$space-12;
   margin-bottom: t.$space-24;
 
   &__label {
-    display: block;
-    margin-bottom: t.$space-8;
-    font-size: t.$font-size-xs;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: p.$portal-gold-muted;
+    font-size: t.$font-size-label;
+    font-weight: t.$font-weight-bold;
+    color: t.$text-secondary;
   }
-}
-
-.filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: t.$space-8;
-}
-
-.filter-chip {
-  @include portal.portal-filter-chip;
 }
 
 .btn {
-  @include portal.portal-btn-interactive;
-  border: none;
-  cursor: pointer;
-  font-weight: t.$font-weight-semibold;
-  font-size: t.$font-size-sm;
-
   &.btn-primary {
-    @include portal.portal-btn-success;
+    @include ui.btn-primary;
   }
 
   &.btn-secondary {
-    @include portal.portal-btn-secondary;
+    @include ui.btn-secondary;
   }
 
   &.btn-ghost {
+    @include ui.btn-base;
     background: transparent;
-    color: p.$portal-text-secondary;
-    border: 1px solid rgba(p.$portal-gold, 0.2);
+    color: t.$blue;
 
-    &:hover {
-      color: p.$portal-text-primary;
-      border-color: rgba(p.$portal-gold, 0.45);
+    &:hover:not(:disabled) {
+      background: t.$blue-tint;
     }
   }
 
   &.btn-sm {
-    padding: t.$space-8 t.$space-12;
-    font-size: t.$font-size-xs;
+    @include ui.btn-sm;
   }
 }
 
 .mis-proyectos__status {
+  margin: 0;
+  padding: t.$space-48 t.$space-24;
+  border-radius: t.$radius-lg;
   text-align: center;
-  padding: t.$space-32;
-  color: p.$portal-text-secondary;
+  font-size: t.$font-size-sm;
+  @include t.surface-card;
+  color: t.$text-secondary;
 
   &--error {
-    @include portal.portal-alert-error;
+    border-color: t.$danger-border;
+    background: t.$danger-tint;
+    box-shadow: none;
+    color: t.$danger-ink;
   }
 }
 
+// C24 · Vacío con acción
 .mis-proyectos__empty {
+  @include t.surface-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-16;
+  padding: t.$space-48 t.$space-24;
   text-align: center;
-  padding: t.$space-48 t.$space-16;
-  @include portal.portal-card;
-  color: p.$portal-text-secondary;
 
   p {
-    margin: 0 0 t.$space-16;
+    margin: 0;
+    max-width: 32rem;
+    font-size: t.$font-size-base;
+    color: t.$text-secondary;
   }
 }
 
 .mis-proyectos__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: t.$space-20;
 }
 
+// C14 · Card de proyecto
 .proyecto-card {
-  @include portal.portal-card-codex;
-  cursor: pointer;
-  overflow: hidden;
+  @include t.surface-card;
   display: flex;
   flex-direction: column;
-  animation: proyecto-card-in 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color t.$transition-base;
+
+  &:hover {
+    border-color: t.$blue-border;
+  }
 
   &__media {
     position: relative;
     aspect-ratio: 16 / 10;
+    background: t.$neutral-soft;
+    border-bottom: 1px solid t.$border-subtle;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.35);
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
   }
 
@@ -139,104 +146,90 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
     height: 100%;
-    color: p.$portal-gold-muted;
-    font-size: 2rem;
-  }
-
-  &__tipo {
-    position: absolute;
-    top: t.$space-8;
-    right: t.$space-8;
-    padding: t.$space-4 t.$space-8;
-    border-radius: t.$radius-full;
-    background: rgba(0, 0, 0, 0.55);
-    color: p.$portal-text-primary;
-    font-size: t.$font-size-xs;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    background: t.$blue-tint;
+    color: rgba(5, 54, 134, 0.4);
+    font-size: 40px;
   }
 
   &__estado {
     position: absolute;
-    left: t.$space-8;
-    bottom: t.$space-8;
-    padding: t.$space-4 t.$space-12;
-    border-radius: t.$radius-full;
-    font-size: t.$font-size-xs;
-    font-weight: t.$font-weight-semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    backdrop-filter: blur(4px);
+    top: t.$space-12;
+    left: t.$space-12;
+  }
+
+  &__tipo {
+    position: absolute;
+    top: t.$space-12;
+    right: t.$space-12;
+    @include ui.estado-pill;
+    background: rgba(255, 255, 255, 0.94);
+    color: t.$ink;
   }
 
   &__body {
-    padding: t.$space-16;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: t.$space-8;
-    flex: 1;
+    padding: t.$space-16 t.$space-20 t.$space-20;
 
     h2 {
       margin: 0;
-      font-family: p.$portal-font-display;
       font-size: t.$font-size-lg;
-      color: p.$portal-text-primary;
+      font-weight: t.$font-weight-extra-bold;
+      letter-spacing: -0.01em;
       line-height: 1.25;
+      color: t.$ink;
     }
 
     p {
       margin: 0;
       font-size: t.$font-size-sm;
-      color: p.$portal-text-secondary;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: t.$line-height-normal;
+      color: t.$text-secondary;
+      @include t.line-clamp(3);
     }
   }
 
   &__actions {
     display: flex;
+    flex-wrap: wrap;
     gap: t.$space-8;
     margin-top: auto;
     padding-top: t.$space-8;
-    flex-wrap: wrap;
   }
 }
 
-.estado--borrador {
-  background: rgba(148, 163, 184, 0.2);
-  color: #cbd5e1;
+// C10 · Badge de estado sobre la imagen (5 estados del backend)
+.proyecto-card__estado {
+  @include ui.estado-pill;
+  background: rgba(255, 255, 255, 0.94);
+  color: rgba(30, 30, 30, 0.75);
 }
 
-.estado--en_revision {
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
+.proyecto-card__estado.estado--en_revision {
+  background: #f8efb5;
+  border-color: t.$accent-border;
+  color: t.$accent-ink;
 }
 
-.estado--aprobado {
-  background: rgba(16, 185, 129, 0.2);
-  color: #6ee7b7;
+.proyecto-card__estado.estado--aprobado {
+  background: #e6ebf3;
+  border-color: t.$blue-border;
+  color: t.$blue;
 }
 
-.estado--publicado {
-  background: rgba(212, 175, 55, 0.2);
-  color: p.$portal-gold;
+.proyecto-card__estado.estado--publicado {
+  background: t.$blue;
+  border-color: t.$blue;
+  color: t.$white;
 }
 
-.estado--rechazado {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
+.proyecto-card__estado.estado--rechazado {
+  background: #f6e3e3;
+  border-color: rgba(176, 42, 42, 0.28);
+  color: t.$danger-ink;
 }
 
-@keyframes proyecto-card-in {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}

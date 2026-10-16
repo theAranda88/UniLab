@@ -8,6 +8,7 @@ import {
   idParamSchema,
   escuelaSchema,
   cursoSchema,
+  cursoUpdateSchema,
   autorizacionCursoSchema,
 } from '../middlewares/validation/schemas';
 
@@ -30,7 +31,13 @@ router.delete('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'),
 router.get('/cursos', ...lectura, cursoController.listar);
 router.get('/cursos/:id', ...lectura, validate(idParamSchema, 'params'), cursoController.obtener);
 router.post('/cursos', ...admin, validate(cursoSchema), cursoController.crear);
-router.patch('/cursos/:id', ...admin, validate(idParamSchema, 'params'), cursoController.actualizar);
+router.patch(
+  '/cursos/:id',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  validate(cursoUpdateSchema),
+  cursoController.actualizar,
+);
 router.delete('/cursos/:id', ...admin, validate(idParamSchema, 'params'), cursoController.eliminar);
 router.post(
   '/cursos/:id/autorizaciones',

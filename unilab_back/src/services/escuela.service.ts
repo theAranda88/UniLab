@@ -74,6 +74,7 @@ export const cursoService = {
     data: Partial<{ nombre_curso: string; periodo_academico: string; id_escuela: number }>,
   ) {
     await cursoService.obtener(id);
+    if (data.id_escuela) await escuelaService.obtener(data.id_escuela);
     return cursoRepository.update(id, {
       nombre_curso: data.nombre_curso,
       periodo_academico: data.periodo_academico,
@@ -83,6 +84,13 @@ export const cursoService = {
 
   async eliminar(id: number) {
     await cursoService.obtener(id);
+    const proyectos = await prisma.proyectos.count({ where: { id_curso: id, ...activo } });
+    if (proyectos > 0) {
+      throw new AppError(
+        `No se puede eliminar: el curso tiene ${proyectos} proyecto(s) asociado(s)`,
+        422,
+      );
+    }
     await cursoRepository.softDelete(id);
   },
 

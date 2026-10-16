@@ -1,31 +1,23 @@
-import { Component, OnInit, OnDestroy, inject, signal, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { navigateAfterLogin } from '../../../core/config/role-redirect';
 import { GoogleSignInButtonComponent } from '../../../shared/ui/google-sign-in/google-sign-in-button.component';
+import { AuthBrandComponent } from '../auth-brand/auth-brand.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, GoogleSignInButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, GoogleSignInButtonComponent, AuthBrandComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  host: {
-    '[class.login--codex]': 'variant === "codex"',
-    '[class.login--embedded]': 'embedded',
-  },
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  /** `default` = página /login · `codex` = portal público (dorado + azul apagado) */
-  @Input() variant: 'default' | 'codex' = 'default';
-  /** true cuando se renderiza dentro del modal del portal */
-  @Input() embedded = false;
-  @Output() authenticated = new EventEmitter<void>();
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -39,7 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    if (!this.embedded && this.authService.isAuthenticated()) {
+    if (this.authService.isAuthenticated()) {
       this.redirectAfterAuth();
     }
     this.loginForm = this.formBuilder.group({
@@ -63,10 +55,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.loading.set(false);
-          if (this.embedded) {
-            this.authenticated.emit();
-            return;
-          }
           this.handleAuthSuccess(response.usuario);
         },
         error: (err: { error?: { error?: string } }) => {
@@ -105,10 +93,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.loading.set(false);
-          if (this.embedded) {
-            this.authenticated.emit();
-            return;
-          }
           this.handleAuthSuccess(response.usuario);
         },
         error: (err: { error?: { error?: string } }) => {
@@ -125,10 +109,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
-    void navigateAfterLogin(this.router, user, {
-      fromPortal: this.embedded,
-      returnUrl,
-    });
+    void navigateAfterLogin(this.router, user, { returnUrl });
   }
 
   get email() {

@@ -7,7 +7,7 @@ import {
   UrlTree,
 } from '@angular/router';
 import { AuthService } from './auth.service';
-import { createDefaultRouteTree } from '../config/role-redirect';
+import { createDefaultRouteTree, resolvePostLoginRoute } from '../config/role-redirect';
 
 /**
  * Guardia de autenticación.
@@ -126,6 +126,24 @@ export const completarPerfilGuard: CanActivateFn = () => {
   }
 
   return true;
+};
+
+/**
+ * Solo para visitantes sin sesión (login, registro, recuperar contraseña).
+ * Si ya hay una sesión activa no se permite otro inicio de sesión: se envía al
+ * usuario a su destino (panel según rol, o el portal para Estudiante/Externo).
+ */
+export const guestGuard: CanActivateFn = (route: ActivatedRouteSnapshot): boolean | UrlTree => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const user = authService.getCurrentUser();
+
+  if (!authService.isAuthenticated() || !user) {
+    return true;
+  }
+
+  const returnUrl = route.queryParamMap.get('returnUrl');
+  return router.parseUrl(resolvePostLoginRoute(user, { returnUrl }) ?? '/');
 };
 
 /**

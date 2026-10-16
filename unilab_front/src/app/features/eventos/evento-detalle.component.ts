@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import QRCode from 'qrcode';
+import { generarQrAsistencia } from '../../core/utils/qr.util';
 import { EventosService } from './eventos.service';
 import { PublicPortalService } from '../home/public-portal.service';
 import { AuthService } from '../../core/auth/auth.service';
@@ -16,14 +16,26 @@ import { InscripcionFormComponent } from './inscripcion-form.component';
 import { JornadaFormComponent } from './jornada-form.component';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/ui/breadcrumb/breadcrumb.component';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
-import { formatearFechaLocal, toDateInputValue } from '../../core/utils/date.util';
+import {
+  formatearFechaLocal,
+  formatearRangoFechas,
+  momentoEvento,
+  toDateInputValue,
+} from '../../core/utils/date.util';
+import { EventoMediaComponent } from '../../shared/ui/evento-media/evento-media.component';
 import { hasPortalTheme } from '../../core/utils/portal-theme.util';
 import type { UiVariant } from '../../shared/ui/ui-variant';
 
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
+
+import { ToastService } from '../../shared/ui/toast/toast.service';
+import { ImageLightboxComponent } from '../../shared/ui/image-lightbox/image-lightbox.component';
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
-  imports: [
+  imports: [ImageLightboxComponent, 
+    EventoMediaComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -31,6 +43,8 @@ import type { UiVariant } from '../../shared/ui/ui-variant';
     InscripcionFormComponent,
     JornadaFormComponent,
     BreadcrumbComponent,
+    EmptyStateComponent,
+    SkeletonComponent,
   ],
   templateUrl: './evento-detalle.component.html',
   styleUrl: './evento-detalle.component.scss',
@@ -46,6 +60,7 @@ export class EventoDetalleComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
+  private toast = inject(ToastService);
 
   readonly portalTheme = signal(false);
   readonly uiVariant = computed<UiVariant>(() => (this.portalTheme() ? 'portal' : 'default'));
@@ -127,15 +142,8 @@ export class EventoDetalleComponent implements OnInit {
 
     for (const jornada of jornadas) {
       try {
-        const deeplink = `${window.location.origin}/eventos/${idEvento}/asistencia?qr=${encodeURIComponent(jornada.codigo_qr)}`;
-        const qrDataUrl = await QRCode.toDataURL(deeplink, {
-          errorCorrectionLevel: 'H',
-          type: 'image/png' as 'image/png',
-          width: 200,
-          margin: 1,
-          color: { dark: '#243b8e', light: '#FFFFFF' },
-        });
-        urls[jornada.id_jornada] = qrDataUrl;
+        if (idEvento === undefined) continue;
+        urls[jornada.id_jornada] = await generarQrAsistencia(idEvento, jornada.codigo_qr);
       } catch {
         // QR generation failed for this jornada
       }
@@ -278,10 +286,7 @@ export class EventoDetalleComponent implements OnInit {
       this.verificarInscripcionPublica(id);
     }
 
-    await this.dialog.success({
-      titleKey: 'dialog.success.title',
-      messageKey: 'inscripcion.exito',
-    });
+    this.toast.success('inscripcion.exito');
   }
 
   abrirFormularioJornada() {
@@ -369,20 +374,14 @@ export class EventoDetalleComponent implements OnInit {
     const id = this.evento()?.id_evento;
     if (id) this.cargarJornadas(id);
     this.cerrarFormularioJornada();
-    await this.dialog.success({
-      titleKey: 'dialog.success.title',
-      messageKey: 'jornadas.exitoCrear',
-    });
+    this.toast.success('jornadas.exitoCrear');
   }
 
   async onJornadaActualizada() {
     const id = this.evento()?.id_evento;
     if (id) this.cargarJornadas(id);
     this.cerrarFormularioJornada();
-    await this.dialog.success({
-      titleKey: 'dialog.success.title',
-      messageKey: 'jornadas.exitoActualizar',
-    });
+    this.toast.success('jornadas.exitoActualizar');
   }
 
   async eliminarJornada(jornada: EventoJornada) {
@@ -410,10 +409,7 @@ export class EventoDetalleComponent implements OnInit {
           delete next[jornada.id_jornada];
           return next;
         });
-        await this.dialog.success({
-          titleKey: 'dialog.success.title',
-          messageKey: 'jornadas.exitoEliminar',
-        });
+        this.toast.success('jornadas.exitoEliminar');
       },
       error: async (err: { message?: string }) => {
         this.eliminandoJornadaId.set(null);
@@ -447,10 +443,7 @@ export class EventoDetalleComponent implements OnInit {
     this.eliminando.set(true);
     this.eventoService.eliminar(id).subscribe({
       next: async () => {
-        await this.dialog.success({
-          titleKey: 'dialog.success.title',
-          messageKey: 'eventos.exitoEliminar',
-        });
+        this.toast.success('eventos.exitoEliminar');
         this.router.navigate([this.eventoService.getBasePath()]);
       },
       error: async (err: { message?: string }) => {
@@ -478,10 +471,7 @@ export class EventoDetalleComponent implements OnInit {
       next: async () => {
         this.actualizandoPagoId.set(null);
         this.cargarInscripciones(this.evento()!.id_evento);
-        await this.dialog.success({
-          titleKey: 'dialog.success.title',
-          messageKey: 'eventos.exitoPago',
-        });
+        this.toast.success('eventos.exitoPago');
       },
       error: async (err: { message?: string }) => {
         this.actualizandoPagoId.set(null);
@@ -535,6 +525,16 @@ export class EventoDetalleComponent implements OnInit {
     return formatearFechaLocal(fecha);
   }
 
+  formatearRango(inicio: string, fin: string): string {
+    return formatearRangoFechas(inicio, fin, this.translate.getCurrentLang() ?? 'es');
+  }
+
+  /** En curso / próximo / finalizado según las fechas del evento. */
+  readonly momento = computed(() => {
+    const e = this.evento();
+    return e ? momentoEvento(e.fecha_inicio, e.fecha_fin) : 'proximo';
+  });
+
   toDateInput(fecha: string): string {
     return toDateInputValue(fecha);
   }
@@ -549,5 +549,16 @@ export class EventoDetalleComponent implements OnInit {
 
   obtenerQRParaJornada(idJornada: number): string {
     return this.qrUrls()[idJornada] || '';
+  }
+
+  /** Visor con zoom de las evidencias (imágenes + posición inicial). */
+  readonly visor = signal<{ imagenes: string[]; inicio: number } | null>(null);
+
+  abrirVisor(imagenes: string[], inicio: number): void {
+    this.visor.set({ imagenes, inicio });
+  }
+
+  urlsEvidencias(idJornada: number): string[] {
+    return this.evidenciasDeJornada(idJornada).map((e) => e.url);
   }
 }

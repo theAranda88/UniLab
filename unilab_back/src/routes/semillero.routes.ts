@@ -8,6 +8,8 @@ import {
   idParamSchema,
   idEstudianteParamSchema,
   semilleroSchema,
+  semilleroUpdateSchema,
+  idProfesorParamSchema,
   asignarProfesorSemilleroSchema,
   solicitudMembresiaSchema,
   resolverMembresiaSchema,
@@ -24,7 +26,13 @@ const lectura = [...auth] as const;
 router.get('/', ...lectura, semilleroController.listar);
 router.get('/:id', ...lectura, validate(idParamSchema, 'params'), semilleroController.obtener);
 router.post('/', ...admin, validate(semilleroSchema), semilleroController.crear);
-router.patch('/:id', ...admin, validate(idParamSchema, 'params'), semilleroController.actualizar);
+router.patch(
+  '/:id',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  validate(semilleroUpdateSchema),
+  semilleroController.actualizar,
+);
 router.delete('/:id', ...admin, validate(idParamSchema, 'params'), semilleroController.eliminar);
 
 router.post(
@@ -37,6 +45,7 @@ router.post(
 router.delete(
   '/:id/profesores/:idProfesor',
   ...admin,
+  validate(idProfesorParamSchema, 'params'),
   semilleroController.quitarProfesor,
 );
 

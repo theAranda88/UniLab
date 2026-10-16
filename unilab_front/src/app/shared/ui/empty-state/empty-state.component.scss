@@ -1,0 +1,73 @@
+@use '../../../../styles/design-tokens' as t;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-8;
+  padding: t.$space-48 t.$space-24;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$white;
+  box-shadow: t.$shadow-card;
+  text-align: center;
+}
+
+:host(.empty--compact) {
+  padding: t.$space-24 t.$space-16;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.empty__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: t.$space-8;
+  border-radius: t.$radius-xl;
+  background: t.$blue-tint;
+  color: t.$blue;
+  font-size: 26px;
+
+  :host(.empty--compact) & {
+    width: 44px;
+    height: 44px;
+    font-size: 21px;
+  }
+
+  :host(.empty--error) & {
+    background: t.$danger-tint;
+    color: t.$danger;
+  }
+}
+
+.empty__title {
+  margin: 0;
+  font-size: t.$font-size-lg;
+  font-weight: t.$font-weight-extra-bold;
+  letter-spacing: -0.01em;
+  color: t.$ink;
+
+  :host(.empty--compact) & {
+    font-size: t.$font-size-base;
+  }
+}
+
+.empty__message {
+  margin: 0;
+  max-width: 42ch;
+  font-size: t.$font-size-sm;
+  line-height: t.$line-height-normal;
+  color: t.$text-secondary;
+}
+
+.empty__actions:not(:empty) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: t.$space-8;
+  margin-top: t.$space-12;
+}
