@@ -143,6 +143,35 @@ export const paths = {
   },
 
   // ─── USUARIOS ───────────────────────────────────────────────────────────────
+  '/usuarios/consulta': {
+    get: {
+      tags: ['Usuarios'],
+      summary: 'Listado de solo lectura de profesores y estudiantes',
+      description:
+        '**Roles:** Administrador, Coordinador, Profesor. Admin y Coordinador ven profesores y estudiantes de todas las escuelas; el Profesor solo estudiantes de su escuela (filtrar `rol=Profesor` devuelve 403).',
+      parameters: [
+        { name: 'rol', in: 'query', schema: { type: 'string', enum: ['Profesor', 'Estudiante'] } },
+        { name: 'id_escuela', in: 'query', schema: { type: 'integer', minimum: 1 } },
+        {
+          name: 'busqueda',
+          in: 'query',
+          schema: { type: 'string', maxLength: 100 },
+          description: 'Nombre, apellido o email',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'Usuarios visibles para quien consulta',
+          content: {
+            'application/json': {
+              schema: { type: 'array', items: { $ref: '#/components/schemas/UsuarioConsulta' } },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
   '/usuarios/roles': {
     get: {
       tags: ['Usuarios'],

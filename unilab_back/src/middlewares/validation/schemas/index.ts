@@ -65,6 +65,12 @@ export const cambiarMiPasswordSchema = z
     path: ['nueva_password'],
   });
 
+export const consultaUsuariosSchema = z.object({
+  rol: z.enum(['Profesor', 'Estudiante']).optional(),
+  id_escuela: z.coerce.number().int().positive().optional(),
+  busqueda: z.string().trim().max(100).optional(),
+});
+
 export const googleLoginSchema = z.object({
   credential: z.string().min(1),
 });

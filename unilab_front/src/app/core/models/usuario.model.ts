@@ -123,3 +123,16 @@ export interface PerfilRol {
   ocupacion: string | null;
 }
 
+/** Fila de los listados de solo lectura (GET /usuarios/consulta). */
+export interface UsuarioConsulta {
+  id_usuario: number;
+  nombres: string;
+  apellidos: string;
+  email: string;
+  telefono: string;
+  activo: boolean;
+  rol: 'Profesor' | 'Estudiante';
+  codigo: string | null;
+  escuela: EscuelaResumen | null;
+  redes: RedesContacto;
+}

@@ -8,7 +8,14 @@ import type {
   Rol,
   RolNombre,
   UsuarioAdmin,
+  UsuarioConsulta,
 } from '../../core/models/usuario.model';
+
+export interface FiltroConsultaUsuarios {
+  rol?: 'Profesor' | 'Estudiante';
+  id_escuela?: number;
+  busqueda?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class UsuariosService {
@@ -18,6 +25,15 @@ export class UsuariosService {
   listar(filtroRol?: RolNombre): Observable<UsuarioAdmin[]> {
     const params = filtroRol ? { rol: filtroRol } : undefined;
     return this.http.get<UsuarioAdmin[]>(this.apiUrl, { params });
+  }
+
+  /** Listado de solo lectura (Coordinador y Profesor); el backend aplica el alcance según el rol. */
+  consultar(filtro: FiltroConsultaUsuarios = {}): Observable<UsuarioConsulta[]> {
+    const params: Record<string, string> = {};
+    if (filtro.rol) params['rol'] = filtro.rol;
+    if (filtro.id_escuela) params['id_escuela'] = String(filtro.id_escuela);
+    if (filtro.busqueda) params['busqueda'] = filtro.busqueda;
+    return this.http.get<UsuarioConsulta[]>(`${this.apiUrl}/consulta`, { params });
   }
 
   listarRoles(): Observable<Rol[]> {

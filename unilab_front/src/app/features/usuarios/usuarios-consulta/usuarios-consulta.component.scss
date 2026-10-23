@@ -1,0 +1,28 @@
+@use '../../../../styles/design-tokens' as t;
+
+// Filtros y detalles propios del listado de solo lectura (la tabla reutiliza usuarios-list).
+.consulta {
+  &__solo-lectura {
+    gap: t.$space-4;
+  }
+
+  &__filtros {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: t.$space-16;
+    margin-bottom: t.$space-20;
+
+    @include t.respond-to(640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__email {
+    text-decoration: none;
+
+    &:hover {
+      color: t.$blue;
+      text-decoration: underline;
+    }
+  }
+}

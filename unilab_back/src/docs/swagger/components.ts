@@ -207,6 +207,25 @@ export const schemas = {
       nueva_password: { type: 'string', minLength: 8, example: 'NuevaClave2026' },
     },
   },
+  UsuarioConsulta: {
+    type: 'object',
+    properties: {
+      id_usuario: { type: 'integer', example: 7 },
+      nombres: { type: 'string', example: 'Ana' },
+      apellidos: { type: 'string', example: 'Gómez' },
+      email: { type: 'string', example: 'ana.gomez@uniautonoma.edu.co' },
+      telefono: { type: 'string', example: '3001234567' },
+      activo: { type: 'boolean', example: true },
+      rol: { type: 'string', enum: ['Profesor', 'Estudiante'] },
+      codigo: { type: 'string', nullable: true, description: 'Código docente o estudiantil' },
+      escuela: {
+        type: 'object',
+        nullable: true,
+        properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+      },
+      redes: { $ref: '#/components/schemas/RedesContacto' },
+    },
+  },
   LoginResponse: {
     type: 'object',
     properties: {

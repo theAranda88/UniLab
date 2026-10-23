@@ -1,0 +1,133 @@
+<div class="usuarios-list">
+  <div class="usuarios-list__header">
+    <div>
+      <h1>{{ (rol() === 'Profesor' ? 'consultaUsuarios.tituloProfesores' : 'consultaUsuarios.tituloEstudiantes') | translate }}</h1>
+      @if (!cargando() && !error()) {
+        <p class="usuarios-list__count">
+          {{ 'usuarios.contador' | translate: { visibles: paginaActual().length, total: filtrados().length } }}
+        </p>
+      }
+    </div>
+    <span class="edu-badge consulta__solo-lectura">
+      <i class="ti ti-eye" aria-hidden="true"></i>{{ 'consultaUsuarios.soloLectura' | translate }}
+    </span>
+  </div>
+
+  <div class="consulta__filtros">
+    <label class="edu-field consulta__buscar">
+      <span class="edu-field__label">{{ 'consultaUsuarios.buscar' | translate }}</span>
+      <input
+        class="edu-control"
+        type="search"
+        [value]="busqueda()"
+        (input)="setBusqueda($any($event.target).value)"
+        [placeholder]="'consultaUsuarios.buscarPlaceholder' | translate"
+      />
+    </label>
+    <label class="edu-field">
+      <span class="edu-field__label">{{ 'usuarios.escuela' | translate }}</span>
+      <select class="edu-control" [value]="filtroEscuela() ?? ''" (change)="setEscuela($any($event.target).value)">
+        <option value="">{{ 'consultaUsuarios.todasEscuelas' | translate }}</option>
+        @for (e of escuelas(); track e.id_escuela) {
+          <option [value]="e.id_escuela" [selected]="filtroEscuela() === e.id_escuela">{{ e.nombre_escuela }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (cargando()) {
+    <app-skeleton variant="table" [rows]="6" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="cargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
+  } @else if (filtrados().length === 0) {
+    <app-empty-state
+      icon="ti-users"
+      [title]="(hayFiltros() ? 'consultaUsuarios.sinResultados' : 'consultaUsuarios.sinUsuarios') | translate"
+      [message]="(hayFiltros() ? 'consultaUsuarios.sinResultadosHint' : 'consultaUsuarios.sinUsuariosHint') | translate"
+    >
+      @if (hayFiltros()) {
+        <button type="button" class="edu-btn edu-btn--secondary" (click)="limpiarFiltros()">
+          {{ 'consultaUsuarios.limpiar' | translate }}
+        </button>
+      }
+    </app-empty-state>
+  } @else {
+    <div class="usuarios-list__table-wrap">
+      <table class="usuarios-list__table">
+        <thead>
+          <tr>
+            <th>{{ 'usuarios.nombre' | translate }}</th>
+            <th>{{ (rol() === 'Profesor' ? 'usuarios.codigoDocente' : 'usuarios.codigoEstudiantil') | translate }}</th>
+            <th>{{ 'usuarios.escuela' | translate }}</th>
+            <th>{{ 'usuarios.estado' | translate }}</th>
+            <th>{{ 'consultaUsuarios.contacto' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of paginaActual(); track usuario.id_usuario) {
+            <tr [class.usuarios-list__row--inactive]="!usuario.activo">
+              <td>
+                <div class="usuarios-list__person">
+                  <span class="edu-avatar">{{ iniciales(usuario) }}</span>
+                  <span class="usuarios-list__person-text">
+                    <span class="usuarios-list__name">{{ usuario.nombres }} {{ usuario.apellidos }}</span>
+                    <a class="usuarios-list__muted consulta__email" [href]="'mailto:' + usuario.email">{{ usuario.email }}</a>
+                  </span>
+                </div>
+              </td>
+              <td>{{ usuario.codigo ?? '—' }}</td>
+              <td>{{ usuario.escuela?.nombre_escuela ?? '—' }}</td>
+              <td>
+                @if (usuario.activo) {
+                  <span class="edu-badge edu-badge--activo">
+                    <span class="edu-badge__dot"></span>{{ 'usuarios.activo' | translate }}
+                  </span>
+                } @else {
+                  <span class="edu-badge">{{ 'usuarios.inactivo' | translate }}</span>
+                }
+              </td>
+              <td>
+                <app-redes-contacto [redes]="usuario.redes" [compacto]="true" />
+                @if (!usuario.redes.linkedin && !usuario.redes.github && !usuario.redes.portafolio) {
+                  <span class="usuarios-list__muted">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (totalPaginas() > 1) {
+        <nav class="usuarios-list__pagination" [attr.aria-label]="'usuarios.paginacion' | translate">
+          <span>{{ 'usuarios.paginaDe' | translate: { pagina: pagina(), total: totalPaginas() } }}</span>
+          <div class="usuarios-list__pages">
+            <button type="button" class="page-btn" [disabled]="pagina() === 1" (click)="irAPagina(pagina() - 1)">
+              {{ 'usuarios.anterior' | translate }}
+            </button>
+            @for (n of paginas(); track n) {
+              <button
+                type="button"
+                class="page-btn"
+                [class.page-btn--active]="n === pagina()"
+                [attr.aria-current]="n === pagina() ? 'page' : null"
+                (click)="irAPagina(n)"
+              >
+                {{ n }}
+              </button>
+            }
+            <button type="button" class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="irAPagina(pagina() + 1)">
+              {{ 'usuarios.siguiente' | translate }}
+            </button>
+          </div>
+        </nav>
+      }
+    </div>
+  }
+</div>

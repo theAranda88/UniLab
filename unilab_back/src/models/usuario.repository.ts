@@ -5,6 +5,28 @@ import type { Prisma } from '@prisma/client';
 const escuelaResumen = { select: { id_escuela: true, nombre_escuela: true } } as const;
 const semilleroResumen = { select: { id_semillero: true, nombre_semillero: true } } as const;
 
+/** Campos visibles en los listados de solo lectura (sin credenciales ni documento). */
+const usuarioConsultaSelect = {
+  id_usuario: true,
+  nombres: true,
+  apellidos: true,
+  email: true,
+  telefono: true,
+  activo: true,
+  url_linkedin: true,
+  url_github: true,
+  url_portafolio: true,
+  rol: { select: { nombre_rol: true } },
+  perfil_profesor: {
+    where: activo,
+    select: { codigo_docente: true, escuela: escuelaResumen },
+  },
+  perfil_estudiante: {
+    where: activo,
+    select: { codigo_estudiantil: true, escuela: escuelaResumen },
+  },
+} satisfies Prisma.usuariosSelect;
+
 export const usuarioRepository = {
   findByEmail(email: string) {
     return prisma.usuarios.findFirst({
@@ -67,6 +89,29 @@ export const usuarioRepository = {
           select: { semillero: semilleroResumen },
         },
       },
+    });
+  },
+
+  /** Listado de solo lectura filtrado por roles y, opcionalmente, por escuela. */
+  findConsulta(filtro: { roles: string[]; id_escuela?: number; busqueda?: string }) {
+    const where: Prisma.usuariosWhereInput = {
+      ...activo,
+      rol: { nombre_rol: { in: filtro.roles } },
+    };
+    if (filtro.id_escuela) {
+      where.OR = [
+        { perfil_profesor: { id_escuela: filtro.id_escuela, ...activo } },
+        { perfil_estudiante: { id_escuela: filtro.id_escuela, ...activo } },
+      ];
+    }
+    if (filtro.busqueda) {
+      const contiene = { contains: filtro.busqueda, mode: 'insensitive' as const };
+      where.AND = [{ OR: [{ nombres: contiene }, { apellidos: contiene }, { email: contiene }] }];
+    }
+    return prisma.usuarios.findMany({
+      where,
+      select: usuarioConsultaSelect,
+      orderBy: [{ apellidos: 'asc' }, { nombres: 'asc' }],
     });
   },
 

@@ -1293,5 +1293,19 @@
         "general": "No se pudo cambiar la contraseña."
       }
     }
+  },
+  "consultaUsuarios": {
+    "tituloProfesores": "Profesores",
+    "tituloEstudiantes": "Estudiantes",
+    "soloLectura": "Solo lectura",
+    "buscar": "Buscar",
+    "buscarPlaceholder": "Nombre, correo o código",
+    "todasEscuelas": "Todas las escuelas",
+    "contacto": "Contacto",
+    "sinUsuarios": "No hay usuarios para mostrar",
+    "sinUsuariosHint": "Cuando el administrador registre usuarios con este rol aparecerán aquí.",
+    "sinResultados": "Sin resultados",
+    "sinResultadosHint": "Prueba con otra búsqueda o quita los filtros.",
+    "limpiar": "Quitar filtros"
   }
 }

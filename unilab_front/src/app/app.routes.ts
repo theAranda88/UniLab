@@ -417,6 +417,17 @@ const usuariosShellChildren: Routes = [
 const loadMiPerfil = () =>
   import('./features/perfil/mi-perfil/mi-perfil.component').then((m) => m.MiPerfilComponent);
 
+const loadUsuariosConsulta = () =>
+  import('./features/usuarios/usuarios-consulta/usuarios-consulta.component').then(
+    (m) => m.UsuariosConsultaComponent,
+  );
+
+/** Coordinador: profesores y estudiantes en solo lectura. */
+const usuariosConsultaChildren: Routes = [
+  { path: 'profesores', loadComponent: loadUsuariosConsulta, data: { rolConsulta: 'Profesor' } },
+  { path: 'estudiantes', loadComponent: loadUsuariosConsulta, data: { rolConsulta: 'Estudiante' } },
+];
+
 export const routes: Routes = [
   {
     path: '',
@@ -568,6 +579,7 @@ export const routes: Routes = [
       ...escuelasShellChildren,
       ...proyectosConsultaChildren,
       ...semillerosShellChildren,
+      ...usuariosConsultaChildren,
       ...eventosShellChildren,
       { path: 'estadisticas', loadComponent: loadReportes },
       { path: 'perfil', loadComponent: loadMiPerfil },

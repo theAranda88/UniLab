@@ -1293,5 +1293,19 @@
         "general": "The password could not be changed."
       }
     }
+  },
+  "consultaUsuarios": {
+    "tituloProfesores": "Professors",
+    "tituloEstudiantes": "Students",
+    "soloLectura": "Read only",
+    "buscar": "Search",
+    "buscarPlaceholder": "Name, email or code",
+    "todasEscuelas": "All schools",
+    "contacto": "Contact",
+    "sinUsuarios": "No users to show",
+    "sinUsuariosHint": "Users with this role will appear here once the administrator registers them.",
+    "sinResultados": "No results",
+    "sinResultadosHint": "Try another search or clear the filters.",
+    "limpiar": "Clear filters"
   }
 }

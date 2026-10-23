@@ -3,6 +3,7 @@ import {
   actualizarMiPerfilSchema,
   configuracionUpdateSchema,
   cambiarMiPasswordSchema,
+  consultaUsuariosSchema,
   cursoUpdateSchema,
   proyectoSchema,
   semilleroUpdateSchema,
@@ -94,6 +95,17 @@ describe('actualizarMiPerfilSchema', () => {
 
   it('rechaza campos desconocidos', () => {
     expect(actualizarMiPerfilSchema.safeParse({ email: 'x@y.co' }).success).toBe(false);
+  });
+});
+
+describe('consultaUsuariosSchema', () => {
+  it('convierte id_escuela de query string a número', () => {
+    expect(consultaUsuariosSchema.parse({ id_escuela: '3' })).toEqual({ id_escuela: 3 });
+  });
+
+  it('solo permite filtrar por Profesor o Estudiante', () => {
+    expect(consultaUsuariosSchema.safeParse({ rol: 'Administrador' }).success).toBe(false);
+    expect(consultaUsuariosSchema.safeParse({ rol: 'Estudiante' }).success).toBe(true);
   });
 });
 

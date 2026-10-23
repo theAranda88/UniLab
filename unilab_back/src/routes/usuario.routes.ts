@@ -9,9 +9,21 @@ import {
   crearUsuarioSchema,
   actualizarUsuarioSchema,
   filtroUsuariosSchema,
+  consultaUsuariosSchema,
 } from '../middlewares/validation/schemas';
 
 const router = Router();
+
+// Solo lectura para Coordinador y Profesor; va antes del filtro exclusivo de Administrador.
+router.get(
+  '/consulta',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  requireRole(['Administrador', 'Coordinador', 'Profesor']),
+  validate(consultaUsuariosSchema, 'query'),
+  usuarioController.listarConsulta,
+);
 
 router.use(verifyToken, checkPrimerLogin, checkPerfilPendiente, requireRole(['Administrador']));
 

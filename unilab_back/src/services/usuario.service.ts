@@ -5,6 +5,25 @@ import { prisma } from '../models/prisma.client';
 
 const ROLES_CON_PERFIL = ['Coordinador', 'Profesor', 'Estudiante', 'Externo'] as const;
 
+type UsuarioConsultaRow = Awaited<ReturnType<typeof usuarioRepository.findConsulta>>[number];
+
+/** Forma pública de un usuario en los listados de solo lectura. */
+function mapUsuarioConsulta(u: UsuarioConsultaRow) {
+  const perfil = u.perfil_profesor ?? u.perfil_estudiante;
+  return {
+    id_usuario: u.id_usuario,
+    nombres: u.nombres,
+    apellidos: u.apellidos,
+    email: u.email,
+    telefono: u.telefono,
+    activo: u.activo,
+    rol: u.rol.nombre_rol,
+    codigo: u.perfil_profesor?.codigo_docente ?? u.perfil_estudiante?.codigo_estudiantil ?? null,
+    escuela: perfil?.escuela ?? null,
+    redes: { linkedin: u.url_linkedin, github: u.url_github, portafolio: u.url_portafolio },
+  };
+}
+
 export const usuarioService = {
   async listarRoles() {
     return usuarioRepository.findAllRoles();
@@ -18,6 +37,36 @@ export const usuarioService = {
       id_rol = rol.id_rol;
     }
     return usuarioRepository.findMany(id_rol ? { id_rol } : undefined);
+  },
+
+  /**
+   * Listado de solo lectura según quién consulta:
+   * - Administrador / Coordinador: profesores y estudiantes de todas las escuelas.
+   * - Profesor: solo estudiantes de su propia escuela.
+   */
+  async listarConsulta(
+    solicitante: { id_usuario: number; id_rol: string },
+    filtro: { rol?: 'Profesor' | 'Estudiante'; id_escuela?: number; busqueda?: string },
+  ) {
+    let roles: string[] = filtro.rol ? [filtro.rol] : ['Profesor', 'Estudiante'];
+    let id_escuela = filtro.id_escuela;
+
+    if (solicitante.id_rol === 'Profesor') {
+      if (filtro.rol === 'Profesor') {
+        throw new AppError('Un profesor solo puede consultar estudiantes', 403);
+      }
+      const profesor = await usuarioRepository.findById(solicitante.id_usuario);
+      const escuelaProfesor = profesor?.perfil_profesor?.id_escuela;
+      if (!escuelaProfesor) throw new AppError('El profesor no tiene escuela asignada', 422);
+      if (id_escuela && id_escuela !== escuelaProfesor) {
+        throw new AppError('Solo puede consultar estudiantes de su escuela', 403);
+      }
+      roles = ['Estudiante'];
+      id_escuela = escuelaProfesor;
+    }
+
+    const usuarios = await usuarioRepository.findConsulta({ roles, id_escuela, busqueda: filtro.busqueda });
+    return usuarios.map(mapUsuarioConsulta);
   },
 
   async obtenerPorId(id: number) {
