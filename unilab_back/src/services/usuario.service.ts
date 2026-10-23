@@ -39,8 +39,12 @@ export const usuarioService = {
     id_escuela?: number;
     cargo?: string;
     dependencia?: string;
+    profesion?: string;
     institucion?: string;
     ocupacion?: string;
+    url_linkedin?: string | null;
+    url_github?: string | null;
+    url_portafolio?: string | null;
   }) {
     const existente = await usuarioRepository.findByEmail(data.email);
     if (existente) throw new AppError('El email ya está registrado', 409);
@@ -59,6 +63,9 @@ export const usuarioService = {
       email: data.email,
       documento_identidad: data.documento_identidad,
       telefono: data.telefono,
+      url_linkedin: data.url_linkedin,
+      url_github: data.url_github,
+      url_portafolio: data.url_portafolio,
       password_hash,
       primer_login: true,
       creador: { connect: { id_usuario: data.created_by } },
@@ -97,6 +104,9 @@ export const usuarioService = {
       email: data.email as string | undefined,
       documento_identidad: data.documento_identidad as string | undefined,
       telefono: data.telefono as string | undefined,
+      url_linkedin: data.url_linkedin as string | null | undefined,
+      url_github: data.url_github as string | null | undefined,
+      url_portafolio: data.url_portafolio as string | null | undefined,
       ...(rolConnect ? { rol: { connect: { id_rol: rolConnect.id_rol } } } : {}),
     });
 
@@ -195,6 +205,7 @@ async function cambiarRolUsuario(
             usuario: { connect: { id_usuario } },
             cargo: perfilData.cargo!,
             dependencia: perfilData.dependencia!,
+            profesion: (data.profesion as string | undefined) || null,
             creador: { connect: { id_usuario: created_by } },
           },
         });
@@ -266,6 +277,7 @@ function construirPerfilCreate(data: {
   id_escuela?: number;
   cargo?: string;
   dependencia?: string;
+  profesion?: string;
   institucion?: string;
   ocupacion?: string;
   created_by: number;
@@ -277,6 +289,7 @@ function construirPerfilCreate(data: {
           create: {
             cargo: data.cargo!,
             dependencia: data.dependencia!,
+            profesion: data.profesion || null,
             creador: { connect: { id_usuario: data.created_by } },
           },
         },
@@ -319,12 +332,13 @@ function construirPerfilCreate(data: {
 async function actualizarPerfilExtendido(rol: string, id_usuario: number, data: Record<string, unknown>) {
   if (!ROLES_CON_PERFIL.includes(rol as (typeof ROLES_CON_PERFIL)[number])) return;
 
-  if (rol === 'Coordinador' && (data.cargo || data.dependencia)) {
+  if (rol === 'Coordinador' && (data.cargo || data.dependencia || data.profesion !== undefined)) {
     await prisma.perfiles_coordinador.update({
       where: { id_usuario },
       data: {
         cargo: data.cargo as string | undefined,
         dependencia: data.dependencia as string | undefined,
+        ...(data.profesion !== undefined ? { profesion: (data.profesion as string) || null } : {}),
       },
     });
   }

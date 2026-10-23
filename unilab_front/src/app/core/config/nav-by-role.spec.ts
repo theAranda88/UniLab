@@ -39,4 +39,10 @@ describe('NAV_BY_ROLE', () => {
     );
     expect(habilitadas('Profesor')).toContain('semilleros');
   });
+
+  it('cada shell tiene la ruta «perfil»', () => {
+    for (const prefijo of Object.values(PREFIJO)) {
+      expect(rutasDelShell(prefijo)).toContain('perfil');
+    }
+  });
 });

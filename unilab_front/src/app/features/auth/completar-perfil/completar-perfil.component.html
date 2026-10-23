@@ -86,6 +86,48 @@
         </fieldset>
       }
 
+      <fieldset class="perfil__role-fields">
+        <legend>{{ 'perfil.redes.tituloOpcional' | translate }}</legend>
+        <div class="perfil__grid">
+          <label class="perfil__field">
+            <span>LinkedIn</span>
+            <input
+              type="url"
+              formControlName="url_linkedin"
+              placeholder="https://www.linkedin.com/in/usuario"
+              [attr.aria-invalid]="!!redError('url_linkedin')"
+            />
+            @if (redError('url_linkedin'); as e) {
+              <small class="perfil__error">{{ e | translate }}</small>
+            }
+          </label>
+          <label class="perfil__field">
+            <span>GitHub</span>
+            <input
+              type="url"
+              formControlName="url_github"
+              placeholder="https://github.com/usuario"
+              [attr.aria-invalid]="!!redError('url_github')"
+            />
+            @if (redError('url_github'); as e) {
+              <small class="perfil__error">{{ e | translate }}</small>
+            }
+          </label>
+          <label class="perfil__field">
+            <span>{{ 'perfil.redes.portafolio' | translate }}</span>
+            <input
+              type="url"
+              formControlName="url_portafolio"
+              placeholder="https://miportafolio.com"
+              [attr.aria-invalid]="!!redError('url_portafolio')"
+            />
+            @if (redError('url_portafolio'); as e) {
+              <small class="perfil__error">{{ e | translate }}</small>
+            }
+          </label>
+        </div>
+      </fieldset>
+
       <button type="submit" class="perfil__submit" [disabled]="loading()">
         {{ loading() ? ('common.loading' | translate) : ('auth.completarPerfil.submit' | translate) }}
       </button>

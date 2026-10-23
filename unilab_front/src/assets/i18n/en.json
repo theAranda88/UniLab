@@ -59,7 +59,8 @@
       "pendientes": "Pending approval",
       "reportes": "Reports",
       "estadisticas": "Statistics",
-      "configuracion": "Settings"
+      "configuracion": "Settings",
+      "perfil": "My profile"
     },
     "cta": {
       "crearUsuario": "Create user",
@@ -1231,6 +1232,66 @@
       "solicitudesSub": "In the groups you lead",
       "revisar": "Projects to review",
       "revisarAccion": "Review"
+    }
+  },
+  "perfil": {
+    "kicker": "My account",
+    "titulo": "My profile",
+    "descripcion": "Your UniLab information and contact links.",
+    "datos": "Profile details",
+    "sinDatos": "There are no additional details in your profile yet.",
+    "escuela": "School",
+    "semilleros": "Research groups",
+    "sinSemilleros": "You are not linked to any research group.",
+    "errorCargar": "Your profile could not be refreshed. Showing the last saved data.",
+    "rolSemillero": {
+      "lider": "Leader",
+      "profesor": "Professor",
+      "miembro": "Member"
+    },
+    "redes": {
+      "titulo": "Contact links",
+      "tituloOpcional": "Contact links (optional)",
+      "hint": "Coordinators and professors can see them in user lists. Leave a field empty to remove it.",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "portafolio": "Portfolio or website",
+      "sinRedes": "No contact links",
+      "exito": "Contact links updated.",
+      "errorGuardar": "Contact links could not be saved.",
+      "errores": {
+        "url": "Enter a valid URL starting with http:// or https://",
+        "url_linkedin": "Must be a linkedin.com link",
+        "url_github": "Must be a github.com link",
+        "url_portafolio": "Enter a valid URL"
+      }
+    },
+    "rolHint": "Your role is assigned by the administrator.",
+    "contacto": "Contact details",
+    "profesion": "Profession",
+    "profesionPlaceholder": "e.g. Systems engineer",
+    "exito": "Profile updated.",
+    "errorGuardar": "Your profile could not be saved.",
+    "errores": {
+      "telefono": "Invalid phone: use 7 to 20 digits (may start with +).",
+      "profesion": "Maximum 255 characters."
+    },
+    "password": {
+      "titulo": "Change password",
+      "hint": "For security, we need your current password.",
+      "actual": "Current password",
+      "nueva": "New password",
+      "confirmar": "Confirm new password",
+      "mostrar": "Show passwords",
+      "boton": "Change password",
+      "exito": "Password updated.",
+      "errores": {
+        "minimo": "At least 8 characters.",
+        "noCoinciden": "Passwords do not match.",
+        "igual": "The new password must be different from the current one.",
+        "actualIncorrecta": "The current password is incorrect.",
+        "general": "The password could not be changed."
+      }
     }
   }
 }

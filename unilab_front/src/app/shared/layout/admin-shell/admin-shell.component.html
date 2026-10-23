@@ -72,11 +72,20 @@
       </a>
 
       <div class="user-card">
-        <span class="user-card__avatar" aria-hidden="true">{{ iniciales() }}</span>
-        <span class="user-card__text">
-          <span class="user-card__name">{{ nombreUsuario() }}</span>
-          <span class="user-card__role">{{ 'roles.' + shellRole() | translate }}</span>
-        </span>
+        <a
+          class="user-card__profile"
+          [routerLink]="[shellPrefix(), 'perfil']"
+          [attr.aria-label]="'perfil.titulo' | translate"
+          [attr.title]="'perfil.titulo' | translate"
+        >
+          <span class="user-card__avatar" aria-hidden="true">{{ iniciales() }}</span>
+          <span class="user-card__text">
+            <span class="user-card__name">{{ nombreUsuario() }}</span>
+            <span class="user-card__role">
+              {{ 'roles.' + shellRole() | translate }}@if (escuelaUsuario(); as escuela) { · {{ escuela }}}
+            </span>
+          </span>
+        </a>
         <button
           type="button"
           class="user-card__logout"
@@ -184,6 +193,10 @@
                 </button>
               }
               <div class="tb-dropdown__sep"></div>
+              <a class="tb-option" role="menuitem" [routerLink]="[shellPrefix(), 'perfil']">
+                <i class="ti ti-user-circle" aria-hidden="true"></i>
+                {{ 'perfil.titulo' | translate }}
+              </a>
               <button type="button" class="tb-option tb-option--danger" role="menuitem" (click)="logout()">
                 <i class="ti ti-logout" aria-hidden="true"></i>
                 {{ 'dashboard.logout' | translate }}

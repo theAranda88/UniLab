@@ -4,11 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { getShellPrefix } from '../../../core/config/role-redirect';
+import { RedesContactoComponent } from '../../../shared/ui/redes-contacto/redes-contacto.component';
 
 @Component({
   selector: 'app-portal-profile-menu',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe, RedesContactoComponent],
   templateUrl: './portal-profile-menu.component.html',
   styleUrl: './portal-profile-menu.component.scss',
 })
@@ -52,6 +53,12 @@ export class PortalProfileMenuComponent {
     if (prefix) return `${prefix}/dashboard`;
     if (rol === 'Estudiante') return '/mis-proyectos';
     return null;
+  });
+
+  /** «Mi perfil» dentro del shell para staff; en el portal para Estudiante y Externo. */
+  readonly perfilRoute = computed(() => {
+    const prefix = getShellPrefix(this.user()?.id_rol ?? '');
+    return prefix ? `${prefix}/perfil` : '/perfil';
   });
 
   readonly rolKey = computed(() => {

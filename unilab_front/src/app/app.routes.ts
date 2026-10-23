@@ -414,6 +414,9 @@ const usuariosShellChildren: Routes = [
   },
 ];
 
+const loadMiPerfil = () =>
+  import('./features/perfil/mi-perfil/mi-perfil.component').then((m) => m.MiPerfilComponent);
+
 export const routes: Routes = [
   {
     path: '',
@@ -452,6 +455,12 @@ export const routes: Routes = [
         canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleGuard],
         data: { roles: ['Estudiante'] },
         children: proyectosEstudianteChildren,
+      },
+      {
+        path: 'perfil',
+        canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard],
+        loadComponent: loadMiPerfil,
+        data: { portalTheme: true },
       },
       {
         path: 'semilleros',
@@ -523,6 +532,7 @@ export const routes: Routes = [
           ),
       },
       ...usuariosShellChildren,
+      { path: 'perfil', loadComponent: loadMiPerfil },
       ...escuelasShellChildren,
       ...cursosAdminChildren,
       ...proyectosConsultaChildren,
@@ -560,6 +570,7 @@ export const routes: Routes = [
       ...semillerosShellChildren,
       ...eventosShellChildren,
       { path: 'estadisticas', loadComponent: loadReportes },
+      { path: 'perfil', loadComponent: loadMiPerfil },
     ],
   },
   {
@@ -583,6 +594,7 @@ export const routes: Routes = [
       ...semillerosShellChildren,
       ...cursosProfChildren,
       ...eventosProfChildren,
+      { path: 'perfil', loadComponent: loadMiPerfil },
     ],
   },
   {

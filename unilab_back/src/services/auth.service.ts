@@ -11,20 +11,58 @@ import { escuelaRepository } from '../models/escuela.repository';
 import type { JwtPayload } from '../middlewares/auth/types';
 import { configuracionService } from './configuracion.service';
 
-function mapUsuarioSesion(usuario: {
-  id_usuario: number;
-  email: string;
-  rol: { nombre_rol: string };
-  primer_login: boolean;
-  perfil_pendiente: boolean;
-}) {
-  return {
-    id_usuario: usuario.id_usuario,
-    email: usuario.email,
-    id_rol: usuario.rol.nombre_rol,
-    primer_login: usuario.primer_login,
-    perfil_pendiente: usuario.perfil_pendiente,
+type PerfilSesion = NonNullable<Awaited<ReturnType<typeof usuarioRepository.findPerfilSesion>>>;
+
+type RolSemillero = 'lider' | 'profesor' | 'miembro';
+
+/** Une los semilleros del usuario (líder, profesor asignado o miembro aprobado) sin duplicados. */
+function semillerosDeUsuario(u: PerfilSesion) {
+  const porId = new Map<number, { id_semillero: number; nombre_semillero: string; rol_semillero: RolSemillero }>();
+  const agregar = (s: { id_semillero: number; nombre_semillero: string }, rol: RolSemillero) => {
+    const previo = porId.get(s.id_semillero);
+    if (!previo || rol === 'lider') porId.set(s.id_semillero, { ...s, rol_semillero: rol });
   };
+  u.semilleros_como_profesor.forEach((p) => agregar(p.semillero, p.es_lider ? 'lider' : 'profesor'));
+  u.semilleros_como_lider.forEach((s) => agregar(s, 'lider'));
+  u.membresias_semillero.forEach((m) => agregar(m.semillero, 'miembro'));
+  return [...porId.values()].sort((a, b) => a.nombre_semillero.localeCompare(b.nombre_semillero));
+}
+
+/** Respuesta común de login, login con Google, completar perfil y GET /auth/me. */
+export function mapUsuarioSesion(u: PerfilSesion) {
+  const perfilAcademico = u.perfil_profesor ?? u.perfil_estudiante;
+  return {
+    id_usuario: u.id_usuario,
+    email: u.email,
+    id_rol: u.rol.nombre_rol,
+    primer_login: u.primer_login,
+    perfil_pendiente: u.perfil_pendiente,
+    nombres: u.nombres,
+    apellidos: u.apellidos,
+    telefono: u.telefono,
+    escuela: perfilAcademico?.escuela ?? null,
+    semilleros: semillerosDeUsuario(u),
+    redes: {
+      linkedin: u.url_linkedin,
+      github: u.url_github,
+      portafolio: u.url_portafolio,
+    },
+    perfil: {
+      codigo_docente: u.perfil_profesor?.codigo_docente ?? null,
+      codigo_estudiantil: u.perfil_estudiante?.codigo_estudiantil ?? null,
+      cargo: u.perfil_coordinador?.cargo ?? null,
+      dependencia: u.perfil_coordinador?.dependencia ?? null,
+      profesion: u.perfil_coordinador?.profesion ?? null,
+      institucion: u.perfil_externo?.institucion ?? null,
+      ocupacion: u.perfil_externo?.ocupacion ?? null,
+    },
+  };
+}
+
+async function construirSesion(id_usuario: number) {
+  const perfil = await usuarioRepository.findPerfilSesion(id_usuario);
+  if (!perfil) throw new AppError('Usuario no encontrado', 404);
+  return mapUsuarioSesion(perfil);
 }
 
 function emitirToken(usuario: { id_usuario: number; email: string; rol: { nombre_rol: string } }): string {
@@ -112,7 +150,7 @@ export const authService = {
     const token = emitirToken(usuario);
     return {
       token,
-      usuario: mapUsuarioSesion(usuario),
+      usuario: await construirSesion(usuario.id_usuario),
     };
   },
 
@@ -141,7 +179,7 @@ export const authService = {
     const token = emitirToken(usuario);
     return {
       token,
-      usuario: mapUsuarioSesion(usuario),
+      usuario: await construirSesion(usuario.id_usuario),
       cuenta_nueva: usuario.perfil_pendiente,
     };
   },
@@ -155,6 +193,9 @@ export const authService = {
       id_escuela?: number;
       institucion?: string;
       ocupacion?: string;
+      url_linkedin?: string | null;
+      url_github?: string | null;
+      url_portafolio?: string | null;
     },
   ) {
     const usuario = await usuarioRepository.findById(id_usuario);
@@ -181,6 +222,9 @@ export const authService = {
       documento_identidad: data.documento_identidad,
       telefono: data.telefono,
       perfil_pendiente: false,
+      url_linkedin: data.url_linkedin,
+      url_github: data.url_github,
+      url_portafolio: data.url_portafolio,
     });
 
     if (rol === 'Estudiante') {
@@ -195,13 +239,51 @@ export const authService = {
       });
     }
 
-    const actualizado = await usuarioRepository.findById(id_usuario);
-    if (!actualizado) throw new AppError('Usuario no encontrado', 404);
-
     return {
       mensaje: 'Perfil completado correctamente',
-      usuario: mapUsuarioSesion(actualizado),
+      usuario: await construirSesion(id_usuario),
     };
+  },
+
+  async obtenerSesion(id_usuario: number) {
+    return construirSesion(id_usuario);
+  },
+
+  /** PATCH /auth/me: teléfono, redes y, solo para Coordinador, profesión. */
+  async actualizarMiPerfil(
+    solicitante: { id_usuario: number; id_rol: string },
+    data: {
+      telefono?: string;
+      profesion?: string | null;
+      url_linkedin?: string | null;
+      url_github?: string | null;
+      url_portafolio?: string | null;
+    },
+  ) {
+    const { profesion, ...datosUsuario } = data;
+    if (profesion !== undefined && solicitante.id_rol !== 'Coordinador') {
+      throw new AppError('Solo el coordinador puede registrar su profesión', 422);
+    }
+    if (Object.keys(datosUsuario).length > 0) {
+      await usuarioRepository.update(solicitante.id_usuario, datosUsuario);
+    }
+    if (profesion !== undefined) {
+      await usuarioRepository.updatePerfilCoordinador(solicitante.id_usuario, { profesion });
+    }
+    return construirSesion(solicitante.id_usuario);
+  },
+
+  /** Cambio voluntario de contraseña: exige la contraseña actual. */
+  async cambiarMiPassword(id_usuario: number, password_actual: string, nueva_password: string) {
+    const usuario = await usuarioRepository.findPasswordHash(id_usuario);
+    if (!usuario) throw new AppError('Usuario no encontrado', 404);
+    const valida = await verificarPassword(password_actual, usuario.password_hash);
+    if (!valida) throw new AppError('La contraseña actual no es correcta', 422);
+    await usuarioRepository.update(id_usuario, {
+      password_hash: await hashearPassword(nueva_password),
+      primer_login: false,
+    });
+    return { mensaje: 'Contraseña actualizada correctamente' };
   },
 
   async register(data: {

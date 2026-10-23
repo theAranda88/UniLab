@@ -92,6 +92,56 @@ export const paths = {
     },
   },
 
+  '/auth/me': {
+    get: {
+      tags: ['Auth'],
+      summary: 'Perfil completo del usuario autenticado',
+      description:
+        'Nombres, escuela, semilleros, redes y datos del perfil. Disponible aunque `primer_login` o `perfil_pendiente` estén activos.',
+      security: [{ bearerAuth: [] }],
+      responses: {
+        200: {
+          description: 'Usuario autenticado',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/UsuarioSesion' } } },
+        },
+        401: err[401],
+      },
+    },
+    patch: {
+      tags: ['Auth'],
+      summary: 'Actualizar mi perfil (teléfono, redes y profesión)',
+      description:
+        'LinkedIn debe ser de linkedin.com y GitHub de github.com. `profesion` solo para Coordinador (otro rol → 422). Devuelve la sesión actualizada.',
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonBody('#/components/schemas/ActualizarMiPerfilRequest'),
+      responses: {
+        200: {
+          description: 'Sesión actualizada',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/UsuarioSesion' } } },
+        },
+        400: err[400],
+        401: err[401],
+        403: err[403],
+        422: err[422],
+      },
+    },
+  },
+  '/auth/me/password': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Cambiar mi contraseña',
+      description: 'Requiere la contraseña actual. La nueva debe tener al menos 8 caracteres y ser distinta.',
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonBody('#/components/schemas/CambiarMiPasswordRequest'),
+      responses: {
+        200: { description: 'Contraseña actualizada' },
+        400: err[400],
+        401: err[401],
+        422: err[422],
+      },
+    },
+  },
+
   // ─── USUARIOS ───────────────────────────────────────────────────────────────
   '/usuarios/roles': {
     get: {

@@ -2,6 +2,9 @@ import { prisma } from './prisma.client';
 import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
+const escuelaResumen = { select: { id_escuela: true, nombre_escuela: true } } as const;
+const semilleroResumen = { select: { id_semillero: true, nombre_semillero: true } } as const;
+
 export const usuarioRepository = {
   findByEmail(email: string) {
     return prisma.usuarios.findFirst({
@@ -28,6 +31,54 @@ export const usuarioRepository = {
         perfil_externo: { where: activo },
       },
     });
+  },
+
+  /** Usuario con escuela, semilleros y redes: base de la respuesta de login y de /auth/me. */
+  findPerfilSesion(id: number) {
+    return prisma.usuarios.findFirst({
+      where: { id_usuario: id, ...activo },
+      select: {
+        id_usuario: true,
+        nombres: true,
+        apellidos: true,
+        email: true,
+        telefono: true,
+        primer_login: true,
+        perfil_pendiente: true,
+        activo: true,
+        url_linkedin: true,
+        url_github: true,
+        url_portafolio: true,
+        rol: { select: { nombre_rol: true } },
+        perfil_coordinador: { where: activo, select: { cargo: true, dependencia: true, profesion: true } },
+        perfil_profesor: { where: activo, select: { codigo_docente: true, escuela: escuelaResumen } },
+        perfil_estudiante: {
+          where: activo,
+          select: { codigo_estudiantil: true, escuela: escuelaResumen },
+        },
+        perfil_externo: { where: activo, select: { institucion: true, ocupacion: true } },
+        semilleros_como_lider: { where: activo, ...semilleroResumen },
+        semilleros_como_profesor: {
+          where: { ...activo, semillero: activo },
+          select: { es_lider: true, semillero: semilleroResumen },
+        },
+        membresias_semillero: {
+          where: { ...activo, estado_solicitud: 'aprobado', semillero: activo },
+          select: { semillero: semilleroResumen },
+        },
+      },
+    });
+  },
+
+  findPasswordHash(id: number) {
+    return prisma.usuarios.findFirst({
+      where: { id_usuario: id, ...activo },
+      select: { password_hash: true },
+    });
+  },
+
+  updatePerfilCoordinador(id_usuario: number, data: Prisma.perfiles_coordinadorUpdateInput) {
+    return prisma.perfiles_coordinador.update({ where: { id_usuario }, data });
   },
 
   findMany(filtro?: { id_rol?: number }) {
