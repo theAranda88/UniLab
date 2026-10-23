@@ -88,7 +88,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       items: [
         { labelKey: 'shell.nav.miPanel', icon: 'ti-layout-dashboard', route: 'dashboard', enabled: true },
         { labelKey: 'shell.nav.misSemilleros', icon: 'ti-flask', route: 'semilleros', enabled: true },
-        { labelKey: 'shell.nav.misEstudiantes', icon: 'ti-users-group', route: 'estudiantes', enabled: false },
+        { labelKey: 'shell.nav.misEstudiantes', icon: 'ti-users-group', route: 'estudiantes', enabled: true },
       ],
     },
     {

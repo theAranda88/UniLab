@@ -21,6 +21,11 @@ export const usuarioController = {
     res.status(200).json(usuarios);
   }),
 
+  estudiantesDeProfesor: asyncHandler(async (req: Request, res: Response) => {
+    const result = await usuarioService.estudiantesDeProfesor(req.user!.id_usuario);
+    res.status(200).json(result);
+  }),
+
   obtener: asyncHandler(async (req: Request, res: Response) => {
     const usuario = await usuarioService.obtenerPorId(Number(req.params.id));
     res.status(200).json(usuario);

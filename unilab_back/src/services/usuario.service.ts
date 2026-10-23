@@ -69,6 +69,57 @@ export const usuarioService = {
     return usuarios.map(mapUsuarioConsulta);
   },
 
+  /** Estudiantes vinculados a los semilleros y proyectos del profesor, con el detalle del vínculo. */
+  async estudiantesDeProfesor(id_profesor: number) {
+    const { semilleros, proyectos } = await usuarioRepository.findVinculosProfesor(id_profesor);
+
+    type Estudiante = ReturnType<typeof mapUsuarioConsulta> & {
+      semilleros: { id_semillero: number; nombre_semillero: string }[];
+      proyectos: { id_proyecto: number; titulo: string; estado_proyecto: string }[];
+    };
+    const porId = new Map<number, Estudiante>();
+    const obtener = (u: UsuarioConsultaRow): Estudiante | null => {
+      if (u.rol.nombre_rol !== 'Estudiante') return null;
+      let e = porId.get(u.id_usuario);
+      if (!e) {
+        e = { ...mapUsuarioConsulta(u), semilleros: [], proyectos: [] };
+        porId.set(u.id_usuario, e);
+      }
+      return e;
+    };
+
+    for (const s of semilleros) {
+      for (const { estudiante } of s.miembros) {
+        obtener(estudiante)?.semilleros.push({
+          id_semillero: s.id_semillero,
+          nombre_semillero: s.nombre_semillero,
+        });
+      }
+    }
+
+    for (const p of proyectos) {
+      const resumen = { id_proyecto: p.id_proyecto, titulo: p.titulo, estado_proyecto: p.estado_proyecto };
+      const ids = new Set<number>();
+      for (const u of [p.estudiante_creador, ...p.autores.map((a) => a.estudiante)]) {
+        if (ids.has(u.id_usuario)) continue;
+        ids.add(u.id_usuario);
+        obtener(u)?.proyectos.push(resumen);
+      }
+    }
+
+    return {
+      estudiantes: [...porId.values()].sort(
+        (a, b) => a.apellidos.localeCompare(b.apellidos) || a.nombres.localeCompare(b.nombres),
+      ),
+      semilleros: semilleros.map((s) => ({ id_semillero: s.id_semillero, nombre_semillero: s.nombre_semillero })),
+      proyectos: proyectos.map((p) => ({
+        id_proyecto: p.id_proyecto,
+        titulo: p.titulo,
+        estado_proyecto: p.estado_proyecto,
+      })),
+    };
+  },
+
   async obtenerPorId(id: number) {
     const usuario = await usuarioRepository.findById(id);
     if (!usuario) throw new AppError('Usuario no encontrado', 404);

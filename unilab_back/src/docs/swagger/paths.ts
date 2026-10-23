@@ -172,6 +172,23 @@ export const paths = {
       },
     },
   },
+  '/profesores/me/estudiantes': {
+    get: {
+      tags: ['Usuarios'],
+      summary: 'Estudiantes de mis semilleros y proyectos',
+      description:
+        '**Rol requerido:** Profesor. Miembros aprobados de los semilleros que lidera o en los que está asignado, y autores de los proyectos que coordina o de semilleros que lidera.',
+      responses: {
+        200: {
+          description: 'Estudiantes con sus vínculos',
+          content: {
+            'application/json': { schema: { $ref: '#/components/schemas/EstudiantesProfesorResponse' } },
+          },
+        },
+        ...err,
+      },
+    },
+  },
   '/usuarios/roles': {
     get: {
       tags: ['Usuarios'],

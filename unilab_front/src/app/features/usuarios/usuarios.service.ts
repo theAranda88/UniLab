@@ -5,6 +5,7 @@ import type {
   ActualizarUsuarioDto,
   CrearUsuarioDto,
   CrearUsuarioResponse,
+  EstudiantesProfesorResponse,
   Rol,
   RolNombre,
   UsuarioAdmin,
@@ -34,6 +35,11 @@ export class UsuariosService {
     if (filtro.id_escuela) params['id_escuela'] = String(filtro.id_escuela);
     if (filtro.busqueda) params['busqueda'] = filtro.busqueda;
     return this.http.get<UsuarioConsulta[]>(`${this.apiUrl}/consulta`, { params });
+  }
+
+  /** Estudiantes de los semilleros y proyectos del profesor autenticado. */
+  estudiantesDeProfesor(): Observable<EstudiantesProfesorResponse> {
+    return this.http.get<EstudiantesProfesorResponse>('http://localhost:3000/api/profesores/me/estudiantes');
   }
 
   listarRoles(): Observable<Rol[]> {

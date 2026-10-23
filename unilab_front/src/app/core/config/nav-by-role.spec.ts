@@ -48,6 +48,7 @@ describe('NAV_BY_ROLE', () => {
         .map((i) => i.route);
 
     expect(habilitadas('Coordinador')).toEqual(expect.arrayContaining(['profesores', 'estudiantes']));
+    expect(habilitadas('Profesor')).toContain('estudiantes');
   });
 
   it('cada shell tiene la ruta «perfil»', () => {

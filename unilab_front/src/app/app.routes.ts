@@ -606,6 +606,13 @@ export const routes: Routes = [
       ...semillerosShellChildren,
       ...cursosProfChildren,
       ...eventosProfChildren,
+      {
+        path: 'estudiantes',
+        loadComponent: () =>
+          import('./features/profesor/mis-estudiantes/mis-estudiantes.component').then(
+            (m) => m.MisEstudiantesComponent,
+          ),
+      },
       { path: 'perfil', loadComponent: loadMiPerfil },
     ],
   },

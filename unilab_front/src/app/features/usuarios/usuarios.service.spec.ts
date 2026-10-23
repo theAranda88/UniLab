@@ -27,4 +27,10 @@ describe('UsuariosService (consultas de solo lectura)', () => {
     req.flush([]);
   });
 
+  it('estudiantesDeProfesor consulta el endpoint del profesor autenticado', () => {
+    service.estudiantesDeProfesor().subscribe((r) => expect(r.estudiantes).toEqual([]));
+    http
+      .expectOne('http://localhost:3000/api/profesores/me/estudiantes')
+      .flush({ estudiantes: [], semilleros: [], proyectos: [] });
+  });
 });

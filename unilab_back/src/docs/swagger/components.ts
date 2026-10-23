@@ -226,6 +226,48 @@ export const schemas = {
       redes: { $ref: '#/components/schemas/RedesContacto' },
     },
   },
+  VinculoSemillero: {
+    type: 'object',
+    properties: { id_semillero: { type: 'integer' }, nombre_semillero: { type: 'string' } },
+  },
+  VinculoProyecto: {
+    type: 'object',
+    properties: {
+      id_proyecto: { type: 'integer' },
+      titulo: { type: 'string' },
+      estado_proyecto: { type: 'string' },
+    },
+  },
+  EstudiantesProfesorResponse: {
+    type: 'object',
+    properties: {
+      estudiantes: {
+        type: 'array',
+        items: {
+          allOf: [
+            { $ref: '#/components/schemas/UsuarioConsulta' },
+            {
+              type: 'object',
+              properties: {
+                semilleros: { type: 'array', items: { $ref: '#/components/schemas/VinculoSemillero' } },
+                proyectos: { type: 'array', items: { $ref: '#/components/schemas/VinculoProyecto' } },
+              },
+            },
+          ],
+        },
+      },
+      semilleros: {
+        type: 'array',
+        description: 'Semilleros del profesor (para filtros)',
+        items: { $ref: '#/components/schemas/VinculoSemillero' },
+      },
+      proyectos: {
+        type: 'array',
+        description: 'Proyectos del profesor (para filtros)',
+        items: { $ref: '#/components/schemas/VinculoProyecto' },
+      },
+    },
+  },
   LoginResponse: {
     type: 'object',
     properties: {

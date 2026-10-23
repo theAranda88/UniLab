@@ -136,3 +136,26 @@ export interface UsuarioConsulta {
   escuela: EscuelaResumen | null;
   redes: RedesContacto;
 }
+
+export interface VinculoSemillero {
+  id_semillero: number;
+  nombre_semillero: string;
+}
+
+export interface VinculoProyecto {
+  id_proyecto: number;
+  titulo: string;
+  estado_proyecto: string;
+}
+
+export interface EstudianteProfesor extends UsuarioConsulta {
+  semilleros: VinculoSemillero[];
+  proyectos: VinculoProyecto[];
+}
+
+/** GET /profesores/me/estudiantes */
+export interface EstudiantesProfesorResponse {
+  estudiantes: EstudianteProfesor[];
+  semilleros: VinculoSemillero[];
+  proyectos: VinculoProyecto[];
+}

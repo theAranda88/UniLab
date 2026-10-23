@@ -1307,5 +1307,18 @@
     "sinResultados": "Sin resultados",
     "sinResultadosHint": "Prueba con otra búsqueda o quita los filtros.",
     "limpiar": "Quitar filtros"
+  },
+  "misEstudiantes": {
+    "contador": "{{total}} estudiantes",
+    "vistas": "Vistas de estudiantes",
+    "vinculados": "Mis semilleros y proyectos",
+    "miEscuela": "Mi escuela",
+    "filtroVinculo": "Semillero o proyecto",
+    "todos": "Todos",
+    "errorCargar": "No se pudieron cargar los estudiantes.",
+    "sinVinculados": "Aún no tienes estudiantes vinculados",
+    "sinVinculadosHint": "Aparecerán los miembros aprobados de tus semilleros y los autores de los proyectos que coordinas.",
+    "sinEscuela": "No hay estudiantes en tu escuela",
+    "sinEscuelaHint": "Cuando se registren estudiantes en tu escuela aparecerán aquí."
   }
 }

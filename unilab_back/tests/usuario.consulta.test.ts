@@ -4,6 +4,7 @@ const m = vi.hoisted(() => ({
   usuarioRepository: {
     findById: vi.fn(),
     findConsulta: vi.fn(),
+    findVinculosProfesor: vi.fn(),
   },
 }));
 
@@ -109,5 +110,53 @@ describe('usuarioService.listarConsulta', () => {
       escuela: { id_escuela: 1, nombre_escuela: 'Ing' },
       redes: { linkedin: null, github: null, portafolio: null },
     });
+  });
+});
+
+describe('usuarioService.estudiantesDeProfesor', () => {
+  beforeEach(() => vi.resetAllMocks());
+
+  it('agrupa a cada estudiante con sus semilleros y proyectos sin duplicados', async () => {
+    const ana = fila(20, 'Estudiante', 'Gómez');
+    const luis = fila(21, 'Estudiante', 'Álvarez');
+    m.usuarioRepository.findVinculosProfesor.mockResolvedValue({
+      semilleros: [{ id_semillero: 1, nombre_semillero: 'IA', miembros: [{ estudiante: ana }] }],
+      proyectos: [
+        {
+          id_proyecto: 9,
+          titulo: 'App',
+          estado_proyecto: 'publicado',
+          estudiante_creador: ana,
+          // La creadora también figura como autora: no debe repetirse el proyecto.
+          autores: [{ estudiante: ana }, { estudiante: luis }],
+        },
+      ],
+    });
+
+    const r = await usuarioService.estudiantesDeProfesor(10);
+
+    expect(r.estudiantes.map((e) => e.id_usuario)).toEqual([21, 20]);
+    const anaR = r.estudiantes.find((e) => e.id_usuario === 20)!;
+    expect(anaR.semilleros).toEqual([{ id_semillero: 1, nombre_semillero: 'IA' }]);
+    expect(anaR.proyectos).toEqual([{ id_proyecto: 9, titulo: 'App', estado_proyecto: 'publicado' }]);
+    expect(r.estudiantes.find((e) => e.id_usuario === 21)!.semilleros).toEqual([]);
+    expect(r.semilleros).toEqual([{ id_semillero: 1, nombre_semillero: 'IA' }]);
+    expect(r.proyectos).toHaveLength(1);
+  });
+
+  it('ignora a usuarios que ya no tienen rol de estudiante', async () => {
+    m.usuarioRepository.findVinculosProfesor.mockResolvedValue({
+      semilleros: [],
+      proyectos: [
+        { id_proyecto: 1, titulo: 'X', estado_proyecto: 'borrador', estudiante_creador: fila(30, 'Externo'), autores: [] },
+      ],
+    });
+    const r = await usuarioService.estudiantesDeProfesor(10);
+    expect(r.estudiantes).toEqual([]);
+  });
+
+  it('devuelve listas vacías si el profesor no tiene vínculos', async () => {
+    m.usuarioRepository.findVinculosProfesor.mockResolvedValue({ semilleros: [], proyectos: [] });
+    expect(await usuarioService.estudiantesDeProfesor(10)).toEqual({ estudiantes: [], semilleros: [], proyectos: [] });
   });
 });

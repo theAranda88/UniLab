@@ -115,6 +115,51 @@ export const usuarioRepository = {
     });
   },
 
+  /** Semilleros (líder o asignado) y proyectos (coordinador) del profesor, con sus estudiantes. */
+  async findVinculosProfesor(id_profesor: number) {
+    const [semilleros, proyectos] = await Promise.all([
+      prisma.semilleros.findMany({
+        where: {
+          ...activo,
+          OR: [
+            { id_profesor_lider: id_profesor },
+            { profesores: { some: { id_profesor, ...activo } } },
+          ],
+        },
+        select: {
+          id_semillero: true,
+          nombre_semillero: true,
+          miembros: {
+            where: { ...activo, estado_solicitud: 'aprobado', estudiante: activo },
+            select: { estudiante: { select: usuarioConsultaSelect } },
+          },
+        },
+        orderBy: { nombre_semillero: 'asc' },
+      }),
+      prisma.proyectos.findMany({
+        where: {
+          ...activo,
+          OR: [
+            { coordinadores: { some: { id_profesor, ...activo } } },
+            { semillero: { id_profesor_lider: id_profesor, ...activo } },
+          ],
+        },
+        select: {
+          id_proyecto: true,
+          titulo: true,
+          estado_proyecto: true,
+          estudiante_creador: { select: usuarioConsultaSelect },
+          autores: {
+            where: { ...activo, estudiante: activo },
+            select: { estudiante: { select: usuarioConsultaSelect } },
+          },
+        },
+        orderBy: { titulo: 'asc' },
+      }),
+    ]);
+    return { semilleros, proyectos };
+  },
+
   findPasswordHash(id: number) {
     return prisma.usuarios.findFirst({
       where: { id_usuario: id, ...activo },

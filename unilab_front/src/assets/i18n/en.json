@@ -1307,5 +1307,18 @@
     "sinResultados": "No results",
     "sinResultadosHint": "Try another search or clear the filters.",
     "limpiar": "Clear filters"
+  },
+  "misEstudiantes": {
+    "contador": "{{total}} students",
+    "vistas": "Student views",
+    "vinculados": "My groups and projects",
+    "miEscuela": "My school",
+    "filtroVinculo": "Research group or project",
+    "todos": "All",
+    "errorCargar": "Students could not be loaded.",
+    "sinVinculados": "You have no linked students yet",
+    "sinVinculadosHint": "Approved members of your research groups and authors of the projects you coordinate will appear here.",
+    "sinEscuela": "There are no students in your school",
+    "sinEscuelaHint": "Students registered in your school will appear here."
   }
 }
