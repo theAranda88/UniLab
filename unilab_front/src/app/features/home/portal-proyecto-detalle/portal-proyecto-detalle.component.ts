@@ -10,11 +10,11 @@ import { ProyectoInteraccionService } from '../proyecto-interaccion.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import {
-  estiloEscuela,
   urlsImagenesProyecto,
   type ComentarioProyecto,
   type ProyectoPublico,
 } from '../../../core/models/portal.model';
+import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { recursosDeProyecto } from '../../../core/utils/recursos-externos.util';
 import { RecursosExternosComponent } from '../../../shared/ui/recursos-externos/recursos-externos.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
@@ -70,7 +70,7 @@ export class PortalProyectoDetalleComponent {
   readonly isLoggedIn = computed(() => this.auth.isAuthenticated());
   private readonly idUsuario = computed(() => (this.isLoggedIn() ? this.auth.getCurrentUser()?.id_usuario : null));
 
-  readonly estilo = computed(() => estiloEscuela(this.proyecto()?.curso?.escuela?.nombre_escuela ?? ''));
+  readonly estilo = computed(() => estiloDeEscuela(this.proyecto()?.curso?.escuela));
   readonly iconoTipo = computed(() => ICONOS_TIPO[this.proyecto()?.tipo_proyecto ?? ''] ?? 'ti-flask');
   readonly imagenes = computed(() => {
     const p = this.proyecto();
@@ -172,6 +172,7 @@ export class PortalProyectoDetalleComponent {
   esMio(c: ComentarioProyecto): boolean {
     return c.id_usuario === this.idUsuario();
   }
+
 
   calificar(puntuacion: number): void {
     const p = this.proyecto();

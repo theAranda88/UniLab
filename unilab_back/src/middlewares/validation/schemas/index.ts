@@ -179,6 +179,11 @@ export const escuelaUpdateSchema = escuelaSchema.partial().refine(
   { message: 'Debe enviar al menos un campo para actualizar' },
 );
 
+export const imagenEscuelaParamSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  idImagen: z.coerce.number().int().positive(),
+});
+
 export const cursoSchema = z.object({
   id_escuela: z.number().int().positive(),
   nombre_curso: z.string().min(1),

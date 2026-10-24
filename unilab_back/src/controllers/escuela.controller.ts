@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { escuelaService, cursoService } from '../services/escuela.service';
+import { escuelaImagenService } from '../services/escuela-imagen.service';
 
 export const escuelaController = {
   listar: asyncHandler(async (_req: Request, res: Response) => {
@@ -23,6 +24,21 @@ export const escuelaController = {
 
   eliminar: asyncHandler(async (req: Request, res: Response) => {
     await escuelaService.eliminar(Number(req.params.id));
+    res.status(204).send();
+  }),
+
+  subirImagenes: asyncHandler(async (req: Request, res: Response) => {
+    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+    const imagenes = await escuelaImagenService.subir(
+      Number(req.params.id),
+      req.user!.id_usuario,
+      files,
+    );
+    res.status(201).json(imagenes);
+  }),
+
+  eliminarImagen: asyncHandler(async (req: Request, res: Response) => {
+    await escuelaImagenService.eliminar(Number(req.params.id), Number(req.params.idImagen));
     res.status(204).send();
   }),
 };
