@@ -68,7 +68,7 @@ export interface ProyectoPublico {
   estudiante_creador?: UsuarioResumen;
   coordinadores?: { profesor: UsuarioResumen }[];
   autores?: ProyectoAutor[];
-  /** Filas tal como las devuelve el detalle público (sin datos del autor). */
+  /** Filas del detalle público, con el nombre del autor. */
   comentarios?: ComentarioProyecto[];
   calificaciones?: CalificacionProyecto[];
 }
@@ -80,6 +80,8 @@ export interface ComentarioProyecto {
   id_comentario_padre: number | null;
   contenido: string;
   fecha_comentario: string;
+  /** Autor: el detalle público solo expone su nombre. */
+  usuario?: UsuarioResumen;
 }
 
 export interface CalificacionProyecto {

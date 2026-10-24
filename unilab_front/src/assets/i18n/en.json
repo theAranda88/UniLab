@@ -871,7 +871,13 @@
       "replyLabel": "Your reply",
       "replyPlaceholder": "Write your reply…",
       "replySubmit": "Post reply",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteTitle": "Delete comment",
+      "deleteMessage": "Delete your comment? Its replies will also be deleted.",
+      "deleteReplyMessage": "Delete your reply?",
+      "deleted": "Comment deleted.",
+      "deleteError": "The comment couldn't be deleted."
     },
     "resources": {
       "aplicativo": {
