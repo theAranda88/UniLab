@@ -271,7 +271,7 @@ export const paths = {
       tags: ['Escuelas'],
       summary: 'Listar escuelas',
       description: '**Rol requerido:** cualquier autenticado',
-      responses: { 200: { description: 'Lista con cursos anidados' }, ...err },
+      responses: { 200: { description: 'Lista con cursos, encargado e imágenes' }, ...err },
     },
     post: {
       tags: ['Escuelas'],
@@ -286,7 +286,7 @@ export const paths = {
       tags: ['Escuelas'],
       summary: 'Obtener escuela por ID',
       parameters: [paramId],
-      responses: { 200: { description: 'Detalle con cursos' }, ...err },
+      responses: { 200: { description: 'Detalle con cursos, encargado e imágenes' }, ...err },
     },
     patch: {
       tags: ['Escuelas'],
@@ -298,7 +298,7 @@ export const paths = {
     },
     delete: {
       tags: ['Escuelas'],
-      summary: 'Eliminar escuela (soft-delete + cascada lógica a cursos)',
+      summary: 'Eliminar escuela (soft-delete + cascada lógica a cursos e imágenes)',
       description: '**Rol requerido:** Administrador, Coordinador',
       parameters: [paramId],
       responses: { 204: { description: 'Eliminada' }, ...err },

@@ -390,8 +390,28 @@ export const schemas = {
   EscuelaRequest: {
     type: 'object',
     required: ['nombre_escuela'],
+    description: 'En PATCH todos los campos son opcionales (al menos uno). `null` o cadena vacía borran el valor.',
     properties: {
-      nombre_escuela: { type: 'string', example: 'Escuela de Software y Desarrollo Tecnológico' },
+      nombre_escuela: { type: 'string', maxLength: 255, example: 'Escuela de Software y Desarrollo Tecnológico' },
+      descripcion: {
+        type: 'string',
+        nullable: true,
+        maxLength: 2000,
+        example: 'Forma profesionales en desarrollo de software, datos e infraestructura.',
+      },
+      color: { type: 'string', nullable: true, pattern: '^#[0-9a-fA-F]{6}$', example: '#2563eb' },
+      icono: {
+        type: 'string',
+        nullable: true,
+        description: 'Clase de ícono Phosphor (`ph-*`)',
+        example: 'ph-code',
+      },
+      id_encargado: {
+        type: 'integer',
+        nullable: true,
+        description: 'Profesor activo encargado de la escuela (si no lo es → 422)',
+        example: 10,
+      },
     },
   },
   CursoRequest: {

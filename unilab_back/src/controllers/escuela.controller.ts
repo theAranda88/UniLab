@@ -12,12 +12,12 @@ export const escuelaController = {
   }),
 
   crear: asyncHandler(async (req: Request, res: Response) => {
-    const escuela = await escuelaService.crear(req.body.nombre_escuela, req.user!.id_usuario);
+    const escuela = await escuelaService.crear(req.body, req.user!.id_usuario);
     res.status(201).json(escuela);
   }),
 
   actualizar: asyncHandler(async (req: Request, res: Response) => {
-    const escuela = await escuelaService.actualizar(Number(req.params.id), req.body.nombre_escuela);
+    const escuela = await escuelaService.actualizar(Number(req.params.id), req.body);
     res.status(200).json(escuela);
   }),
 

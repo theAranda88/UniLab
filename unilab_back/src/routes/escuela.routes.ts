@@ -7,6 +7,7 @@ import { validate } from '../middlewares/validation/validate';
 import {
   idParamSchema,
   escuelaSchema,
+  escuelaUpdateSchema,
   cursoSchema,
   cursoUpdateSchema,
   autorizacionCursoSchema,
@@ -24,7 +25,7 @@ const lectura = [...auth] as const;
 router.get('/escuelas', ...lectura, escuelaController.listar);
 router.get('/escuelas/:id', ...lectura, validate(idParamSchema, 'params'), escuelaController.obtener);
 router.post('/escuelas', ...adminCoord, validate(escuelaSchema), escuelaController.crear);
-router.patch('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), validate(escuelaSchema), escuelaController.actualizar);
+router.patch('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), validate(escuelaUpdateSchema), escuelaController.actualizar);
 router.delete('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), escuelaController.eliminar);
 
 // Cursos

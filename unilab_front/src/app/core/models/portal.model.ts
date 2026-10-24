@@ -1,6 +1,11 @@
 export interface Escuela {
   id_escuela: number;
   nombre_escuela: string;
+  descripcion?: string | null;
+  /** Color de identidad guardado (#RRGGBB); si falta se deduce del nombre. */
+  color?: string | null;
+  /** Ícono Phosphor guardado; si falta se deduce del nombre. */
+  icono?: string | null;
   total_proyectos_publicados?: number;
 }
 
@@ -143,7 +148,8 @@ const ESCUELA_ESTILOS: Record<EscuelaThemeKey | 'generic', EscuelaEstilo> = {
 };
 
 /**
- * Estilo visual de una escuela. El backend no guarda ícono ni color, así que se deduce del
+ * Estilo visual deducido del nombre de la escuela (respaldo cuando no tiene color o ícono
+ * guardados; ver `estiloDeEscuela` en `portal-theme.util.ts`). Se deduce del
  * nombre; cualquier escuela que no coincida (p. ej. una recién creada) recibe el estilo
  * institucional genérico, siempre el mismo para que no cambie entre visitas.
  */
