@@ -546,7 +546,17 @@ export const paths = {
       description: '**Rol requerido:** cualquier autenticado. Soporta hilos con `id_comentario_padre`.',
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/ComentarioRequest'),
-      responses: { 201: { description: 'Comentario creado' }, ...err },
+      responses: { 201: { description: 'Comentario creado (incluye `usuario` con nombres y apellidos)' }, ...err },
+    },
+  },
+  '/comentarios/{id}': {
+    delete: {
+      tags: ['Proyectos'],
+      summary: 'Eliminar comentario (borrado lógico)',
+      description:
+        '**Rol requerido:** autor del comentario o Administrador (otro usuario → 403). Elimina también sus respuestas.',
+      parameters: [paramId],
+      responses: { 204: { description: 'Comentario eliminado' }, ...err },
     },
   },
   '/proyectos/{id}/calificacion': {
@@ -1152,7 +1162,8 @@ export const paths = {
     get: {
       tags: ['Público'],
       summary: 'Detalle de proyecto publicado',
-      description: 'Sin autenticación. Registra una vista e incrementa `contador_vistas`.',
+      description:
+        'Sin autenticación. Registra una vista e incrementa `contador_vistas`. Cada comentario incluye `usuario` con nombres y apellidos del autor.',
       security: [],
       parameters: [paramId],
       responses: {

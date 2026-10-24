@@ -2,6 +2,9 @@ import { prisma } from './prisma.client';
 import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
+/** Autor del comentario: solo el nombre (es información pública en el portal). */
+const autorComentario = { usuario: { select: { nombres: true, apellidos: true } } } as const;
+
 export const proyectoRepository = {
   findMany(where?: Prisma.proyectosWhereInput) {
     return prisma.proyectos.findMany({
@@ -27,7 +30,7 @@ export const proyectoRepository = {
         estudiante_creador: { include: { rol: true } },
         coordinadores: { where: activo, include: { profesor: true } },
         autores: { where: activo, include: { estudiante: true } },
-        comentarios: { where: activo },
+        comentarios: { where: activo, include: autorComentario },
         calificaciones: { where: activo },
         imagenes: { where: activo, orderBy: { orden: 'asc' } },
       },
@@ -72,7 +75,26 @@ export const proyectoRepository = {
   },
 
   crearComentario(data: Prisma.comentariosCreateInput) {
-    return prisma.comentarios.create({ data });
+    return prisma.comentarios.create({ data, include: autorComentario });
+  },
+
+  findComentarioById(id_comentario: number) {
+    return prisma.comentarios.findFirst({ where: { id_comentario, ...activo } });
+  },
+
+  /** Borrado lógico del comentario y de sus respuestas (no quedan respuestas huérfanas). */
+  softDeleteComentario(id_comentario: number) {
+    const ahora = new Date();
+    return prisma.$transaction([
+      prisma.comentarios.updateMany({
+        where: { id_comentario_padre: id_comentario, ...activo },
+        data: { deleted_at: ahora },
+      }),
+      prisma.comentarios.update({
+        where: { id_comentario },
+        data: { deleted_at: ahora },
+      }),
+    ]);
   },
 
   upsertCalificacion(id_proyecto: number, id_usuario: number, puntuacion: number) {

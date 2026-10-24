@@ -871,7 +871,13 @@
       "replyLabel": "Tu respuesta",
       "replyPlaceholder": "Escribe tu respuesta…",
       "replySubmit": "Publicar respuesta",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "deleteTitle": "Eliminar comentario",
+      "deleteMessage": "¿Eliminar tu comentario? También se eliminarán sus respuestas.",
+      "deleteReplyMessage": "¿Eliminar tu respuesta?",
+      "deleted": "Comentario eliminado.",
+      "deleteError": "No se pudo eliminar el comentario."
     },
     "resources": {
       "aplicativo": {
