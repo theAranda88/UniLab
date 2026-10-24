@@ -304,6 +304,53 @@ export const paths = {
       responses: { 204: { description: 'Eliminada' }, ...err },
     },
   },
+  '/escuelas/{id}/imagenes': {
+    post: {
+      tags: ['Escuelas'],
+      summary: 'Subir imágenes de la escuela',
+      description:
+        '**Rol requerido:** Administrador, Coordinador. **Multipart:** campo `imagenes` (JPEG/PNG/WebP, máx. 5 MB c/u, máx. 5 imágenes en total por escuela; si se supera → 422).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['imagenes'],
+              properties: {
+                imagenes: {
+                  type: 'array',
+                  items: { type: 'string', format: 'binary' },
+                  description: 'Archivos de imagen (máx. 5 en total por escuela)',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Imágenes subidas',
+          content: {
+            'application/json': {
+              schema: { type: 'array', items: { $ref: '#/components/schemas/EscuelaImagenResponse' } },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
+  '/escuelas/{id}/imagenes/{idImagen}': {
+    delete: {
+      tags: ['Escuelas'],
+      summary: 'Eliminar imagen de la escuela (soft-delete)',
+      description: '**Rol requerido:** Administrador, Coordinador. Reordena las imágenes restantes.',
+      parameters: [paramId, paramIdImagen],
+      responses: { 204: { description: 'Imagen eliminada' }, ...err },
+    },
+  },
 
   // ─── CURSOS ───────────────────────────────────────────────────────────────
   '/cursos': {

@@ -414,6 +414,18 @@ export const schemas = {
       },
     },
   },
+  EscuelaImagenResponse: {
+    type: 'object',
+    properties: {
+      id_imagen: { type: 'integer', example: 1 },
+      id_escuela: { type: 'integer', example: 5 },
+      ruta_archivo: { type: 'string', example: '/uploads/escuelas/5/abc123.webp' },
+      url: { type: 'string', example: 'http://localhost:3000/uploads/escuelas/5/abc123.webp' },
+      nombre_original: { type: 'string', example: 'campus.webp' },
+      mime_type: { type: 'string', example: 'image/webp' },
+      orden: { type: 'integer', example: 1 },
+    },
+  },
   CursoRequest: {
     type: 'object',
     required: ['id_escuela', 'nombre_curso', 'periodo_academico'],
@@ -743,6 +755,20 @@ export const schemas = {
     properties: {
       id_escuela: { type: 'integer', example: 31 },
       nombre_escuela: { type: 'string', example: 'Escuela de Software y Desarrollo Tecnológico' },
+      descripcion: { type: 'string', nullable: true },
+      color: { type: 'string', nullable: true, example: '#2563eb' },
+      icono: { type: 'string', nullable: true, example: 'ph-code' },
+      imagenes: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id_imagen: { type: 'integer', example: 1 },
+            url: { type: 'string', example: 'http://localhost:3000/uploads/escuelas/31/abc123.webp' },
+            orden: { type: 'integer', example: 1 },
+          },
+        },
+      },
       total_proyectos_publicados: {
         type: 'integer',
         minimum: 0,

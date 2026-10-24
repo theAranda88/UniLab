@@ -128,6 +128,19 @@
           </div>
         </fieldset>
 
+        <!-- Imágenes -->
+        <fieldset class="escuelas-form__fieldset">
+          <legend>{{ 'escuelas.imagenes.titulo' | translate }}</legend>
+          <app-image-uploader
+            [guardadas]="imagenesGuardadas()"
+            [(pendientes)]="imagenesPendientes"
+            [max]="maxImagenes"
+            [disabled]="enviando()"
+            [alt]="formulario.controls.nombre_escuela.value"
+            (eliminar)="eliminarImagen($event)"
+          />
+        </fieldset>
+
         <div class="escuelas-form__actions">
           <button type="button" class="btn btn-secondary" (click)="cancelar()">
             {{ 'common.cancelar' | translate }}

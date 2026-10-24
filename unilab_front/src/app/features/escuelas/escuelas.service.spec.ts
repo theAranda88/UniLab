@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { EscuelasService } from './escuelas.service';
 
-describe('EscuelasService (información de la escuela)', () => {
+describe('EscuelasService (información e imágenes)', () => {
   let service: EscuelasService;
   let http: HttpTestingController;
 
@@ -26,4 +26,20 @@ describe('EscuelasService (información de la escuela)', () => {
     req.flush({});
   });
 
+  it('subirImagenes envía los archivos en el campo multipart «imagenes»', () => {
+    const files = [new File(['a'], 'a.png', { type: 'image/png' }), new File(['b'], 'b.webp', { type: 'image/webp' })];
+    service.subirImagenes(4, files).subscribe();
+    const req = http.expectOne('http://localhost:3000/api/escuelas/4/imagenes');
+    expect(req.request.method).toBe('POST');
+    const body = req.request.body as FormData;
+    expect(body.getAll('imagenes').length).toBe(2);
+    req.flush([]);
+  });
+
+  it('eliminarImagen borra la imagen de la escuela indicada', () => {
+    service.eliminarImagen(4, 9).subscribe();
+    const req = http.expectOne('http://localhost:3000/api/escuelas/4/imagenes/9');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });

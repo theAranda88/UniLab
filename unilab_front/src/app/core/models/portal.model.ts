@@ -1,3 +1,9 @@
+export interface EscuelaImagenPublica {
+  id_imagen: number;
+  url: string;
+  orden: number;
+}
+
 export interface Escuela {
   id_escuela: number;
   nombre_escuela: string;
@@ -6,6 +12,7 @@ export interface Escuela {
   color?: string | null;
   /** Ícono Phosphor guardado; si falta se deduce del nombre. */
   icono?: string | null;
+  imagenes?: EscuelaImagenPublica[];
   total_proyectos_publicados?: number;
 }
 

@@ -4,8 +4,11 @@ import { verifyToken } from '../middlewares/auth/verifyToken';
 import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
 import { requireRole } from '../middlewares/roles/requireRole';
 import { validate } from '../middlewares/validation/validate';
+import { subirImagenes } from '../middlewares/upload/subirImagenes.middleware';
+import { MAX_IMAGENES_POR_ESCUELA, carpetaEscuela } from '../utils/uploadPaths';
 import {
   idParamSchema,
+  imagenEscuelaParamSchema,
   escuelaSchema,
   escuelaUpdateSchema,
   cursoSchema,
@@ -27,6 +30,23 @@ router.get('/escuelas/:id', ...lectura, validate(idParamSchema, 'params'), escue
 router.post('/escuelas', ...adminCoord, validate(escuelaSchema), escuelaController.crear);
 router.patch('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), validate(escuelaUpdateSchema), escuelaController.actualizar);
 router.delete('/escuelas/:id', ...adminCoord, validate(idParamSchema, 'params'), escuelaController.eliminar);
+router.post(
+  '/escuelas/:id/imagenes',
+  ...adminCoord,
+  validate(idParamSchema, 'params'),
+  subirImagenes({
+    campo: 'imagenes',
+    maxArchivos: MAX_IMAGENES_POR_ESCUELA,
+    carpeta: (req) => carpetaEscuela(Number(req.params.id)),
+  }),
+  escuelaController.subirImagenes,
+);
+router.delete(
+  '/escuelas/:id/imagenes/:idImagen',
+  ...adminCoord,
+  validate(imagenEscuelaParamSchema, 'params'),
+  escuelaController.eliminarImagen,
+);
 
 // Cursos
 router.get('/cursos', ...lectura, cursoController.listar);

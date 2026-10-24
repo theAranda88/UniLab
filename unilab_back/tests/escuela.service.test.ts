@@ -22,6 +22,7 @@ vi.mock('../src/models/prisma.client', () => ({ prisma: m.prisma }));
 vi.mock('fs', () => ({ default: { unlink: m.unlink } }));
 
 import { escuelaService } from '../src/services/escuela.service';
+import { escuelaImagenService } from '../src/services/escuela-imagen.service';
 
 function escuela(extra: Record<string, unknown> = {}) {
   return {
@@ -36,6 +37,10 @@ function escuela(extra: Record<string, unknown> = {}) {
     imagenes: [],
     ...extra,
   };
+}
+
+function archivo(nombre: string) {
+  return { path: `/tmp/${nombre}`, originalname: nombre, mimetype: 'image/png' } as Express.Multer.File;
 }
 
 describe('escuelaService', () => {
@@ -102,5 +107,42 @@ describe('escuelaService', () => {
     const resultado = await escuelaService.obtener(1);
 
     expect(resultado.imagenes[0].url).toMatch(/\/uploads\/escuelas\/1\/a\.png$/);
+  });
+});
+
+describe('escuelaImagenService', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    m.escuelaRepository.findById.mockResolvedValue(escuela());
+  });
+
+  it('no supera el máximo de imágenes por escuela y descarta los archivos', async () => {
+    m.prisma.escuela_imagenes.count.mockResolvedValue(4);
+
+    await expect(
+      escuelaImagenService.subir(1, 1, [archivo('a.png'), archivo('b.png')]),
+    ).rejects.toMatchObject({ statusCode: 422 });
+    expect(m.unlink).toHaveBeenCalledTimes(2);
+    expect(m.prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('responde 404 y descarta los archivos si la escuela no existe', async () => {
+    m.escuelaRepository.findById.mockResolvedValue(null);
+
+    await expect(escuelaImagenService.subir(9, 1, [archivo('a.png')])).rejects.toMatchObject({
+      statusCode: 404,
+    });
+    expect(m.unlink).toHaveBeenCalledTimes(1);
+  });
+
+  it('exige al menos un archivo', async () => {
+    await expect(escuelaImagenService.subir(1, 1, [])).rejects.toMatchObject({ statusCode: 400 });
+  });
+
+  it('responde 404 al eliminar una imagen que no es de la escuela', async () => {
+    m.prisma.escuela_imagenes.findFirst.mockResolvedValue(null);
+
+    await expect(escuelaImagenService.eliminar(1, 50)).rejects.toMatchObject({ statusCode: 404 });
+    expect(m.prisma.$transaction).not.toHaveBeenCalled();
   });
 });
