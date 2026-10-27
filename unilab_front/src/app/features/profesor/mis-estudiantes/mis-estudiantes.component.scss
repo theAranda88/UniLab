@@ -1,0 +1,41 @@
+@use '../../../../styles/design-tokens' as t;
+
+.mis-est {
+  &__filtros {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: t.$space-16;
+    margin-bottom: t.$space-20;
+
+    &--uno {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    @include t.respond-to(640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: t.$space-4;
+    max-width: 280px;
+
+    .edu-chip {
+      max-width: 100%;
+      overflow: hidden;
+      text-decoration: none;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__email {
+    text-decoration: none;
+
+    &:hover {
+      color: t.$blue;
+      text-decoration: underline;
+    }
+  }
+}

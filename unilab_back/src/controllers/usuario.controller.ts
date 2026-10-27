@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { usuarioService } from '../services/usuario.service';
+import { consultaUsuariosSchema } from '../middlewares/validation/schemas';
 
 export const usuarioController = {
   listarRoles: asyncHandler(async (_req: Request, res: Response) => {
@@ -11,6 +12,18 @@ export const usuarioController = {
   listar: asyncHandler(async (req: Request, res: Response) => {
     const usuarios = await usuarioService.listar(req.query.rol as string | undefined);
     res.status(200).json(usuarios);
+  }),
+
+  listarConsulta: asyncHandler(async (req: Request, res: Response) => {
+    // Express 5 vuelve a parsear req.query en cada acceso: se toman los valores ya convertidos.
+    const filtro = consultaUsuariosSchema.parse(req.query);
+    const usuarios = await usuarioService.listarConsulta(req.user!, filtro);
+    res.status(200).json(usuarios);
+  }),
+
+  estudiantesDeProfesor: asyncHandler(async (req: Request, res: Response) => {
+    const result = await usuarioService.estudiantesDeProfesor(req.user!.id_usuario);
+    res.status(200).json(result);
   }),
 
   obtener: asyncHandler(async (req: Request, res: Response) => {

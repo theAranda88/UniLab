@@ -7,6 +7,12 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { PublicPortalService } from '../../home/public-portal.service';
 import { navigateAfterLogin } from '../../../core/config/role-redirect';
 import type { Escuela } from '../../../core/models/portal.model';
+import {
+  GITHUB_DOMINIO,
+  LINKEDIN_DOMINIO,
+  redesDesdeFormulario,
+  urlRedValidator,
+} from '../../../shared/validators/redes.validators';
 
 @Component({
   selector: 'app-completar-perfil',
@@ -32,6 +38,9 @@ export class CompletarPerfilComponent implements OnInit {
     id_escuela: [null as number | null],
     institucion: [''],
     ocupacion: [''],
+    url_linkedin: ['', urlRedValidator(LINKEDIN_DOMINIO)],
+    url_github: ['', urlRedValidator(GITHUB_DOMINIO)],
+    url_portafolio: ['', urlRedValidator()],
   });
 
   readonly rol = signal<string | null>(null);
@@ -62,6 +71,13 @@ export class CompletarPerfilComponent implements OnInit {
     return !!control && control.invalid && control.touched;
   }
 
+  /** Clave i18n del error de una red de contacto, o null si es válida. */
+  redError(name: 'url_linkedin' | 'url_github' | 'url_portafolio'): string | null {
+    const control = this.form.controls[name];
+    if (!control.invalid || !control.touched) return null;
+    return control.hasError('dominio') ? `perfil.redes.errores.${name}` : 'perfil.redes.errores.url';
+  }
+
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -78,6 +94,7 @@ export class CompletarPerfilComponent implements OnInit {
       .completarPerfil({
         documento_identidad: raw.documento_identidad,
         telefono: raw.telefono,
+        ...redesDesdeFormulario(raw),
         ...(rol === 'Estudiante'
           ? {
               codigo_estudiantil: raw.codigo_estudiantil,

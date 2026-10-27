@@ -2,6 +2,31 @@ import { prisma } from './prisma.client';
 import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
+const escuelaResumen = { select: { id_escuela: true, nombre_escuela: true } } as const;
+const semilleroResumen = { select: { id_semillero: true, nombre_semillero: true } } as const;
+
+/** Campos visibles en los listados de solo lectura (sin credenciales ni documento). */
+const usuarioConsultaSelect = {
+  id_usuario: true,
+  nombres: true,
+  apellidos: true,
+  email: true,
+  telefono: true,
+  activo: true,
+  url_linkedin: true,
+  url_github: true,
+  url_portafolio: true,
+  rol: { select: { nombre_rol: true } },
+  perfil_profesor: {
+    where: activo,
+    select: { codigo_docente: true, escuela: escuelaResumen },
+  },
+  perfil_estudiante: {
+    where: activo,
+    select: { codigo_estudiantil: true, escuela: escuelaResumen },
+  },
+} satisfies Prisma.usuariosSelect;
+
 export const usuarioRepository = {
   findByEmail(email: string) {
     return prisma.usuarios.findFirst({
@@ -28,6 +53,122 @@ export const usuarioRepository = {
         perfil_externo: { where: activo },
       },
     });
+  },
+
+  /** Usuario con escuela, semilleros y redes: base de la respuesta de login y de /auth/me. */
+  findPerfilSesion(id: number) {
+    return prisma.usuarios.findFirst({
+      where: { id_usuario: id, ...activo },
+      select: {
+        id_usuario: true,
+        nombres: true,
+        apellidos: true,
+        email: true,
+        telefono: true,
+        primer_login: true,
+        perfil_pendiente: true,
+        activo: true,
+        url_linkedin: true,
+        url_github: true,
+        url_portafolio: true,
+        rol: { select: { nombre_rol: true } },
+        perfil_coordinador: { where: activo, select: { cargo: true, dependencia: true, profesion: true } },
+        perfil_profesor: { where: activo, select: { codigo_docente: true, escuela: escuelaResumen } },
+        perfil_estudiante: {
+          where: activo,
+          select: { codigo_estudiantil: true, escuela: escuelaResumen },
+        },
+        perfil_externo: { where: activo, select: { institucion: true, ocupacion: true } },
+        semilleros_como_lider: { where: activo, ...semilleroResumen },
+        semilleros_como_profesor: {
+          where: { ...activo, semillero: activo },
+          select: { es_lider: true, semillero: semilleroResumen },
+        },
+        membresias_semillero: {
+          where: { ...activo, estado_solicitud: 'aprobado', semillero: activo },
+          select: { semillero: semilleroResumen },
+        },
+      },
+    });
+  },
+
+  /** Listado de solo lectura filtrado por roles y, opcionalmente, por escuela. */
+  findConsulta(filtro: { roles: string[]; id_escuela?: number; busqueda?: string }) {
+    const where: Prisma.usuariosWhereInput = {
+      ...activo,
+      rol: { nombre_rol: { in: filtro.roles } },
+    };
+    if (filtro.id_escuela) {
+      where.OR = [
+        { perfil_profesor: { id_escuela: filtro.id_escuela, ...activo } },
+        { perfil_estudiante: { id_escuela: filtro.id_escuela, ...activo } },
+      ];
+    }
+    if (filtro.busqueda) {
+      const contiene = { contains: filtro.busqueda, mode: 'insensitive' as const };
+      where.AND = [{ OR: [{ nombres: contiene }, { apellidos: contiene }, { email: contiene }] }];
+    }
+    return prisma.usuarios.findMany({
+      where,
+      select: usuarioConsultaSelect,
+      orderBy: [{ apellidos: 'asc' }, { nombres: 'asc' }],
+    });
+  },
+
+  /** Semilleros (líder o asignado) y proyectos (coordinador) del profesor, con sus estudiantes. */
+  async findVinculosProfesor(id_profesor: number) {
+    const [semilleros, proyectos] = await Promise.all([
+      prisma.semilleros.findMany({
+        where: {
+          ...activo,
+          OR: [
+            { id_profesor_lider: id_profesor },
+            { profesores: { some: { id_profesor, ...activo } } },
+          ],
+        },
+        select: {
+          id_semillero: true,
+          nombre_semillero: true,
+          miembros: {
+            where: { ...activo, estado_solicitud: 'aprobado', estudiante: activo },
+            select: { estudiante: { select: usuarioConsultaSelect } },
+          },
+        },
+        orderBy: { nombre_semillero: 'asc' },
+      }),
+      prisma.proyectos.findMany({
+        where: {
+          ...activo,
+          OR: [
+            { coordinadores: { some: { id_profesor, ...activo } } },
+            { semillero: { id_profesor_lider: id_profesor, ...activo } },
+          ],
+        },
+        select: {
+          id_proyecto: true,
+          titulo: true,
+          estado_proyecto: true,
+          estudiante_creador: { select: usuarioConsultaSelect },
+          autores: {
+            where: { ...activo, estudiante: activo },
+            select: { estudiante: { select: usuarioConsultaSelect } },
+          },
+        },
+        orderBy: { titulo: 'asc' },
+      }),
+    ]);
+    return { semilleros, proyectos };
+  },
+
+  findPasswordHash(id: number) {
+    return prisma.usuarios.findFirst({
+      where: { id_usuario: id, ...activo },
+      select: { password_hash: true },
+    });
+  },
+
+  updatePerfilCoordinador(id_usuario: number, data: Prisma.perfiles_coordinadorUpdateInput) {
+    return prisma.perfiles_coordinador.update({ where: { id_usuario }, data });
   },
 
   findMany(filtro?: { id_rol?: number }) {

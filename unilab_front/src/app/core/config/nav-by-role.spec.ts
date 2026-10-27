@@ -39,4 +39,21 @@ describe('NAV_BY_ROLE', () => {
     );
     expect(habilitadas('Profesor')).toContain('semilleros');
   });
+
+  it('habilita profesores/estudiantes del coordinador y «Mis estudiantes» del profesor', () => {
+    const habilitadas = (rol: ShellRole) =>
+      NAV_BY_ROLE[rol]
+        .flatMap((s) => s.items)
+        .filter((i) => i.enabled)
+        .map((i) => i.route);
+
+    expect(habilitadas('Coordinador')).toEqual(expect.arrayContaining(['profesores', 'estudiantes']));
+    expect(habilitadas('Profesor')).toContain('estudiantes');
+  });
+
+  it('cada shell tiene la ruta «perfil»', () => {
+    for (const prefijo of Object.values(PREFIJO)) {
+      expect(rutasDelShell(prefijo)).toContain('perfil');
+    }
+  });
 });

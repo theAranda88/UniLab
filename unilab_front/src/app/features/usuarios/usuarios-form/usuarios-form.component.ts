@@ -55,6 +55,7 @@ export class UsuariosFormComponent implements OnInit {
     id_escuela: [null as number | null],
     cargo: [''],
     dependencia: [''],
+    profesion: [''],
     institucion: [''],
     ocupacion: [''],
   });
@@ -88,6 +89,9 @@ export class UsuariosFormComponent implements OnInit {
           documento_identidad: usuario.documento_identidad,
           telefono: usuario.telefono,
           rol: usuario.rol.nombre_rol,
+          cargo: usuario.perfil_coordinador?.cargo ?? '',
+          dependencia: usuario.perfil_coordinador?.dependencia ?? '',
+          profesion: usuario.perfil_coordinador?.profesion ?? '',
         });
         this.aplicarValidadoresRol(usuario.rol.nombre_rol);
         this.cargando.set(false);
@@ -154,7 +158,9 @@ export class UsuariosFormComponent implements OnInit {
       ...(raw.rol === 'Estudiante'
         ? { codigo_estudiantil: raw.codigo_estudiantil, id_escuela: Number(raw.id_escuela) }
         : {}),
-      ...(raw.rol === 'Coordinador' ? { cargo: raw.cargo, dependencia: raw.dependencia } : {}),
+      ...(raw.rol === 'Coordinador'
+        ? { cargo: raw.cargo, dependencia: raw.dependencia, profesion: raw.profesion }
+        : {}),
       ...(raw.rol === 'Externo' ? { institucion: raw.institucion, ocupacion: raw.ocupacion } : {}),
     };
 

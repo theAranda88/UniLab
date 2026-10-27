@@ -1,0 +1,191 @@
+<div class="usuarios-list">
+  <div class="usuarios-list__header">
+    <div>
+      <h1>{{ 'shell.nav.misEstudiantes' | translate }}</h1>
+      @if (!cargando() && !error()) {
+        <p class="usuarios-list__count">{{ 'misEstudiantes.contador' | translate: { total: total() } }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="usuarios-list__filters" role="tablist" [attr.aria-label]="'misEstudiantes.vistas' | translate">
+    <button
+      type="button"
+      role="tab"
+      class="filter-chip"
+      [class.filter-chip--active]="vista() === 'vinculados'"
+      [attr.aria-selected]="vista() === 'vinculados'"
+      (click)="cambiarVista('vinculados')"
+    >
+      <i class="ti ti-link" aria-hidden="true"></i> {{ 'misEstudiantes.vinculados' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="filter-chip"
+      [class.filter-chip--active]="vista() === 'escuela'"
+      [attr.aria-selected]="vista() === 'escuela'"
+      (click)="cambiarVista('escuela')"
+    >
+      <i class="ti ti-school" aria-hidden="true"></i> {{ 'misEstudiantes.miEscuela' | translate }}
+    </button>
+  </div>
+
+  <div class="mis-est__filtros" [class.mis-est__filtros--uno]="vista() === 'escuela'">
+    <label class="edu-field">
+      <span class="edu-field__label">{{ 'consultaUsuarios.buscar' | translate }}</span>
+      <input
+        class="edu-control"
+        type="search"
+        [value]="busqueda()"
+        (input)="busqueda.set($any($event.target).value)"
+        [placeholder]="'consultaUsuarios.buscarPlaceholder' | translate"
+      />
+    </label>
+    @if (vista() === 'vinculados') {
+      <label class="edu-field">
+        <span class="edu-field__label">{{ 'misEstudiantes.filtroVinculo' | translate }}</span>
+        <select class="edu-control" [value]="vinculo()" (change)="vinculo.set($any($event.target).value)">
+          <option value="">{{ 'misEstudiantes.todos' | translate }}</option>
+          @if (semilleros().length) {
+            <optgroup [label]="'shell.nav.semilleros' | translate">
+              @for (s of semilleros(); track s.id_semillero) {
+                <option [value]="'s:' + s.id_semillero" [selected]="vinculo() === 's:' + s.id_semillero">{{ s.nombre_semillero }}</option>
+              }
+            </optgroup>
+          }
+          @if (proyectos().length) {
+            <optgroup [label]="'shell.nav.proyectos' | translate">
+              @for (p of proyectos(); track p.id_proyecto) {
+                <option [value]="'p:' + p.id_proyecto" [selected]="vinculo() === 'p:' + p.id_proyecto">{{ p.titulo }}</option>
+              }
+            </optgroup>
+          }
+        </select>
+      </label>
+    }
+  </div>
+
+  @if (cargando()) {
+    <app-skeleton variant="table" [rows]="6" />
+  } @else if (error()) {
+    <app-empty-state
+      icon="ti-cloud-off"
+      tone="error"
+      [title]="'common.loadErrorTitle' | translate"
+      [message]="error()! | translate"
+    >
+      <button type="button" class="edu-btn edu-btn--secondary" (click)="recargar()">{{ 'common.reintentar' | translate }}</button>
+    </app-empty-state>
+  } @else if (vista() === 'vinculados') {
+    @if (filtradosVinculados().length === 0) {
+      <app-empty-state
+        icon="ti-users-group"
+        [title]="(hayFiltros() ? 'consultaUsuarios.sinResultados' : 'misEstudiantes.sinVinculados') | translate"
+        [message]="(hayFiltros() ? 'consultaUsuarios.sinResultadosHint' : 'misEstudiantes.sinVinculadosHint') | translate"
+      >
+        @if (hayFiltros()) {
+          <button type="button" class="edu-btn edu-btn--secondary" (click)="limpiarFiltros()">
+            {{ 'consultaUsuarios.limpiar' | translate }}
+          </button>
+        }
+      </app-empty-state>
+    } @else {
+      <div class="usuarios-list__table-wrap">
+        <table class="usuarios-list__table">
+          <thead>
+            <tr>
+              <th>{{ 'usuarios.nombre' | translate }}</th>
+              <th>{{ 'usuarios.codigoEstudiantil' | translate }}</th>
+              <th>{{ 'shell.nav.semilleros' | translate }}</th>
+              <th>{{ 'shell.nav.proyectos' | translate }}</th>
+              <th>{{ 'consultaUsuarios.contacto' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of filtradosVinculados(); track e.id_usuario) {
+              <tr [class.usuarios-list__row--inactive]="!e.activo">
+                <td>
+                  <div class="usuarios-list__person">
+                    <span class="edu-avatar">{{ iniciales(e) }}</span>
+                    <span class="usuarios-list__person-text">
+                      <span class="usuarios-list__name">{{ e.nombres }} {{ e.apellidos }}</span>
+                      <a class="usuarios-list__muted mis-est__email" [href]="'mailto:' + e.email">{{ e.email }}</a>
+                    </span>
+                  </div>
+                </td>
+                <td>{{ e.codigo ?? '—' }}</td>
+                <td>
+                  <span class="mis-est__chips">
+                    @for (s of e.semilleros; track s.id_semillero) {
+                      <a class="edu-chip" [routerLink]="['/prof/semilleros', s.id_semillero]">{{ s.nombre_semillero }}</a>
+                    } @empty {
+                      <span class="usuarios-list__muted">—</span>
+                    }
+                  </span>
+                </td>
+                <td>
+                  <span class="mis-est__chips">
+                    @for (p of e.proyectos; track p.id_proyecto) {
+                      <a
+                        class="edu-chip"
+                        [routerLink]="['/prof/proyectos', p.id_proyecto]"
+                        [attr.title]="'proyectosEstudiante.estados.' + p.estado_proyecto | translate"
+                      >{{ p.titulo }}</a>
+                    } @empty {
+                      <span class="usuarios-list__muted">—</span>
+                    }
+                  </span>
+                </td>
+                <td>
+                  <app-redes-contacto [redes]="e.redes" [compacto]="true" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    @if (filtradosEscuela().length === 0) {
+      <app-empty-state
+        icon="ti-school"
+        [title]="(busqueda() ? 'consultaUsuarios.sinResultados' : 'misEstudiantes.sinEscuela') | translate"
+        [message]="(busqueda() ? 'consultaUsuarios.sinResultadosHint' : 'misEstudiantes.sinEscuelaHint') | translate"
+      />
+    } @else {
+      <div class="usuarios-list__table-wrap">
+        <table class="usuarios-list__table">
+          <thead>
+            <tr>
+              <th>{{ 'usuarios.nombre' | translate }}</th>
+              <th>{{ 'usuarios.codigoEstudiantil' | translate }}</th>
+              <th>{{ 'usuarios.escuela' | translate }}</th>
+              <th>{{ 'consultaUsuarios.contacto' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of filtradosEscuela(); track e.id_usuario) {
+              <tr [class.usuarios-list__row--inactive]="!e.activo">
+                <td>
+                  <div class="usuarios-list__person">
+                    <span class="edu-avatar">{{ iniciales(e) }}</span>
+                    <span class="usuarios-list__person-text">
+                      <span class="usuarios-list__name">{{ e.nombres }} {{ e.apellidos }}</span>
+                      <a class="usuarios-list__muted mis-est__email" [href]="'mailto:' + e.email">{{ e.email }}</a>
+                    </span>
+                  </div>
+                </td>
+                <td>{{ e.codigo ?? '—' }}</td>
+                <td>{{ e.escuela?.nombre_escuela ?? '—' }}</td>
+                <td>
+                  <app-redes-contacto [redes]="e.redes" [compacto]="true" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

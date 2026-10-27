@@ -59,7 +59,8 @@
       "pendientes": "Pendientes de aprobar",
       "reportes": "Reportes",
       "estadisticas": "Estadísticas",
-      "configuracion": "Configuración"
+      "configuracion": "Configuración",
+      "perfil": "Mi perfil"
     },
     "cta": {
       "crearUsuario": "Crear usuario",
@@ -1232,5 +1233,92 @@
       "revisar": "Proyectos por revisar",
       "revisarAccion": "Revisar"
     }
+  },
+  "perfil": {
+    "kicker": "Mi cuenta",
+    "titulo": "Mi perfil",
+    "descripcion": "Tu información en UniLab y tus redes de contacto.",
+    "datos": "Datos del perfil",
+    "sinDatos": "Aún no hay datos adicionales en tu perfil.",
+    "escuela": "Escuela",
+    "semilleros": "Semilleros",
+    "sinSemilleros": "No estás vinculado a ningún semillero.",
+    "errorCargar": "No se pudo actualizar tu perfil. Se muestran los últimos datos guardados.",
+    "rolSemillero": {
+      "lider": "Líder",
+      "profesor": "Profesor",
+      "miembro": "Miembro"
+    },
+    "redes": {
+      "titulo": "Redes de contacto",
+      "tituloOpcional": "Redes de contacto (opcional)",
+      "hint": "Se muestran a coordinadores y profesores en los listados. Deja un campo vacío para quitarlo.",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "portafolio": "Portafolio o sitio web",
+      "sinRedes": "Sin redes registradas",
+      "exito": "Redes de contacto actualizadas.",
+      "errorGuardar": "No se pudieron guardar las redes de contacto.",
+      "errores": {
+        "url": "Ingresa una URL válida que empiece por http:// o https://",
+        "url_linkedin": "Debe ser un enlace de linkedin.com",
+        "url_github": "Debe ser un enlace de github.com",
+        "url_portafolio": "Ingresa una URL válida"
+      }
+    },
+    "rolHint": "El rol lo asigna el administrador.",
+    "contacto": "Datos de contacto",
+    "profesion": "Profesión",
+    "profesionPlaceholder": "Ej.: Ingeniera de sistemas",
+    "exito": "Perfil actualizado.",
+    "errorGuardar": "No se pudo guardar tu perfil.",
+    "errores": {
+      "telefono": "Teléfono inválido: usa entre 7 y 20 dígitos (puede empezar por +).",
+      "profesion": "Máximo 255 caracteres."
+    },
+    "password": {
+      "titulo": "Cambiar contraseña",
+      "hint": "Por seguridad te pedimos tu contraseña actual.",
+      "actual": "Contraseña actual",
+      "nueva": "Nueva contraseña",
+      "confirmar": "Confirmar nueva contraseña",
+      "mostrar": "Mostrar contraseñas",
+      "boton": "Cambiar contraseña",
+      "exito": "Contraseña actualizada.",
+      "errores": {
+        "minimo": "Mínimo 8 caracteres.",
+        "noCoinciden": "Las contraseñas no coinciden.",
+        "igual": "La nueva contraseña debe ser distinta de la actual.",
+        "actualIncorrecta": "La contraseña actual no es correcta.",
+        "general": "No se pudo cambiar la contraseña."
+      }
+    }
+  },
+  "consultaUsuarios": {
+    "tituloProfesores": "Profesores",
+    "tituloEstudiantes": "Estudiantes",
+    "soloLectura": "Solo lectura",
+    "buscar": "Buscar",
+    "buscarPlaceholder": "Nombre, correo o código",
+    "todasEscuelas": "Todas las escuelas",
+    "contacto": "Contacto",
+    "sinUsuarios": "No hay usuarios para mostrar",
+    "sinUsuariosHint": "Cuando el administrador registre usuarios con este rol aparecerán aquí.",
+    "sinResultados": "Sin resultados",
+    "sinResultadosHint": "Prueba con otra búsqueda o quita los filtros.",
+    "limpiar": "Quitar filtros"
+  },
+  "misEstudiantes": {
+    "contador": "{{total}} estudiantes",
+    "vistas": "Vistas de estudiantes",
+    "vinculados": "Mis semilleros y proyectos",
+    "miEscuela": "Mi escuela",
+    "filtroVinculo": "Semillero o proyecto",
+    "todos": "Todos",
+    "errorCargar": "No se pudieron cargar los estudiantes.",
+    "sinVinculados": "Aún no tienes estudiantes vinculados",
+    "sinVinculadosHint": "Aparecerán los miembros aprobados de tus semilleros y los autores de los proyectos que coordinas.",
+    "sinEscuela": "No hay estudiantes en tu escuela",
+    "sinEscuelaHint": "Cuando se registren estudiantes en tu escuela aparecerán aquí."
   }
 }

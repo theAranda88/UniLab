@@ -30,6 +30,36 @@
         <span class="portal-profile__value">{{ rolKey() | translate }}</span>
       </div>
 
+      @if (user()?.escuela; as escuela) {
+        <div class="portal-profile__meta">
+          <span class="portal-profile__label">{{ 'perfil.escuela' | translate }}</span>
+          <span class="portal-profile__value">{{ escuela.nombre_escuela }}</span>
+        </div>
+      }
+
+      @if (user()?.semilleros?.length) {
+        <div class="portal-profile__meta portal-profile__meta--stack">
+          <span class="portal-profile__label">{{ 'perfil.semilleros' | translate }}</span>
+          <span class="portal-profile__chips">
+            @for (s of user()!.semilleros!; track s.id_semillero) {
+              <span class="portal-profile__chip">{{ s.nombre_semillero }}</span>
+            }
+          </span>
+        </div>
+      }
+
+      <app-redes-contacto class="portal-profile__redes" [redes]="user()?.redes" [compacto]="true" />
+
+      <a
+        [routerLink]="perfilRoute()"
+        class="portal-profile__panel-link portal-profile__panel-link--secondary"
+        role="menuitem"
+        (click)="close()"
+      >
+        <i class="ti ti-user-circle" aria-hidden="true"></i>
+        {{ 'perfil.titulo' | translate }}
+      </a>
+
       @if (panelRoute(); as ruta) {
         <a [routerLink]="ruta" class="portal-profile__panel-link" role="menuitem" (click)="close()">
           <i class="ti ti-layout-dashboard" aria-hidden="true"></i>

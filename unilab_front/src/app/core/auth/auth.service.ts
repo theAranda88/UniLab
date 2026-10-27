@@ -3,8 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 import type { RegisterRequest, RegisterResponse } from '../models/portal.model';
-import type { CompletarPerfilDto } from '../models/usuario.model';
+import type {
+  ActualizarMiPerfilDto,
+  CambiarMiPasswordDto,
+  CompletarPerfilDto,
+  EscuelaResumen,
+  PerfilRol,
+  RedesContacto,
+  SemilleroUsuario,
+} from '../models/usuario.model';
 
+/** Sesión del usuario: respuesta de login, Google, completar perfil y GET /auth/me. */
 export interface User {
   id_usuario: number;
   email: string;
@@ -13,6 +22,11 @@ export interface User {
   perfil_pendiente?: boolean;
   nombres?: string;
   apellidos?: string;
+  telefono?: string;
+  escuela?: EscuelaResumen | null;
+  semilleros?: SemilleroUsuario[];
+  redes?: RedesContacto;
+  perfil?: PerfilRol;
 }
 
 export interface LoginRequest {
@@ -79,6 +93,35 @@ export class AuthService {
           }
         }),
       );
+  }
+
+  /** Perfil completo del usuario autenticado; refresca la copia guardada en localStorage. */
+  me(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/me`).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /**
+   * Actualiza la sesión guardada con GET /auth/me (p. ej. al recargar la página),
+   * para que nombre, escuela y semilleros no queden desactualizados.
+   * El interceptor no cierra sesión ante un 401 de /api/auth/, por eso se hace aquí.
+   */
+  refrescarSesion(): void {
+    if (!this.isAuthenticated()) return;
+    this.me().subscribe({
+      error: (err: { status?: number }) => {
+        if (err?.status === 401) this.logout();
+      },
+    });
+  }
+
+  /** Teléfono, redes de contacto y (solo Coordinador) profesión. */
+  actualizarMiPerfil(data: ActualizarMiPerfilDto): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/me`, data).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /** Cambio voluntario de contraseña desde «Mi perfil» (exige la actual). */
+  cambiarMiPassword(data: CambiarMiPasswordDto): Observable<CambiarPasswordResponse> {
+    return this.http.post<CambiarPasswordResponse>(`${this.apiUrl}/me/password`, data);
   }
 
   register(data: RegisterRequest): Observable<RegisterResponse> {
