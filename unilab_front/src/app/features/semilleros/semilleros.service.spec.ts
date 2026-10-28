@@ -81,4 +81,18 @@ describe('SemillerosService', () => {
     service.eliminarPortada(2).subscribe();
     expect(http.expectOne(`${API}/2/portada`).request.method).toBe('DELETE');
   });
+
+  it('lista, sube y elimina evidencias', () => {
+    service.listarEvidencias(2).subscribe();
+    http.expectOne(`${API}/2/evidencias`).flush([]);
+
+    const file = new File(['x'], 'ev.webp', { type: 'image/webp' });
+    service.subirEvidencias(2, [file]).subscribe();
+    const subir = http.expectOne(`${API}/2/evidencias`);
+    expect(subir.request.method).toBe('POST');
+    subir.flush([{ id_evidencia: 1, id_semillero: 2, url: 'http://x', orden: 1 }]);
+
+    service.eliminarEvidencia(2, 1).subscribe();
+    expect(http.expectOne(`${API}/2/evidencias/1`).request.method).toBe('DELETE');
+  });
 });
