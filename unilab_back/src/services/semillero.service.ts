@@ -52,7 +52,7 @@ export const semilleroService = {
       creador: { connect: { id_usuario: data.created_by } },
     });
 
-    return semillero;
+    return semilleroService.obtener(semillero.id_semillero);
   },
 
   async actualizar(
@@ -94,7 +94,7 @@ export const semilleroService = {
       await semilleroService.asignarProfesor(id, id_profesor_lider, updated_by, true, true);
     }
 
-    return semillero;
+    return semilleroService.obtener(id);
   },
 
   async eliminar(id: number) {
