@@ -1,0 +1,56 @@
+<section class="semillero-galeria edu-card" aria-labelledby="titulo-galeria-semillero">
+  <div class="semillero-galeria__head">
+    <h2 id="titulo-galeria-semillero" class="semillero-galeria__title">
+      {{ 'semilleros.galeria' | translate }}
+    </h2>
+    <span class="edu-badge">{{ evidencias().length }} / {{ maxEvidencias }}</span>
+  </div>
+  <p class="semillero-galeria__hint">{{ 'semilleros.evidenciasHint' | translate }}</p>
+
+  @if (cargando()) {
+    <p class="semillero-galeria__loading">{{ 'common.cargando' | translate }}</p>
+  } @else if (evidencias().length === 0) {
+    <app-empty-state
+      icon="ti-photo"
+      [title]="'semilleros.sinEvidencias' | translate"
+      [message]="puedeGestionar ? ('semilleros.sinEvidenciasHint' | translate) : ''"
+    />
+  } @else {
+    <app-project-image-carousel
+      [images]="urlsCarrusel()"
+      [alt]="'semilleros.galeria' | translate"
+      [zoomable]="true"
+    />
+
+    @if (puedeGestionar) {
+      <div class="semillero-galeria__grid">
+        @for (ev of evidencias(); track ev.id_evidencia) {
+          <figure class="semillero-galeria__thumb">
+            <img [src]="ev.url" [alt]="ev.nombre_original" />
+            <button
+              type="button"
+              class="semillero-galeria__remove"
+              (click)="eliminar(ev.id_evidencia)"
+              [attr.aria-label]="'semilleros.evidenciaEliminar' | translate"
+            >
+              <i class="ti ti-trash" aria-hidden="true"></i>
+            </button>
+          </figure>
+        }
+      </div>
+    }
+  }
+
+  @if (puedeGestionar && evidenciasRestantes() > 0) {
+    <label class="semillero-galeria__upload">
+      <span>{{ subiendo() ? ('common.guardando' | translate) : ('semilleros.subirEvidencias' | translate) }}</span>
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        [disabled]="subiendo()"
+        (change)="onArchivosSeleccionados($event)"
+      />
+    </label>
+  }
+</section>

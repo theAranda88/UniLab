@@ -13,7 +13,10 @@ import {
   asignarProfesorSemilleroSchema,
   solicitudMembresiaSchema,
   resolverMembresiaSchema,
+  evidenciaSemilleroParamSchema,
 } from '../middlewares/validation/schemas';
+import { subirPortadaSemillero } from '../middlewares/upload/subirPortadaSemillero.middleware';
+import { subirEvidenciasSemillero } from '../middlewares/upload/subirEvidenciasSemillero.middleware';
 
 const router = Router();
 
@@ -25,6 +28,38 @@ const lectura = [...auth] as const;
 
 router.get('/', ...lectura, semilleroController.listar);
 router.get('/:id', ...lectura, validate(idParamSchema, 'params'), semilleroController.obtener);
+router.put(
+  '/:id/portada',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  subirPortadaSemillero,
+  semilleroController.subirPortada,
+);
+router.delete(
+  '/:id/portada',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  semilleroController.eliminarPortada,
+);
+router.get(
+  '/:id/evidencias',
+  ...lectura,
+  validate(idParamSchema, 'params'),
+  semilleroController.listarEvidencias,
+);
+router.post(
+  '/:id/evidencias',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  subirEvidenciasSemillero,
+  semilleroController.subirEvidencias,
+);
+router.delete(
+  '/:id/evidencias/:idEvidencia',
+  ...admin,
+  validate(evidenciaSemilleroParamSchema, 'params'),
+  semilleroController.eliminarEvidencia,
+);
 router.post('/', ...admin, validate(semilleroSchema), semilleroController.crear);
 router.patch(
   '/:id',

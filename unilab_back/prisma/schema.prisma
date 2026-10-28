@@ -75,6 +75,7 @@ model usuarios {
   eventos_creados               eventos[]               @relation("eventos_creador")
   evento_jornadas_creadas       evento_jornadas[]       @relation("evento_jornadas_creador")
   evento_jornada_evidencias_creadas evento_jornada_evidencias[] @relation("evento_jornada_evidencias_creador")
+  semillero_evidencias_creadas      semillero_evidencias[]      @relation("semillero_evidencias_creador")
   inscripciones_creadas         inscripciones[]         @relation("inscripciones_creador")
   asistencias_creadas           asistencias[]           @relation("asistencias_creador")
 
@@ -383,6 +384,8 @@ model semilleros {
   descripcion       String   @db.Text
   id_escuela        Int
   id_profesor_lider Int
+  foto_portada_ruta String?  @db.VarChar(500)
+  url_foto_portada  String?  @db.VarChar(500)
   activo            Boolean  @default(true)
   created_at        DateTime @default(now()) @db.Timestamp(6)
   updated_at        DateTime @updatedAt @db.Timestamp(6)
@@ -396,6 +399,23 @@ model semilleros {
   profesores semillero_profesores[]
   miembros   semillero_miembros[]
   proyectos  proyectos[]
+  evidencias semillero_evidencias[]
+}
+
+model semillero_evidencias {
+  id_evidencia    Int       @id @default(autoincrement())
+  id_semillero    Int
+  ruta_archivo    String    @db.VarChar(500)
+  nombre_original String    @db.VarChar(255)
+  mime_type       String    @db.VarChar(100)
+  orden           Int
+  created_at      DateTime  @default(now()) @db.Timestamp(6)
+  updated_at      DateTime  @updatedAt @db.Timestamp(6)
+  created_by      Int?
+  deleted_at      DateTime? @db.Timestamp(6)
+
+  semillero semilleros @relation(fields: [id_semillero], references: [id_semillero], onDelete: Restrict)
+  creador   usuarios?  @relation("semillero_evidencias_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
 }
 
 model semillero_profesores {

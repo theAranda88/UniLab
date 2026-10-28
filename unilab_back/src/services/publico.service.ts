@@ -1,8 +1,10 @@
 import { AppError } from '../utils/AppError';
 import { escuelaRepository, cursoRepository } from '../models/escuela.repository';
 import { proyectoRepository } from '../models/proyecto.repository';
+import { semilleroRepository } from '../models/semillero.repository';
 import { proyectoImagenService } from './proyecto-imagen.service';
 import { escuelaImagenService } from './escuela-imagen.service';
+import { semilleroEvidenciaService } from './semillero-evidencia.service';
 import { eventoService } from './evento.service';
 
 type ProyectoConImagenes = Awaited<ReturnType<typeof proyectoRepository.findMany>>[number];
@@ -15,6 +17,21 @@ function enriquecerProyectoPublico<T extends ProyectoConImagenes>(proyecto: T) {
     ...proyecto,
     imagenes,
     url_imagen: imagenes[0]?.url ?? proyecto.url_imagen ?? null,
+  };
+}
+
+type SemilleroPublicoRow = Awaited<ReturnType<typeof semilleroRepository.findManyPublicos>>[number];
+type SemilleroPublicoDetalleRow = NonNullable<Awaited<ReturnType<typeof semilleroRepository.findPublicoById>>>;
+
+function mapSemilleroPublicoResumen(semillero: SemilleroPublicoRow | SemilleroPublicoDetalleRow) {
+  return {
+    id_semillero: semillero.id_semillero,
+    nombre_semillero: semillero.nombre_semillero,
+    descripcion: semillero.descripcion,
+    url_foto_portada: semillero.url_foto_portada,
+    escuela: semillero.escuela,
+    lider: semillero.profesor_lider,
+    total_miembros_aprobados: semillero._count.miembros,
   };
 }
 
@@ -102,5 +119,49 @@ export const publicoService = {
 
   registrarAsistenciaEvento(codigo_qr: string, documento_identidad: string) {
     return eventoService.registrarAsistenciaPublica(codigo_qr, documento_identidad);
+  },
+
+  async listarSemilleros(params: { id_escuela?: number; pagina: number; limite: number }) {
+    if (params.id_escuela !== undefined) {
+      const escuela = await escuelaRepository.findById(params.id_escuela);
+      if (!escuela) throw new AppError('Escuela no encontrada', 404);
+    }
+
+    const total = await semilleroRepository.countPublicos(params.id_escuela);
+    const skip = (params.pagina - 1) * params.limite;
+    const semilleros = await semilleroRepository.findManyPublicos({
+      id_escuela: params.id_escuela,
+      skip,
+      take: params.limite,
+    });
+
+    return {
+      data: semilleros.map(mapSemilleroPublicoResumen),
+      paginacion: {
+        pagina: params.pagina,
+        limite: params.limite,
+        total,
+        total_paginas: total === 0 ? 0 : Math.ceil(total / params.limite),
+      },
+    };
+  },
+
+  async obtenerSemilleroPublico(id: number) {
+    const semillero = await semilleroRepository.findPublicoById(id);
+    if (!semillero) throw new AppError('Semillero no encontrado', 404);
+
+    const evidencias = semilleroEvidenciaService
+      .mapEvidencias(semillero.evidencias)
+      .map(({ id_evidencia, url, orden, nombre_original }) => ({
+        id_evidencia,
+        url,
+        orden,
+        nombre_original,
+      }));
+
+    return {
+      ...mapSemilleroPublicoResumen(semillero),
+      evidencias,
+    };
   },
 };

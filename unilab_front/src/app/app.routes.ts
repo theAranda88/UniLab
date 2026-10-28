@@ -458,6 +458,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'semilleros/:idSemillero',
+        loadComponent: () =>
+          import('./features/home/portal-semillero-detalle/portal-semillero-detalle.component').then(
+            (m) => m.PortalSemilleroDetalleComponent,
+          ),
+      },
+      {
         path: 'eventos',
         children: eventosPortalChildren,
       },

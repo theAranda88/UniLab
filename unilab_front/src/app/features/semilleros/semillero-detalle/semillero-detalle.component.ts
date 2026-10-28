@@ -17,6 +17,7 @@ import { DialogService } from '../../../shared/ui/dialog/dialog.service';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { SemilleroGaleriaComponent } from '../semillero-galeria/semillero-galeria.component';
 
 type FiltroMiembros = EstadoMembresia | 'todos';
 
@@ -34,6 +35,7 @@ type FiltroMiembros = EstadoMembresia | 'todos';
     TranslatePipe,
     EmptyStateComponent,
     SkeletonComponent,
+    SemilleroGaleriaComponent,
   ],
   templateUrl: './semillero-detalle.component.html',
   styleUrl: './semillero-detalle.component.scss',
