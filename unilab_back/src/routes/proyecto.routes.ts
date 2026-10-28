@@ -78,12 +78,3 @@ router.delete(
 );
 
 export default router;
-
-// Comentarios en ruta separada: se eliminan por su propio id
-export const comentarioRouter = Router();
-comentarioRouter.delete(
-  '/:id',
-  ...auth,
-  validate(idParamSchema, 'params'),
-  proyectoController.eliminarComentario,
-);

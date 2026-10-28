@@ -448,30 +448,13 @@
     "errorActualizar": "Error updating school",
     "errorEliminar": "Error deleting school",
     "eliminarTitulo": "Delete school",
-    "eliminarMensaje": "Delete school \"{{nombre}}\"? Its courses and images will also be soft-deleted.",
+    "eliminarMensaje": "Delete school \"{{nombre}}\"? Its courses will also be soft-deleted.",
     "exitoCrear": "School created successfully.",
     "exitoActualizar": "School updated successfully.",
     "exitoEliminar": "School deleted.",
     "sinEscuelasHint": "Create the first school to link courses and projects to it.",
     "sinCursos": "No registered courses.",
-    "verProyectos": "View projects",
-    "descripcion": "Description",
-    "descripcionPlaceholder": "What the school teaches, its focus and what makes it unique…",
-    "encargado": "Head",
-    "sinEncargado": "No head assigned",
-    "encargadoHint": "Professor in charge of the school.",
-    "color": "Identity color",
-    "colorPersonalizado": "Pick another color",
-    "icono": "Icon",
-    "automatico": "Automatic",
-    "imagenes": {
-      "titulo": "School images",
-      "eliminarTitulo": "Delete image",
-      "eliminarMensaje": "Delete this school image? It will no longer appear on the portal.",
-      "exitoEliminar": "Image deleted.",
-      "errorEliminar": "The image couldn't be deleted.",
-      "errorSubir": "The school was saved, but the images couldn't be uploaded. Please try again."
-    }
+    "verProyectos": "View projects"
   },
   "usuarios": {
     "titulo": "Users",
@@ -835,8 +818,7 @@
       "filterType": "Filter by project type",
       "allTypes": "All",
       "exploreOthers": "Explore other schools",
-      "otherSchools": "Other schools",
-      "galleryTitle": "Get to know the school"
+      "otherSchools": "Other schools"
     },
     "events": {
       "kicker": "Events",
@@ -871,13 +853,7 @@
       "replyLabel": "Your reply",
       "replyPlaceholder": "Write your reply…",
       "replySubmit": "Post reply",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "deleteTitle": "Delete comment",
-      "deleteMessage": "Delete your comment? Its replies will also be deleted.",
-      "deleteReplyMessage": "Delete your reply?",
-      "deleted": "Comment deleted.",
-      "deleteError": "The comment couldn't be deleted."
+      "cancel": "Cancel"
     },
     "resources": {
       "aplicativo": {
@@ -1344,15 +1320,5 @@
     "sinVinculadosHint": "Approved members of your research groups and authors of the projects you coordinate will appear here.",
     "sinEscuela": "There are no students in your school",
     "sinEscuelaHint": "Students registered in your school will appear here."
-  },
-  "imagenUploader": {
-    "agregar": "Add images",
-    "eliminar": "Delete image",
-    "quitar": "Remove image",
-    "pendiente": "To upload",
-    "hint": "JPEG, PNG or WebP up to 5 MB. Up to {{max}} images.",
-    "errorTipo": "Only JPEG, PNG or WebP images are allowed.",
-    "errorPeso": "Each image must be 5 MB or less.",
-    "errorMax": "You exceed the maximum number of images."
   }
 }

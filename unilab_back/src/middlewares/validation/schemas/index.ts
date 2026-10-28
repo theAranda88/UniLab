@@ -147,41 +147,8 @@ export const filtroUsuariosSchema = z.object({
   rol: z.enum(['Administrador', 'Coordinador', 'Profesor', 'Estudiante', 'Externo']).optional(),
 });
 
-/** Texto opcional; cadena vacía o null borran el valor guardado. */
-const textoOpcional = (max: number) =>
-  z
-    .string()
-    .trim()
-    .max(max)
-    .transform((v) => v || null)
-    .nullable()
-    .optional();
-
 export const escuelaSchema = z.object({
-  nombre_escuela: z.string().trim().min(1).max(255),
-  descripcion: textoOpcional(2000),
-  color: z
-    .string()
-    .regex(/^#[0-9a-fA-F]{6}$/, 'Color inválido: use el formato #RRGGBB')
-    .nullable()
-    .optional(),
-  /** Clase de ícono Phosphor, p. ej. `ph-code`. */
-  icono: z
-    .string()
-    .regex(/^ph-[a-z0-9-]{1,96}$/, 'Ícono inválido: use una clase Phosphor como ph-code')
-    .nullable()
-    .optional(),
-  id_encargado: z.number().int().positive().nullable().optional(),
-});
-
-export const escuelaUpdateSchema = escuelaSchema.partial().refine(
-  (data) => Object.keys(data).length > 0,
-  { message: 'Debe enviar al menos un campo para actualizar' },
-);
-
-export const imagenEscuelaParamSchema = z.object({
-  id: z.coerce.number().int().positive(),
-  idImagen: z.coerce.number().int().positive(),
+  nombre_escuela: z.string().min(1),
 });
 
 export const cursoSchema = z.object({

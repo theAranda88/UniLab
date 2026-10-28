@@ -6,20 +6,10 @@
       <p class="escuelas-form__loading">{{ 'common.cargando' | translate }}</p>
     } @else {
       @if (error()) {
-        <p class="escuelas-form__error" role="alert">{{ error() | translate }}</p>
+        <p class="escuelas-form__error">{{ error() | translate }}</p>
       }
 
-      <form [formGroup]="formulario" (ngSubmit)="submit()" class="escuelas-form__body" novalidate>
-        <!-- Vista previa de la tarjeta con el color y el ícono elegidos -->
-        <div class="escuelas-form__preview" [style.--school-color]="estilo().color" aria-hidden="true">
-          <span class="escuelas-form__preview-icon">
-            <i class="ph-duotone {{ estilo().icono }}"></i>
-          </span>
-          <span class="escuelas-form__preview-name">
-            {{ formulario.controls.nombre_escuela.value || ('escuelas.nombre' | translate) }}
-          </span>
-        </div>
-
+      <form [formGroup]="formulario" (ngSubmit)="submit()" class="escuelas-form__body">
         <div class="form-group">
           <label for="nombre_escuela">{{ 'escuelas.nombre' | translate }} *</label>
           <input
@@ -27,126 +17,19 @@
             type="text"
             formControlName="nombre_escuela"
             class="form-control"
-            autocomplete="off"
-            [attr.aria-invalid]="invalido('nombre_escuela')"
+            [class.is-invalid]="formulario.controls.nombre_escuela.invalid && formulario.controls.nombre_escuela.touched"
           />
-          @if (invalido('nombre_escuela')) {
+          @if (formulario.controls.nombre_escuela.invalid && formulario.controls.nombre_escuela.touched) {
             <span class="error-text">{{ 'validation.requerido' | translate }}</span>
           }
         </div>
-
-        <div class="form-group">
-          <label for="descripcion">{{ 'escuelas.descripcion' | translate }}</label>
-          <textarea
-            id="descripcion"
-            rows="4"
-            formControlName="descripcion"
-            class="form-control"
-            [maxlength]="maxDescripcion"
-            [placeholder]="'escuelas.descripcionPlaceholder' | translate"
-            [attr.aria-invalid]="invalido('descripcion')"
-          ></textarea>
-          <span class="escuelas-form__hint">
-            {{ formulario.controls.descripcion.value.length }}/{{ maxDescripcion }}
-          </span>
-        </div>
-
-        <div class="form-group">
-          <label for="id_encargado">{{ 'escuelas.encargado' | translate }}</label>
-          <select id="id_encargado" formControlName="id_encargado" class="form-control">
-            <option [ngValue]="null">{{ 'escuelas.sinEncargado' | translate }}</option>
-            @for (profesor of opcionesEncargado(); track profesor.id_usuario) {
-              <option [ngValue]="profesor.id_usuario">{{ profesor.nombres }} {{ profesor.apellidos }}</option>
-            }
-          </select>
-          <span class="escuelas-form__hint">{{ 'escuelas.encargadoHint' | translate }}</span>
-        </div>
-
-        <!-- Color de identidad -->
-        <fieldset class="escuelas-form__fieldset">
-          <legend>{{ 'escuelas.color' | translate }}</legend>
-          <div class="escuelas-form__swatches">
-            <button
-              type="button"
-              class="escuelas-form__auto"
-              [class.is-active]="!formulario.controls.color.value"
-              [attr.aria-pressed]="!formulario.controls.color.value"
-              (click)="elegirColor(null)"
-            >
-              {{ 'escuelas.automatico' | translate }}
-            </button>
-            @for (color of colores; track color) {
-              <button
-                type="button"
-                class="escuelas-form__swatch"
-                [style.background]="color"
-                [class.is-active]="formulario.controls.color.value === color"
-                [attr.aria-pressed]="formulario.controls.color.value === color"
-                [attr.aria-label]="color"
-                [attr.title]="color"
-                (click)="elegirColor(color)"
-              ></button>
-            }
-            <label class="escuelas-form__custom" [attr.title]="'escuelas.colorPersonalizado' | translate">
-              <input
-                type="color"
-                [value]="estilo().color"
-                (input)="elegirColor($any($event.target).value)"
-                [attr.aria-label]="'escuelas.colorPersonalizado' | translate"
-              />
-              <i class="ti ti-color-picker" aria-hidden="true"></i>
-            </label>
-          </div>
-        </fieldset>
-
-        <!-- Ícono -->
-        <fieldset class="escuelas-form__fieldset">
-          <legend>{{ 'escuelas.icono' | translate }}</legend>
-          <div class="escuelas-form__iconos" [style.--school-color]="estilo().color">
-            <button
-              type="button"
-              class="escuelas-form__auto"
-              [class.is-active]="!formulario.controls.icono.value"
-              [attr.aria-pressed]="!formulario.controls.icono.value"
-              (click)="elegirIcono(null)"
-            >
-              {{ 'escuelas.automatico' | translate }}
-            </button>
-            @for (icono of iconos; track icono) {
-              <button
-                type="button"
-                class="escuelas-form__icono"
-                [class.is-active]="formulario.controls.icono.value === icono"
-                [attr.aria-pressed]="formulario.controls.icono.value === icono"
-                [attr.aria-label]="icono"
-                [attr.title]="icono"
-                (click)="elegirIcono(icono)"
-              >
-                <i class="ph-duotone {{ icono }}" aria-hidden="true"></i>
-              </button>
-            }
-          </div>
-        </fieldset>
-
-        <!-- Imágenes -->
-        <fieldset class="escuelas-form__fieldset">
-          <legend>{{ 'escuelas.imagenes.titulo' | translate }}</legend>
-          <app-image-uploader
-            [guardadas]="imagenesGuardadas()"
-            [(pendientes)]="imagenesPendientes"
-            [max]="maxImagenes"
-            [disabled]="enviando()"
-            [alt]="formulario.controls.nombre_escuela.value"
-            (eliminar)="eliminarImagen($event)"
-          />
-        </fieldset>
 
         <div class="escuelas-form__actions">
           <button type="button" class="btn btn-secondary" (click)="cancelar()">
             {{ 'common.cancelar' | translate }}
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="enviando()">
-            {{ enviando() ? ('common.guardando' | translate) : ('common.guardar' | translate) }}
+            {{ enviando() ? ('common.cargando' | translate) : ('common.guardar' | translate) }}
           </button>
         </div>
       </form>

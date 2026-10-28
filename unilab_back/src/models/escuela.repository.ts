@@ -2,18 +2,11 @@ import { prisma } from './prisma.client';
 import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
-/** Cursos, encargado (solo datos públicos) e imágenes activas en orden. */
-const includeEscuela = {
-  cursos: { where: activo },
-  encargado: { select: { id_usuario: true, nombres: true, apellidos: true } },
-  imagenes: { where: activo, orderBy: { orden: 'asc' } },
-} satisfies Prisma.escuelasInclude;
-
 export const escuelaRepository = {
   findMany() {
     return prisma.escuelas.findMany({
       where: activo,
-      include: includeEscuela,
+      include: { cursos: { where: activo } },
       orderBy: { id_escuela: 'asc' },
     });
   },
@@ -21,7 +14,7 @@ export const escuelaRepository = {
   findById(id: number) {
     return prisma.escuelas.findFirst({
       where: { id_escuela: id, ...activo },
-      include: includeEscuela,
+      include: { cursos: { where: activo } },
     });
   },
 
@@ -33,19 +26,11 @@ export const escuelaRepository = {
   },
 
   create(data: Prisma.escuelasCreateInput) {
-    return prisma.escuelas.create({ data, include: includeEscuela });
+    return prisma.escuelas.create({ data });
   },
 
   update(id: number, data: Prisma.escuelasUpdateInput) {
-    return prisma.escuelas.update({ where: { id_escuela: id }, data, include: includeEscuela });
-  },
-
-  /** Usuario activo con rol Profesor que puede quedar como encargado de una escuela. */
-  findEncargadoValido(id_usuario: number) {
-    return prisma.usuarios.findFirst({
-      where: { id_usuario, activo: true, ...activo, rol: { nombre_rol: 'Profesor' } },
-      select: { id_usuario: true },
-    });
+    return prisma.escuelas.update({ where: { id_escuela: id }, data });
   },
 
   softDelete(id: number) {

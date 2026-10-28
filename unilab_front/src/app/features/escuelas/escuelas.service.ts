@@ -1,12 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import type {
-  ActualizarEscuelaDto,
-  CrearEscuelaDto,
-  EscuelaAdmin,
-  EscuelaImagen,
-} from '../../core/models/escuela.model';
+import type { ActualizarEscuelaDto, CrearEscuelaDto, EscuelaAdmin } from '../../core/models/escuela.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getEscuelasBasePath } from '../../core/config/escuelas-paths';
 
@@ -42,17 +37,5 @@ export class EscuelasService {
 
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
-  subirImagenes(id: number, files: File[]): Observable<EscuelaImagen[]> {
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append('imagenes', file);
-    }
-    return this.http.post<EscuelaImagen[]>(`${this.apiUrl}/${id}/imagenes`, formData);
-  }
-
-  eliminarImagen(idEscuela: number, idImagen: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${idEscuela}/imagenes/${idImagen}`);
   }
 }

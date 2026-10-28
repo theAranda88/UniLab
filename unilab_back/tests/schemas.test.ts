@@ -5,8 +5,6 @@ import {
   cambiarMiPasswordSchema,
   consultaUsuariosSchema,
   cursoUpdateSchema,
-  escuelaSchema,
-  escuelaUpdateSchema,
   proyectoSchema,
   semilleroUpdateSchema,
 } from '../src/middlewares/validation/schemas';
@@ -141,33 +139,5 @@ describe('cambiarMiPasswordSchema', () => {
     expect(
       cambiarMiPasswordSchema.safeParse({ password_actual: 'Password123!', nueva_password: 'NuevaClave2026' }).success,
     ).toBe(true);
-  });
-});
-
-describe('escuelaSchema', () => {
-  it('acepta la información completa de la escuela', () => {
-    const r = escuelaSchema.parse({
-      nombre_escuela: '  Software  ',
-      descripcion: 'Desarrollo de software',
-      color: '#2563EB',
-      icono: 'ph-code',
-      id_encargado: 10,
-    });
-    expect(r.nombre_escuela).toBe('Software');
-  });
-
-  it('rechaza color e ícono con formato inválido', () => {
-    expect(escuelaSchema.safeParse({ nombre_escuela: 'A', color: 'azul' }).success).toBe(false);
-    expect(escuelaSchema.safeParse({ nombre_escuela: 'A', color: '#12345' }).success).toBe(false);
-    expect(escuelaSchema.safeParse({ nombre_escuela: 'A', icono: 'ti-code' }).success).toBe(false);
-  });
-
-  it('la descripción vacía se guarda como null', () => {
-    expect(escuelaSchema.parse({ nombre_escuela: 'A', descripcion: '   ' }).descripcion).toBeNull();
-  });
-
-  it('en la actualización exige al menos un campo y permite quitar el encargado', () => {
-    expect(escuelaUpdateSchema.safeParse({}).success).toBe(false);
-    expect(escuelaUpdateSchema.parse({ id_encargado: null }).id_encargado).toBeNull();
   });
 });

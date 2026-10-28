@@ -4,9 +4,8 @@ import { Observable } from 'rxjs';
 import type { CalificacionProyecto, ComentarioProyecto } from '../../core/models/portal.model';
 
 /**
- * Calificar y comentar proyectos publicados. Usa los endpoints del backend
- * (PUT /proyectos/:id/calificacion, POST /proyectos/:id/comentarios, DELETE /comentarios/:id),
- * que exigen sesión.
+ * Calificar y comentar proyectos publicados. Usa los endpoints existentes del backend
+ * (PUT /proyectos/:id/calificacion, POST /proyectos/:id/comentarios), que exigen sesión.
  */
 @Injectable({ providedIn: 'root' })
 export class ProyectoInteraccionService {
@@ -24,10 +23,5 @@ export class ProyectoInteraccionService {
       contenido,
       ...(idPadre ? { id_comentario_padre: idPadre } : {}),
     });
-  }
-
-  /** Borrado lógico; solo el autor (o el administrador) puede eliminar el comentario. */
-  eliminarComentario(idComentario: number): Observable<void> {
-    return this.http.delete<void>(`http://localhost:3000/api/comentarios/${idComentario}`);
   }
 }
