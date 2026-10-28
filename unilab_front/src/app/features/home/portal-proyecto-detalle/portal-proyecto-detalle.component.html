@@ -91,7 +91,7 @@
           </section>
         }
 
-        <!-- Comentarios (funcionalidad existente: POST /proyectos/:id/comentarios) -->
+        <!-- Comentarios: POST /proyectos/:id/comentarios y DELETE /comentarios/:id (solo los propios) -->
         <section class="pd-section" aria-labelledby="pd-comments">
           <h2 id="pd-comments" class="pd-section__title">
             {{ 'home.comments.title' | translate }}
@@ -105,25 +105,57 @@
               @for (hilo of hilos(); track hilo.comentario.id_comentario) {
                 <li class="pd-comment">
                   <p class="pd-comment__meta">
-                    <strong>{{ (esMio(hilo.comentario) ? 'home.comments.you' : 'home.comments.member') | translate }}</strong>
+                    <strong>{{ autor(hilo.comentario) ?? ('home.comments.member' | translate) }}</strong>
+                    @if (esMio(hilo.comentario)) {
+                      <span class="pd-comment__you">{{ 'home.comments.you' | translate }}</span>
+                    }
                     <time [attr.datetime]="hilo.comentario.fecha_comentario">{{ hilo.comentario.fecha_comentario | date: 'medium' }}</time>
                   </p>
                   <p class="pd-comment__text">{{ hilo.comentario.contenido }}</p>
-                  @if (isLoggedIn() && respondiendoA() !== hilo.comentario.id_comentario) {
-                    <button type="button" class="pd-reply-btn" (click)="abrirRespuesta(hilo.comentario.id_comentario)">
-                      <i class="ti ti-arrow-back-up" aria-hidden="true"></i>
-                      {{ 'home.comments.reply' | translate }}
-                    </button>
-                  }
+                  <div class="pd-comment__actions">
+                    @if (isLoggedIn() && respondiendoA() !== hilo.comentario.id_comentario) {
+                      <button type="button" class="pd-reply-btn" (click)="abrirRespuesta(hilo.comentario.id_comentario)">
+                        <i class="ti ti-arrow-back-up" aria-hidden="true"></i>
+                        {{ 'home.comments.reply' | translate }}
+                      </button>
+                    }
+                    @if (esMio(hilo.comentario)) {
+                      <button
+                        type="button"
+                        class="pd-reply-btn pd-reply-btn--danger"
+                        [disabled]="eliminandoComentario() === hilo.comentario.id_comentario"
+                        (click)="eliminarComentario(hilo.comentario)"
+                      >
+                        <i class="ti ti-trash" aria-hidden="true"></i>
+                        {{ 'home.comments.delete' | translate }}
+                      </button>
+                    }
+                  </div>
                   @if (hilo.respuestas.length > 0) {
                     <ol class="pd-comments pd-comments--replies">
                       @for (r of hilo.respuestas; track r.id_comentario) {
                         <li class="pd-comment">
                           <p class="pd-comment__meta">
-                            <strong>{{ (esMio(r) ? 'home.comments.you' : 'home.comments.member') | translate }}</strong>
+                            <strong>{{ autor(r) ?? ('home.comments.member' | translate) }}</strong>
+                            @if (esMio(r)) {
+                              <span class="pd-comment__you">{{ 'home.comments.you' | translate }}</span>
+                            }
                             <time [attr.datetime]="r.fecha_comentario">{{ r.fecha_comentario | date: 'medium' }}</time>
                           </p>
                           <p class="pd-comment__text">{{ r.contenido }}</p>
+                          @if (esMio(r)) {
+                            <div class="pd-comment__actions">
+                              <button
+                                type="button"
+                                class="pd-reply-btn pd-reply-btn--danger"
+                                [disabled]="eliminandoComentario() === r.id_comentario"
+                                (click)="eliminarComentario(r)"
+                              >
+                                <i class="ti ti-trash" aria-hidden="true"></i>
+                                {{ 'home.comments.delete' | translate }}
+                              </button>
+                            </div>
+                          }
                         </li>
                       }
                     </ol>

@@ -5,23 +5,28 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
-import {
-  estiloEscuela,
-  type Curso,
-  type Escuela,
-  type ProyectoPublico,
-} from '../../../core/models/portal.model';
+import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
+import type { Curso, Escuela, ProyectoPublico } from '../../../core/models/portal.model';
+import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 
 /**
- * Pantalla 22 · Portal — una escuela, sus programas y sus proyectos publicados.
+ * Pantalla 22 · Portal — una escuela (descripción, color e imágenes), sus programas y sus
+ * proyectos publicados.
  * Escucha el parámetro de ruta: al pasar de una escuela a otra el componente se reutiliza.
  */
 @Component({
   selector: 'app-portal-escuela-proyectos',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, ProyectoCardComponent, EmptyStateComponent, SkeletonComponent],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    ProyectoCardComponent,
+    ProjectImageCarouselComponent,
+    EmptyStateComponent,
+    SkeletonComponent,
+  ],
   templateUrl: './portal-escuela-proyectos.component.html',
   styleUrl: './portal-escuela-proyectos.component.scss',
 })
@@ -39,12 +44,15 @@ export class PortalEscuelaProyectosComponent {
   readonly filtroTipo = signal<string | null>(null);
 
   readonly escuela = computed(() => this.escuelas().find((e) => e.id_escuela === this.idEscuela()) ?? null);
-  readonly estilo = computed(() => estiloEscuela(this.escuela()?.nombre_escuela ?? ''));
+  readonly estilo = computed(() => estiloDeEscuela(this.escuela()));
+  readonly imagenes = computed(() =>
+    [...(this.escuela()?.imagenes ?? [])].sort((a, b) => a.orden - b.orden).map((img) => img.url),
+  );
 
   readonly otrasEscuelas = computed(() =>
     this.escuelas()
       .filter((e) => e.id_escuela !== this.idEscuela())
-      .map((e) => ({ escuela: e, estilo: estiloEscuela(e.nombre_escuela) })),
+      .map((e) => ({ escuela: e, estilo: estiloDeEscuela(e) })),
   );
 
   /** Tipos de proyecto presentes en esta escuela (el filtro solo aparece si hay más de uno). */

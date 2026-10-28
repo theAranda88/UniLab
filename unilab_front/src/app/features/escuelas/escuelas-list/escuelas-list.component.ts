@@ -6,7 +6,8 @@ import { catchError, forkJoin, map, of } from 'rxjs';
 import { EscuelasService } from '../escuelas.service';
 import { PublicPortalService } from '../../home/public-portal.service';
 import type { EscuelaAdmin } from '../../../core/models/escuela.model';
-import type { Curso } from '../../../core/models/portal.model';
+import type { Curso, EscuelaEstilo } from '../../../core/models/portal.model';
+import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { DialogService } from '../../../shared/ui/dialog/dialog.service';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
@@ -14,11 +15,13 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
 
 interface EscuelaCard {
   escuela: EscuelaAdmin;
+  estilo: EscuelaEstilo;
+  encargado: string | null;
   cursos: string[];
   proyectos: number;
 }
 
-/** Pantalla 09 · Escuelas — tarjetas con sus cursos y proyectos publicados. */
+/** Pantalla 09 · Escuelas — tarjetas con su color, ícono, encargado, cursos y proyectos publicados. */
 @Component({
   selector: 'app-escuelas-list',
   standalone: true,
@@ -46,6 +49,8 @@ export class EscuelasListComponent implements OnInit {
   readonly cards = computed<EscuelaCard[]>(() =>
     this.escuelas().map((escuela) => ({
       escuela,
+      estilo: estiloDeEscuela(escuela),
+      encargado: escuela.encargado ? `${escuela.encargado.nombres} ${escuela.encargado.apellidos}` : null,
       cursos: (this.cursosPorEscuela()[escuela.id_escuela] ?? []).map((c) => c.nombre_curso),
       proyectos: this.proyectosPorEscuela()[escuela.id_escuela] ?? 0,
     })),
