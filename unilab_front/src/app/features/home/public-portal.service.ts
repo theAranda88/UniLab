@@ -10,7 +10,9 @@ import type {
   Asistencia,
 } from '../../core/models/evento.model';
 
-const API = 'http://localhost:3000/api/public';
+import { environment } from '../../../environments/environment';
+
+const API = `${environment.apiUrl}/public`;
 
 @Injectable({ providedIn: 'root' })
 export class PublicPortalService {

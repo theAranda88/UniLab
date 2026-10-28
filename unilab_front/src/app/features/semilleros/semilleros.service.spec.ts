@@ -3,8 +3,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { SemillerosService } from './semilleros.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api/semilleros';
+const API = `${environment.apiUrl}/semilleros`;
 
 describe('SemillerosService', () => {
   let service: SemillerosService;
@@ -76,7 +77,7 @@ describe('SemillerosService', () => {
     const subir = http.expectOne(`${API}/2/portada`);
     expect(subir.request.method).toBe('PUT');
     expect(subir.request.body instanceof FormData).toBe(true);
-    subir.flush({ url_foto_portada: 'http://localhost:3000/uploads/semilleros/2/p.webp' });
+    subir.flush({ url_foto_portada: `${environment.apiUrl.replace(/\/api\/?$/, '')}/uploads/semilleros/2/p.webp` });
 
     service.eliminarPortada(2).subscribe();
     expect(http.expectOne(`${API}/2/portada`).request.method).toBe('DELETE');

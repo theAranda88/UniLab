@@ -3,8 +3,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ConfiguracionService } from './configuracion.service';
 import type { ConfiguracionSistema } from '../../core/models/configuracion.model';
+import { environment } from '../../../environments/environment';
 
-const PUBLICA = 'http://localhost:3000/api/public/configuracion';
+const PUBLICA = `${environment.apiUrl}/public/configuracion`;
 
 describe('ConfiguracionService', () => {
   let service: ConfiguracionService;
@@ -57,7 +58,7 @@ describe('ConfiguracionService', () => {
       .flush({ registro_abierto: true, semilleros_solicitudes_abiertas: true, mensaje_portal: '' });
 
     service.actualizar({ registro_abierto: false }).subscribe();
-    const patch = http.expectOne('http://localhost:3000/api/configuracion');
+    const patch = http.expectOne(`${environment.apiUrl}/configuracion`);
     expect(patch.request.method).toBe('PATCH');
     expect(patch.request.body).toEqual({ registro_abierto: false });
     patch.flush({});

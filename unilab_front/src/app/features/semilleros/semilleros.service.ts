@@ -11,6 +11,7 @@ import type {
 } from '../../core/models/semillero.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getShellPrefix } from '../../core/config/role-redirect';
+import { environment } from '../../../environments/environment';
 
 /** RF-015 / RA-010 · Semilleros: CRUD (admin), membresía (estudiante) y resolución (profesor líder). */
 export const MAX_EVIDENCIAS_SEMILLERO = 10;
@@ -19,7 +20,7 @@ export const MAX_EVIDENCIAS_SEMILLERO = 10;
 export class SemillerosService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
-  private apiUrl = 'http://localhost:3000/api/semilleros';
+  private apiUrl = `${environment.apiUrl}/semilleros`;
 
   /** Ruta base del listado en el panel del rol actual (p. ej. /admin/semilleros). */
   getBasePath(): string {

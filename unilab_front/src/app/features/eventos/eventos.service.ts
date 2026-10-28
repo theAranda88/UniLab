@@ -16,6 +16,7 @@ import {
 } from '../../core/models/evento.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getEventosBasePath } from '../../core/config/eventos-paths';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -23,9 +24,9 @@ import { getEventosBasePath } from '../../core/config/eventos-paths';
 export class EventosService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private apiUrl = 'http://localhost:3000/api/eventos';
-  private jornadasUrl = 'http://localhost:3000/api/jornadas';
-  private inscripcionesUrl = 'http://localhost:3000/api/inscripciones';
+  private apiUrl = `${environment.apiUrl}/eventos`;
+  private jornadasUrl = `${environment.apiUrl}/jornadas`;
+  private inscripcionesUrl = `${environment.apiUrl}/inscripciones`;
 
   getBasePath(): string {
     return getEventosBasePath(this.authService.getCurrentUser()?.id_rol);

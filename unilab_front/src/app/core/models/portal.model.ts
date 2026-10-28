@@ -135,11 +135,13 @@ export function urlsImagenesProyecto(proyecto: Pick<ProyectoPublico, 'imagenes' 
   return proyecto.url_imagen ? [proyecto.url_imagen] : [];
 }
 
+import { environment } from '../../../environments/environment';
+
 function resolverUrlImagen(ruta?: string | null): string {
   if (!ruta) return '';
   if (ruta.startsWith('http')) return ruta;
-  const base = 'http://localhost:3000';
-  return `${base}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
+  const origin = environment.apiUrl.replace(/\/api\/?$/, '');
+  return `${origin}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
 }
 
 export type EscuelaThemeKey =

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { UsuariosService } from './usuarios.service';
+import { environment } from '../../../environments/environment';
 
 describe('UsuariosService (consultas de solo lectura)', () => {
   let service: UsuariosService;
@@ -19,7 +20,7 @@ describe('UsuariosService (consultas de solo lectura)', () => {
 
   it('consultar envía solo los filtros indicados', () => {
     service.consultar({ rol: 'Profesor', id_escuela: 3 }).subscribe();
-    const req = http.expectOne((r) => r.url === 'http://localhost:3000/api/usuarios/consulta');
+    const req = http.expectOne((r) => r.url === `${environment.apiUrl}/usuarios/consulta`);
     expect(req.request.method).toBe('GET');
     expect(req.request.params.get('rol')).toBe('Profesor');
     expect(req.request.params.get('id_escuela')).toBe('3');
@@ -30,7 +31,7 @@ describe('UsuariosService (consultas de solo lectura)', () => {
   it('estudiantesDeProfesor consulta el endpoint del profesor autenticado', () => {
     service.estudiantesDeProfesor().subscribe((r) => expect(r.estudiantes).toEqual([]));
     http
-      .expectOne('http://localhost:3000/api/profesores/me/estudiantes')
+      .expectOne(`${environment.apiUrl}/profesores/me/estudiantes`)
       .flush({ estudiantes: [], semilleros: [], proyectos: [] });
   });
 });
