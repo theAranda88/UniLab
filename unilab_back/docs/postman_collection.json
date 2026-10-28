@@ -719,6 +719,36 @@
           }
         },
         {
+          "name": "Listar evidencias semillero",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/evidencias"
+          }
+        },
+        {
+          "name": "Subir evidencias semillero",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "evidencias", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/semilleros/1/evidencias",
+            "description": "Solo Administrador. Hasta 10 imágenes por semillero."
+          }
+        },
+        {
+          "name": "Eliminar evidencia semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/evidencias/1",
+            "description": "Solo Administrador."
+          }
+        },
+        {
           "name": "Solicitar membresía",
           "request": {
             "method": "POST",

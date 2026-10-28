@@ -777,6 +777,71 @@ export const paths = {
       responses: { 204: { description: 'Portada eliminada' }, ...err },
     },
   },
+  '/semilleros/{id}/evidencias': {
+    get: {
+      tags: ['Semilleros'],
+      summary: 'Listar evidencias del semillero',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Galería ordenada',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/SemilleroEvidenciaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+    post: {
+      tags: ['Semilleros'],
+      summary: 'Subir evidencias al semillero',
+      description:
+        '**Rol requerido:** Administrador. Multipart con campo `evidencias` (hasta 10 imágenes JPEG/PNG/WebP, 5 MB c/u).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['evidencias'],
+              properties: {
+                evidencias: { type: 'array', items: { type: 'string', format: 'binary' } },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Evidencias registradas',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/SemilleroEvidenciaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
+  '/semilleros/{id}/evidencias/{idEvidencia}': {
+    delete: {
+      tags: ['Semilleros'],
+      summary: 'Eliminar evidencia del semillero',
+      description: '**Rol requerido:** Administrador (soft-delete y reordenación).',
+      parameters: [paramId, { name: 'idEvidencia', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Evidencia eliminada' }, ...err },
+    },
+  },
 
   // ─── EVENTOS ────────────────────────────────────────────────────────────────
   '/eventos': {

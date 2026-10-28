@@ -266,6 +266,8 @@ export const evidenciaJornadaParamSchema = z.object({
   idEvidencia: z.coerce.number().int().positive(),
 });
 
+export const evidenciaSemilleroParamSchema = evidenciaJornadaParamSchema;
+
 export const actualizarProyectoSchema = proyectoBaseSchema.partial().superRefine((data, ctx) => {
   if (!data.tipo_proyecto) return;
   validarUrlsPorTipoProyecto(data.tipo_proyecto, data, ctx);

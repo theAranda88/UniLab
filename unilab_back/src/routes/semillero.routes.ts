@@ -13,8 +13,10 @@ import {
   asignarProfesorSemilleroSchema,
   solicitudMembresiaSchema,
   resolverMembresiaSchema,
+  evidenciaSemilleroParamSchema,
 } from '../middlewares/validation/schemas';
 import { subirPortadaSemillero } from '../middlewares/upload/subirPortadaSemillero.middleware';
+import { subirEvidenciasSemillero } from '../middlewares/upload/subirEvidenciasSemillero.middleware';
 
 const router = Router();
 
@@ -38,6 +40,25 @@ router.delete(
   ...admin,
   validate(idParamSchema, 'params'),
   semilleroController.eliminarPortada,
+);
+router.get(
+  '/:id/evidencias',
+  ...lectura,
+  validate(idParamSchema, 'params'),
+  semilleroController.listarEvidencias,
+);
+router.post(
+  '/:id/evidencias',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  subirEvidenciasSemillero,
+  semilleroController.subirEvidencias,
+);
+router.delete(
+  '/:id/evidencias/:idEvidencia',
+  ...admin,
+  validate(evidenciaSemilleroParamSchema, 'params'),
+  semilleroController.eliminarEvidencia,
 );
 router.post('/', ...admin, validate(semilleroSchema), semilleroController.crear);
 router.patch(

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { semilleroService } from '../services/semillero.service';
 import { semilleroPortadaService } from '../services/semillero-portada.service';
+import { semilleroEvidenciaService } from '../services/semillero-evidencia.service';
 
 export const semilleroController = {
   listar: asyncHandler(async (_req: Request, res: Response) => {
@@ -87,6 +88,27 @@ export const semilleroController = {
 
   eliminarPortada: asyncHandler(async (req: Request, res: Response) => {
     await semilleroPortadaService.eliminar(Number(req.params.id));
+    res.status(204).send();
+  }),
+
+  listarEvidencias: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await semilleroEvidenciaService.listar(Number(req.params.id)));
+  }),
+
+  subirEvidencias: asyncHandler(async (req: Request, res: Response) => {
+    const evidencias = await semilleroEvidenciaService.subir(
+      Number(req.params.id),
+      req.user!.id_usuario,
+      (req.files as Express.Multer.File[]) ?? [],
+    );
+    res.status(201).json(evidencias);
+  }),
+
+  eliminarEvidencia: asyncHandler(async (req: Request, res: Response) => {
+    await semilleroEvidenciaService.eliminar(
+      Number(req.params.id),
+      Number(req.params.idEvidencia),
+    );
     res.status(204).send();
   }),
 };

@@ -22,6 +22,7 @@ export const IMAGEN_EXTENSION_POR_MIME: Record<string, string> = {
 export const MAX_IMAGENES_POR_PROYECTO = 3;
 export const MAX_EVIDENCIAS_POR_JORNADA = 3;
 export const MAX_IMAGENES_POR_ESCUELA = 5;
+export const MAX_EVIDENCIAS_POR_SEMILLERO = 10;
 export const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
 
 export function carpetaProyecto(id_proyecto: number): string {
@@ -46,6 +47,14 @@ export function carpetaSemillero(id_semillero: number): string {
 
 export function rutaPublicaSemillero(id_semillero: number, nombreArchivo: string): string {
   return `/uploads/semilleros/${id_semillero}/${nombreArchivo}`;
+}
+
+export function carpetaSemilleroEvidencias(id_semillero: number): string {
+  return path.join(carpetaSemillero(id_semillero), 'evidencias');
+}
+
+export function rutaPublicaSemilleroEvidencia(id_semillero: number, nombreArchivo: string): string {
+  return `/uploads/semilleros/${id_semillero}/evidencias/${nombreArchivo}`;
 }
 
 export function carpetaEvento(id_evento: number): string {

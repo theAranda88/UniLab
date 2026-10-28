@@ -599,6 +599,18 @@ export const schemas = {
       foto_portada_ruta: { type: 'string', example: '/uploads/semilleros/1/portada-abc.webp' },
     },
   },
+  SemilleroEvidenciaResponse: {
+    type: 'object',
+    properties: {
+      id_evidencia: { type: 'integer', example: 1 },
+      id_semillero: { type: 'integer', example: 1 },
+      ruta_archivo: { type: 'string', example: '/uploads/semilleros/1/evidencias/abc.webp' },
+      url: { type: 'string', example: 'http://localhost:3000/uploads/semilleros/1/evidencias/abc.webp' },
+      nombre_original: { type: 'string', example: 'taller.webp' },
+      mime_type: { type: 'string', example: 'image/webp' },
+      orden: { type: 'integer', example: 1 },
+    },
+  },
   AsignarProfesorSemilleroRequest: {
     type: 'object',
     required: ['id_profesor'],
