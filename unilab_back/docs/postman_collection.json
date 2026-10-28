@@ -697,6 +697,28 @@
           }
         },
         {
+          "name": "Subir portada semillero",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "portada", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/semilleros/1/portada",
+            "description": "Solo Administrador. JPEG, PNG o WebP, máx. 5 MB."
+          }
+        },
+        {
+          "name": "Eliminar portada semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/portada",
+            "description": "Solo Administrador."
+          }
+        },
+        {
           "name": "Solicitar membresía",
           "request": {
             "method": "POST",

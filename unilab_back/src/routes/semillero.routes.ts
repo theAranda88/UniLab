@@ -14,6 +14,7 @@ import {
   solicitudMembresiaSchema,
   resolverMembresiaSchema,
 } from '../middlewares/validation/schemas';
+import { subirPortadaSemillero } from '../middlewares/upload/subirPortadaSemillero.middleware';
 
 const router = Router();
 
@@ -25,6 +26,19 @@ const lectura = [...auth] as const;
 
 router.get('/', ...lectura, semilleroController.listar);
 router.get('/:id', ...lectura, validate(idParamSchema, 'params'), semilleroController.obtener);
+router.put(
+  '/:id/portada',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  subirPortadaSemillero,
+  semilleroController.subirPortada,
+);
+router.delete(
+  '/:id/portada',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  semilleroController.eliminarPortada,
+);
 router.post('/', ...admin, validate(semilleroSchema), semilleroController.crear);
 router.patch(
   '/:id',

@@ -741,6 +741,42 @@ export const paths = {
       responses: { 200: { description: 'Autorización concedida' }, ...err },
     },
   },
+  '/semilleros/{id}/portada': {
+    put: {
+      tags: ['Semilleros'],
+      summary: 'Subir o reemplazar portada del semillero',
+      description: '**Rol requerido:** Administrador. Multipart con campo `portada` (JPEG, PNG o WebP, máx. 5 MB).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['portada'],
+              properties: {
+                portada: { type: 'string', format: 'binary' },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Portada actualizada',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/SemilleroPortadaResponse' } } },
+        },
+        ...err,
+      },
+    },
+    delete: {
+      tags: ['Semilleros'],
+      summary: 'Eliminar portada del semillero',
+      description: '**Rol requerido:** Administrador',
+      parameters: [paramId],
+      responses: { 204: { description: 'Portada eliminada' }, ...err },
+    },
+  },
 
   // ─── EVENTOS ────────────────────────────────────────────────────────────────
   '/eventos': {

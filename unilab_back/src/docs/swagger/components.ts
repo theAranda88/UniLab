@@ -567,6 +567,38 @@ export const schemas = {
       id_profesor_lider: { type: 'integer', example: 3, description: 'ID del profesor líder (profesor1@unilab.edu)' },
     },
   },
+  SemilleroResponse: {
+    type: 'object',
+    description: 'Semillero con relación escuela, líder, profesores y miembros.',
+    properties: {
+      id_semillero: { type: 'integer', example: 1 },
+      nombre_semillero: { type: 'string' },
+      descripcion: { type: 'string' },
+      id_escuela: { type: 'integer' },
+      id_profesor_lider: { type: 'integer' },
+      url_foto_portada: {
+        type: 'string',
+        nullable: true,
+        example: 'http://localhost:3000/uploads/semilleros/1/portada-abc.webp',
+      },
+      foto_portada_ruta: { type: 'string', nullable: true },
+      activo: { type: 'boolean' },
+      escuela: {
+        type: 'object',
+        properties: {
+          id_escuela: { type: 'integer' },
+          nombre_escuela: { type: 'string' },
+        },
+      },
+    },
+  },
+  SemilleroPortadaResponse: {
+    type: 'object',
+    properties: {
+      url_foto_portada: { type: 'string', example: 'http://localhost:3000/uploads/semilleros/1/portada-abc.webp' },
+      foto_portada_ruta: { type: 'string', example: '/uploads/semilleros/1/portada-abc.webp' },
+    },
+  },
   AsignarProfesorSemilleroRequest: {
     type: 'object',
     required: ['id_profesor'],

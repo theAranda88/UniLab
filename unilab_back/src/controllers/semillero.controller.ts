@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { semilleroService } from '../services/semillero.service';
+import { semilleroPortadaService } from '../services/semillero-portada.service';
 
 export const semilleroController = {
   listar: asyncHandler(async (_req: Request, res: Response) => {
@@ -74,5 +75,18 @@ export const semilleroController = {
       req.user!.id_usuario,
     );
     res.status(200).json(membresia);
+  }),
+
+  subirPortada: asyncHandler(async (req: Request, res: Response) => {
+    const resultado = await semilleroPortadaService.subir(
+      Number(req.params.id),
+      req.file as Express.Multer.File,
+    );
+    res.status(200).json(resultado);
+  }),
+
+  eliminarPortada: asyncHandler(async (req: Request, res: Response) => {
+    await semilleroPortadaService.eliminar(Number(req.params.id));
+    res.status(204).send();
   }),
 };
