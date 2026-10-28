@@ -37,6 +37,10 @@
             <dt>{{ 'home.schoolPage.programs' | translate }}</dt>
             <dd>{{ cursos().length }}</dd>
           </div>
+          <div>
+            <dt>{{ 'home.semilleros.titleShort' | translate }}</dt>
+            <dd>{{ semilleros().length }}</dd>
+          </div>
         </dl>
       }
     </div>
@@ -70,6 +74,35 @@
             </li>
           }
         </ul>
+      </section>
+    }
+
+    @if (semilleros().length > 0) {
+      <section class="school-semilleros" aria-labelledby="semilleros-school-title">
+        <h2 id="semilleros-school-title" class="school-page__h2">{{ 'home.semilleros.schoolTitle' | translate }}</h2>
+        <p class="school-semilleros__hint">{{ 'home.semilleros.schoolHint' | translate }}</p>
+        <div class="school-semilleros__grid">
+          @for (s of semilleros(); track s.id_semillero) {
+            <a class="semillero-card" [routerLink]="['/semilleros', s.id_semillero]">
+              @if (s.url_foto_portada) {
+                <img class="semillero-card__img" [src]="s.url_foto_portada" [alt]="s.nombre_semillero" />
+              } @else {
+                <span class="semillero-card__placeholder" aria-hidden="true">
+                  <i class="ti ti-flask"></i>
+                </span>
+              }
+              <span class="semillero-card__body">
+                <span class="semillero-card__name">{{ s.nombre_semillero }}</span>
+                <span class="semillero-card__meta">
+                  {{ 'home.semilleros.leader' | translate }}: {{ nombreLider(s) }}
+                </span>
+                <span class="semillero-card__meta">
+                  {{ 'home.semilleros.members' | translate: { count: s.total_miembros_aprobados } }}
+                </span>
+              </span>
+            </a>
+          }
+        </div>
       </section>
     }
 

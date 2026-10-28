@@ -6,7 +6,7 @@ import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
-import type { Curso, Escuela, ProyectoPublico } from '../../../core/models/portal.model';
+import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
@@ -38,6 +38,7 @@ export class PortalEscuelaProyectosComponent {
   readonly escuelas = signal<Escuela[]>([]);
   readonly idEscuela = signal<number | null>(null);
   readonly proyectos = signal<ProyectoPublico[]>([]);
+  readonly semilleros = signal<SemilleroPublico[]>([]);
   readonly cursos = signal<Curso[]>([]);
   readonly loading = signal(true);
   readonly loadError = signal(false);
@@ -88,6 +89,12 @@ export class PortalEscuelaProyectosComponent {
           forkJoin({
             proyectos: this.portal.listarProyectos(id),
             cursos: this.portal.listarCursos(id).pipe(catchError(() => of([] as Curso[]))),
+            semilleros: this.portal
+              .listarSemilleros({ idEscuela: id, limite: 50 })
+              .pipe(
+                map((resp) => resp.data),
+                catchError(() => of([] as SemilleroPublico[])),
+              ),
           }).pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(),
@@ -100,7 +107,12 @@ export class PortalEscuelaProyectosComponent {
         }
         this.proyectos.set(datos.proyectos);
         this.cursos.set(datos.cursos);
+        this.semilleros.set(datos.semilleros);
       });
+  }
+
+  nombreLider(s: SemilleroPublico): string {
+    return `${s.lider.nombres} ${s.lider.apellidos}`.trim();
   }
 
   setFiltroTipo(tipo: string | null): void {

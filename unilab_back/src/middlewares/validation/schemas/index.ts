@@ -266,6 +266,8 @@ export const evidenciaJornadaParamSchema = z.object({
   idEvidencia: z.coerce.number().int().positive(),
 });
 
+export const evidenciaSemilleroParamSchema = evidenciaJornadaParamSchema;
+
 export const actualizarProyectoSchema = proyectoBaseSchema.partial().superRefine((data, ctx) => {
   if (!data.tipo_proyecto) return;
   validarUrlsPorTipoProyecto(data.tipo_proyecto, data, ctx);
@@ -390,3 +392,9 @@ export const configuracionUpdateSchema = z
   .refine((data) => Object.keys(data).length > 0, {
     message: 'Debe enviar al menos un parámetro para actualizar',
   });
+
+export const publicoSemillerosQuerySchema = z.object({
+  id_escuela: z.coerce.number().int().positive().optional(),
+  pagina: z.coerce.number().int().positive().optional().default(1),
+  limite: z.coerce.number().int().min(1).max(50).optional().default(12),
+});

@@ -23,6 +23,16 @@ Las migraciones de Prisma se aplican solas al arrancar el contenedor `api`.
 | Swagger | http://localhost:3000/api-docs |
 | PostgreSQL | `localhost:5433` (`postgres` / `postgres`, BD `unilab`) |
 
+### Login con Google (OAuth)
+
+1. Copia el **Client ID** OAuth (tipo *Aplicación web*) en `.env` como `GOOGLE_CLIENT_ID` (debe coincidir con `unilab_front/src/app/core/config/google.config.ts`).
+2. En [Google Cloud Console](https://console.cloud.google.com/) → **APIs y servicios** → **Credenciales** → tu client ID → **Orígenes autorizados de JavaScript**, añade al menos:
+   - `http://localhost:8080` (portal con Docker)
+   - `http://localhost:4200` (solo si desarrollas el front con `npm start`)
+3. Mantén `CORS_ORIGINS=http://localhost:8080` en `.env` al usar Docker.
+
+Detalle del error *«The given origin is not allowed…»*: [docs/PENDIENTES-BACKEND.md](docs/PENDIENTES-BACKEND.md) §10.
+
 > Si ya tienes una base de datos levantada en otro puerto (p. ej. 5434), arranca con `POSTGRES_PORT=5434 docker compose up -d` para que Compose no la recree.
 
 Cuentas de prueba (contraseña `Password123!`):

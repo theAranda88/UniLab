@@ -97,4 +97,46 @@ export const semilleroRepository = {
       },
     });
   },
+
+  countPublicos(id_escuela?: number) {
+    return prisma.semilleros.count({
+      where: {
+        ...activo,
+        activo: true,
+        ...(id_escuela !== undefined ? { id_escuela } : {}),
+      },
+    });
+  },
+
+  findManyPublicos(params: { id_escuela?: number; skip: number; take: number }) {
+    const miembrosAprobados = { ...activo, estado_solicitud: 'aprobado' as const };
+    return prisma.semilleros.findMany({
+      where: {
+        ...activo,
+        activo: true,
+        ...(params.id_escuela !== undefined ? { id_escuela: params.id_escuela } : {}),
+      },
+      include: {
+        escuela: { select: { id_escuela: true, nombre_escuela: true } },
+        profesor_lider: { select: { nombres: true, apellidos: true } },
+        _count: { select: { miembros: { where: miembrosAprobados } } },
+      },
+      orderBy: { nombre_semillero: 'asc' },
+      skip: params.skip,
+      take: params.take,
+    });
+  },
+
+  findPublicoById(id: number) {
+    const miembrosAprobados = { ...activo, estado_solicitud: 'aprobado' as const };
+    return prisma.semilleros.findFirst({
+      where: { id_semillero: id, ...activo, activo: true },
+      include: {
+        escuela: { select: { id_escuela: true, nombre_escuela: true, color: true, icono: true } },
+        profesor_lider: { select: { nombres: true, apellidos: true } },
+        evidencias: { where: activo, orderBy: { orden: 'asc' } },
+        _count: { select: { miembros: { where: miembrosAprobados } } },
+      },
+    });
+  },
 };

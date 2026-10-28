@@ -36,6 +36,39 @@ export interface SemilleroResumen {
   id_profesor_lider?: number;
 }
 
+export interface SemilleroEvidenciaPublica {
+  id_evidencia: number;
+  url: string;
+  orden: number;
+  nombre_original?: string;
+}
+
+export interface SemilleroPublico {
+  id_semillero: number;
+  nombre_semillero: string;
+  descripcion: string;
+  url_foto_portada?: string | null;
+  escuela: {
+    id_escuela: number;
+    nombre_escuela: string;
+    color?: string | null;
+    icono?: string | null;
+  };
+  lider: UsuarioResumen;
+  total_miembros_aprobados: number;
+  evidencias?: SemilleroEvidenciaPublica[];
+}
+
+export interface SemillerosPublicosPaginados {
+  data: SemilleroPublico[];
+  paginacion: {
+    pagina: number;
+    limite: number;
+    total: number;
+    total_paginas: number;
+  };
+}
+
 export interface ProyectoAutor {
   rol_autor: string | null;
   estudiante: UsuarioResumen;
@@ -102,11 +135,13 @@ export function urlsImagenesProyecto(proyecto: Pick<ProyectoPublico, 'imagenes' 
   return proyecto.url_imagen ? [proyecto.url_imagen] : [];
 }
 
+import { environment } from '../../../environments/environment';
+
 function resolverUrlImagen(ruta?: string | null): string {
   if (!ruta) return '';
   if (ruta.startsWith('http')) return ruta;
-  const base = 'http://localhost:3000';
-  return `${base}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
+  const origin = environment.apiUrl.replace(/\/api\/?$/, '');
+  return `${origin}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
 }
 
 export type EscuelaThemeKey =

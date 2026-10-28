@@ -1,0 +1,77 @@
+<main class="sd" [style.--school-color]="estilo().color">
+  @if (loading()) {
+    <div class="sd__container"><app-skeleton variant="cards" [rows]="1" /></div>
+  } @else if (loadError()) {
+    <div class="sd__container">
+      <app-empty-state
+        icon="ti-cloud-off"
+        tone="error"
+        [title]="'common.loadErrorTitle' | translate"
+        [message]="'home.loadSemilleroError' | translate"
+      >
+        <a class="edu-btn edu-btn--secondary" routerLink="/" fragment="semilleros">
+          {{ 'home.semilleros.explore' | translate }}
+        </a>
+      </app-empty-state>
+    </div>
+  } @else if (semillero(); as s) {
+    <header class="sd-head">
+      <div class="sd__container sd-head__inner">
+        <nav class="sd-head__crumbs" [attr.aria-label]="'home.breadcrumb' | translate">
+          <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
+          <a [routerLink]="['/escuelas', s.escuela.id_escuela]">{{ s.escuela.nombre_escuela }}</a>
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
+          <span aria-current="page">{{ s.nombre_semillero }}</span>
+        </nav>
+
+        <span class="sd-head__kicker">{{ 'home.semilleros.kicker' | translate }}</span>
+        <h1 class="sd-head__title">{{ s.nombre_semillero }}</h1>
+
+        <ul class="sd-head__meta">
+          <li>
+            <i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+            {{ s.escuela.nombre_escuela }}
+          </li>
+          <li>
+            <i class="ti ti-user-star" aria-hidden="true"></i>
+            {{ 'home.semilleros.leader' | translate }}: {{ nombreLider(s) }}
+          </li>
+          <li>
+            <i class="ti ti-users" aria-hidden="true"></i>
+            {{ 'home.semilleros.members' | translate: { count: s.total_miembros_aprobados } }}
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="sd__container sd__body">
+      @if (s.url_foto_portada) {
+        <figure class="sd__portada">
+          <img [src]="s.url_foto_portada" [alt]="s.nombre_semillero" />
+        </figure>
+      }
+
+      @if (imagenesGaleria().length > 0) {
+        <section class="sd__gallery" aria-labelledby="sd-gallery-title">
+          <h2 id="sd-gallery-title" class="sd__h2">{{ 'home.semilleros.gallery' | translate }}</h2>
+          <app-project-image-carousel
+            [images]="imagenesGaleria()"
+            [alt]="s.nombre_semillero"
+            [zoomable]="true"
+          />
+        </section>
+      }
+
+      <section class="sd__about" aria-labelledby="sd-about-title">
+        <h2 id="sd-about-title" class="sd__h2">{{ 'home.semilleros.about' | translate }}</h2>
+        <p class="sd__text">{{ s.descripcion }}</p>
+      </section>
+
+      <button type="button" class="portal-sub__back" (click)="volverEscuela()">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i>
+        {{ 'home.semilleros.backSchool' | translate }}
+      </button>
+    </div>
+  }
+</main>

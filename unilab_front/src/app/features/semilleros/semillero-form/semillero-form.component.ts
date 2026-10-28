@@ -33,6 +33,10 @@ export class SemilleroFormComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly escuelas = signal<EscuelaAdmin[]>([]);
   readonly profesores = signal<UsuarioAdmin[]>([]);
+  readonly urlPortadaActual = signal<string | null>(null);
+  readonly portadaPendiente = signal<File | null>(null);
+  readonly portadaPreview = signal<string | null>(null);
+  readonly subiendoPortada = signal(false);
   private idSemillero: number | null = null;
 
   readonly formulario = this.fb.nonNullable.group({
@@ -84,6 +88,7 @@ export class SemilleroFormComponent implements OnInit {
           id_profesor_lider: s.id_profesor_lider,
           activo: s.activo,
         });
+        this.urlPortadaActual.set(s.url_foto_portada ?? null);
         this.cargando.set(false);
       },
       error: () => {
@@ -96,6 +101,58 @@ export class SemilleroFormComponent implements OnInit {
   invalido(campo: keyof typeof this.formulario.controls): boolean {
     const control = this.formulario.controls[campo];
     return control.invalid && control.touched;
+  }
+
+  onPortadaSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.portadaPendiente.set(file);
+    this.portadaPreview.set(URL.createObjectURL(file));
+  }
+
+  limpiarPortadaPendiente(): void {
+    this.portadaPendiente.set(null);
+    this.portadaPreview.set(null);
+  }
+
+  quitarPortadaActual(): void {
+    if (!this.idSemillero) return;
+    this.subiendoPortada.set(true);
+    this.semillerosService.eliminarPortada(this.idSemillero).subscribe({
+      next: () => {
+        this.urlPortadaActual.set(null);
+        this.limpiarPortadaPendiente();
+        this.subiendoPortada.set(false);
+        this.toast.success('semilleros.portadaExitoEliminar');
+      },
+      error: () => {
+        this.subiendoPortada.set(false);
+        this.error.set('semilleros.portadaError');
+      },
+    });
+  }
+
+  private subirPortadaSiHay(idSemillero: number, alTerminar: () => void): void {
+    const file = this.portadaPendiente();
+    if (!file) {
+      alTerminar();
+      return;
+    }
+    this.subiendoPortada.set(true);
+    this.semillerosService.subirPortada(idSemillero, file).subscribe({
+      next: (res) => {
+        this.urlPortadaActual.set(res.url_foto_portada);
+        this.limpiarPortadaPendiente();
+        this.subiendoPortada.set(false);
+        alTerminar();
+      },
+      error: () => {
+        this.subiendoPortada.set(false);
+        this.error.set('semilleros.portadaError');
+        this.enviando.set(false);
+      },
+    });
   }
 
   submit(): void {
@@ -113,12 +170,15 @@ export class SemilleroFormComponent implements OnInit {
         : this.semillerosService.crear(datos);
 
     request$.subscribe({
-      next: () => {
-        this.enviando.set(false);
-        this.toast.success(
-          this.modoEdicion() ? 'semilleros.exitoActualizar' : 'semilleros.exitoCrear',
-        );
-        this.router.navigate([this.semillerosService.getBasePath()]);
+      next: (semillero) => {
+        const id = this.idSemillero ?? semillero.id_semillero;
+        this.subirPortadaSiHay(id, () => {
+          this.enviando.set(false);
+          this.toast.success(
+            this.modoEdicion() ? 'semilleros.exitoActualizar' : 'semilleros.exitoCrear',
+          );
+          this.router.navigate([this.semillerosService.getBasePath()]);
+        });
       },
       error: (err: { message?: string }) => {
         this.enviando.set(false);

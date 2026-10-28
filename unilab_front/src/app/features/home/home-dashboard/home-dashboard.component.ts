@@ -19,7 +19,7 @@ import {
   FloatingBubblesComponent,
   type Burbuja,
 } from '../../../shared/ui/floating-bubbles/floating-bubbles.component';
-import type { Curso, Escuela, ProyectoPublico } from '../../../core/models/portal.model';
+import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { EventoCardComponent } from '../../../shared/ui/evento-card/evento-card.component';
@@ -95,6 +95,7 @@ export class HomeDashboardComponent implements OnInit {
   readonly cursosPorEscuela = signal<Record<number, Curso[]>>({});
   readonly eventos = signal<Evento[]>([]);
   readonly proyectos = signal<ProyectoPublico[]>([]);
+  readonly semilleros = signal<SemilleroPublico[]>([]);
 
   /** Los tres proyectos publicados más recientes de todas las escuelas. */
   readonly proyectosRecientes = computed(() =>
@@ -231,6 +232,9 @@ export class HomeDashboardComponent implements OnInit {
         this.proyectos.set(proyectos);
         this.reanclar();
       },
+    });
+    this.portal.listarSemilleros({ pagina: 1, limite: 6 }).subscribe({
+      next: (resp) => this.semilleros.set(resp.data),
     });
   }
 

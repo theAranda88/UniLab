@@ -11,8 +11,9 @@ import type {
 } from '../../core/models/proyecto.model';
 import type { Curso, ProyectoImagen } from '../../core/models/portal.model';
 import { getProyectosBasePath } from '../../core/config/proyectos-paths';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api';
+const API = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class ProyectosService {

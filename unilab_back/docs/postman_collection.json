@@ -657,6 +657,29 @@
             "url": "{{base_url}}/public/proyectos/{{id_proyecto}}",
             "description": "Registra una vista e incrementa `contador_vistas`."
           }
+        },
+        {
+          "name": "Listar semilleros públicos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/semilleros?id_escuela={{id_escuela}}&pagina=1&limite=12",
+              "host": ["{{base_url}}"],
+              "path": ["public", "semilleros"],
+              "query": [
+                { "key": "id_escuela", "value": "{{id_escuela}}" },
+                { "key": "pagina", "value": "1" },
+                { "key": "limite", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle semillero público",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/semilleros/1"
+          }
         }
       ]
     },
@@ -693,6 +716,58 @@
               "raw": "{\n  \"nombre_semillero\": \"Semillero de Prueba\",\n  \"descripcion\": \"Semillero creado desde Postman\",\n  \"id_escuela\": 5,\n  \"id_profesor_lider\": 3\n}"
             },
             "url": "{{base_url}}/semilleros",
+            "description": "Solo Administrador."
+          }
+        },
+        {
+          "name": "Subir portada semillero",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "portada", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/semilleros/1/portada",
+            "description": "Solo Administrador. JPEG, PNG o WebP, máx. 5 MB."
+          }
+        },
+        {
+          "name": "Eliminar portada semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/portada",
+            "description": "Solo Administrador."
+          }
+        },
+        {
+          "name": "Listar evidencias semillero",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/evidencias"
+          }
+        },
+        {
+          "name": "Subir evidencias semillero",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "evidencias", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/semilleros/1/evidencias",
+            "description": "Solo Administrador. Hasta 10 imágenes por semillero."
+          }
+        },
+        {
+          "name": "Eliminar evidencia semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/evidencias/1",
             "description": "Solo Administrador."
           }
         },

@@ -24,7 +24,7 @@ npm install
 npm start
 ```
 
-App en http://localhost:4200. La URL de la API está fijada en los servicios como `http://localhost:3000/api`.
+App en http://localhost:4200. La URL base de la API está en `src/environments/environment.ts` (`environment.apiUrl`, por defecto `http://localhost:3000/api`). En build de producción se usa `environment.prod.ts` vía `angular.json` → `fileReplacements`.
 
 ## Estructura de la app
 

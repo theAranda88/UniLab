@@ -61,8 +61,9 @@ describe('semilleroService', () => {
       m.escuelaRepository.findById.mockResolvedValue({ id_escuela: 2 });
       m.usuarioRepository.findById.mockResolvedValue(usuario('Profesor'));
       m.semilleroRepository.create.mockResolvedValue({ id_semillero: 3 });
+      m.semilleroRepository.findById.mockResolvedValue({ ...SEMILLERO, id_semillero: 3 });
 
-      await semilleroService.crear({
+      const result = await semilleroService.crear({
         nombre_semillero: 'IA',
         descripcion: 'd',
         id_escuela: 2,
@@ -73,6 +74,7 @@ describe('semilleroService', () => {
       expect(m.semilleroRepository.agregarProfesor).toHaveBeenCalledWith(
         expect.objectContaining({ es_lider: true, profesor: { connect: { id_usuario: 5 } } }),
       );
+      expect(result.id_semillero).toBe(3);
     });
   });
 
@@ -136,6 +138,7 @@ describe('semilleroService', () => {
       expect(m.semilleroRepository.agregarProfesor).toHaveBeenCalledWith(
         expect.objectContaining({ es_lider: true, profesor: { connect: { id_usuario: 20 } } }),
       );
+      expect(m.semilleroRepository.findById).toHaveBeenCalledWith(1);
     });
   });
 
