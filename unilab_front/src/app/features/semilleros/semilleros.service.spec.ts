@@ -69,4 +69,16 @@ describe('SemillerosService', () => {
     service.quitarProfesor(4, 9).subscribe();
     expect(http.expectOne(`${API}/4/profesores/9`).request.method).toBe('DELETE');
   });
+
+  it('sube y elimina la portada', () => {
+    const file = new File(['x'], 'portada.webp', { type: 'image/webp' });
+    service.subirPortada(2, file).subscribe();
+    const subir = http.expectOne(`${API}/2/portada`);
+    expect(subir.request.method).toBe('PUT');
+    expect(subir.request.body instanceof FormData).toBe(true);
+    subir.flush({ url_foto_portada: 'http://localhost:3000/uploads/semilleros/2/p.webp' });
+
+    service.eliminarPortada(2).subscribe();
+    expect(http.expectOne(`${API}/2/portada`).request.method).toBe('DELETE');
+  });
 });

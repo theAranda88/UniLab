@@ -81,6 +81,45 @@
           </div>
         </div>
 
+        <div class="form-group portada-group">
+          <label for="portada">{{ 'semilleros.portada' | translate }}</label>
+          <p class="semillero-form__hint">{{ 'semilleros.portadaHint' | translate }}</p>
+          @if (urlPortadaActual() && !portadaPreview()) {
+            <div class="image-preview-card">
+              <img [src]="urlPortadaActual()!" [alt]="'semilleros.portada' | translate" />
+              @if (modoEdicion()) {
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  [disabled]="subiendoPortada()"
+                  (click)="quitarPortadaActual()"
+                >
+                  {{ 'semilleros.portadaEliminar' | translate }}
+                </button>
+              }
+            </div>
+          }
+          @if (portadaPreview()) {
+            <div class="image-preview-card">
+              <img [src]="portadaPreview()!" [alt]="'semilleros.portada' | translate" />
+              <button type="button" class="btn btn-secondary btn-sm" (click)="limpiarPortadaPendiente()">
+                {{ 'common.cancelar' | translate }}
+              </button>
+            </div>
+          }
+          @if (!portadaPreview()) {
+            <label class="image-upload-zone" for="portada">
+              <span>{{ 'semilleros.portadaSeleccionar' | translate }}</span>
+              <input
+                id="portada"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                (change)="onPortadaSeleccionada($event)"
+              />
+            </label>
+          }
+        </div>
+
         @if (modoEdicion()) {
           <label class="semillero-form__check">
             <input type="checkbox" formControlName="activo" />
@@ -95,7 +134,7 @@
           <button type="button" class="btn btn-secondary" (click)="cancelar()">
             {{ 'common.cancelar' | translate }}
           </button>
-          <button type="submit" class="btn btn-primary" [disabled]="enviando()">
+          <button type="submit" class="btn btn-primary" [disabled]="enviando() || subiendoPortada()">
             {{ enviando() ? ('common.guardando' | translate) : ('common.guardar' | translate) }}
           </button>
         </div>

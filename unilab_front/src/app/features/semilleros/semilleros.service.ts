@@ -71,4 +71,14 @@ export class SemillerosService {
       {},
     );
   }
+
+  subirPortada(id: number, file: File): Observable<{ url_foto_portada: string }> {
+    const formData = new FormData();
+    formData.append('portada', file);
+    return this.http.put<{ url_foto_portada: string }>(`${this.apiUrl}/${id}/portada`, formData);
+  }
+
+  eliminarPortada(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}/portada`);
+  }
 }

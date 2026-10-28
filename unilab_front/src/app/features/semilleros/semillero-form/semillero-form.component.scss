@@ -1,5 +1,6 @@
 @use '../../../../styles/admin-pages' as pages;
 @use '../../../../styles/design-tokens' as t;
+@use '../../../../styles/eventos-ui' as ui;
 
 // RA-010 · Semillero — crear / editar
 .semillero-form {
@@ -38,5 +39,25 @@
       font-size: t.$font-size-label;
       color: t.$text-secondary;
     }
+  }
+}
+
+.portada-group {
+  .image-preview-card {
+    @include ui.image-preview-card;
+  }
+
+  .image-upload-zone {
+    @include ui.image-upload-zone;
+  }
+}
+
+.btn {
+  &.btn-secondary {
+    @include ui.btn-secondary;
+  }
+
+  &.btn-sm {
+    @include ui.btn-sm;
   }
 }

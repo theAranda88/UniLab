@@ -35,6 +35,8 @@ export interface Semillero {
   descripcion: string;
   id_escuela: number;
   id_profesor_lider: number;
+  url_foto_portada?: string | null;
+  foto_portada_ruta?: string | null;
   activo: boolean;
   escuela?: Escuela;
   profesor_lider?: UsuarioBasico;
