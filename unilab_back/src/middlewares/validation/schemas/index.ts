@@ -5,6 +5,72 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+/** zod 4 ejecuta los refine aunque el formato falle: el hostname se obtiene sin lanzar. */
+function hostnameDe(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+}
+
+/** URL http(s) opcional; cadena vacía o null borran el valor guardado. */
+const urlRed = (dominio?: RegExp, mensaje?: string) =>
+  z
+    .union([
+      z
+        .url({ protocol: /^https?$/, message: 'Debe ser una URL http(s) válida' })
+        .max(500)
+        .refine((v) => !dominio || dominio.test(hostnameDe(v)), { message: mensaje }),
+      z.literal(''),
+      z.null(),
+    ])
+    .transform((v) => (v ? v : null))
+    .optional();
+
+const redesContactoShape = {
+  url_linkedin: urlRed(/(^|\.)linkedin\.com$/i, 'Debe ser un enlace de linkedin.com'),
+  url_github: urlRed(/(^|\.)github\.com$/i, 'Debe ser un enlace de github.com'),
+  url_portafolio: urlRed(),
+};
+
+const telefonoSchema = z
+  .string()
+  .trim()
+  .regex(/^\+?[0-9][0-9\s-]{6,19}$/, 'Teléfono inválido: use entre 7 y 20 dígitos');
+
+/** PATCH /auth/me: datos que el propio usuario puede editar (no rol, email ni documento). */
+export const actualizarMiPerfilSchema = z
+  .object({
+    telefono: telefonoSchema.optional(),
+    profesion: z
+      .string()
+      .trim()
+      .max(255)
+      .transform((v) => v || null)
+      .nullable()
+      .optional(),
+    ...redesContactoShape,
+  })
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, { message: 'Envíe al menos un campo para actualizar' });
+
+export const cambiarMiPasswordSchema = z
+  .object({
+    password_actual: z.string().min(1),
+    nueva_password: z.string().min(8, 'La nueva contraseña debe tener al menos 8 caracteres').max(128),
+  })
+  .refine((d) => d.password_actual !== d.nueva_password, {
+    message: 'La nueva contraseña debe ser distinta de la actual',
+    path: ['nueva_password'],
+  });
+
+export const consultaUsuariosSchema = z.object({
+  rol: z.enum(['Profesor', 'Estudiante']).optional(),
+  id_escuela: z.coerce.number().int().positive().optional(),
+  busqueda: z.string().trim().max(100).optional(),
+});
+
 export const googleLoginSchema = z.object({
   credential: z.string().min(1),
 });
@@ -16,6 +82,7 @@ export const completarPerfilSchema = z.object({
   id_escuela: z.number().int().positive().optional(),
   institucion: z.string().optional(),
   ocupacion: z.string().optional(),
+  ...redesContactoShape,
 });
 
 export const registerSchema = z.object({
@@ -51,9 +118,11 @@ export const crearUsuarioSchema = z.object({
   codigo_estudiantil: z.string().optional(),
   id_escuela: z.number().int().positive().optional(),
   cargo: z.string().optional(),
+  profesion: z.string().trim().max(255).optional(),
   dependencia: z.string().optional(),
   institucion: z.string().optional(),
   ocupacion: z.string().optional(),
+  ...redesContactoShape,
 });
 
 export const actualizarUsuarioSchema = z.object({
@@ -67,9 +136,11 @@ export const actualizarUsuarioSchema = z.object({
   codigo_docente: z.string().optional(),
   codigo_estudiantil: z.string().optional(),
   cargo: z.string().optional(),
+  profesion: z.string().trim().max(255).optional(),
   dependencia: z.string().optional(),
   institucion: z.string().optional(),
   ocupacion: z.string().optional(),
+  ...redesContactoShape,
 });
 
 export const filtroUsuariosSchema = z.object({

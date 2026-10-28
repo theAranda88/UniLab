@@ -18,6 +18,25 @@ export const authController = {
     res.status(200).json(result);
   }),
 
+  me: asyncHandler(async (req: Request, res: Response) => {
+    const usuario = await authService.obtenerSesion(req.user!.id_usuario);
+    res.status(200).json(usuario);
+  }),
+
+  actualizarMiPerfil: asyncHandler(async (req: Request, res: Response) => {
+    const usuario = await authService.actualizarMiPerfil(req.user!, req.body);
+    res.status(200).json(usuario);
+  }),
+
+  cambiarMiPassword: asyncHandler(async (req: Request, res: Response) => {
+    const result = await authService.cambiarMiPassword(
+      req.user!.id_usuario,
+      req.body.password_actual,
+      req.body.nueva_password,
+    );
+    res.status(200).json(result);
+  }),
+
   register: asyncHandler(async (req: Request, res: Response) => {
     const result = await authService.register(req.body);
     res.status(201).json(result);

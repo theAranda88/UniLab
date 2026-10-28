@@ -1,0 +1,231 @@
+<div class="mi-perfil">
+  <header class="edu-page-header">
+    <div>
+      <p class="edu-page-header__kicker">{{ 'perfil.kicker' | translate }}</p>
+      <h1 class="edu-page-header__title">{{ 'perfil.titulo' | translate }}</h1>
+      <p class="edu-page-header__description">{{ 'perfil.descripcion' | translate }}</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="edu-alert edu-alert--warning mi-perfil__alert" role="alert">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+      <span>{{ error()! | translate }}</span>
+    </div>
+  }
+
+  @if (usuario(); as u) {
+    <section class="edu-card mi-perfil__identidad">
+      <span class="mi-perfil__avatar" aria-hidden="true">{{ iniciales() }}</span>
+      <div class="mi-perfil__quien">
+        <h2>{{ nombreCompleto() }}</h2>
+        <p>{{ u.email }}</p>
+        <span class="mi-perfil__rol">
+          <span class="edu-badge edu-badge--info">
+            <i class="ti ti-shield-check" aria-hidden="true"></i>{{ 'roles.' + u.id_rol | translate }}
+          </span>
+          <small>{{ 'perfil.rolHint' | translate }}</small>
+        </span>
+      </div>
+      <app-redes-contacto class="mi-perfil__redes-resumen" [redes]="u.redes" />
+    </section>
+
+    <div class="mi-perfil__grid">
+      <section class="edu-card">
+        <h3 class="mi-perfil__h3">
+          <i class="ti ti-id-badge-2" aria-hidden="true"></i>{{ 'perfil.datos' | translate }}
+        </h3>
+        <dl class="mi-perfil__datos">
+          <div>
+            <dt>{{ 'usuarios.rol' | translate }}</dt>
+            <dd>{{ 'roles.' + u.id_rol | translate }}</dd>
+          </div>
+          @for (fila of datos(); track fila.etiqueta) {
+            <div>
+              <dt>{{ fila.etiqueta | translate }}</dt>
+              <dd>{{ fila.valor }}</dd>
+            </div>
+          }
+        </dl>
+      </section>
+
+      <section class="edu-card">
+        <h3 class="mi-perfil__h3">
+          <i class="ti ti-flask" aria-hidden="true"></i>{{ 'perfil.semilleros' | translate }}
+          @if (u.semilleros?.length) {
+            <span class="mi-perfil__contador">{{ u.semilleros!.length }}</span>
+          }
+        </h3>
+        @if (u.semilleros?.length) {
+          <ul class="mi-perfil__semilleros">
+            @for (s of u.semilleros; track s.id_semillero) {
+              <li>
+                <span>{{ s.nombre_semillero }}</span>
+                <span class="edu-badge" [class.edu-badge--info]="s.rol_semillero === 'lider'">
+                  {{ 'perfil.rolSemillero.' + s.rol_semillero | translate }}
+                </span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="mi-perfil__vacio">{{ 'perfil.sinSemilleros' | translate }}</p>
+        }
+      </section>
+    </div>
+
+    <section class="edu-card">
+      <h3 class="mi-perfil__h3">
+        <i class="ti ti-address-book" aria-hidden="true"></i>{{ 'perfil.contacto' | translate }}
+      </h3>
+      <p class="mi-perfil__hint">{{ 'perfil.redes.hint' | translate }}</p>
+
+      <form class="mi-perfil__form" [formGroup]="form" (ngSubmit)="guardar()">
+        <label class="edu-field">
+          <span class="edu-field__label"><i class="ti ti-phone" aria-hidden="true"></i> {{ 'usuarios.telefono' | translate }} *</span>
+          <input
+            class="edu-control"
+            type="tel"
+            formControlName="telefono"
+            autocomplete="tel"
+            placeholder="+57 300 123 4567"
+            [attr.aria-invalid]="!!errorCampo('telefono')"
+          />
+          @if (errorCampo('telefono'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          }
+        </label>
+
+        @if (esCoordinador()) {
+          <label class="edu-field">
+            <span class="edu-field__label"><i class="ti ti-briefcase" aria-hidden="true"></i> {{ 'perfil.profesion' | translate }}</span>
+            <input
+              class="edu-control"
+              type="text"
+              formControlName="profesion"
+              maxlength="255"
+              [placeholder]="'perfil.profesionPlaceholder' | translate"
+              [attr.aria-invalid]="!!errorCampo('profesion')"
+            />
+            @if (errorCampo('profesion'); as e) {
+              <small class="edu-field__error">{{ e | translate }}</small>
+            }
+          </label>
+        }
+
+        <label class="edu-field">
+          <span class="edu-field__label"><i class="ti ti-brand-linkedin" aria-hidden="true"></i> LinkedIn</span>
+          <input
+            class="edu-control"
+            type="url"
+            formControlName="url_linkedin"
+            placeholder="https://www.linkedin.com/in/usuario"
+            [attr.aria-invalid]="!!errorCampo('url_linkedin')"
+          />
+          @if (errorCampo('url_linkedin'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          }
+        </label>
+        <label class="edu-field">
+          <span class="edu-field__label"><i class="ti ti-brand-github" aria-hidden="true"></i> GitHub</span>
+          <input
+            class="edu-control"
+            type="url"
+            formControlName="url_github"
+            placeholder="https://github.com/usuario"
+            [attr.aria-invalid]="!!errorCampo('url_github')"
+          />
+          @if (errorCampo('url_github'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          }
+        </label>
+        <label class="edu-field">
+          <span class="edu-field__label"><i class="ti ti-world" aria-hidden="true"></i> {{ 'perfil.redes.portafolio' | translate }}</span>
+          <input
+            class="edu-control"
+            type="url"
+            formControlName="url_portafolio"
+            placeholder="https://miportafolio.com"
+            [attr.aria-invalid]="!!errorCampo('url_portafolio')"
+          />
+          @if (errorCampo('url_portafolio'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          }
+        </label>
+
+        <div class="mi-perfil__acciones">
+          <button type="submit" class="edu-btn" [disabled]="guardando() || cargando() || form.pristine">
+            {{ (guardando() ? 'common.guardando' : 'common.guardar') | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="edu-card">
+      <h3 class="mi-perfil__h3">
+        <i class="ti ti-lock" aria-hidden="true"></i>{{ 'perfil.password.titulo' | translate }}
+      </h3>
+      <p class="mi-perfil__hint">{{ 'perfil.password.hint' | translate }}</p>
+
+      @if (errorPassword()) {
+        <div class="edu-alert edu-alert--warning mi-perfil__alert-form" role="alert">
+          <i class="ti ti-alert-circle" aria-hidden="true"></i>
+          <span>{{ errorPassword()! | translate }}</span>
+        </div>
+      }
+
+      <form class="mi-perfil__form" [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()">
+        <label class="edu-field">
+          <span class="edu-field__label">{{ 'perfil.password.actual' | translate }} *</span>
+          <input
+            class="edu-control"
+            [type]="mostrarPasswords() ? 'text' : 'password'"
+            formControlName="password_actual"
+            autocomplete="current-password"
+            [attr.aria-invalid]="!!errorPasswordCampo('password_actual')"
+          />
+          @if (errorPasswordCampo('password_actual'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          }
+        </label>
+        <label class="edu-field">
+          <span class="edu-field__label">{{ 'perfil.password.nueva' | translate }} *</span>
+          <input
+            class="edu-control"
+            [type]="mostrarPasswords() ? 'text' : 'password'"
+            formControlName="nueva_password"
+            autocomplete="new-password"
+            [attr.aria-invalid]="!!errorPasswordCampo('nueva_password')"
+          />
+          @if (errorPasswordCampo('nueva_password'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          } @else {
+            <small class="edu-field__hint">{{ 'perfil.password.errores.minimo' | translate }}</small>
+          }
+        </label>
+        <label class="edu-field">
+          <span class="edu-field__label">{{ 'perfil.password.confirmar' | translate }} *</span>
+          <input
+            class="edu-control"
+            [type]="mostrarPasswords() ? 'text' : 'password'"
+            formControlName="confirmar_password"
+            autocomplete="new-password"
+            [attr.aria-invalid]="!!errorPasswordCampo('confirmar_password')"
+          />
+          @if (errorPasswordCampo('confirmar_password'); as e) {
+            <small class="edu-field__error">{{ e | translate }}</small>
+          }
+        </label>
+
+        <div class="mi-perfil__acciones mi-perfil__acciones--entre">
+          <label class="mi-perfil__check">
+            <input type="checkbox" [checked]="mostrarPasswords()" (change)="mostrarPasswords.set(!mostrarPasswords())" />
+            {{ 'perfil.password.mostrar' | translate }}
+          </label>
+          <button type="submit" class="edu-btn" [disabled]="cambiandoPassword()">
+            {{ (cambiandoPassword() ? 'common.guardando' : 'perfil.password.boton') | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+</div>

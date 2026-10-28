@@ -304,6 +304,26 @@
   background: t.$cream;
 }
 
+.user-card__profile {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  border-radius: t.$radius-md;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover .user-card__name {
+    color: t.$blue;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: t.$focus-ring;
+  }
+}
+
 .user-card__avatar {
   display: inline-flex;
   flex: none;
@@ -336,8 +356,11 @@
 }
 
 .user-card__role {
+  overflow: hidden;
   font-size: t.$font-size-xs;
   color: t.$text-secondary;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-card__logout {
@@ -634,6 +657,7 @@
 
 .tb-option {
   display: flex;
+  text-decoration: none;
   align-items: center;
   gap: t.$space-8;
   width: 100%;

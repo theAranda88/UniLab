@@ -5,6 +5,25 @@ import { prisma } from '../models/prisma.client';
 
 const ROLES_CON_PERFIL = ['Coordinador', 'Profesor', 'Estudiante', 'Externo'] as const;
 
+type UsuarioConsultaRow = Awaited<ReturnType<typeof usuarioRepository.findConsulta>>[number];
+
+/** Forma pública de un usuario en los listados de solo lectura. */
+function mapUsuarioConsulta(u: UsuarioConsultaRow) {
+  const perfil = u.perfil_profesor ?? u.perfil_estudiante;
+  return {
+    id_usuario: u.id_usuario,
+    nombres: u.nombres,
+    apellidos: u.apellidos,
+    email: u.email,
+    telefono: u.telefono,
+    activo: u.activo,
+    rol: u.rol.nombre_rol,
+    codigo: u.perfil_profesor?.codigo_docente ?? u.perfil_estudiante?.codigo_estudiantil ?? null,
+    escuela: perfil?.escuela ?? null,
+    redes: { linkedin: u.url_linkedin, github: u.url_github, portafolio: u.url_portafolio },
+  };
+}
+
 export const usuarioService = {
   async listarRoles() {
     return usuarioRepository.findAllRoles();
@@ -18,6 +37,87 @@ export const usuarioService = {
       id_rol = rol.id_rol;
     }
     return usuarioRepository.findMany(id_rol ? { id_rol } : undefined);
+  },
+
+  /**
+   * Listado de solo lectura según quién consulta:
+   * - Administrador / Coordinador: profesores y estudiantes de todas las escuelas.
+   * - Profesor: solo estudiantes de su propia escuela.
+   */
+  async listarConsulta(
+    solicitante: { id_usuario: number; id_rol: string },
+    filtro: { rol?: 'Profesor' | 'Estudiante'; id_escuela?: number; busqueda?: string },
+  ) {
+    let roles: string[] = filtro.rol ? [filtro.rol] : ['Profesor', 'Estudiante'];
+    let id_escuela = filtro.id_escuela;
+
+    if (solicitante.id_rol === 'Profesor') {
+      if (filtro.rol === 'Profesor') {
+        throw new AppError('Un profesor solo puede consultar estudiantes', 403);
+      }
+      const profesor = await usuarioRepository.findById(solicitante.id_usuario);
+      const escuelaProfesor = profesor?.perfil_profesor?.id_escuela;
+      if (!escuelaProfesor) throw new AppError('El profesor no tiene escuela asignada', 422);
+      if (id_escuela && id_escuela !== escuelaProfesor) {
+        throw new AppError('Solo puede consultar estudiantes de su escuela', 403);
+      }
+      roles = ['Estudiante'];
+      id_escuela = escuelaProfesor;
+    }
+
+    const usuarios = await usuarioRepository.findConsulta({ roles, id_escuela, busqueda: filtro.busqueda });
+    return usuarios.map(mapUsuarioConsulta);
+  },
+
+  /** Estudiantes vinculados a los semilleros y proyectos del profesor, con el detalle del vínculo. */
+  async estudiantesDeProfesor(id_profesor: number) {
+    const { semilleros, proyectos } = await usuarioRepository.findVinculosProfesor(id_profesor);
+
+    type Estudiante = ReturnType<typeof mapUsuarioConsulta> & {
+      semilleros: { id_semillero: number; nombre_semillero: string }[];
+      proyectos: { id_proyecto: number; titulo: string; estado_proyecto: string }[];
+    };
+    const porId = new Map<number, Estudiante>();
+    const obtener = (u: UsuarioConsultaRow): Estudiante | null => {
+      if (u.rol.nombre_rol !== 'Estudiante') return null;
+      let e = porId.get(u.id_usuario);
+      if (!e) {
+        e = { ...mapUsuarioConsulta(u), semilleros: [], proyectos: [] };
+        porId.set(u.id_usuario, e);
+      }
+      return e;
+    };
+
+    for (const s of semilleros) {
+      for (const { estudiante } of s.miembros) {
+        obtener(estudiante)?.semilleros.push({
+          id_semillero: s.id_semillero,
+          nombre_semillero: s.nombre_semillero,
+        });
+      }
+    }
+
+    for (const p of proyectos) {
+      const resumen = { id_proyecto: p.id_proyecto, titulo: p.titulo, estado_proyecto: p.estado_proyecto };
+      const ids = new Set<number>();
+      for (const u of [p.estudiante_creador, ...p.autores.map((a) => a.estudiante)]) {
+        if (ids.has(u.id_usuario)) continue;
+        ids.add(u.id_usuario);
+        obtener(u)?.proyectos.push(resumen);
+      }
+    }
+
+    return {
+      estudiantes: [...porId.values()].sort(
+        (a, b) => a.apellidos.localeCompare(b.apellidos) || a.nombres.localeCompare(b.nombres),
+      ),
+      semilleros: semilleros.map((s) => ({ id_semillero: s.id_semillero, nombre_semillero: s.nombre_semillero })),
+      proyectos: proyectos.map((p) => ({
+        id_proyecto: p.id_proyecto,
+        titulo: p.titulo,
+        estado_proyecto: p.estado_proyecto,
+      })),
+    };
   },
 
   async obtenerPorId(id: number) {
@@ -39,8 +139,12 @@ export const usuarioService = {
     id_escuela?: number;
     cargo?: string;
     dependencia?: string;
+    profesion?: string;
     institucion?: string;
     ocupacion?: string;
+    url_linkedin?: string | null;
+    url_github?: string | null;
+    url_portafolio?: string | null;
   }) {
     const existente = await usuarioRepository.findByEmail(data.email);
     if (existente) throw new AppError('El email ya está registrado', 409);
@@ -59,6 +163,9 @@ export const usuarioService = {
       email: data.email,
       documento_identidad: data.documento_identidad,
       telefono: data.telefono,
+      url_linkedin: data.url_linkedin,
+      url_github: data.url_github,
+      url_portafolio: data.url_portafolio,
       password_hash,
       primer_login: true,
       creador: { connect: { id_usuario: data.created_by } },
@@ -97,6 +204,9 @@ export const usuarioService = {
       email: data.email as string | undefined,
       documento_identidad: data.documento_identidad as string | undefined,
       telefono: data.telefono as string | undefined,
+      url_linkedin: data.url_linkedin as string | null | undefined,
+      url_github: data.url_github as string | null | undefined,
+      url_portafolio: data.url_portafolio as string | null | undefined,
       ...(rolConnect ? { rol: { connect: { id_rol: rolConnect.id_rol } } } : {}),
     });
 
@@ -195,6 +305,7 @@ async function cambiarRolUsuario(
             usuario: { connect: { id_usuario } },
             cargo: perfilData.cargo!,
             dependencia: perfilData.dependencia!,
+            profesion: (data.profesion as string | undefined) || null,
             creador: { connect: { id_usuario: created_by } },
           },
         });
@@ -266,6 +377,7 @@ function construirPerfilCreate(data: {
   id_escuela?: number;
   cargo?: string;
   dependencia?: string;
+  profesion?: string;
   institucion?: string;
   ocupacion?: string;
   created_by: number;
@@ -277,6 +389,7 @@ function construirPerfilCreate(data: {
           create: {
             cargo: data.cargo!,
             dependencia: data.dependencia!,
+            profesion: data.profesion || null,
             creador: { connect: { id_usuario: data.created_by } },
           },
         },
@@ -319,12 +432,13 @@ function construirPerfilCreate(data: {
 async function actualizarPerfilExtendido(rol: string, id_usuario: number, data: Record<string, unknown>) {
   if (!ROLES_CON_PERFIL.includes(rol as (typeof ROLES_CON_PERFIL)[number])) return;
 
-  if (rol === 'Coordinador' && (data.cargo || data.dependencia)) {
+  if (rol === 'Coordinador' && (data.cargo || data.dependencia || data.profesion !== undefined)) {
     await prisma.perfiles_coordinador.update({
       where: { id_usuario },
       data: {
         cargo: data.cargo as string | undefined,
         dependencia: data.dependencia as string | undefined,
+        ...(data.profesion !== undefined ? { profesion: (data.profesion as string) || null } : {}),
       },
     });
   }

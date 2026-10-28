@@ -226,6 +226,46 @@
   }
 }
 
+.portal-profile__panel-link--secondary {
+  border: 1px solid $blue-border;
+  background: $blue-tint-strong;
+  color: $blue;
+
+  &:hover {
+    background: $blue-tint;
+    color: $blue;
+  }
+}
+
+.portal-profile__meta--stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.portal-profile__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.portal-profile__chip {
+  max-width: 100%;
+  padding: 2px 8px;
+  overflow: hidden;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-full;
+  background: $white;
+  color: $ink;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portal-profile__redes:empty {
+  display: none;
+}
+
 .portal-profile__logout {
   min-height: 38px;
   border: 1px solid $border-control;

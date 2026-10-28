@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  actualizarMiPerfilSchema,
   configuracionUpdateSchema,
+  cambiarMiPasswordSchema,
+  consultaUsuariosSchema,
   cursoUpdateSchema,
   proyectoSchema,
   semilleroUpdateSchema,
@@ -65,5 +68,76 @@ describe('proyectoSchema', () => {
 
   it('un podcast solo requiere YouTube', () => {
     expect(proyectoSchema.safeParse({ ...base, tipo_proyecto: 'podcast' }).success).toBe(true);
+  });
+});
+
+describe('actualizarMiPerfilSchema', () => {
+  it('acepta enlaces válidos de cada red', () => {
+    const r = actualizarMiPerfilSchema.safeParse({
+      url_linkedin: 'https://www.linkedin.com/in/ana',
+      url_github: 'https://github.com/ana',
+      url_portafolio: 'https://ana.dev',
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('convierte cadena vacía en null para borrar el valor', () => {
+    expect(actualizarMiPerfilSchema.parse({ url_linkedin: '' })).toEqual({ url_linkedin: null });
+  });
+
+  it('rechaza dominios equivocados, protocolos no http y cuerpo vacío', () => {
+    expect(actualizarMiPerfilSchema.safeParse({ url_linkedin: 'https://evil.com/linkedin.com' }).success).toBe(false);
+    expect(actualizarMiPerfilSchema.safeParse({ url_linkedin: 'https://notlinkedin.com/in/a' }).success).toBe(false);
+    expect(actualizarMiPerfilSchema.safeParse({ url_github: 'https://gitlab.com/ana' }).success).toBe(false);
+    expect(actualizarMiPerfilSchema.safeParse({ url_portafolio: 'javascript:alert(1)' }).success).toBe(false);
+    expect(actualizarMiPerfilSchema.safeParse({}).success).toBe(false);
+  });
+
+  it('rechaza campos desconocidos', () => {
+    expect(actualizarMiPerfilSchema.safeParse({ email: 'x@y.co' }).success).toBe(false);
+  });
+});
+
+describe('consultaUsuariosSchema', () => {
+  it('convierte id_escuela de query string a número', () => {
+    expect(consultaUsuariosSchema.parse({ id_escuela: '3' })).toEqual({ id_escuela: 3 });
+  });
+
+  it('solo permite filtrar por Profesor o Estudiante', () => {
+    expect(consultaUsuariosSchema.safeParse({ rol: 'Administrador' }).success).toBe(false);
+    expect(consultaUsuariosSchema.safeParse({ rol: 'Estudiante' }).success).toBe(true);
+  });
+});
+
+describe('actualizarMiPerfilSchema: teléfono y profesión', () => {
+  it('acepta teléfonos con prefijo, espacios o guiones', () => {
+    expect(actualizarMiPerfilSchema.safeParse({ telefono: '+57 300 123-4567' }).success).toBe(true);
+    expect(actualizarMiPerfilSchema.safeParse({ telefono: '3001234567' }).success).toBe(true);
+  });
+
+  it('rechaza teléfonos cortos o con letras', () => {
+    expect(actualizarMiPerfilSchema.safeParse({ telefono: '123' }).success).toBe(false);
+    expect(actualizarMiPerfilSchema.safeParse({ telefono: '300abc4567' }).success).toBe(false);
+  });
+
+  it('profesión vacía se guarda como null', () => {
+    expect(actualizarMiPerfilSchema.parse({ profesion: '  ' })).toEqual({ profesion: null });
+  });
+
+  it('no permite cambiar rol ni email desde el perfil', () => {
+    expect(actualizarMiPerfilSchema.safeParse({ rol: 'Administrador' }).success).toBe(false);
+    expect(actualizarMiPerfilSchema.safeParse({ email: 'otro@x.co' }).success).toBe(false);
+  });
+});
+
+describe('cambiarMiPasswordSchema', () => {
+  it('exige mínimo 8 caracteres y que sea distinta de la actual', () => {
+    expect(cambiarMiPasswordSchema.safeParse({ password_actual: 'a', nueva_password: 'corta' }).success).toBe(false);
+    expect(
+      cambiarMiPasswordSchema.safeParse({ password_actual: 'Password123!', nueva_password: 'Password123!' }).success,
+    ).toBe(false);
+    expect(
+      cambiarMiPasswordSchema.safeParse({ password_actual: 'Password123!', nueva_password: 'NuevaClave2026' }).success,
+    ).toBe(true);
   });
 });

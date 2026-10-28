@@ -68,8 +68,8 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       items: [
         { labelKey: 'shell.nav.proyectos', icon: 'ti-folders', route: 'proyectos', enabled: true },
         { labelKey: 'shell.nav.semilleros', icon: 'ti-flask', route: 'semilleros', enabled: true },
-        { labelKey: 'shell.nav.profesores', icon: 'ti-users', route: 'profesores', enabled: false },
-        { labelKey: 'shell.nav.estudiantes', icon: 'ti-school', route: 'estudiantes', enabled: false },
+        { labelKey: 'shell.nav.profesores', icon: 'ti-users', route: 'profesores', enabled: true },
+        { labelKey: 'shell.nav.estudiantes', icon: 'ti-school', route: 'estudiantes', enabled: true },
       ],
     },
     {
@@ -88,7 +88,7 @@ export const NAV_BY_ROLE: Record<ShellRole, NavSection[]> = {
       items: [
         { labelKey: 'shell.nav.miPanel', icon: 'ti-layout-dashboard', route: 'dashboard', enabled: true },
         { labelKey: 'shell.nav.misSemilleros', icon: 'ti-flask', route: 'semilleros', enabled: true },
-        { labelKey: 'shell.nav.misEstudiantes', icon: 'ti-users-group', route: 'estudiantes', enabled: false },
+        { labelKey: 'shell.nav.misEstudiantes', icon: 'ti-users-group', route: 'estudiantes', enabled: true },
       ],
     },
     {

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from './core/auth/auth.service';
 import { DialogHostComponent } from './shared/ui/dialog/dialog-host.component';
 import { ToastHostComponent } from './shared/ui/toast/toast-host.component';
 
@@ -19,4 +20,9 @@ import { ToastHostComponent } from './shared/ui/toast/toast-host.component';
     }
   `]
 })
-export class App {}
+export class App {
+  constructor() {
+    // Fuera del constructor de AuthService: los interceptores también lo inyectan.
+    inject(AuthService).refrescarSesion();
+  }
+}

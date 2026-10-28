@@ -44,6 +44,8 @@ export class AdminShellComponent implements OnInit {
   readonly idiomaActual = signal(this.i18n.getCurrentLanguage());
 
   usuario = computed(() => this.authService.getCurrentUser());
+  /** Escuela del usuario (Profesor) para mostrar bajo el rol en la tarjeta lateral. */
+  escuelaUsuario = computed(() => this.usuario()?.escuela?.nombre_escuela ?? null);
   /** Nombre real del usuario (o su correo si el perfil no trae nombre). */
   nombreUsuario = computed(() => {
     const u = this.usuario();
@@ -79,7 +81,11 @@ export class AdminShellComponent implements OnInit {
   readonly tituloKey = computed(
     () =>
       this.itemActivo()?.item.labelKey ??
-      (this.shellRole() === 'Profesor' ? 'shell.pages.miPanel' : 'shell.pages.dashboard'),
+      (this.isActive('perfil')
+        ? 'shell.pages.perfil'
+        : this.shellRole() === 'Profesor'
+          ? 'shell.pages.miPanel'
+          : 'shell.pages.dashboard'),
   );
 
   constructor() {

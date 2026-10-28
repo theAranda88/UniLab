@@ -39,6 +39,9 @@ model usuarios {
   activo              Boolean  @default(true)
   primer_login        Boolean  @default(true)
   perfil_pendiente    Boolean  @default(false)
+  url_linkedin        String?  @db.VarChar(500)
+  url_github          String?  @db.VarChar(500)
+  url_portafolio      String?  @db.VarChar(500)
   created_at          DateTime @default(now()) @db.Timestamp(6)
   updated_at          DateTime @updatedAt @db.Timestamp(6)
   created_by          Int?
@@ -102,6 +105,7 @@ model perfiles_coordinador {
   id_usuario  Int      @id
   cargo       String   @db.VarChar(255)
   dependencia String   @db.VarChar(255)
+  profesion   String?  @db.VarChar(255)
   created_at  DateTime @default(now()) @db.Timestamp(6)
   updated_at  DateTime @updatedAt @db.Timestamp(6)
   created_by  Int?

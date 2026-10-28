@@ -130,20 +130,149 @@ export const schemas = {
       password: { type: 'string', example: 'Password123!' },
     },
   },
+  RedesContacto: {
+    type: 'object',
+    properties: {
+      linkedin: { type: 'string', nullable: true, example: 'https://www.linkedin.com/in/ana-gomez' },
+      github: { type: 'string', nullable: true, example: 'https://github.com/anagomez' },
+      portafolio: { type: 'string', nullable: true, example: 'https://anagomez.dev' },
+    },
+  },
+  UsuarioSesion: {
+    type: 'object',
+    description: 'Respuesta común de login, login con Google, completar perfil y GET /auth/me.',
+    properties: {
+      id_usuario: { type: 'integer', example: 7 },
+      email: { type: 'string', example: 'ana.gomez@uniautonoma.edu.co' },
+      id_rol: { type: 'string', example: 'Estudiante' },
+      primer_login: { type: 'boolean', example: false },
+      perfil_pendiente: { type: 'boolean', example: false },
+      nombres: { type: 'string', example: 'Ana' },
+      apellidos: { type: 'string', example: 'Gómez' },
+      telefono: { type: 'string', example: '3001234567' },
+      escuela: {
+        type: 'object',
+        nullable: true,
+        description: 'Escuela del perfil de Profesor o Estudiante; null para otros roles.',
+        properties: {
+          id_escuela: { type: 'integer', example: 1 },
+          nombre_escuela: { type: 'string', example: 'Ingeniería' },
+        },
+      },
+      semilleros: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/SemilleroUsuario' },
+      },
+      redes: { $ref: '#/components/schemas/RedesContacto' },
+      perfil: {
+        type: 'object',
+        description: 'Datos del perfil según el rol; los que no aplican vienen en null.',
+        properties: {
+          codigo_docente: { type: 'string', nullable: true },
+          codigo_estudiantil: { type: 'string', nullable: true },
+          cargo: { type: 'string', nullable: true },
+          dependencia: { type: 'string', nullable: true },
+          profesion: { type: 'string', nullable: true, description: 'Solo Coordinador' },
+          institucion: { type: 'string', nullable: true },
+          ocupacion: { type: 'string', nullable: true },
+        },
+      },
+    },
+  },
+  SemilleroUsuario: {
+    type: 'object',
+    properties: {
+      id_semillero: { type: 'integer', example: 2 },
+      nombre_semillero: { type: 'string', example: 'IA aplicada' },
+      rol_semillero: { type: 'string', enum: ['lider', 'profesor', 'miembro'] },
+    },
+  },
+  ActualizarMiPerfilRequest: {
+    type: 'object',
+    description:
+      'Al menos un campo. En las redes y la profesión, cadena vacía o null borran el valor. Rol, email y documento no se pueden cambiar aquí.',
+    properties: {
+      telefono: { type: 'string', example: '+57 300 123 4567' },
+      profesion: { type: 'string', nullable: true, example: 'Ingeniera de sistemas', description: 'Solo Coordinador' },
+      url_linkedin: { type: 'string', nullable: true, example: 'https://www.linkedin.com/in/ana-gomez' },
+      url_github: { type: 'string', nullable: true, example: 'https://github.com/anagomez' },
+      url_portafolio: { type: 'string', nullable: true, example: 'https://anagomez.dev' },
+    },
+  },
+  CambiarMiPasswordRequest: {
+    type: 'object',
+    required: ['password_actual', 'nueva_password'],
+    properties: {
+      password_actual: { type: 'string', example: 'Password123!' },
+      nueva_password: { type: 'string', minLength: 8, example: 'NuevaClave2026' },
+    },
+  },
+  UsuarioConsulta: {
+    type: 'object',
+    properties: {
+      id_usuario: { type: 'integer', example: 7 },
+      nombres: { type: 'string', example: 'Ana' },
+      apellidos: { type: 'string', example: 'Gómez' },
+      email: { type: 'string', example: 'ana.gomez@uniautonoma.edu.co' },
+      telefono: { type: 'string', example: '3001234567' },
+      activo: { type: 'boolean', example: true },
+      rol: { type: 'string', enum: ['Profesor', 'Estudiante'] },
+      codigo: { type: 'string', nullable: true, description: 'Código docente o estudiantil' },
+      escuela: {
+        type: 'object',
+        nullable: true,
+        properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+      },
+      redes: { $ref: '#/components/schemas/RedesContacto' },
+    },
+  },
+  VinculoSemillero: {
+    type: 'object',
+    properties: { id_semillero: { type: 'integer' }, nombre_semillero: { type: 'string' } },
+  },
+  VinculoProyecto: {
+    type: 'object',
+    properties: {
+      id_proyecto: { type: 'integer' },
+      titulo: { type: 'string' },
+      estado_proyecto: { type: 'string' },
+    },
+  },
+  EstudiantesProfesorResponse: {
+    type: 'object',
+    properties: {
+      estudiantes: {
+        type: 'array',
+        items: {
+          allOf: [
+            { $ref: '#/components/schemas/UsuarioConsulta' },
+            {
+              type: 'object',
+              properties: {
+                semilleros: { type: 'array', items: { $ref: '#/components/schemas/VinculoSemillero' } },
+                proyectos: { type: 'array', items: { $ref: '#/components/schemas/VinculoProyecto' } },
+              },
+            },
+          ],
+        },
+      },
+      semilleros: {
+        type: 'array',
+        description: 'Semilleros del profesor (para filtros)',
+        items: { $ref: '#/components/schemas/VinculoSemillero' },
+      },
+      proyectos: {
+        type: 'array',
+        description: 'Proyectos del profesor (para filtros)',
+        items: { $ref: '#/components/schemas/VinculoProyecto' },
+      },
+    },
+  },
   LoginResponse: {
     type: 'object',
     properties: {
       token: { type: 'string' },
-      usuario: {
-        type: 'object',
-        properties: {
-          id_usuario: { type: 'integer', example: 1 },
-          email: { type: 'string', example: 'admin@unilab.edu' },
-          id_rol: { type: 'string', example: 'Administrador' },
-          primer_login: { type: 'boolean', example: false },
-          perfil_pendiente: { type: 'boolean', example: false },
-        },
-      },
+      usuario: { $ref: '#/components/schemas/UsuarioSesion' },
     },
   },
   GoogleLoginRequest: {
@@ -158,16 +287,7 @@ export const schemas = {
     properties: {
       token: { type: 'string' },
       cuenta_nueva: { type: 'boolean', example: true },
-      usuario: {
-        type: 'object',
-        properties: {
-          id_usuario: { type: 'integer' },
-          email: { type: 'string' },
-          id_rol: { type: 'string' },
-          primer_login: { type: 'boolean' },
-          perfil_pendiente: { type: 'boolean' },
-        },
-      },
+      usuario: { $ref: '#/components/schemas/UsuarioSesion' },
     },
   },
   CompletarPerfilRequest: {
