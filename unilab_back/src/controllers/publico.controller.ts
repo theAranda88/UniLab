@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { publicoService } from '../services/publico.service';
 import { configuracionService } from '../services/configuracion.service';
+import { publicoSemillerosQuerySchema } from '../middlewares/validation/schemas';
 
 export const publicoController = {
   /** Todos los parámetros actuales son de lectura pública (portal, registro, semilleros). */
@@ -60,11 +61,8 @@ export const publicoController = {
   }),
 
   listarSemilleros: asyncHandler(async (req: Request, res: Response) => {
-    const query = req.query as unknown as {
-      id_escuela?: number;
-      pagina: number;
-      limite: number;
-    };
+    // Express 5 vuelve a parsear req.query en cada acceso; revalidar aquí (mismo patrón que /usuarios/consulta).
+    const query = publicoSemillerosQuerySchema.parse(req.query);
     res.status(200).json(await publicoService.listarSemilleros(query));
   }),
 

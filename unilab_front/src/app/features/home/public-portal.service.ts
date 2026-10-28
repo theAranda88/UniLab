@@ -43,9 +43,9 @@ export class PublicPortalService {
     limite?: number;
   }): Observable<SemillerosPublicosPaginados> {
     let httpParams = new HttpParams();
-    if (params?.idEscuela) httpParams = httpParams.set('id_escuela', params.idEscuela.toString());
-    if (params?.pagina) httpParams = httpParams.set('pagina', params.pagina.toString());
-    if (params?.limite) httpParams = httpParams.set('limite', params.limite.toString());
+    if (params?.idEscuela != null) httpParams = httpParams.set('id_escuela', params.idEscuela.toString());
+    httpParams = httpParams.set('pagina', String(params?.pagina ?? 1));
+    httpParams = httpParams.set('limite', String(params?.limite ?? 12));
     return this.http.get<SemillerosPublicosPaginados>(`${API}/semilleros`, { params: httpParams });
   }
 
