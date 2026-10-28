@@ -657,6 +657,29 @@
             "url": "{{base_url}}/public/proyectos/{{id_proyecto}}",
             "description": "Registra una vista e incrementa `contador_vistas`."
           }
+        },
+        {
+          "name": "Listar semilleros públicos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/semilleros?id_escuela={{id_escuela}}&pagina=1&limite=12",
+              "host": ["{{base_url}}"],
+              "path": ["public", "semilleros"],
+              "query": [
+                { "key": "id_escuela", "value": "{{id_escuela}}" },
+                { "key": "pagina", "value": "1" },
+                { "key": "limite", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle semillero público",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/semilleros/1"
+          }
         }
       ]
     },

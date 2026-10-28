@@ -6,6 +6,7 @@ import {
   inscripcionPublicaSchema,
   inscripcionDocumentoQuerySchema,
   asistenciaPublicaSchema,
+  publicoSemillerosQuerySchema,
 } from '../middlewares/validation/schemas';
 import { z } from 'zod';
 
@@ -31,6 +32,17 @@ router.get(
   '/proyectos/:id',
   validate(idParamSchema, 'params'),
   publicoController.obtenerProyecto,
+);
+
+router.get(
+  '/semilleros',
+  validate(publicoSemillerosQuerySchema, 'query'),
+  publicoController.listarSemilleros,
+);
+router.get(
+  '/semilleros/:id',
+  validate(idParamSchema, 'params'),
+  publicoController.obtenerSemillero,
 );
 
 router.get('/eventos', publicoController.listarEventos);

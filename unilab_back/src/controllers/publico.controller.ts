@@ -58,4 +58,17 @@ export const publicoController = {
     );
     res.status(201).json(asistencia);
   }),
+
+  listarSemilleros: asyncHandler(async (req: Request, res: Response) => {
+    const query = req.query as unknown as {
+      id_escuela?: number;
+      pagina: number;
+      limite: number;
+    };
+    res.status(200).json(await publicoService.listarSemilleros(query));
+  }),
+
+  obtenerSemillero: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await publicoService.obtenerSemilleroPublico(Number(req.params.id)));
+  }),
 };

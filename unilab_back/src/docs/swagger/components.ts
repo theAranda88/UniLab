@@ -611,6 +611,51 @@ export const schemas = {
       orden: { type: 'integer', example: 1 },
     },
   },
+  SemilleroPublicoResponse: {
+    type: 'object',
+    properties: {
+      id_semillero: { type: 'integer', example: 1 },
+      nombre_semillero: { type: 'string' },
+      descripcion: { type: 'string' },
+      url_foto_portada: { type: 'string', nullable: true },
+      escuela: {
+        type: 'object',
+        properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+      },
+      lider: {
+        type: 'object',
+        properties: { nombres: { type: 'string' }, apellidos: { type: 'string' } },
+      },
+      total_miembros_aprobados: { type: 'integer', example: 12 },
+      evidencias: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id_evidencia: { type: 'integer' },
+            url: { type: 'string' },
+            orden: { type: 'integer' },
+            nombre_original: { type: 'string' },
+          },
+        },
+      },
+    },
+  },
+  SemillerosPublicosPaginadosResponse: {
+    type: 'object',
+    properties: {
+      data: { type: 'array', items: { $ref: '#/components/schemas/SemilleroPublicoResponse' } },
+      paginacion: {
+        type: 'object',
+        properties: {
+          pagina: { type: 'integer', example: 1 },
+          limite: { type: 'integer', example: 12 },
+          total: { type: 'integer', example: 25 },
+          total_paginas: { type: 'integer', example: 3 },
+        },
+      },
+    },
+  },
   AsignarProfesorSemilleroRequest: {
     type: 'object',
     required: ['id_profesor'],

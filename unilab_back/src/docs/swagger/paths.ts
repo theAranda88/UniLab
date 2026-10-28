@@ -1280,6 +1280,50 @@ export const paths = {
       },
     },
   },
+  '/public/semilleros': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar semilleros activos (portal público)',
+      description:
+        'Sin autenticación. Solo semilleros activos. Incluye escuela, líder y total de miembros aprobados.',
+      security: [],
+      parameters: [
+        { name: 'id_escuela', in: 'query', schema: { type: 'integer' }, required: false },
+        { name: 'pagina', in: 'query', schema: { type: 'integer', default: 1 } },
+        { name: 'limite', in: 'query', schema: { type: 'integer', default: 12, maximum: 50 } },
+      ],
+      responses: {
+        200: {
+          description: 'Listado paginado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SemillerosPublicosPaginadosResponse' },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/public/semilleros/{id}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Detalle público de semillero',
+      description: 'Sin autenticación. Portada, evidencias y escuela.',
+      security: [],
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Semillero activo',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SemilleroPublicoResponse' },
+            },
+          },
+        },
+        404: err[404],
+      },
+    },
+  },
   '/public/eventos': {
     get: {
       tags: ['Público'],

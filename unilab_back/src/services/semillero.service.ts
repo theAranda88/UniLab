@@ -79,7 +79,7 @@ export const semilleroService = {
       await validarProfesor(id_profesor_lider, 'El líder debe ser un Profesor');
     }
 
-    const semillero = await semilleroRepository.update(id, {
+    await semilleroRepository.update(id, {
       ...campos,
       ...(id_escuela !== undefined ? { escuela: { connect: { id_escuela } } } : {}),
       ...(cambiaLider ? { profesor_lider: { connect: { id_usuario: id_profesor_lider } } } : {}),
