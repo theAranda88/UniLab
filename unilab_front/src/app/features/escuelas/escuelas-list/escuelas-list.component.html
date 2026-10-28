@@ -33,11 +33,25 @@
   } @else {
     <div class="escuelas-list__grid">
       @for (card of cards(); track trackById($index, card)) {
-        <article class="escuela-card">
+        <article class="escuela-card" [style.--school-color]="card.estilo.color">
           <header class="escuela-card__head">
-            <span class="escuela-card__icon"><i class="ti ti-school" aria-hidden="true"></i></span>
-            <h3>{{ card.escuela.nombre_escuela }}</h3>
+            <span class="escuela-card__icon"><i class="ph-duotone {{ card.estilo.icono }}" aria-hidden="true"></i></span>
+            <div class="escuela-card__titles">
+              <h3>{{ card.escuela.nombre_escuela }}</h3>
+              <p class="escuela-card__encargado">
+                <i class="ti ti-user-star" aria-hidden="true"></i>
+                @if (card.encargado) {
+                  <span>{{ 'escuelas.encargado' | translate }}: <strong>{{ card.encargado }}</strong></span>
+                } @else {
+                  <span>{{ 'escuelas.sinEncargado' | translate }}</span>
+                }
+              </p>
+            </div>
           </header>
+
+          @if (card.escuela.descripcion) {
+            <p class="escuela-card__descripcion">{{ card.escuela.descripcion }}</p>
+          }
 
           @if (card.cursos.length > 0) {
             <ul class="escuela-card__cursos">

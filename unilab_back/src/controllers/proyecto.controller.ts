@@ -57,6 +57,15 @@ export const proyectoController = {
     res.status(201).json(comentario);
   }),
 
+  eliminarComentario: asyncHandler(async (req: Request, res: Response) => {
+    await proyectoService.eliminarComentario(
+      Number(req.params.id),
+      req.user!.id_rol,
+      req.user!.id_usuario,
+    );
+    res.status(204).send();
+  }),
+
   calificar: asyncHandler(async (req: Request, res: Response) => {
     const calificacion = await proyectoService.calificar(
       Number(req.params.id),

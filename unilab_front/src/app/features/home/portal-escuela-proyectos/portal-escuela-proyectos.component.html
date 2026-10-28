@@ -21,7 +21,11 @@
         </div>
       </div>
 
-      <p class="school-hero__lead">{{ 'home.projectsListHint' | translate }}</p>
+      @if (escuela()?.descripcion; as descripcion) {
+        <p class="school-hero__lead school-hero__lead--descripcion">{{ descripcion }}</p>
+      } @else {
+        <p class="school-hero__lead">{{ 'home.projectsListHint' | translate }}</p>
+      }
 
       @if (!loading() && !loadError()) {
         <dl class="school-hero__facts">
@@ -39,6 +43,21 @@
   </header>
 
   <div class="school-page__content">
+    <!-- Imágenes de la escuela (se recrea al cambiar de escuela: loading vuelve a true) -->
+    @if (!loading() && imagenes().length > 0) {
+      <section class="school-gallery" aria-labelledby="gallery-title">
+        <h2 id="gallery-title" class="school-page__h2">{{ 'home.schoolPage.galleryTitle' | translate }}</h2>
+        <figure class="school-gallery__frame">
+          <app-project-image-carousel
+            [zoomable]="true"
+            [images]="imagenes()"
+            [alt]="escuela()?.nombre_escuela ?? ''"
+            [autoplayMs]="5500"
+          />
+        </figure>
+      </section>
+    }
+
     <!-- Programas (cursos) de la escuela -->
     @if (cursos().length > 0) {
       <section class="school-programs" aria-labelledby="programs-title">

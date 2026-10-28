@@ -10,14 +10,15 @@ import { ProyectoInteraccionService } from '../proyecto-interaccion.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import {
-  estiloEscuela,
   urlsImagenesProyecto,
   type ComentarioProyecto,
   type ProyectoPublico,
 } from '../../../core/models/portal.model';
+import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { recursosDeProyecto } from '../../../core/utils/recursos-externos.util';
 import { RecursosExternosComponent } from '../../../shared/ui/recursos-externos/recursos-externos.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { DialogService } from '../../../shared/ui/dialog/dialog.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 
@@ -62,6 +63,7 @@ export class PortalProyectoDetalleComponent {
   private translate = inject(TranslateService);
   private auth = inject(AuthService);
   private toast = inject(ToastService);
+  private dialog = inject(DialogService);
 
   readonly proyecto = signal<ProyectoPublico | null>(null);
   readonly loading = signal(true);
@@ -70,7 +72,7 @@ export class PortalProyectoDetalleComponent {
   readonly isLoggedIn = computed(() => this.auth.isAuthenticated());
   private readonly idUsuario = computed(() => (this.isLoggedIn() ? this.auth.getCurrentUser()?.id_usuario : null));
 
-  readonly estilo = computed(() => estiloEscuela(this.proyecto()?.curso?.escuela?.nombre_escuela ?? ''));
+  readonly estilo = computed(() => estiloDeEscuela(this.proyecto()?.curso?.escuela));
   readonly iconoTipo = computed(() => ICONOS_TIPO[this.proyecto()?.tipo_proyecto ?? ''] ?? 'ti-flask');
   readonly imagenes = computed(() => {
     const p = this.proyecto();
@@ -141,6 +143,7 @@ export class PortalProyectoDetalleComponent {
   respuesta = '';
   readonly enviandoRespuesta = signal(false);
   readonly maxComentario = 1000;
+  readonly eliminandoComentario = signal<number | null>(null);
 
   constructor() {
     // Escucha el parámetro: el componente se reutiliza si se navega de un proyecto a otro
@@ -171,6 +174,47 @@ export class PortalProyectoDetalleComponent {
 
   esMio(c: ComentarioProyecto): boolean {
     return c.id_usuario === this.idUsuario();
+  }
+
+  /** Nombre del autor; si la API no lo trae, el texto genérico de siempre. */
+  autor(c: ComentarioProyecto): string | null {
+    return c.usuario ? `${c.usuario.nombres} ${c.usuario.apellidos}` : null;
+  }
+
+  /** Solo el autor ve «Eliminar»; al borrar un comentario también se quitan sus respuestas. */
+  async eliminarComentario(c: ComentarioProyecto): Promise<void> {
+    if (!this.esMio(c) || this.eliminandoComentario()) return;
+    const ok = await this.dialog.confirm({
+      titleKey: 'home.comments.deleteTitle',
+      messageKey: c.id_comentario_padre ? 'home.comments.deleteReplyMessage' : 'home.comments.deleteMessage',
+      confirmKey: 'common.eliminar',
+      cancelKey: 'common.cancelar',
+      destructive: true,
+    });
+    if (!ok) return;
+
+    this.eliminandoComentario.set(c.id_comentario);
+    this.interaccion.eliminarComentario(c.id_comentario).subscribe({
+      next: () => {
+        this.proyecto.update((actual) =>
+          actual
+            ? {
+                ...actual,
+                comentarios: (actual.comentarios ?? []).filter(
+                  (x) => x.id_comentario !== c.id_comentario && x.id_comentario_padre !== c.id_comentario,
+                ),
+              }
+            : actual,
+        );
+        if (this.respondiendoA() === c.id_comentario) this.cancelarRespuesta();
+        this.eliminandoComentario.set(null);
+        this.toast.success('home.comments.deleted');
+      },
+      error: () => {
+        this.eliminandoComentario.set(null);
+        this.toast.error('home.comments.deleteError');
+      },
+    });
   }
 
   calificar(puntuacion: number): void {
