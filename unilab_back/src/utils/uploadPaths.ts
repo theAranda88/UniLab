@@ -4,7 +4,6 @@ import fs from 'fs';
 export const UPLOADS_ROOT = path.join(process.cwd(), 'uploads');
 export const PROYECTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'proyectos');
 export const EVENTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'eventos');
-export const ESCUELA_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'escuelas');
 
 export const IMAGEN_MIME_PERMITIDOS = new Set([
   'image/jpeg',
@@ -20,7 +19,6 @@ export const IMAGEN_EXTENSION_POR_MIME: Record<string, string> = {
 
 export const MAX_IMAGENES_POR_PROYECTO = 3;
 export const MAX_EVIDENCIAS_POR_JORNADA = 3;
-export const MAX_IMAGENES_POR_ESCUELA = 5;
 export const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
 
 export function carpetaProyecto(id_proyecto: number): string {
@@ -29,14 +27,6 @@ export function carpetaProyecto(id_proyecto: number): string {
 
 export function rutaPublicaProyecto(id_proyecto: number, nombreArchivo: string): string {
   return `/uploads/proyectos/${id_proyecto}/${nombreArchivo}`;
-}
-
-export function carpetaEscuela(id_escuela: number): string {
-  return path.join(ESCUELA_IMAGENES_DIR, String(id_escuela));
-}
-
-export function rutaPublicaEscuela(id_escuela: number, nombreArchivo: string): string {
-  return `/uploads/escuelas/${id_escuela}/${nombreArchivo}`;
 }
 
 export function carpetaEvento(id_evento: number): string {

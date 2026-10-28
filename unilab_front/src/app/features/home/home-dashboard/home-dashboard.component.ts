@@ -19,8 +19,7 @@ import {
   FloatingBubblesComponent,
   type Burbuja,
 } from '../../../shared/ui/floating-bubbles/floating-bubbles.component';
-import type { Curso, Escuela, ProyectoPublico } from '../../../core/models/portal.model';
-import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
+import { estiloEscuela, type Curso, type Escuela, type ProyectoPublico } from '../../../core/models/portal.model';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { EventoCardComponent } from '../../../shared/ui/evento-card/evento-card.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
@@ -111,7 +110,7 @@ export class HomeDashboardComponent implements OnInit {
   readonly escuelaCards = computed<EscuelaCard[]>(() =>
     this.escuelas().map((escuela) => {
       const cursos = this.cursosPorEscuela()[escuela.id_escuela] ?? [];
-      const estilo = estiloDeEscuela(escuela);
+      const estilo = estiloEscuela(escuela.nombre_escuela);
       return {
         escuela,
         icono: estilo.icono,

@@ -2,7 +2,6 @@ import { AppError } from '../utils/AppError';
 import { escuelaRepository, cursoRepository } from '../models/escuela.repository';
 import { proyectoRepository } from '../models/proyecto.repository';
 import { proyectoImagenService } from './proyecto-imagen.service';
-import { escuelaImagenService } from './escuela-imagen.service';
 import { eventoService } from './evento.service';
 
 type ProyectoConImagenes = Awaited<ReturnType<typeof proyectoRepository.findMany>>[number];
@@ -25,17 +24,9 @@ export const publicoService = {
       proyectoRepository.countPublicadosPorEscuela(),
     ]);
 
-    return escuelas.map(({ id_escuela, nombre_escuela, descripcion, color, icono, imagenes }) => ({
+    return escuelas.map(({ id_escuela, nombre_escuela }) => ({
       id_escuela,
       nombre_escuela,
-      descripcion,
-      color,
-      icono,
-      imagenes: escuelaImagenService.mapImagenes(imagenes).map(({ id_imagen, url, orden }) => ({
-        id_imagen,
-        url,
-        orden,
-      })),
       total_proyectos_publicados: conteos[id_escuela] ?? 0,
     }));
   },

@@ -390,40 +390,8 @@ export const schemas = {
   EscuelaRequest: {
     type: 'object',
     required: ['nombre_escuela'],
-    description: 'En PATCH todos los campos son opcionales (al menos uno). `null` o cadena vacía borran el valor.',
     properties: {
-      nombre_escuela: { type: 'string', maxLength: 255, example: 'Escuela de Software y Desarrollo Tecnológico' },
-      descripcion: {
-        type: 'string',
-        nullable: true,
-        maxLength: 2000,
-        example: 'Forma profesionales en desarrollo de software, datos e infraestructura.',
-      },
-      color: { type: 'string', nullable: true, pattern: '^#[0-9a-fA-F]{6}$', example: '#2563eb' },
-      icono: {
-        type: 'string',
-        nullable: true,
-        description: 'Clase de ícono Phosphor (`ph-*`)',
-        example: 'ph-code',
-      },
-      id_encargado: {
-        type: 'integer',
-        nullable: true,
-        description: 'Profesor activo encargado de la escuela (si no lo es → 422)',
-        example: 10,
-      },
-    },
-  },
-  EscuelaImagenResponse: {
-    type: 'object',
-    properties: {
-      id_imagen: { type: 'integer', example: 1 },
-      id_escuela: { type: 'integer', example: 5 },
-      ruta_archivo: { type: 'string', example: '/uploads/escuelas/5/abc123.webp' },
-      url: { type: 'string', example: 'http://localhost:3000/uploads/escuelas/5/abc123.webp' },
-      nombre_original: { type: 'string', example: 'campus.webp' },
-      mime_type: { type: 'string', example: 'image/webp' },
-      orden: { type: 'integer', example: 1 },
+      nombre_escuela: { type: 'string', example: 'Escuela de Software y Desarrollo Tecnológico' },
     },
   },
   CursoRequest: {
@@ -755,20 +723,6 @@ export const schemas = {
     properties: {
       id_escuela: { type: 'integer', example: 31 },
       nombre_escuela: { type: 'string', example: 'Escuela de Software y Desarrollo Tecnológico' },
-      descripcion: { type: 'string', nullable: true },
-      color: { type: 'string', nullable: true, example: '#2563eb' },
-      icono: { type: 'string', nullable: true, example: 'ph-code' },
-      imagenes: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            id_imagen: { type: 'integer', example: 1 },
-            url: { type: 'string', example: 'http://localhost:3000/uploads/escuelas/31/abc123.webp' },
-            orden: { type: 'integer', example: 1 },
-          },
-        },
-      },
       total_proyectos_publicados: {
         type: 'integer',
         minimum: 0,

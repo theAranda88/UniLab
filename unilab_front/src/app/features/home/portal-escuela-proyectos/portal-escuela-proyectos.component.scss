@@ -139,11 +139,6 @@
   color: $text-secondary;
 }
 
-// Descripción propia de la escuela: conserva los saltos de línea
-.school-hero__lead--descripcion {
-  white-space: pre-line;
-}
-
 .school-hero__facts {
   display: flex;
   flex-wrap: wrap;
@@ -200,31 +195,6 @@
   font-weight: $font-weight-black;
   letter-spacing: -0.02em;
   color: $ink;
-}
-
-// Imágenes de la escuela
-.school-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.school-gallery__frame {
-  margin: 0;
-  aspect-ratio: 21 / 9;
-  overflow: hidden;
-  border-radius: $radius-xl;
-  background: color-mix(in srgb, var(--school-color) 8%, transparent);
-  box-shadow: 0 24px 48px -30px color-mix(in srgb, var(--school-color) 70%, transparent);
-
-  app-project-image-carousel {
-    display: block;
-    height: 100%;
-  }
-
-  @include respond-to($breakpoint-sm) {
-    aspect-ratio: 4 / 3;
-  }
 }
 
 // Programas

@@ -57,8 +57,6 @@ model usuarios {
   perfiles_estudiante_creados   perfiles_estudiante[]   @relation("perfiles_estudiante_creador")
   perfiles_externo_creados      perfiles_externo[]      @relation("perfiles_externo_creador")
   escuelas_creadas              escuelas[]              @relation("escuelas_creador")
-  escuelas_a_cargo              escuelas[]              @relation("escuelas_encargado")
-  escuela_imagenes_creadas      escuela_imagenes[]      @relation("escuela_imagenes_creador")
   cursos_creados                cursos[]                @relation("cursos_creador")
   curso_autorizaciones_creadas  curso_autorizaciones[]  @relation("curso_autorizaciones_creador")
   proyectos_creados             proyectos[]             @relation("proyectos_creador")
@@ -165,40 +163,16 @@ model perfiles_externo {
 model escuelas {
   id_escuela     Int      @id @default(autoincrement())
   nombre_escuela String   @db.VarChar(255)
-  descripcion    String?  @db.Text
-  color          String?  @db.VarChar(7)
-  icono          String?  @db.VarChar(100)
-  id_encargado   Int?
   created_at     DateTime @default(now()) @db.Timestamp(6)
   updated_at     DateTime @updatedAt @db.Timestamp(6)
   created_by     Int?
   deleted_at     DateTime? @db.Timestamp(6)
 
   creador             usuarios?             @relation("escuelas_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
-  encargado           usuarios?             @relation("escuelas_encargado", fields: [id_encargado], references: [id_usuario], onDelete: Restrict)
   cursos              cursos[]
-  imagenes            escuela_imagenes[]
   perfiles_profesor   perfiles_profesor[]
   perfiles_estudiante perfiles_estudiante[]
   semilleros          semilleros[]
-}
-
-model escuela_imagenes {
-  id_imagen       Int       @id @default(autoincrement())
-  id_escuela      Int
-  ruta_archivo    String    @db.VarChar(500)
-  nombre_original String    @db.VarChar(255)
-  mime_type       String    @db.VarChar(100)
-  orden           Int
-  created_at      DateTime  @default(now()) @db.Timestamp(6)
-  updated_at      DateTime  @updatedAt @db.Timestamp(6)
-  created_by      Int?
-  deleted_at      DateTime? @db.Timestamp(6)
-
-  escuela escuelas  @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
-  creador usuarios? @relation("escuela_imagenes_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
-
-  @@unique([id_escuela, orden], where: { deleted_at: null })
 }
 
 model cursos {

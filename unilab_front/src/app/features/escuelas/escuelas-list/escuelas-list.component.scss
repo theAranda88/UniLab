@@ -18,13 +18,11 @@
 }
 
 .escuela-card {
-  --school-color: #{t.$blue};
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 22px;
   border: 1px solid t.$border-subtle;
-  border-top: 4px solid var(--school-color);
   border-radius: t.$radius-xl;
   background: t.$white;
   box-shadow: t.$shadow-card;
@@ -32,7 +30,6 @@
 
   &:hover {
     border-color: t.$blue-border;
-    border-top-color: var(--school-color);
   }
 
   &__head {
@@ -41,7 +38,7 @@
     gap: t.$space-12;
 
     h3 {
-      margin: 0 0 t.$space-4;
+      margin: 0;
       font-size: t.$font-size-base;
       font-weight: t.$font-weight-extra-bold;
       line-height: 1.3;
@@ -57,39 +54,9 @@
     width: 40px;
     height: 40px;
     border-radius: t.$radius-lg;
-    background: color-mix(in srgb, var(--school-color) 12%, transparent);
-    color: var(--school-color);
-    font-size: 22px;
-  }
-
-  &__titles {
-    min-width: 0;
-  }
-
-  &__encargado {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0;
-    font-size: t.$font-size-xs;
-    color: t.$text-secondary;
-
-    strong {
-      color: t.$ink;
-    }
-  }
-
-  // Descripción recortada a tres líneas
-  &__descripcion {
-    display: -webkit-box;
-    margin: 0;
-    overflow: hidden;
-    font-size: t.$font-size-label;
-    line-height: 1.5;
-    color: t.$text-secondary;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
+    background: rgba(5, 54, 134, 0.08);
+    color: t.$blue;
+    font-size: 20px;
   }
 
   // Cursos con viñeta amarilla
