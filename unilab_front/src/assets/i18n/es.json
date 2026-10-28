@@ -826,6 +826,21 @@
       "title": "Publicados recientemente",
       "lead": "Los últimos proyectos publicados en el portal, de todas las escuelas."
     },
+    "semilleros": {
+      "kicker": "Semilleros",
+      "title": "Semilleros de investigación",
+      "titleShort": "Semilleros",
+      "lead": "Grupos activos por escuela: conoce su enfoque, líder y comunidad.",
+      "schoolTitle": "Semilleros de esta escuela",
+      "schoolHint": "Selecciona un semillero para ver su descripción, portada y galería.",
+      "leader": "Líder",
+      "members": "{{count}} miembro(s) aprobado(s)",
+      "gallery": "Galería de evidencias",
+      "about": "Acerca del semillero",
+      "backSchool": "Volver a la escuela",
+      "explore": "Explorar semilleros"
+    },
+    "loadSemilleroError": "No se pudo cargar el semillero.",
     "schoolPage": {
       "kicker": "Escuela",
       "publishedProjects": "Proyectos publicados",

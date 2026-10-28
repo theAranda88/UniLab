@@ -826,6 +826,21 @@
       "title": "Recently published",
       "lead": "The latest projects published on the portal, across all schools."
     },
+    "semilleros": {
+      "kicker": "Research groups",
+      "title": "Research groups",
+      "titleShort": "Groups",
+      "lead": "Active groups by school: explore their focus, leader and community.",
+      "schoolTitle": "Groups in this school",
+      "schoolHint": "Open a group to see its description, cover and gallery.",
+      "leader": "Leader",
+      "members": "{{count}} approved member(s)",
+      "gallery": "Evidence gallery",
+      "about": "About the group",
+      "backSchool": "Back to school",
+      "explore": "Explore groups"
+    },
+    "loadSemilleroError": "Could not load the research group.",
     "schoolPage": {
       "kicker": "School",
       "publishedProjects": "Published projects",

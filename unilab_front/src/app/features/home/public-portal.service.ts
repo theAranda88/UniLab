@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import type { Curso, Escuela, ProyectoPublico } from '../../core/models/portal.model';
+import type { Curso, Escuela, ProyectoPublico, SemilleroPublico, SemillerosPublicosPaginados } from '../../core/models/portal.model';
 import type {
   Evento,
   Inscripcion,
@@ -33,6 +33,22 @@ export class PublicPortalService {
 
   obtenerProyecto(idProyecto: number): Observable<ProyectoPublico> {
     return this.http.get<ProyectoPublico>(`${API}/proyectos/${idProyecto}`);
+  }
+
+  listarSemilleros(params?: {
+    idEscuela?: number;
+    pagina?: number;
+    limite?: number;
+  }): Observable<SemillerosPublicosPaginados> {
+    let httpParams = new HttpParams();
+    if (params?.idEscuela) httpParams = httpParams.set('id_escuela', params.idEscuela.toString());
+    if (params?.pagina) httpParams = httpParams.set('pagina', params.pagina.toString());
+    if (params?.limite) httpParams = httpParams.set('limite', params.limite.toString());
+    return this.http.get<SemillerosPublicosPaginados>(`${API}/semilleros`, { params: httpParams });
+  }
+
+  obtenerSemillero(idSemillero: number): Observable<SemilleroPublico> {
+    return this.http.get<SemilleroPublico>(`${API}/semilleros/${idSemillero}`);
   }
 
   listarEventosActivos(): Observable<Evento[]> {

@@ -80,6 +80,39 @@
   </div>
 </section>
 
+@if (semilleros().length > 0) {
+  <section class="semilleros-home" id="semilleros" data-seccion="proyectos" aria-labelledby="semilleros-home-title">
+    <div class="semilleros-home__inner">
+      <div class="section-head">
+        <div class="section-head__title">
+          <span class="section-head__kicker">{{ 'home.semilleros.kicker' | translate }}</span>
+          <h2 id="semilleros-home-title">{{ 'home.semilleros.title' | translate }}</h2>
+          <span class="section-head__rule" aria-hidden="true"></span>
+        </div>
+        <p>{{ 'home.semilleros.lead' | translate }}</p>
+      </div>
+      <div class="semilleros-home__grid">
+        @for (s of semilleros(); track s.id_semillero) {
+          <a class="semillero-card" [routerLink]="['/semilleros', s.id_semillero]">
+            @if (s.url_foto_portada) {
+              <img class="semillero-card__img" [src]="s.url_foto_portada" [alt]="s.nombre_semillero" />
+            } @else {
+              <span class="semillero-card__placeholder" aria-hidden="true"><i class="ti ti-flask"></i></span>
+            }
+            <span class="semillero-card__body">
+              <span class="semillero-card__school">{{ s.escuela.nombre_escuela }}</span>
+              <span class="semillero-card__name">{{ s.nombre_semillero }}</span>
+              <span class="semillero-card__meta">
+                {{ 'home.semilleros.members' | translate: { count: s.total_miembros_aprobados } }}
+              </span>
+            </span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+}
+
 <!-- Proyectos recientes (solo si hay proyectos publicados) -->
 @if (proyectosRecientes().length > 0) {
   <section class="recent" data-seccion="proyectos" aria-labelledby="recent-title">
