@@ -2,36 +2,79 @@ import { AppError } from '../utils/AppError';
 import { escuelaRepository, cursoRepository } from '../models/escuela.repository';
 import { prisma } from '../models/prisma.client';
 import { activo } from '../models/base.repository';
+import { escuelaImagenService } from './escuela-imagen.service';
+
+type EscuelaConDetalle = NonNullable<Awaited<ReturnType<typeof escuelaRepository.findById>>>;
+
+export interface EscuelaDatos {
+  nombre_escuela: string;
+  descripcion?: string | null;
+  color?: string | null;
+  icono?: string | null;
+  id_encargado?: number | null;
+}
+
+/** Agrega la URL pública a cada imagen de la escuela. */
+function mapEscuela(escuela: EscuelaConDetalle) {
+  return { ...escuela, imagenes: escuelaImagenService.mapImagenes(escuela.imagenes) };
+}
+
+async function verificarEncargado(id_encargado: number | null | undefined): Promise<void> {
+  if (!id_encargado) return;
+  const encargado = await escuelaRepository.findEncargadoValido(id_encargado);
+  if (!encargado) throw new AppError('El encargado debe ser un Profesor activo', 422);
+}
 
 export const escuelaService = {
-  listar() {
-    return escuelaRepository.findMany();
+  async listar() {
+    const escuelas = await escuelaRepository.findMany();
+    return escuelas.map(mapEscuela);
   },
 
   async obtener(id: number) {
     const escuela = await escuelaRepository.findById(id);
     if (!escuela) throw new AppError('Escuela no encontrada', 404);
-    return escuela;
+    return mapEscuela(escuela);
   },
 
-  crear(nombre_escuela: string, created_by: number) {
-    return escuelaRepository.create({
-      nombre_escuela,
+  async crear(data: EscuelaDatos, created_by: number) {
+    await verificarEncargado(data.id_encargado);
+    const escuela = await escuelaRepository.create({
+      nombre_escuela: data.nombre_escuela,
+      descripcion: data.descripcion ?? null,
+      color: data.color ?? null,
+      icono: data.icono ?? null,
+      ...(data.id_encargado ? { encargado: { connect: { id_usuario: data.id_encargado } } } : {}),
       creador: { connect: { id_usuario: created_by } },
     });
+    return mapEscuela(escuela);
   },
 
-  async actualizar(id: number, nombre_escuela: string) {
+  async actualizar(id: number, data: Partial<EscuelaDatos>) {
     await escuelaService.obtener(id);
-    return escuelaRepository.update(id, { nombre_escuela });
+    await verificarEncargado(data.id_encargado);
+    const escuela = await escuelaRepository.update(id, {
+      nombre_escuela: data.nombre_escuela,
+      descripcion: data.descripcion,
+      color: data.color,
+      icono: data.icono,
+      // undefined: no cambia · null: quita el encargado · número: lo reemplaza
+      ...(data.id_encargado === null ? { encargado: { disconnect: true } } : {}),
+      ...(data.id_encargado ? { encargado: { connect: { id_usuario: data.id_encargado } } } : {}),
+    });
+    return mapEscuela(escuela);
   },
 
   async eliminar(id: number) {
     await escuelaService.obtener(id);
     const ahora = new Date();
-    // Cascada lógica: soft-delete escuela → cursos
+    // Cascada lógica: soft-delete escuela → cursos e imágenes
     await prisma.$transaction([
       prisma.cursos.updateMany({
+        where: { id_escuela: id, ...activo },
+        data: { deleted_at: ahora },
+      }),
+      prisma.escuela_imagenes.updateMany({
         where: { id_escuela: id, ...activo },
         data: { deleted_at: ahora },
       }),

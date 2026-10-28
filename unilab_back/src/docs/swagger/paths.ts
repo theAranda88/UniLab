@@ -271,7 +271,7 @@ export const paths = {
       tags: ['Escuelas'],
       summary: 'Listar escuelas',
       description: '**Rol requerido:** cualquier autenticado',
-      responses: { 200: { description: 'Lista con cursos anidados' }, ...err },
+      responses: { 200: { description: 'Lista con cursos, encargado e imágenes' }, ...err },
     },
     post: {
       tags: ['Escuelas'],
@@ -286,7 +286,7 @@ export const paths = {
       tags: ['Escuelas'],
       summary: 'Obtener escuela por ID',
       parameters: [paramId],
-      responses: { 200: { description: 'Detalle con cursos' }, ...err },
+      responses: { 200: { description: 'Detalle con cursos, encargado e imágenes' }, ...err },
     },
     patch: {
       tags: ['Escuelas'],
@@ -298,10 +298,57 @@ export const paths = {
     },
     delete: {
       tags: ['Escuelas'],
-      summary: 'Eliminar escuela (soft-delete + cascada lógica a cursos)',
+      summary: 'Eliminar escuela (soft-delete + cascada lógica a cursos e imágenes)',
       description: '**Rol requerido:** Administrador, Coordinador',
       parameters: [paramId],
       responses: { 204: { description: 'Eliminada' }, ...err },
+    },
+  },
+  '/escuelas/{id}/imagenes': {
+    post: {
+      tags: ['Escuelas'],
+      summary: 'Subir imágenes de la escuela',
+      description:
+        '**Rol requerido:** Administrador, Coordinador. **Multipart:** campo `imagenes` (JPEG/PNG/WebP, máx. 5 MB c/u, máx. 5 imágenes en total por escuela; si se supera → 422).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['imagenes'],
+              properties: {
+                imagenes: {
+                  type: 'array',
+                  items: { type: 'string', format: 'binary' },
+                  description: 'Archivos de imagen (máx. 5 en total por escuela)',
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Imágenes subidas',
+          content: {
+            'application/json': {
+              schema: { type: 'array', items: { $ref: '#/components/schemas/EscuelaImagenResponse' } },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
+  '/escuelas/{id}/imagenes/{idImagen}': {
+    delete: {
+      tags: ['Escuelas'],
+      summary: 'Eliminar imagen de la escuela (soft-delete)',
+      description: '**Rol requerido:** Administrador, Coordinador. Reordena las imágenes restantes.',
+      parameters: [paramId, paramIdImagen],
+      responses: { 204: { description: 'Imagen eliminada' }, ...err },
     },
   },
 
@@ -499,7 +546,17 @@ export const paths = {
       description: '**Rol requerido:** cualquier autenticado. Soporta hilos con `id_comentario_padre`.',
       parameters: [paramId],
       requestBody: jsonBody('#/components/schemas/ComentarioRequest'),
-      responses: { 201: { description: 'Comentario creado' }, ...err },
+      responses: { 201: { description: 'Comentario creado (incluye `usuario` con nombres y apellidos)' }, ...err },
+    },
+  },
+  '/comentarios/{id}': {
+    delete: {
+      tags: ['Proyectos'],
+      summary: 'Eliminar comentario (borrado lógico)',
+      description:
+        '**Rol requerido:** autor del comentario o Administrador (otro usuario → 403). Elimina también sus respuestas.',
+      parameters: [paramId],
+      responses: { 204: { description: 'Comentario eliminado' }, ...err },
     },
   },
   '/proyectos/{id}/calificacion': {
@@ -1105,7 +1162,8 @@ export const paths = {
     get: {
       tags: ['Público'],
       summary: 'Detalle de proyecto publicado',
-      description: 'Sin autenticación. Registra una vista e incrementa `contador_vistas`.',
+      description:
+        'Sin autenticación. Registra una vista e incrementa `contador_vistas`. Cada comentario incluye `usuario` con nombres y apellidos del autor.',
       security: [],
       parameters: [paramId],
       responses: {

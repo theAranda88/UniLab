@@ -300,6 +300,22 @@
   }
 }
 
+// Marca «Tú» junto al nombre en los comentarios propios
+.pd-comment__you {
+  padding: 0 6px;
+  border-radius: $radius-sm;
+  background: $blue-tint-strong;
+  color: $blue;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+}
+
+.pd-comment__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
 .pd-comment__text {
   margin: 0;
   font-size: $font-size-sm;
@@ -332,6 +348,19 @@
   &:focus-visible {
     outline: none;
     box-shadow: $focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--danger {
+    color: $danger;
+
+    &:focus-visible {
+      box-shadow: $focus-ring-danger;
+    }
   }
 }
 

@@ -274,6 +274,18 @@ export const proyectoService = {
     });
   },
 
+  /** Solo el autor del comentario o el Administrador pueden eliminarlo. */
+  async eliminarComentario(id_comentario: number, rol: string, id_usuario: number) {
+    const comentario = await proyectoRepository.findComentarioById(id_comentario);
+    if (!comentario) throw new AppError('Comentario no encontrado', 404);
+
+    if (rol !== 'Administrador' && comentario.id_usuario !== id_usuario) {
+      throw new AppError('Solo el autor o el administrador pueden eliminar el comentario', 403);
+    }
+
+    await proyectoRepository.softDeleteComentario(id_comentario);
+  },
+
   async calificar(id_proyecto: number, id_usuario: number, puntuacion: number) {
     const proyecto = await proyectoRepository.findById(id_proyecto);
     if (!proyecto) throw new AppError('Proyecto no encontrado', 404);
