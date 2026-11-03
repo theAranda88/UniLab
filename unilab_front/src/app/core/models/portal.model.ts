@@ -58,6 +58,8 @@ export interface SemilleroPublico {
   };
   lider: UsuarioResumen;
   total_miembros_aprobados: number;
+  /** Proyectos publicados asociados (listado público). */
+  total_proyectos_publicados?: number;
   evidencias?: SemilleroEvidenciaPublica[];
   proyectos?: ProyectoPublico[];
 }

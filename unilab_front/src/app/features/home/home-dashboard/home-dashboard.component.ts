@@ -10,6 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { SemilleroCardComponent } from '../semillero-card/semillero-card.component';
 import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -20,7 +21,6 @@ import {
   type Burbuja,
 } from '../../../shared/ui/floating-bubbles/floating-bubbles.component';
 import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
-import { urlImagenDestacadaSemillero } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { EventoCardComponent } from '../../../shared/ui/evento-card/evento-card.component';
@@ -70,6 +70,7 @@ const BURBUJAS: Burbuja[] = [
   selector: 'app-home-dashboard',
   standalone: true,
   imports: [
+    SemilleroCardComponent,
     RouterLink,
     TranslatePipe,
     FloatingBubblesComponent,
@@ -91,13 +92,13 @@ export class HomeDashboardComponent implements OnInit {
   private injector = inject(Injector);
 
   readonly burbujas = BURBUJAS;
-  readonly urlImagenSemillero = urlImagenDestacadaSemillero;
 
   readonly escuelas = signal<Escuela[]>([]);
   readonly cursosPorEscuela = signal<Record<number, Curso[]>>({});
   readonly eventos = signal<Evento[]>([]);
   readonly proyectos = signal<ProyectoPublico[]>([]);
   readonly semilleros = signal<SemilleroPublico[]>([]);
+  readonly totalSemilleros = signal(0);
 
   /** Los tres proyectos publicados más recientes de todas las escuelas. */
   readonly proyectosRecientes = computed(() =>
@@ -236,7 +237,10 @@ export class HomeDashboardComponent implements OnInit {
       },
     });
     this.portal.listarSemilleros({ pagina: 1, limite: 6 }).subscribe({
-      next: (resp) => this.semilleros.set(resp.data),
+      next: (resp) => {
+        this.semilleros.set(resp.data);
+        this.totalSemilleros.set(resp.paginacion.total);
+      },
     });
   }
 

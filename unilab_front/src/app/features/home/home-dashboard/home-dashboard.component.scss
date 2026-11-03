@@ -613,7 +613,7 @@
 }
 
 .semilleros-home {
-  padding: $space-32 0;
+  padding: $space-48 0;
   background: $cream;
 
   &__inner {
@@ -623,7 +623,39 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: $space-16;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: $space-20;
+  }
+
+  &__more {
+    display: flex;
+    justify-content: center;
+    margin-top: $space-24;
+  }
+
+  &__all {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-8;
+    min-height: 46px;
+    padding: 0 $space-20;
+    border: 1px solid $blue;
+    border-radius: $radius-md;
+    background: $white;
+    color: $blue;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    text-decoration: none;
+    transition: background 160ms ease, color 160ms ease;
+
+    span {
+      font-weight: $font-weight-semibold;
+      opacity: 0.8;
+    }
+
+    &:hover {
+      background: $blue;
+      color: $white;
+    }
   }
 }

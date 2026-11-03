@@ -1,77 +1,142 @@
 <main class="sd" [style.--school-color]="estilo().color">
   @if (loading()) {
-    <div class="sd__container"><app-skeleton variant="cards" [rows]="1" /></div>
+    <div class="sd__container sd__loading"><app-skeleton variant="cards" [rows]="2" /></div>
   } @else if (loadError()) {
-    <div class="sd__container">
+    <div class="sd__container sd__loading">
       <app-empty-state
         icon="ti-cloud-off"
         tone="error"
         [title]="'common.loadErrorTitle' | translate"
         [message]="'home.loadSemilleroError' | translate"
       >
-        <a class="edu-btn edu-btn--secondary" routerLink="/" fragment="semilleros">
+        <a class="edu-btn edu-btn--secondary" routerLink="/semilleros/explorar">
           {{ 'home.semilleros.explore' | translate }}
         </a>
       </app-empty-state>
     </div>
   } @else if (semillero(); as s) {
-    <header class="sd-head">
-      <div class="sd__container sd-head__inner">
-        <nav class="sd-head__crumbs" [attr.aria-label]="'home.breadcrumb' | translate">
+    <!-- Portada -->
+    <header class="sd-hero" [class.sd-hero--sin-imagen]="!imagenHero()">
+      @if (imagenHero(); as img) {
+        <img class="sd-hero__bg" [src]="img" alt="" aria-hidden="true" />
+      } @else {
+        <i class="sd-hero__watermark ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+      }
+      <div class="sd-hero__veil" aria-hidden="true"></div>
+
+      <div class="sd__container sd-hero__inner">
+        <nav class="sd-hero__crumbs" [attr.aria-label]="'home.breadcrumb' | translate">
           <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
           <i class="ti ti-chevron-right" aria-hidden="true"></i>
-          <a [routerLink]="['/escuelas', s.escuela.id_escuela]">{{ s.escuela.nombre_escuela }}</a>
+          <a routerLink="/semilleros/explorar">{{ 'home.semilleros.titleShort' | translate }}</a>
           <i class="ti ti-chevron-right" aria-hidden="true"></i>
           <span aria-current="page">{{ s.nombre_semillero }}</span>
         </nav>
 
-        <span class="sd-head__kicker">{{ 'home.semilleros.kicker' | translate }}</span>
-        <h1 class="sd-head__title">{{ s.nombre_semillero }}</h1>
+        <a class="sd-hero__school" [routerLink]="['/escuelas', s.escuela.id_escuela]">
+          <i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+          {{ s.escuela.nombre_escuela }}
+        </a>
+        <h1 class="sd-hero__title">{{ s.nombre_semillero }}</h1>
+        @if (s.descripcion) {
+          <p class="sd-hero__lead">{{ s.descripcion }}</p>
+        }
 
-        <ul class="sd-head__meta">
-          <li>
-            <i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
-            {{ s.escuela.nombre_escuela }}
-          </li>
-          <li>
-            <i class="ti ti-user-star" aria-hidden="true"></i>
-            {{ 'home.semilleros.leader' | translate }}: {{ nombreLider(s) }}
-          </li>
-          <li>
-            <i class="ti ti-users" aria-hidden="true"></i>
-            {{ 'home.semilleros.members' | translate: { count: s.total_miembros_aprobados } }}
-          </li>
-        </ul>
+        <div class="sd-hero__actions">
+          <button type="button" class="sd-btn sd-btn--primary" (click)="irA('sd-proyectos')">
+            <i class="ti ti-folders" aria-hidden="true"></i>
+            {{ 'home.semilleros.seeProjects' | translate }}
+          </button>
+          @if (participar(); as p) {
+            <a class="sd-btn sd-btn--ghost" [routerLink]="p.ruta" [queryParams]="p.query">
+              <i class="ti ti-user-plus" aria-hidden="true"></i>
+              {{ 'home.semilleros.join' | translate }}
+            </a>
+          }
+        </div>
       </div>
     </header>
 
+    <!-- Indicadores -->
+    <div class="sd__container">
+      <dl class="sd-stats">
+        <div class="sd-stats__item">
+          <dt><i class="ti ti-folders" aria-hidden="true"></i>{{ 'home.semilleros.statProjects' | translate }}</dt>
+          <dd>{{ proyectos().length }}</dd>
+        </div>
+        <div class="sd-stats__item">
+          <dt><i class="ti ti-users" aria-hidden="true"></i>{{ 'home.semilleros.statMembers' | translate }}</dt>
+          <dd>{{ s.total_miembros_aprobados }}</dd>
+        </div>
+        <div class="sd-stats__item">
+          <dt><i class="ti ti-photo" aria-hidden="true"></i>{{ 'home.semilleros.statEvidence' | translate }}</dt>
+          <dd>{{ evidencias().length }}</dd>
+        </div>
+        <div class="sd-stats__item sd-stats__item--leader">
+          <dt><i class="ti ti-user-star" aria-hidden="true"></i>{{ 'home.semilleros.leader' | translate }}</dt>
+          <dd>
+            <span class="sd-avatar" aria-hidden="true">{{ inicialesLider(s) }}</span>
+            <span>{{ nombreLider(s) }}</span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Navegación de secciones -->
+    <nav class="sd-tabs" [attr.aria-label]="'home.semilleros.sections' | translate">
+      <div class="sd__container sd-tabs__inner">
+        <button type="button" (click)="irA('sd-proyectos')">
+          {{ 'home.semilleros.projectsTitle' | translate }}
+          <span class="sd-tabs__count">{{ proyectos().length }}</span>
+        </button>
+        @if (evidencias().length) {
+          <button type="button" (click)="irA('sd-galeria')">
+            {{ 'home.semilleros.gallery' | translate }}
+            <span class="sd-tabs__count">{{ evidencias().length }}</span>
+          </button>
+        }
+        <button type="button" (click)="irA('sd-acerca')">{{ 'home.semilleros.about' | translate }}</button>
+      </div>
+    </nav>
+
     <div class="sd__container sd__body">
-      @if (urlPortada()) {
-        <figure class="sd__portada">
-          <img [src]="urlPortada()" [alt]="s.nombre_semillero" />
-        </figure>
-      }
+      <!-- Proyectos -->
+      <section class="sd-section" id="sd-proyectos" aria-labelledby="sd-proyectos-title">
+        <div class="sd-section__head">
+          <div>
+            <h2 id="sd-proyectos-title" class="sd__h2">{{ 'home.semilleros.projectsTitle' | translate }}</h2>
+            <p class="sd-section__hint">
+              {{ 'home.semilleros.projectsHint' | translate: { count: proyectos().length } }}
+            </p>
+          </div>
+          @if (tipos().length > 1) {
+            <div class="sd-filters" role="group" [attr.aria-label]="'home.semilleros.filterType' | translate">
+              <button
+                type="button"
+                class="sd-chip"
+                [class.sd-chip--active]="tipoFiltro() === null"
+                [attr.aria-pressed]="tipoFiltro() === null"
+                (click)="elegirTipo(null)"
+              >
+                {{ 'home.semilleros.allTypes' | translate }}
+                <span>{{ proyectos().length }}</span>
+              </button>
+              @for (t of tipos(); track t.tipo) {
+                <button
+                  type="button"
+                  class="sd-chip"
+                  [class.sd-chip--active]="tipoFiltro() === t.tipo"
+                  [attr.aria-pressed]="tipoFiltro() === t.tipo"
+                  (click)="elegirTipo(t.tipo)"
+                >
+                  {{ 'home.projectTypes.' + t.tipo | translate }}
+                  <span>{{ t.total }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
 
-      @if (imagenesGaleria().length > 0) {
-        <section class="sd__gallery" aria-labelledby="sd-gallery-title">
-          <h2 id="sd-gallery-title" class="sd__h2">{{ 'home.semilleros.gallery' | translate }}</h2>
-          <figure class="sd__gallery-frame">
-            <app-project-image-carousel
-              [images]="imagenesGaleria()"
-              [alt]="s.nombre_semillero"
-              [zoomable]="true"
-            />
-          </figure>
-        </section>
-      }
-
-      <section class="sd__about" aria-labelledby="sd-about-title">
-        <h2 id="sd-about-title" class="sd__h2">{{ 'home.semilleros.about' | translate }}</h2>
-        <p class="sd__text">{{ s.descripcion }}</p>
-      </section>
-
-      <section class="sd__projects" aria-labelledby="sd-projects-title">
-        <h2 id="sd-projects-title" class="sd__h2">{{ 'home.semilleros.projectsTitle' | translate }}</h2>
         @if (proyectos().length === 0) {
           <app-empty-state
             icon="ti-folders"
@@ -80,11 +145,80 @@
           />
         } @else {
           <div class="sd__projects-grid">
-            @for (proyecto of proyectos(); track proyecto.id_proyecto) {
+            @for (proyecto of proyectosFiltrados(); track proyecto.id_proyecto) {
               <app-proyecto-card [proyecto]="proyecto" />
             }
           </div>
         }
+      </section>
+
+      <!-- Galería -->
+      @if (evidencias().length) {
+        <section class="sd-section" id="sd-galeria" aria-labelledby="sd-galeria-title">
+          <div class="sd-section__head">
+            <div>
+              <h2 id="sd-galeria-title" class="sd__h2">{{ 'home.semilleros.gallery' | translate }}</h2>
+              <p class="sd-section__hint">{{ 'home.semilleros.galleryHint' | translate }}</p>
+            </div>
+          </div>
+          <ul class="sd-gallery" [class.sd-gallery--destacada]="miniaturas().length >= 5">
+            @for (img of miniaturas(); track img; let i = $index) {
+              <li [class.sd-gallery__item--main]="i === 0">
+                <button
+                  type="button"
+                  class="sd-gallery__btn"
+                  (click)="abrirVisor(i)"
+                  [attr.aria-label]="'home.semilleros.openImage' | translate: { n: i + 1 }"
+                >
+                  <img [src]="img" [alt]="s.nombre_semillero" loading="lazy" />
+                  @if (!verTodas() && ocultas() > 0 && i === miniaturas().length - 1) {
+                    <span class="sd-gallery__more">+{{ ocultas() }}</span>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+          @if (ocultas() > 0) {
+            <button type="button" class="edu-btn edu-btn--ghost sd-gallery__toggle" (click)="verTodas.set(!verTodas())">
+              {{ (verTodas() ? 'home.semilleros.showLess' : 'home.semilleros.showAll') | translate: { count: evidencias().length } }}
+            </button>
+          }
+        </section>
+      }
+
+      <!-- Acerca -->
+      <section class="sd-section sd-about" id="sd-acerca" aria-labelledby="sd-acerca-title">
+        <div class="sd-about__text">
+          <h2 id="sd-acerca-title" class="sd__h2">{{ 'home.semilleros.about' | translate }}</h2>
+          <p class="sd__text">{{ s.descripcion }}</p>
+        </div>
+        <aside class="sd-about__side">
+          <div class="sd-card">
+            <span class="sd-card__label">{{ 'home.semilleros.leader' | translate }}</span>
+            <span class="sd-card__person">
+              <span class="sd-avatar" aria-hidden="true">{{ inicialesLider(s) }}</span>
+              <strong>{{ nombreLider(s) }}</strong>
+            </span>
+          </div>
+          @if (autores().length) {
+            <div class="sd-card">
+              <span class="sd-card__label">{{ 'home.semilleros.authors' | translate: { count: autores().length } }}</span>
+              <ul class="sd-card__list">
+                @for (nombre of autores(); track nombre) {
+                  <li>{{ nombre }}</li>
+                }
+              </ul>
+            </div>
+          }
+          <a class="sd-card sd-card--link" [routerLink]="['/escuelas', s.escuela.id_escuela]">
+            <span class="sd-card__label">{{ 'home.semilleros.school' | translate }}</span>
+            <span class="sd-card__person">
+              <i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+              <strong>{{ s.escuela.nombre_escuela }}</strong>
+              <i class="ti ti-arrow-right sd-card__arrow" aria-hidden="true"></i>
+            </span>
+          </a>
+        </aside>
       </section>
 
       <button type="button" class="portal-sub__back" (click)="volverEscuela()">
@@ -92,5 +226,14 @@
         {{ 'home.semilleros.backSchool' | translate }}
       </button>
     </div>
+
+    @if (visor() !== null) {
+      <app-image-lightbox
+        [images]="evidencias()"
+        [alt]="s.nombre_semillero"
+        [startIndex]="visor()!"
+        (closed)="visor.set(null)"
+      />
+    }
   }
 </main>

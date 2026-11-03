@@ -75,17 +75,17 @@
                 {{ 'home.projectsNav' | translate }}
               </a>
             </li>
-            <li>
-              <a
-                routerLink="/semilleros"
-                class="portal__nav-link"
-                [class.portal__nav-link--active]="activeSection() === 'semilleros'"
-                [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
-              >
-                {{ 'home.semillerosNav' | translate }}
-              </a>
-            </li>
           }
+          <li>
+            <a
+              [routerLink]="isLoggedIn() && isEstudiante() ? '/semilleros' : '/semilleros/explorar'"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'semilleros'"
+              [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
+            >
+              {{ 'home.semillerosNav' | translate }}
+            </a>
+          </li>
         </ul>
 
         <div class="portal__actions">

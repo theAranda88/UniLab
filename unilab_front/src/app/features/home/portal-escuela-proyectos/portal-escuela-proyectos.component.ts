@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { SemilleroCardComponent } from '../semillero-card/semillero-card.component';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -7,7 +8,6 @@ import { PublicPortalService } from '../public-portal.service';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
-import { urlImagenDestacadaSemillero } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
@@ -21,6 +21,7 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
   selector: 'app-portal-escuela-proyectos',
   standalone: true,
   imports: [
+    SemilleroCardComponent,
     RouterLink,
     TranslatePipe,
     ProyectoCardComponent,
@@ -36,7 +37,6 @@ export class PortalEscuelaProyectosComponent {
   private router = inject(Router);
   private portal = inject(PublicPortalService);
 
-  readonly urlImagenSemillero = urlImagenDestacadaSemillero;
 
   readonly escuelas = signal<Escuela[]>([]);
   readonly idEscuela = signal<number | null>(null);
@@ -112,10 +112,6 @@ export class PortalEscuelaProyectosComponent {
         this.cursos.set(datos.cursos);
         this.semilleros.set(datos.semilleros);
       });
-  }
-
-  nombreLider(s: SemilleroPublico): string {
-    return `${s.lider.nombres} ${s.lider.apellidos}`.trim();
   }
 
   setFiltroTipo(tipo: string | null): void {

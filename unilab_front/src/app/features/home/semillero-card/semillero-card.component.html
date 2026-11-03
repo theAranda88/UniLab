@@ -1,0 +1,50 @@
+@let s = semillero();
+<a class="sc" [routerLink]="['/semilleros', s.id_semillero]" [style.--sc-color]="estilo().color">
+  <span class="sc__media">
+    @if (imagen(); as img) {
+      <img class="sc__img" [src]="img" [alt]="s.nombre_semillero" loading="lazy" />
+    } @else {
+      <span class="sc__placeholder" aria-hidden="true">
+        <i class="ph-duotone {{ estilo().icono }}"></i>
+      </span>
+    }
+    @if (mostrarEscuela()) {
+      <span class="sc__school">
+        <i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i>
+        <span>{{ s.escuela.nombre_escuela }}</span>
+      </span>
+    }
+  </span>
+
+  <span class="sc__body">
+    <span class="sc__name">{{ s.nombre_semillero }}</span>
+    @if (s.descripcion) {
+      <span class="sc__desc">{{ s.descripcion }}</span>
+    }
+
+    <span class="sc__stats">
+      <span class="sc__stat" [class.sc__stat--strong]="totalProyectos() > 0">
+        <i class="ti ti-folders" aria-hidden="true"></i>
+        {{ 'home.semilleros.projectsCount' | translate: { count: totalProyectos() } }}
+      </span>
+      <span class="sc__stat">
+        <i class="ti ti-users" aria-hidden="true"></i>
+        {{ 'home.semilleros.membersCount' | translate: { count: s.total_miembros_aprobados } }}
+      </span>
+    </span>
+
+    <span class="sc__foot">
+      <span class="sc__leader">
+        <span class="sc__avatar" aria-hidden="true">{{ inicialesLider() }}</span>
+        <span class="sc__leader-text">
+          <small>{{ 'home.semilleros.leader' | translate }}</small>
+          <span>{{ lider() }}</span>
+        </span>
+      </span>
+      <span class="sc__cta">
+        {{ 'home.semilleros.view' | translate }}
+        <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </span>
+    </span>
+  </span>
+</a>

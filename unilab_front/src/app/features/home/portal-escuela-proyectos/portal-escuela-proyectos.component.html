@@ -83,24 +83,7 @@
         <p class="school-semilleros__hint">{{ 'home.semilleros.schoolHint' | translate }}</p>
         <div class="school-semilleros__grid">
           @for (s of semilleros(); track s.id_semillero) {
-            <a class="semillero-card" [routerLink]="['/semilleros', s.id_semillero]">
-              @if (urlImagenSemillero(s); as imgSemillero) {
-                <img class="semillero-card__img" [src]="imgSemillero" [alt]="s.nombre_semillero" />
-              } @else {
-                <span class="semillero-card__placeholder" aria-hidden="true">
-                  <i class="ti ti-flask"></i>
-                </span>
-              }
-              <span class="semillero-card__body">
-                <span class="semillero-card__name">{{ s.nombre_semillero }}</span>
-                <span class="semillero-card__meta">
-                  {{ 'home.semilleros.leader' | translate }}: {{ nombreLider(s) }}
-                </span>
-                <span class="semillero-card__meta">
-                  {{ 'home.semilleros.members' | translate: { count: s.total_miembros_aprobados } }}
-                </span>
-              </span>
-            </a>
+            <app-semillero-card [semillero]="s" [mostrarEscuela]="false" />
           }
         </div>
       </section>

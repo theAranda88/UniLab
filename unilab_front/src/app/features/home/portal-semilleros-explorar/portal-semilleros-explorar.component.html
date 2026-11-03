@@ -1,0 +1,107 @@
+<main class="se">
+  <header class="se-hero">
+    <div class="se__container se-hero__inner">
+      <nav class="se-hero__crumbs" [attr.aria-label]="'home.breadcrumb' | translate">
+        <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
+        <i class="ti ti-chevron-right" aria-hidden="true"></i>
+        <span aria-current="page">{{ 'home.semilleros.titleShort' | translate }}</span>
+      </nav>
+      <span class="se-hero__kicker">{{ 'home.semilleros.kicker' | translate }}</span>
+      <h1 class="se-hero__title">{{ 'home.semilleros.title' | translate }}</h1>
+      <p class="se-hero__lead">{{ 'home.semilleros.catalogLead' | translate }}</p>
+
+      <label class="se-search">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <span class="se-sr">{{ 'home.semilleros.searchLabel' | translate }}</span>
+        <input
+          type="search"
+          [value]="busqueda()"
+          (input)="onBuscar($any($event.target).value)"
+          [placeholder]="'home.semilleros.searchPlaceholder' | translate"
+          maxlength="100"
+        />
+      </label>
+    </div>
+  </header>
+
+  <div class="se__container se__body">
+    <div class="se-filters" role="group" [attr.aria-label]="'home.semilleros.filterSchool' | translate">
+      <button
+        type="button"
+        class="se-chip"
+        [class.se-chip--active]="idEscuela() === null"
+        [attr.aria-pressed]="idEscuela() === null"
+        (click)="elegirEscuela(null)"
+      >
+        {{ 'home.semilleros.allSchools' | translate }}
+      </button>
+      @for (e of escuelas(); track e.id_escuela) {
+        <button
+          type="button"
+          class="se-chip"
+          [style.--chip-color]="colorEscuela(e)"
+          [class.se-chip--active]="idEscuela() === e.id_escuela"
+          [attr.aria-pressed]="idEscuela() === e.id_escuela"
+          (click)="elegirEscuela(e.id_escuela)"
+        >
+          <i class="ph-duotone {{ iconoEscuela(e) }}" aria-hidden="true"></i>
+          {{ e.nombre_escuela }}
+        </button>
+      }
+    </div>
+
+    @if (!cargando() && !error()) {
+      <p class="se__count" aria-live="polite">
+        {{ 'home.semilleros.resultCount' | translate: { count: total() } }}
+        @if (escuelaActiva(); as e) {
+          · {{ e.nombre_escuela }}
+        }
+      </p>
+    }
+
+    @if (cargando()) {
+      <app-skeleton variant="cards" [rows]="3" />
+    } @else if (error()) {
+      <app-empty-state
+        icon="ti-cloud-off"
+        tone="error"
+        [title]="'common.loadErrorTitle' | translate"
+        [message]="'home.semilleros.loadError' | translate"
+      >
+        <button type="button" class="edu-btn edu-btn--secondary" (click)="reintentar()">
+          {{ 'common.reintentar' | translate }}
+        </button>
+      </app-empty-state>
+    } @else if (semilleros().length === 0) {
+      <app-empty-state
+        icon="ti-flask"
+        [title]="(hayFiltros() ? 'home.semilleros.noResults' : 'home.semilleros.noSemilleros') | translate"
+        [message]="(hayFiltros() ? 'home.semilleros.noResultsHint' : 'home.semilleros.noSemillerosHint') | translate"
+      >
+        @if (hayFiltros()) {
+          <button type="button" class="edu-btn edu-btn--secondary" (click)="limpiar()">
+            {{ 'home.semilleros.clearFilters' | translate }}
+          </button>
+        }
+      </app-empty-state>
+    } @else {
+      <div class="se__grid">
+        @for (s of semilleros(); track s.id_semillero) {
+          <app-semillero-card [semillero]="s" />
+        }
+      </div>
+
+      @if (hayMas()) {
+        <div class="se__more">
+          <button type="button" class="edu-btn edu-btn--secondary" [disabled]="cargandoMas()" (click)="cargarMas()">
+            @if (cargandoMas()) {
+              {{ 'common.cargando' | translate }}
+            } @else {
+              {{ 'home.semilleros.loadMore' | translate }}
+            }
+          </button>
+        </div>
+      }
+    }
+  </div>
+</main>
