@@ -7,6 +7,25 @@ const usuarioResumen = {
   select: { id_usuario: true, nombres: true, apellidos: true, email: true },
 } as const;
 
+export interface FiltroSemillerosPublicos {
+  id_escuela?: number;
+  /** Texto libre sobre nombre o descripción del semillero. */
+  busqueda?: string;
+}
+
+/** Proyectos que cuentan en el portal: publicados y sin borrar. */
+const proyectosPublicados = { ...activo, estado_proyecto: 'publicado' };
+
+function whereSemillerosPublicos(filtro: FiltroSemillerosPublicos): Prisma.semillerosWhereInput {
+  const contiene = filtro.busqueda ? { contains: filtro.busqueda, mode: 'insensitive' as const } : null;
+  return {
+    ...activo,
+    activo: true,
+    ...(filtro.id_escuela !== undefined ? { id_escuela: filtro.id_escuela } : {}),
+    ...(contiene ? { OR: [{ nombre_semillero: contiene }, { descripcion: contiene }] } : {}),
+  };
+}
+
 export const semilleroRepository = {
   findMany() {
     return prisma.semilleros.findMany({
@@ -98,26 +117,16 @@ export const semilleroRepository = {
     });
   },
 
-  countPublicos(id_escuela?: number) {
-    return prisma.semilleros.count({
-      where: {
-        ...activo,
-        activo: true,
-        ...(id_escuela !== undefined ? { id_escuela } : {}),
-      },
-    });
+  countPublicos(filtro: FiltroSemillerosPublicos = {}) {
+    return prisma.semilleros.count({ where: whereSemillerosPublicos(filtro) });
   },
 
-  findManyPublicos(params: { id_escuela?: number; skip: number; take: number }) {
+  findManyPublicos(params: FiltroSemillerosPublicos & { skip: number; take: number }) {
     const miembrosAprobados = { ...activo, estado_solicitud: 'aprobado' as const };
     return prisma.semilleros.findMany({
-      where: {
-        ...activo,
-        activo: true,
-        ...(params.id_escuela !== undefined ? { id_escuela: params.id_escuela } : {}),
-      },
+      where: whereSemillerosPublicos(params),
       include: {
-        escuela: { select: { id_escuela: true, nombre_escuela: true } },
+        escuela: { select: { id_escuela: true, nombre_escuela: true, color: true, icono: true } },
         profesor_lider: { select: { nombres: true, apellidos: true } },
         evidencias: {
           where: activo,
@@ -125,7 +134,9 @@ export const semilleroRepository = {
           take: 1,
           select: { ruta_archivo: true },
         },
-        _count: { select: { miembros: { where: miembrosAprobados } } },
+        _count: {
+          select: { miembros: { where: miembrosAprobados }, proyectos: { where: proyectosPublicados } },
+        },
       },
       orderBy: { nombre_semillero: 'asc' },
       skip: params.skip,
@@ -141,7 +152,9 @@ export const semilleroRepository = {
         escuela: { select: { id_escuela: true, nombre_escuela: true, color: true, icono: true } },
         profesor_lider: { select: { nombres: true, apellidos: true } },
         evidencias: { where: activo, orderBy: { orden: 'asc' } },
-        _count: { select: { miembros: { where: miembrosAprobados } } },
+        _count: {
+          select: { miembros: { where: miembrosAprobados }, proyectos: { where: proyectosPublicados } },
+        },
       },
     });
   },

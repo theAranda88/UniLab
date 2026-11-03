@@ -43,6 +43,7 @@ function mapSemilleroPublicoResumen(semillero: SemilleroPublicoRow | SemilleroPu
     escuela: semillero.escuela,
     lider: semillero.profesor_lider,
     total_miembros_aprobados: semillero._count.miembros,
+    total_proyectos_publicados: semillero._count.proyectos,
   };
 }
 
@@ -151,16 +152,17 @@ export const publicoService = {
     return eventoService.registrarAsistenciaPublica(codigo_qr, documento_identidad);
   },
 
-  async listarSemilleros(params: { id_escuela?: number; pagina: number; limite: number }) {
+  async listarSemilleros(params: { id_escuela?: number; busqueda?: string; pagina: number; limite: number }) {
     if (params.id_escuela !== undefined) {
       const escuela = await escuelaRepository.findById(params.id_escuela);
       if (!escuela) throw new AppError('Escuela no encontrada', 404);
     }
 
-    const total = await semilleroRepository.countPublicos(params.id_escuela);
+    const filtro = { id_escuela: params.id_escuela, busqueda: params.busqueda || undefined };
+    const total = await semilleroRepository.countPublicos(filtro);
     const skip = (params.pagina - 1) * params.limite;
     const semilleros = await semilleroRepository.findManyPublicos({
-      id_escuela: params.id_escuela,
+      ...filtro,
       skip,
       take: params.limite,
     });

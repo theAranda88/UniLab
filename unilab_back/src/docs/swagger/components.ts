@@ -632,6 +632,7 @@ export const schemas = {
         properties: { nombres: { type: 'string' }, apellidos: { type: 'string' } },
       },
       total_miembros_aprobados: { type: 'integer', example: 12 },
+      total_proyectos_publicados: { type: 'integer', example: 4 },
       evidencias: {
         type: 'array',
         items: {

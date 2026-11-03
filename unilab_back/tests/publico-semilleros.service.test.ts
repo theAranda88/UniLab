@@ -31,7 +31,7 @@ const SEMILLERO_LISTA = {
   url_foto_portada: null,
   escuela: { id_escuela: 2, nombre_escuela: 'Software' },
   profesor_lider: { nombres: 'Ana', apellidos: 'López' },
-  _count: { miembros: 5 },
+  _count: { miembros: 5, proyectos: 3 },
 };
 
 describe('publicoService · semilleros', () => {
@@ -58,6 +58,39 @@ describe('publicoService · semilleros', () => {
     expect(result.data[0].total_miembros_aprobados).toBe(5);
     expect(result.paginacion.total).toBe(1);
     expect(result.data[0].lider).toEqual({ nombres: 'Ana', apellidos: 'López' });
+  });
+
+  it('listarSemilleros incluye el total de proyectos publicados', async () => {
+    m.semilleroRepository.countPublicos.mockResolvedValue(1);
+    m.semilleroRepository.findManyPublicos.mockResolvedValue([SEMILLERO_LISTA]);
+
+    const result = await publicoService.listarSemilleros({ pagina: 1, limite: 12 });
+
+    expect(result.data[0].total_proyectos_publicados).toBe(3);
+  });
+
+  it('listarSemilleros aplica la búsqueda al conteo y al listado por igual', async () => {
+    m.semilleroRepository.countPublicos.mockResolvedValue(0);
+    m.semilleroRepository.findManyPublicos.mockResolvedValue([]);
+
+    await publicoService.listarSemilleros({ busqueda: 'robot', pagina: 2, limite: 6 });
+
+    expect(m.semilleroRepository.countPublicos).toHaveBeenCalledWith({ id_escuela: undefined, busqueda: 'robot' });
+    expect(m.semilleroRepository.findManyPublicos).toHaveBeenCalledWith({
+      id_escuela: undefined,
+      busqueda: 'robot',
+      skip: 6,
+      take: 6,
+    });
+  });
+
+  it('listarSemilleros ignora una búsqueda vacía', async () => {
+    m.semilleroRepository.countPublicos.mockResolvedValue(0);
+    m.semilleroRepository.findManyPublicos.mockResolvedValue([]);
+
+    await publicoService.listarSemilleros({ busqueda: '', pagina: 1, limite: 12 });
+
+    expect(m.semilleroRepository.countPublicos).toHaveBeenCalledWith({ id_escuela: undefined, busqueda: undefined });
   });
 
   it('obtenerSemilleroPublico responde 404 si no existe', async () => {

@@ -1304,10 +1304,17 @@ export const paths = {
       tags: ['Público'],
       summary: 'Listar semilleros activos (portal público)',
       description:
-        'Sin autenticación. Solo semilleros activos. Incluye escuela, líder y total de miembros aprobados.',
+        'Sin autenticación. Solo semilleros activos. Incluye escuela, líder, total de miembros aprobados y de proyectos publicados.',
       security: [],
       parameters: [
         { name: 'id_escuela', in: 'query', schema: { type: 'integer' }, required: false },
+        {
+          name: 'busqueda',
+          in: 'query',
+          schema: { type: 'string', maxLength: 100 },
+          required: false,
+          description: 'Texto en el nombre o la descripción',
+        },
         { name: 'pagina', in: 'query', schema: { type: 'integer', default: 1 } },
         { name: 'limite', in: 'query', schema: { type: 'integer', default: 12, maximum: 50 } },
       ],

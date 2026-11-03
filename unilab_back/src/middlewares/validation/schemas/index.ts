@@ -395,6 +395,7 @@ export const configuracionUpdateSchema = z
 
 export const publicoSemillerosQuerySchema = z.object({
   id_escuela: z.coerce.number().int().positive().optional(),
+  busqueda: z.string().trim().max(100).optional(),
   pagina: z.coerce.number().int().positive().optional().default(1),
   limite: z.coerce.number().int().min(1).max(50).optional().default(12),
 });
