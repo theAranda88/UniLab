@@ -38,8 +38,10 @@ En Docker, el front se sirve en \`http://localhost:8080\` (variable \`FRONT_PORT
 ### Portal público (sin JWT)
 - \`GET /public/escuelas\` — escuelas con \`total_proyectos_publicados\`
 - \`GET /public/cursos?id_escuela=\` — cursos por escuela
-- \`GET /public/proyectos?id_escuela=\` — proyectos publicados (incluye \`imagenes[]\`)
+- \`GET /public/proyectos?id_escuela=\` — proyectos publicados (incluye \`imagenes[]\`; use \`sin_semillero=true\` en ficha de escuela)
+- \`GET /public/proyectos?id_semillero=\` — publicados de un semillero activo
 - \`GET /public/proyectos/{id}\` — detalle + registro de vista
+- \`GET /public/semilleros/{id}\` — detalle con evidencias y \`proyectos[]\`
 
 ### IDs de referencia (seed)
 - Escuela Software: \`id_escuela=5\`

@@ -20,6 +20,7 @@ import {
   type Burbuja,
 } from '../../../shared/ui/floating-bubbles/floating-bubbles.component';
 import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
+import { urlImagenDestacadaSemillero } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { EventoCardComponent } from '../../../shared/ui/evento-card/evento-card.component';
@@ -90,6 +91,7 @@ export class HomeDashboardComponent implements OnInit {
   private injector = inject(Injector);
 
   readonly burbujas = BURBUJAS;
+  readonly urlImagenSemillero = urlImagenDestacadaSemillero;
 
   readonly escuelas = signal<Escuela[]>([]);
   readonly cursosPorEscuela = signal<Record<number, Curso[]>>({});

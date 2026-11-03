@@ -1232,7 +1232,12 @@ export const paths = {
     get: {
       tags: ['Público'],
       summary: 'Listar proyectos publicados (portal público)',
-      description: 'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.',
+      description:
+        'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.\n\n' +
+        'Filtros opcionales:\n' +
+        '- `id_escuela`: proyectos de cursos de esa escuela (todos, con o sin semillero).\n' +
+        '- `sin_semillero=true` con `id_escuela`: solo publicados sin semillero asignado (ficha de escuela).\n' +
+        '- `id_semillero`: publicados del semillero; el semillero debe estar activo (404 si no).',
       security: [],
       parameters: [
         {
@@ -1242,6 +1247,20 @@ export const paths = {
           required: false,
           description: 'Filtrar por escuela del curso',
           example: 31,
+        },
+        {
+          name: 'id_semillero',
+          in: 'query',
+          schema: { type: 'integer' },
+          required: false,
+          description: 'Filtrar por semillero (debe estar activo en portal)',
+        },
+        {
+          name: 'sin_semillero',
+          in: 'query',
+          schema: { type: 'boolean' },
+          required: false,
+          description: 'Si es true, solo proyectos sin `id_semillero`. Usar con `id_escuela` en la ficha de escuela.',
         },
       ],
       responses: {
@@ -1308,7 +1327,8 @@ export const paths = {
     get: {
       tags: ['Público'],
       summary: 'Detalle público de semillero',
-      description: 'Sin autenticación. Portada, evidencias y escuela.',
+      description:
+        'Sin autenticación. Portada, evidencias, proyectos publicados del semillero y escuela.',
       security: [],
       parameters: [paramId],
       responses: {

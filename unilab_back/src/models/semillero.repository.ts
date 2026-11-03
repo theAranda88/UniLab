@@ -119,6 +119,12 @@ export const semilleroRepository = {
       include: {
         escuela: { select: { id_escuela: true, nombre_escuela: true } },
         profesor_lider: { select: { nombres: true, apellidos: true } },
+        evidencias: {
+          where: activo,
+          orderBy: { orden: 'asc' },
+          take: 1,
+          select: { ruta_archivo: true },
+        },
         _count: { select: { miembros: { where: miembrosAprobados } } },
       },
       orderBy: { nombre_semillero: 'asc' },

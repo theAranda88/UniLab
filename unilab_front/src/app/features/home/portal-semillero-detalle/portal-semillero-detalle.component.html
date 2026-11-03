@@ -46,26 +46,45 @@
     </header>
 
     <div class="sd__container sd__body">
-      @if (s.url_foto_portada) {
+      @if (urlPortada()) {
         <figure class="sd__portada">
-          <img [src]="s.url_foto_portada" [alt]="s.nombre_semillero" />
+          <img [src]="urlPortada()" [alt]="s.nombre_semillero" />
         </figure>
       }
 
       @if (imagenesGaleria().length > 0) {
         <section class="sd__gallery" aria-labelledby="sd-gallery-title">
           <h2 id="sd-gallery-title" class="sd__h2">{{ 'home.semilleros.gallery' | translate }}</h2>
-          <app-project-image-carousel
-            [images]="imagenesGaleria()"
-            [alt]="s.nombre_semillero"
-            [zoomable]="true"
-          />
+          <figure class="sd__gallery-frame">
+            <app-project-image-carousel
+              [images]="imagenesGaleria()"
+              [alt]="s.nombre_semillero"
+              [zoomable]="true"
+            />
+          </figure>
         </section>
       }
 
       <section class="sd__about" aria-labelledby="sd-about-title">
         <h2 id="sd-about-title" class="sd__h2">{{ 'home.semilleros.about' | translate }}</h2>
         <p class="sd__text">{{ s.descripcion }}</p>
+      </section>
+
+      <section class="sd__projects" aria-labelledby="sd-projects-title">
+        <h2 id="sd-projects-title" class="sd__h2">{{ 'home.semilleros.projectsTitle' | translate }}</h2>
+        @if (proyectos().length === 0) {
+          <app-empty-state
+            icon="ti-folders"
+            [title]="'home.semilleros.noProjects' | translate"
+            [message]="'home.semilleros.noProjectsHint' | translate"
+          />
+        } @else {
+          <div class="sd__projects-grid">
+            @for (proyecto of proyectos(); track proyecto.id_proyecto) {
+              <app-proyecto-card [proyecto]="proyecto" />
+            }
+          </div>
+        }
       </section>
 
       <button type="button" class="portal-sub__back" (click)="volverEscuela()">

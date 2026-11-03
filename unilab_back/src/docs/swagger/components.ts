@@ -618,6 +618,11 @@ export const schemas = {
       nombre_semillero: { type: 'string' },
       descripcion: { type: 'string' },
       url_foto_portada: { type: 'string', nullable: true },
+      url_imagen_destacada: {
+        type: 'string',
+        nullable: true,
+        description: 'Portada o primera evidencia; útil en tarjetas del portal',
+      },
       escuela: {
         type: 'object',
         properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
@@ -638,6 +643,11 @@ export const schemas = {
             nombre_original: { type: 'string' },
           },
         },
+      },
+      proyectos: {
+        type: 'array',
+        description: 'Proyectos publicados asociados a este semillero',
+        items: { $ref: '#/components/schemas/ProyectoPublicoResponse' },
       },
     },
   },

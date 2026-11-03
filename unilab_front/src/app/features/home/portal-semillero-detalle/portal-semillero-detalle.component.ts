@@ -5,10 +5,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
-import type { SemilleroPublico } from '../../../core/models/portal.model';
+import type { SemilleroPublico, ProyectoPublico } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
+import { normalizarUrlUploadPublica } from '../../../core/models/portal.model';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 
 /** HU-3.3 · Portal — detalle público de semillero (portada y galería). */
 @Component({
@@ -20,6 +22,7 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
     ProjectImageCarouselComponent,
     EmptyStateComponent,
     SkeletonComponent,
+    ProyectoCardComponent,
   ],
   templateUrl: './portal-semillero-detalle.component.html',
   styleUrl: './portal-semillero-detalle.component.scss',
@@ -37,10 +40,16 @@ export class PortalSemilleroDetalleComponent {
   readonly imagenesGaleria = computed(() => {
     const s = this.semillero();
     if (!s) return [] as string[];
-    const urls = (s.evidencias ?? []).sort((a, b) => a.orden - b.orden).map((e) => e.url);
+    const urls = (s.evidencias ?? [])
+      .sort((a, b) => a.orden - b.orden)
+      .map((e) => normalizarUrlUploadPublica(e.url));
     if (urls.length) return urls;
-    return s.url_foto_portada ? [s.url_foto_portada] : [];
+    return s.url_foto_portada ? [normalizarUrlUploadPublica(s.url_foto_portada)] : [];
   });
+
+  readonly urlPortada = computed(() => normalizarUrlUploadPublica(this.semillero()?.url_foto_portada));
+
+  readonly proyectos = computed((): ProyectoPublico[] => this.semillero()?.proyectos ?? []);
 
   constructor() {
     this.route.paramMap

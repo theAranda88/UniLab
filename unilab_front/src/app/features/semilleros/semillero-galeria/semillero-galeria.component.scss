@@ -31,10 +31,32 @@
     color: t.$text-secondary;
   }
 
+  &__carousel-frame {
+    margin: 0;
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+    border-radius: t.$radius-lg;
+    border: 1px solid t.$border-subtle;
+    background: t.$blue-tint;
+
+    app-project-image-carousel {
+      display: block;
+      height: 100%;
+    }
+
+    @media (max-width: 640px) {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: t.$space-12;
+
+    &--solo-lectura {
+      margin-top: t.$space-4;
+    }
   }
 
   &__thumb {

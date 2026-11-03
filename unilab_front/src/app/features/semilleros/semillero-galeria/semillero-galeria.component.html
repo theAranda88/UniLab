@@ -16,17 +16,19 @@
       [message]="puedeGestionar ? ('semilleros.sinEvidenciasHint' | translate) : ''"
     />
   } @else {
-    <app-project-image-carousel
-      [images]="urlsCarrusel()"
-      [alt]="'semilleros.galeria' | translate"
-      [zoomable]="true"
-    />
+    <figure class="semillero-galeria__carousel-frame">
+      <app-project-image-carousel
+        [images]="urlsCarrusel()"
+        [alt]="'semilleros.galeria' | translate"
+        [zoomable]="true"
+      />
+    </figure>
 
-    @if (puedeGestionar) {
-      <div class="semillero-galeria__grid">
-        @for (ev of evidencias(); track ev.id_evidencia) {
-          <figure class="semillero-galeria__thumb">
-            <img [src]="ev.url" [alt]="ev.nombre_original" />
+    <div class="semillero-galeria__grid" [class.semillero-galeria__grid--solo-lectura]="!puedeGestionar">
+      @for (ev of evidencias(); track ev.id_evidencia) {
+        <figure class="semillero-galeria__thumb">
+          <img [src]="normalizarUrlUploadPublica(ev.url)" [alt]="ev.nombre_original" />
+          @if (puedeGestionar) {
             <button
               type="button"
               class="semillero-galeria__remove"
@@ -35,10 +37,10 @@
             >
               <i class="ti ti-trash" aria-hidden="true"></i>
             </button>
-          </figure>
-        }
-      </div>
-    }
+          }
+        </figure>
+      }
+    </div>
   }
 
   @if (puedeGestionar && evidenciasRestantes() > 0) {

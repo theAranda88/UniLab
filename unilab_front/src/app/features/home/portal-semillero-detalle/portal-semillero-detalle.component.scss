@@ -44,6 +44,31 @@
       display: block;
     }
   }
+
+  &__projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: t.$space-20;
+  }
+
+  &__gallery-frame {
+    margin: 0;
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+    border-radius: t.$radius-xl;
+    border: 1px solid t.$border-subtle;
+    background: color-mix(in srgb, var(--school-color) 8%, transparent);
+    box-shadow: 0 24px 48px -30px color-mix(in srgb, var(--school-color) 45%, transparent);
+
+    app-project-image-carousel {
+      display: block;
+      height: 100%;
+    }
+
+    @media (max-width: 640px) {
+      aspect-ratio: 4 / 3;
+    }
+  }
 }
 
 .sd-head {

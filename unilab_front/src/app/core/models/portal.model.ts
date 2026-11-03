@@ -48,6 +48,8 @@ export interface SemilleroPublico {
   nombre_semillero: string;
   descripcion: string;
   url_foto_portada?: string | null;
+  /** Portada del semillero o, si no hay, primera evidencia (tarjetas del portal). */
+  url_imagen_destacada?: string | null;
   escuela: {
     id_escuela: number;
     nombre_escuela: string;
@@ -57,6 +59,7 @@ export interface SemilleroPublico {
   lider: UsuarioResumen;
   total_miembros_aprobados: number;
   evidencias?: SemilleroEvidenciaPublica[];
+  proyectos?: ProyectoPublico[];
 }
 
 export interface SemillerosPublicosPaginados {
@@ -137,11 +140,33 @@ export function urlsImagenesProyecto(proyecto: Pick<ProyectoPublico, 'imagenes' 
 
 import { environment } from '../../../environments/environment';
 
-function resolverUrlImagen(ruta?: string | null): string {
-  if (!ruta) return '';
-  if (ruta.startsWith('http')) return ruta;
+/** Alinea URLs de `/uploads/...` con el origen del API configurado en el front (4200, 8080, etc.). */
+export function normalizarUrlUploadPublica(url?: string | null): string {
+  if (!url) return '';
   const origin = environment.apiUrl.replace(/\/api\/?$/, '');
-  return `${origin}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname.startsWith('/uploads/')) {
+        return `${origin}${parsed.pathname}${parsed.search}`;
+      }
+      return url;
+    } catch {
+      return url;
+    }
+  }
+  return `${origin}${url.startsWith('/') ? url : `/${url}`}`;
+}
+
+/** Imagen de tarjeta pública: portada o primera evidencia. */
+export function urlImagenDestacadaSemillero(
+  semillero: Pick<SemilleroPublico, 'url_foto_portada' | 'url_imagen_destacada'>,
+): string {
+  return normalizarUrlUploadPublica(semillero.url_imagen_destacada ?? semillero.url_foto_portada);
+}
+
+function resolverUrlImagen(ruta?: string | null): string {
+  return normalizarUrlUploadPublica(ruta);
 }
 
 export type EscuelaThemeKey =

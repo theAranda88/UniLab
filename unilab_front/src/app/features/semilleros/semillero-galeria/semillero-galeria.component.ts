@@ -3,6 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 import { SemillerosService, MAX_EVIDENCIAS_SEMILLERO } from '../semilleros.service';
 import type { SemilleroEvidencia } from '../../../core/models/semillero.model';
+import { normalizarUrlUploadPublica } from '../../../core/models/portal.model';
 import { ProjectImageCarouselComponent } from '../../home/project-image-carousel/project-image-carousel.component';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
@@ -22,12 +23,16 @@ export class SemilleroGaleriaComponent implements OnInit {
   private semillerosService = inject(SemillerosService);
   private toast = inject(ToastService);
 
+  readonly normalizarUrlUploadPublica = normalizarUrlUploadPublica;
+
   readonly evidencias = signal<SemilleroEvidencia[]>([]);
   readonly cargando = signal(false);
   readonly subiendo = signal(false);
   readonly maxEvidencias = MAX_EVIDENCIAS_SEMILLERO;
 
-  readonly urlsCarrusel = computed(() => this.evidencias().map((e) => e.url));
+  readonly urlsCarrusel = computed(() =>
+    this.evidencias().map((e) => normalizarUrlUploadPublica(e.url)),
+  );
   readonly evidenciasRestantes = computed(() =>
     Math.max(0, MAX_EVIDENCIAS_SEMILLERO - this.evidencias().length),
   );

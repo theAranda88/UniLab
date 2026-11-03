@@ -8,12 +8,18 @@ const m = vi.hoisted(() => ({
   },
   escuelaRepository: { findById: vi.fn() },
   semilleroEvidenciaService: { mapEvidencias: vi.fn((evs: unknown[]) => evs) },
+  proyectoRepository: { findMany: vi.fn().mockResolvedValue([]) },
+  proyectoImagenService: { mapImagenes: vi.fn((imgs: unknown[]) => imgs) },
 }));
 
 vi.mock('../src/models/semillero.repository', () => ({ semilleroRepository: m.semilleroRepository }));
 vi.mock('../src/models/escuela.repository', () => ({ escuelaRepository: m.escuelaRepository }));
 vi.mock('../src/services/semillero-evidencia.service', () => ({
   semilleroEvidenciaService: m.semilleroEvidenciaService,
+}));
+vi.mock('../src/models/proyecto.repository', () => ({ proyectoRepository: m.proyectoRepository }));
+vi.mock('../src/services/proyecto-imagen.service', () => ({
+  proyectoImagenService: m.proyectoImagenService,
 }));
 
 import { publicoService } from '../src/services/publico.service';
@@ -31,6 +37,7 @@ const SEMILLERO_LISTA = {
 describe('publicoService · semilleros', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    m.proyectoRepository.findMany.mockResolvedValue([]);
   });
 
   it('listarSemilleros valida que la escuela exista', async () => {
@@ -72,5 +79,6 @@ describe('publicoService · semilleros', () => {
 
     expect(detalle.evidencias).toHaveLength(1);
     expect(detalle.evidencias[0].url).toContain('http');
+    expect(detalle.proyectos).toEqual([]);
   });
 });

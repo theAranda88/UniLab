@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { publicoService } from '../services/publico.service';
 import { configuracionService } from '../services/configuracion.service';
-import { publicoSemillerosQuerySchema } from '../middlewares/validation/schemas';
+import { publicoProyectosQuerySchema, publicoSemillerosQuerySchema } from '../middlewares/validation/schemas';
 
 export const publicoController = {
   /** Todos los parámetros actuales son de lectura pública (portal, registro, semilleros). */
@@ -20,8 +20,8 @@ export const publicoController = {
   }),
 
   listarProyectos: asyncHandler(async (req: Request, res: Response) => {
-    const id_escuela = req.query.id_escuela ? Number(req.query.id_escuela) : undefined;
-    res.status(200).json(await publicoService.listarProyectosPublicados(id_escuela));
+    const query = publicoProyectosQuerySchema.parse(req.query);
+    res.status(200).json(await publicoService.listarProyectosPublicados(query));
   }),
 
   obtenerProyecto: asyncHandler(async (req: Request, res: Response) => {

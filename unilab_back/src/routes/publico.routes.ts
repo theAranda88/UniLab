@@ -6,6 +6,7 @@ import {
   inscripcionPublicaSchema,
   inscripcionDocumentoQuerySchema,
   asistenciaPublicaSchema,
+  publicoProyectosQuerySchema,
   publicoSemillerosQuerySchema,
 } from '../middlewares/validation/schemas';
 import { z } from 'zod';
@@ -25,7 +26,7 @@ router.get(
 );
 router.get(
   '/proyectos',
-  validate(escuelaQuerySchema, 'query'),
+  validate(publicoProyectosQuerySchema, 'query'),
   publicoController.listarProyectos,
 );
 router.get(

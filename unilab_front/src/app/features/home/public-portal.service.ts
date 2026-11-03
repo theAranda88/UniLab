@@ -28,9 +28,16 @@ export class PublicPortalService {
   }
 
   /** Proyectos publicados; sin `idEscuela`, los de todas las escuelas. */
-  listarProyectos(idEscuela?: number): Observable<ProyectoPublico[]> {
-    const params = idEscuela ? new HttpParams().set('id_escuela', idEscuela.toString()) : undefined;
-    return this.http.get<ProyectoPublico[]>(`${API}/proyectos`, { params });
+  listarProyectos(options?: {
+    idEscuela?: number;
+    idSemillero?: number;
+    sinSemillero?: boolean;
+  }): Observable<ProyectoPublico[]> {
+    let params = new HttpParams();
+    if (options?.idEscuela != null) params = params.set('id_escuela', options.idEscuela.toString());
+    if (options?.idSemillero != null) params = params.set('id_semillero', options.idSemillero.toString());
+    if (options?.sinSemillero) params = params.set('sin_semillero', 'true');
+    return this.http.get<ProyectoPublico[]>(`${API}/proyectos`, { params: params.keys().length ? params : undefined });
   }
 
   obtenerProyecto(idProyecto: number): Observable<ProyectoPublico> {

@@ -398,3 +398,19 @@ export const publicoSemillerosQuerySchema = z.object({
   pagina: z.coerce.number().int().positive().optional().default(1),
   limite: z.coerce.number().int().min(1).max(50).optional().default(12),
 });
+
+const publicoSinSemilleroQuery = z
+  .union([z.literal('true'), z.literal('false'), z.boolean()])
+  .optional()
+  .transform((val) => val === true || val === 'true');
+
+export const publicoProyectosQuerySchema = z
+  .object({
+    id_escuela: z.coerce.number().int().positive().optional(),
+    id_semillero: z.coerce.number().int().positive().optional(),
+    sin_semillero: publicoSinSemilleroQuery,
+  })
+  .strict()
+  .refine((data) => !(data.id_semillero !== undefined && data.sin_semillero === true), {
+    message: 'No combine id_semillero con sin_semillero',
+  });

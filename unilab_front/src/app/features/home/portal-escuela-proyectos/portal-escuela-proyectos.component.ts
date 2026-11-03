@@ -7,6 +7,7 @@ import { PublicPortalService } from '../public-portal.service';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
 import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
+import { urlImagenDestacadaSemillero } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
@@ -34,6 +35,8 @@ export class PortalEscuelaProyectosComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private portal = inject(PublicPortalService);
+
+  readonly urlImagenSemillero = urlImagenDestacadaSemillero;
 
   readonly escuelas = signal<Escuela[]>([]);
   readonly idEscuela = signal<number | null>(null);
@@ -87,7 +90,7 @@ export class PortalEscuelaProyectosComponent {
         }),
         switchMap((id) =>
           forkJoin({
-            proyectos: this.portal.listarProyectos(id),
+            proyectos: this.portal.listarProyectos({ idEscuela: id, sinSemillero: true }),
             cursos: this.portal.listarCursos(id).pipe(catchError(() => of([] as Curso[]))),
             semilleros: this.portal
               .listarSemilleros({ idEscuela: id, limite: 50 })

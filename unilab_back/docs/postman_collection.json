@@ -642,12 +642,27 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{base_url}}/public/proyectos?id_escuela={{id_escuela}}",
+              "raw": "{{base_url}}/public/proyectos?id_escuela={{id_escuela}}&sin_semillero=true",
               "host": ["{{base_url}}"],
               "path": ["public", "proyectos"],
-              "query": [{ "key": "id_escuela", "value": "{{id_escuela}}" }]
+              "query": [
+                { "key": "id_escuela", "value": "{{id_escuela}}" },
+                { "key": "sin_semillero", "value": "true" }
+              ]
             },
-            "description": "Respuesta incluye array `imagenes[]` con URLs servidas en `/uploads/...`."
+            "description": "Ficha de escuela en portal: solo publicados sin semillero. Respuesta incluye `imagenes[]`."
+          }
+        },
+        {
+          "name": "Listar proyectos publicados por semillero",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/proyectos?id_semillero={{id_semillero}}",
+              "host": ["{{base_url}}"],
+              "path": ["public", "proyectos"],
+              "query": [{ "key": "id_semillero", "value": "{{id_semillero}}" }]
+            }
           }
         },
         {
