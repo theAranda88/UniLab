@@ -3,8 +3,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { SemillerosService } from './semilleros.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api/semilleros';
+const API = `${environment.apiUrl}/semilleros`;
 
 describe('SemillerosService', () => {
   let service: SemillerosService;
@@ -68,5 +69,31 @@ describe('SemillerosService', () => {
 
     service.quitarProfesor(4, 9).subscribe();
     expect(http.expectOne(`${API}/4/profesores/9`).request.method).toBe('DELETE');
+  });
+
+  it('sube y elimina la portada', () => {
+    const file = new File(['x'], 'portada.webp', { type: 'image/webp' });
+    service.subirPortada(2, file).subscribe();
+    const subir = http.expectOne(`${API}/2/portada`);
+    expect(subir.request.method).toBe('PUT');
+    expect(subir.request.body instanceof FormData).toBe(true);
+    subir.flush({ url_foto_portada: `${environment.apiUrl.replace(/\/api\/?$/, '')}/uploads/semilleros/2/p.webp` });
+
+    service.eliminarPortada(2).subscribe();
+    expect(http.expectOne(`${API}/2/portada`).request.method).toBe('DELETE');
+  });
+
+  it('lista, sube y elimina evidencias', () => {
+    service.listarEvidencias(2).subscribe();
+    http.expectOne(`${API}/2/evidencias`).flush([]);
+
+    const file = new File(['x'], 'ev.webp', { type: 'image/webp' });
+    service.subirEvidencias(2, [file]).subscribe();
+    const subir = http.expectOne(`${API}/2/evidencias`);
+    expect(subir.request.method).toBe('POST');
+    subir.flush([{ id_evidencia: 1, id_semillero: 2, url: 'http://x', orden: 1 }]);
+
+    service.eliminarEvidencia(2, 1).subscribe();
+    expect(http.expectOne(`${API}/2/evidencias/1`).request.method).toBe('DELETE');
   });
 });
