@@ -12,6 +12,7 @@ import type {
   RedesContacto,
   SemilleroUsuario,
 } from '../models/usuario.model';
+import { environment } from '../../../environments/environment';
 
 /** Sesión del usuario: respuesta de login, Google, completar perfil y GET /auth/me. */
 export interface User {
@@ -54,7 +55,7 @@ export interface RecuperarPasswordResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenSignal = signal<string | null>(this.readToken());
   private userSignal = signal<User | null>(this.readUser());
 

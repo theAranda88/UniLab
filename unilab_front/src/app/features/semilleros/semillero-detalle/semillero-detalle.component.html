@@ -35,6 +35,14 @@
       </div>
     </header>
 
+    @if (s.url_foto_portada) {
+      <figure class="semillero-detalle__portada">
+        <img [src]="s.url_foto_portada" [alt]="s.nombre_semillero" />
+      </figure>
+    }
+
+    <app-semillero-galeria [idSemillero]="s.id_semillero" [puedeGestionar]="esAdmin" />
+
     <div class="semillero-detalle__layout">
       <!-- Profesores -->
       <section class="edu-card semillero-detalle__section" aria-labelledby="titulo-profesores">

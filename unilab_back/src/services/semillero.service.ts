@@ -52,7 +52,7 @@ export const semilleroService = {
       creador: { connect: { id_usuario: data.created_by } },
     });
 
-    return semillero;
+    return semilleroService.obtener(semillero.id_semillero);
   },
 
   async actualizar(
@@ -79,7 +79,7 @@ export const semilleroService = {
       await validarProfesor(id_profesor_lider, 'El líder debe ser un Profesor');
     }
 
-    const semillero = await semilleroRepository.update(id, {
+    await semilleroRepository.update(id, {
       ...campos,
       ...(id_escuela !== undefined ? { escuela: { connect: { id_escuela } } } : {}),
       ...(cambiaLider ? { profesor_lider: { connect: { id_usuario: id_profesor_lider } } } : {}),
@@ -94,7 +94,7 @@ export const semilleroService = {
       await semilleroService.asignarProfesor(id, id_profesor_lider, updated_by, true, true);
     }
 
-    return semillero;
+    return semilleroService.obtener(id);
   },
 
   async eliminar(id: number) {

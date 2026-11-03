@@ -266,6 +266,8 @@ export const evidenciaJornadaParamSchema = z.object({
   idEvidencia: z.coerce.number().int().positive(),
 });
 
+export const evidenciaSemilleroParamSchema = evidenciaJornadaParamSchema;
+
 export const actualizarProyectoSchema = proyectoBaseSchema.partial().superRefine((data, ctx) => {
   if (!data.tipo_proyecto) return;
   validarUrlsPorTipoProyecto(data.tipo_proyecto, data, ctx);
@@ -389,4 +391,26 @@ export const configuracionUpdateSchema = z
   .strict()
   .refine((data) => Object.keys(data).length > 0, {
     message: 'Debe enviar al menos un parámetro para actualizar',
+  });
+
+export const publicoSemillerosQuerySchema = z.object({
+  id_escuela: z.coerce.number().int().positive().optional(),
+  pagina: z.coerce.number().int().positive().optional().default(1),
+  limite: z.coerce.number().int().min(1).max(50).optional().default(12),
+});
+
+const publicoSinSemilleroQuery = z
+  .union([z.literal('true'), z.literal('false'), z.boolean()])
+  .optional()
+  .transform((val) => val === true || val === 'true');
+
+export const publicoProyectosQuerySchema = z
+  .object({
+    id_escuela: z.coerce.number().int().positive().optional(),
+    id_semillero: z.coerce.number().int().positive().optional(),
+    sin_semillero: publicoSinSemilleroQuery,
+  })
+  .strict()
+  .refine((data) => !(data.id_semillero !== undefined && data.sin_semillero === true), {
+    message: 'No combine id_semillero con sin_semillero',
   });

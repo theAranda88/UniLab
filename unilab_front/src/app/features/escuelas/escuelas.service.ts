@@ -9,12 +9,13 @@ import type {
 } from '../../core/models/escuela.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getEscuelasBasePath } from '../../core/config/escuelas-paths';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EscuelasService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
-  private apiUrl = 'http://localhost:3000/api/escuelas';
+  private apiUrl = `${environment.apiUrl}/escuelas`;
 
   getBasePath(): string {
     return getEscuelasBasePath(this.auth.getCurrentUser()?.id_rol);

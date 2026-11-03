@@ -36,6 +36,42 @@ export interface SemilleroResumen {
   id_profesor_lider?: number;
 }
 
+export interface SemilleroEvidenciaPublica {
+  id_evidencia: number;
+  url: string;
+  orden: number;
+  nombre_original?: string;
+}
+
+export interface SemilleroPublico {
+  id_semillero: number;
+  nombre_semillero: string;
+  descripcion: string;
+  url_foto_portada?: string | null;
+  /** Portada del semillero o, si no hay, primera evidencia (tarjetas del portal). */
+  url_imagen_destacada?: string | null;
+  escuela: {
+    id_escuela: number;
+    nombre_escuela: string;
+    color?: string | null;
+    icono?: string | null;
+  };
+  lider: UsuarioResumen;
+  total_miembros_aprobados: number;
+  evidencias?: SemilleroEvidenciaPublica[];
+  proyectos?: ProyectoPublico[];
+}
+
+export interface SemillerosPublicosPaginados {
+  data: SemilleroPublico[];
+  paginacion: {
+    pagina: number;
+    limite: number;
+    total: number;
+    total_paginas: number;
+  };
+}
+
 export interface ProyectoAutor {
   rol_autor: string | null;
   estudiante: UsuarioResumen;
@@ -102,11 +138,35 @@ export function urlsImagenesProyecto(proyecto: Pick<ProyectoPublico, 'imagenes' 
   return proyecto.url_imagen ? [proyecto.url_imagen] : [];
 }
 
+import { environment } from '../../../environments/environment';
+
+/** Alinea URLs de `/uploads/...` con el origen del API configurado en el front (4200, 8080, etc.). */
+export function normalizarUrlUploadPublica(url?: string | null): string {
+  if (!url) return '';
+  const origin = environment.apiUrl.replace(/\/api\/?$/, '');
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname.startsWith('/uploads/')) {
+        return `${origin}${parsed.pathname}${parsed.search}`;
+      }
+      return url;
+    } catch {
+      return url;
+    }
+  }
+  return `${origin}${url.startsWith('/') ? url : `/${url}`}`;
+}
+
+/** Imagen de tarjeta pública: portada o primera evidencia. */
+export function urlImagenDestacadaSemillero(
+  semillero: Pick<SemilleroPublico, 'url_foto_portada' | 'url_imagen_destacada'>,
+): string {
+  return normalizarUrlUploadPublica(semillero.url_imagen_destacada ?? semillero.url_foto_portada);
+}
+
 function resolverUrlImagen(ruta?: string | null): string {
-  if (!ruta) return '';
-  if (ruta.startsWith('http')) return ruta;
-  const base = 'http://localhost:3000';
-  return `${base}${ruta.startsWith('/') ? ruta : `/${ruta}`}`;
+  return normalizarUrlUploadPublica(ruta);
 }
 
 export type EscuelaThemeKey =

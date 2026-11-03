@@ -35,6 +35,8 @@ export interface Semillero {
   descripcion: string;
   id_escuela: number;
   id_profesor_lider: number;
+  url_foto_portada?: string | null;
+  foto_portada_ruta?: string | null;
   activo: boolean;
   escuela?: Escuela;
   profesor_lider?: UsuarioBasico;
@@ -50,3 +52,13 @@ export interface CrearSemilleroDto {
 }
 
 export type ActualizarSemilleroDto = Partial<CrearSemilleroDto & { activo: boolean }>;
+
+export interface SemilleroEvidencia {
+  id_evidencia: number;
+  id_semillero: number;
+  ruta_archivo: string;
+  url: string;
+  nombre_original: string;
+  mime_type: string;
+  orden: number;
+}

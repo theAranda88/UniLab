@@ -741,6 +741,107 @@ export const paths = {
       responses: { 200: { description: 'Autorización concedida' }, ...err },
     },
   },
+  '/semilleros/{id}/portada': {
+    put: {
+      tags: ['Semilleros'],
+      summary: 'Subir o reemplazar portada del semillero',
+      description: '**Rol requerido:** Administrador. Multipart con campo `portada` (JPEG, PNG o WebP, máx. 5 MB).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['portada'],
+              properties: {
+                portada: { type: 'string', format: 'binary' },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Portada actualizada',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/SemilleroPortadaResponse' } } },
+        },
+        ...err,
+      },
+    },
+    delete: {
+      tags: ['Semilleros'],
+      summary: 'Eliminar portada del semillero',
+      description: '**Rol requerido:** Administrador',
+      parameters: [paramId],
+      responses: { 204: { description: 'Portada eliminada' }, ...err },
+    },
+  },
+  '/semilleros/{id}/evidencias': {
+    get: {
+      tags: ['Semilleros'],
+      summary: 'Listar evidencias del semillero',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Galería ordenada',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/SemilleroEvidenciaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+    post: {
+      tags: ['Semilleros'],
+      summary: 'Subir evidencias al semillero',
+      description:
+        '**Rol requerido:** Administrador. Multipart con campo `evidencias` (hasta 10 imágenes JPEG/PNG/WebP, 5 MB c/u).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['evidencias'],
+              properties: {
+                evidencias: { type: 'array', items: { type: 'string', format: 'binary' } },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Evidencias registradas',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/SemilleroEvidenciaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
+  '/semilleros/{id}/evidencias/{idEvidencia}': {
+    delete: {
+      tags: ['Semilleros'],
+      summary: 'Eliminar evidencia del semillero',
+      description: '**Rol requerido:** Administrador (soft-delete y reordenación).',
+      parameters: [paramId, { name: 'idEvidencia', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Evidencia eliminada' }, ...err },
+    },
+  },
 
   // ─── EVENTOS ────────────────────────────────────────────────────────────────
   '/eventos': {
@@ -1131,7 +1232,12 @@ export const paths = {
     get: {
       tags: ['Público'],
       summary: 'Listar proyectos publicados (portal público)',
-      description: 'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.',
+      description:
+        'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.\n\n' +
+        'Filtros opcionales:\n' +
+        '- `id_escuela`: proyectos de cursos de esa escuela (todos, con o sin semillero).\n' +
+        '- `sin_semillero=true` con `id_escuela`: solo publicados sin semillero asignado (ficha de escuela).\n' +
+        '- `id_semillero`: publicados del semillero; el semillero debe estar activo (404 si no).',
       security: [],
       parameters: [
         {
@@ -1141,6 +1247,20 @@ export const paths = {
           required: false,
           description: 'Filtrar por escuela del curso',
           example: 31,
+        },
+        {
+          name: 'id_semillero',
+          in: 'query',
+          schema: { type: 'integer' },
+          required: false,
+          description: 'Filtrar por semillero (debe estar activo en portal)',
+        },
+        {
+          name: 'sin_semillero',
+          in: 'query',
+          schema: { type: 'boolean' },
+          required: false,
+          description: 'Si es true, solo proyectos sin `id_semillero`. Usar con `id_escuela` en la ficha de escuela.',
         },
       ],
       responses: {
@@ -1172,6 +1292,51 @@ export const paths = {
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ProyectoPublicoResponse' },
+            },
+          },
+        },
+        404: err[404],
+      },
+    },
+  },
+  '/public/semilleros': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar semilleros activos (portal público)',
+      description:
+        'Sin autenticación. Solo semilleros activos. Incluye escuela, líder y total de miembros aprobados.',
+      security: [],
+      parameters: [
+        { name: 'id_escuela', in: 'query', schema: { type: 'integer' }, required: false },
+        { name: 'pagina', in: 'query', schema: { type: 'integer', default: 1 } },
+        { name: 'limite', in: 'query', schema: { type: 'integer', default: 12, maximum: 50 } },
+      ],
+      responses: {
+        200: {
+          description: 'Listado paginado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SemillerosPublicosPaginadosResponse' },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/public/semilleros/{id}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Detalle público de semillero',
+      description:
+        'Sin autenticación. Portada, evidencias, proyectos publicados del semillero y escuela.',
+      security: [],
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Semillero activo',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SemilleroPublicoResponse' },
             },
           },
         },
