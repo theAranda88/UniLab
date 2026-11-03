@@ -294,8 +294,13 @@ $nav-breakpoint: 860px;
   }
 
   .portal__actions {
+    flex-wrap: wrap;
     justify-content: space-between;
     padding-top: 4px;
+  }
+
+  .portal__profile {
+    width: 100%;
   }
 
   .portal__cta {
