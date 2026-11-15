@@ -5,12 +5,30 @@ import { eventoFlyerService } from '../services/evento-flyer.service';
 import { eventoJornadaEvidenciaService } from '../services/evento-jornada-evidencia.service';
 
 export const eventoController = {
-  listar: asyncHandler(async (_req: Request, res: Response) => {
-    res.status(200).json(await eventoService.listar());
+  listar: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await eventoService.listar(req.user!.id_rol));
   }),
 
   obtener: asyncHandler(async (req: Request, res: Response) => {
-    res.status(200).json(await eventoService.obtener(Number(req.params.id)));
+    res.status(200).json(await eventoService.obtenerVisible(Number(req.params.id), req.user!));
+  }),
+
+  misSolicitudes: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await eventoService.misSolicitudes(req.user!.id_usuario));
+  }),
+
+  solicitar: asyncHandler(async (req: Request, res: Response) => {
+    const evento = await eventoService.solicitar({ ...req.body, id_usuario: req.user!.id_usuario });
+    res.status(201).json(evento);
+  }),
+
+  resolverSolicitud: asyncHandler(async (req: Request, res: Response) => {
+    const evento = await eventoService.resolverSolicitud(
+      Number(req.params.id),
+      req.body.decision,
+      req.body.motivo_rechazo,
+    );
+    res.status(200).json(evento);
   }),
 
   crear: asyncHandler(async (req: Request, res: Response) => {

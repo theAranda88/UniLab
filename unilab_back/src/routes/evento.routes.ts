@@ -13,6 +13,8 @@ import {
   pagoInscripcionSchema,
   asistenciaSchema,
   evidenciaJornadaParamSchema,
+  solicitudEventoSchema,
+  resolverSolicitudEventoSchema,
 } from '../middlewares/validation/schemas';
 import { subirFlyerEvento } from '../middlewares/upload/subirFlyerEvento.middleware';
 import { subirEvidenciasJornada } from '../middlewares/upload/subirEvidenciasJornada.middleware';
@@ -23,9 +25,21 @@ const auth = [verifyToken, checkPrimerLogin, checkPerfilPendiente] as const;
 const admin = [...auth, requireRole(['Administrador'])] as const;
 const adminCoord = [...auth, requireRole(['Administrador', 'Coordinador'])] as const;
 const autenticado = [...auth] as const;
+const externo = [...auth, requireRole(['Externo'])] as const;
 
 router.get('/', ...autenticado, eventoController.listar);
 router.post('/', ...admin, validate(eventoSchema), eventoController.crear);
+
+// Solicitudes de eventos externos (antes de /:id para no ser capturadas por el parámetro)
+router.get('/solicitudes/mias', ...externo, eventoController.misSolicitudes);
+router.post('/solicitudes', ...externo, validate(solicitudEventoSchema), eventoController.solicitar);
+router.patch(
+  '/:id/solicitud',
+  ...admin,
+  validate(idParamSchema, 'params'),
+  validate(resolverSolicitudEventoSchema),
+  eventoController.resolverSolicitud,
+);
 
 // Asistencias (debe estar antes de /:id para no ser capturada por el parámetro)
 router.post(

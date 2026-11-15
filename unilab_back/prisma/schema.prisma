@@ -182,6 +182,7 @@ model escuelas {
   perfiles_profesor   perfiles_profesor[]
   perfiles_estudiante perfiles_estudiante[]
   semilleros          semilleros[]
+  eventos             eventos[]
 }
 
 model escuela_imagenes {
@@ -400,6 +401,7 @@ model semilleros {
   miembros   semillero_miembros[]
   proyectos  proyectos[]
   evidencias semillero_evidencias[]
+  eventos    eventos[]
 }
 
 model semillero_evidencias {
@@ -471,6 +473,13 @@ model eventos {
   lugar          String   @db.VarChar(255)
   id_organizador Int
   estado         String   @db.VarChar(50)
+  /// institucional | escuela | semillero | externo
+  alcance              String   @default("institucional") @db.VarChar(20)
+  id_escuela           Int?
+  id_semillero         Int?
+  /// Organización que solicita el evento externo.
+  organizacion_externa String?  @db.VarChar(255)
+  motivo_rechazo       String?  @db.Text
   requiere_pago  Boolean  @default(false)
   flyer_ruta_archivo String? @db.VarChar(500)
   url_flyer          String? @db.VarChar(500)
@@ -481,6 +490,8 @@ model eventos {
 
   organizador usuarios @relation("eventos_organizador", fields: [id_organizador], references: [id_usuario], onDelete: Restrict)
   creador     usuarios? @relation("eventos_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  escuela     escuelas?   @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
+  semillero   semilleros? @relation(fields: [id_semillero], references: [id_semillero], onDelete: Restrict)
 
   jornadas      evento_jornadas[]
   inscripciones inscripciones[]
