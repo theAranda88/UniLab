@@ -4,7 +4,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EventosService } from './eventos.service';
-import { CreateEventoDto, UpdateEventoDto } from '../../core/models/evento.model';
+import {
+  AlcanceEvento,
+  CreateEventoDto,
+  SolicitudEventoDto,
+  UpdateEventoDto,
+} from '../../core/models/evento.model';
+import type { EscuelaAdmin } from '../../core/models/escuela.model';
+import type { Semillero } from '../../core/models/semillero.model';
+import { EscuelasService } from '../escuelas/escuelas.service';
+import { SemillerosService } from '../semilleros/semilleros.service';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
 
 import { ToastService } from '../../shared/ui/toast/toast.service';
@@ -23,6 +32,8 @@ export class EventoFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private toast = inject(ToastService);
+  private escuelasService = inject(EscuelasService);
+  private semillerosService = inject(SemillerosService);
 
   formulario!: FormGroup;
   enviando = signal(false);
@@ -36,7 +47,25 @@ export class EventoFormComponent implements OnInit {
   flyerPreview = signal<string | null>(null);
   subiendoFlyer = signal(false);
 
+  /** Un usuario Externo solicita un evento: sin estado, alcance ni flyer; queda pendiente de aprobación. */
+  readonly modoSolicitud = signal(false);
+  readonly alcances: AlcanceEvento[] = ['institucional', 'escuela', 'semillero', 'externo'];
+  readonly escuelas = signal<EscuelaAdmin[]>([]);
+  readonly semilleros = signal<Semillero[]>([]);
+  /** El evento editado es una solicitud externa sin resolver: su estado no se toca desde aquí. */
+  readonly esSolicitudPendiente = signal(false);
+
+  get alcanceActual(): AlcanceEvento {
+    return this.formulario.get('alcance')?.value as AlcanceEvento;
+  }
+
   ngOnInit(): void {
+    this.modoSolicitud.set(this.route.snapshot.data['solicitud'] === true);
+    if (!this.modoSolicitud()) {
+      this.escuelasService.listar().subscribe({ next: (data) => this.escuelas.set(data) });
+      this.semillerosService.listar().subscribe({ next: (data) => this.semilleros.set(data) });
+    }
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.modoEdicion.set(true);
@@ -56,7 +85,32 @@ export class EventoFormComponent implements OnInit {
       lugar: ['', Validators.required],
       estado: ['planeado', Validators.required],
       requiere_pago: [false],
+      alcance: [this.modoSolicitud() ? 'externo' : 'institucional'],
+      id_escuela: [null as number | null],
+      id_semillero: [null as number | null],
+      organizacion_externa: ['', this.modoSolicitud() ? [Validators.required] : []],
     });
+  }
+
+  /** Solo se envía el dato que corresponde al alcance elegido. */
+  private datosAlcance() {
+    const v = this.formulario.value;
+    const alcance = v.alcance as AlcanceEvento;
+    return {
+      alcance,
+      id_escuela: alcance === 'escuela' ? v.id_escuela : null,
+      id_semillero: alcance === 'semillero' ? v.id_semillero : null,
+      organizacion_externa: alcance === 'externo' ? (v.organizacion_externa ?? '').trim() : null,
+    };
+  }
+
+  /** Clave de error si el alcance elegido no tiene su dato obligatorio. */
+  private errorAlcance(): string | null {
+    const a = this.datosAlcance();
+    if (a.alcance === 'escuela' && !a.id_escuela) return 'eventos.alcance.errorEscuela';
+    if (a.alcance === 'semillero' && !a.id_semillero) return 'eventos.alcance.errorSemillero';
+    if (a.alcance === 'externo' && !a.organizacion_externa) return 'eventos.alcance.errorExterno';
+    return null;
   }
 
   private cargarEvento(id: number): void {
@@ -73,7 +127,12 @@ export class EventoFormComponent implements OnInit {
           lugar: evento.lugar,
           estado: evento.estado,
           requiere_pago: evento.requiere_pago,
+          alcance: evento.alcance ?? 'institucional',
+          id_escuela: evento.id_escuela,
+          id_semillero: evento.id_semillero,
+          organizacion_externa: evento.organizacion_externa ?? '',
         });
+        this.esSolicitudPendiente.set(['solicitado', 'rechazado'].includes(evento.estado));
         this.urlFlyerActual.set(evento.url_flyer ?? null);
         this.cargando.set(false);
       },
@@ -142,15 +201,45 @@ export class EventoFormComponent implements OnInit {
 
   submit() {
     if (this.formulario.invalid) {
+      this.formulario.markAllAsTouched();
       this.error.set(this.translate.instant('eventos.formInvalid'));
+      return;
+    }
+    const errorAlcance = this.errorAlcance();
+    if (errorAlcance) {
+      this.error.set(errorAlcance);
       return;
     }
 
     this.enviando.set(true);
     this.error.set(null);
 
+    const { alcance: _a, id_escuela: _e, id_semillero: _s, organizacion_externa: _o, ...datos } =
+      this.formulario.value;
+
+    if (this.modoSolicitud()) {
+      const { estado: _estado, ...base } = datos;
+      const solicitud: SolicitudEventoDto = {
+        ...base,
+        organizacion_externa: this.datosAlcance().organizacion_externa ?? '',
+      };
+      this.eventoService.solicitar(solicitud).subscribe({
+        next: () => {
+          this.enviando.set(false);
+          this.toast.success('eventos.solicitud.exitoEnviar');
+          this.router.navigate(['/mis-solicitudes']);
+        },
+        error: () => {
+          this.error.set('eventos.solicitud.errorEnviar');
+          this.enviando.set(false);
+        },
+      });
+      return;
+    }
+
     if (this.modoEdicion()) {
-      const data: UpdateEventoDto = this.formulario.value;
+      const data: UpdateEventoDto = { ...datos, ...this.datosAlcance() };
+      if (this.esSolicitudPendiente()) delete data.estado;
       this.eventoService.actualizar(this.idEvento()!, data).subscribe({
         next: async () => {
           this.subirFlyerSiHay(this.idEvento()!, async () => {
@@ -165,7 +254,7 @@ export class EventoFormComponent implements OnInit {
         },
       });
     } else {
-      const eventoData: CreateEventoDto = this.formulario.value;
+      const eventoData: CreateEventoDto = { ...datos, ...this.datosAlcance() };
       this.eventoService.crear(eventoData).subscribe({
         next: async (evento) => {
           this.subirFlyerSiHay(evento.id_evento, async () => {
@@ -183,7 +272,9 @@ export class EventoFormComponent implements OnInit {
   }
 
   volver() {
-    if (this.modoEdicion() && this.idEvento()) {
+    if (this.modoSolicitud()) {
+      this.router.navigate(['/mis-solicitudes']);
+    } else if (this.modoEdicion() && this.idEvento()) {
       this.router.navigate([this.eventoService.getBasePath(), this.idEvento()]);
     } else {
       this.router.navigate([this.eventoService.getBasePath()]);

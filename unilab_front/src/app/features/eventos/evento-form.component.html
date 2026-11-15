@@ -1,7 +1,12 @@
 <div class="evento-form-container">
 
   <div class="form-card">
-    <h1>{{ (modoEdicion() ? 'eventos.editar' : 'eventos.crear') | translate }}</h1>
+    <h1>
+      {{ (modoSolicitud() ? 'eventos.solicitud.formTitulo' : modoEdicion() ? 'eventos.editar' : 'eventos.crear') | translate }}
+    </h1>
+    @if (modoSolicitud()) {
+      <p class="form-hint">{{ 'eventos.solicitud.formHint' | translate }}</p>
+    }
 
     @if (cargando()) {
       <p class="loading">{{ 'common.cargando' | translate }}</p>
@@ -97,20 +102,83 @@
         }
       </div>
 
-      <div class="form-group">
-        <label for="estado">{{ 'eventos.estado' | translate }} *</label>
-        <select id="estado" formControlName="estado" class="form-control">
-          <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
-          <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
-          <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
-        </select>
-      </div>
+      @if (modoSolicitud()) {
+        <div class="form-group">
+          <label for="organizacion_externa">{{ 'eventos.alcance.organizacion' | translate }} *</label>
+          <input
+            type="text"
+            id="organizacion_externa"
+            formControlName="organizacion_externa"
+            class="form-control"
+            [placeholder]="'eventos.alcance.organizacionPlaceholder' | translate"
+            [class.is-invalid]="formulario.get('organizacion_externa')?.invalid && formulario.get('organizacion_externa')?.touched"
+          />
+          @if (formulario.get('organizacion_externa')?.invalid && formulario.get('organizacion_externa')?.touched) {
+            <span class="error-text">{{ 'validation.requerido' | translate }}</span>
+          }
+        </div>
+      } @else {
+        <fieldset class="form-group alcance-group">
+          <legend>{{ 'eventos.alcance.titulo' | translate }} *</legend>
+          <p class="form-hint">{{ 'eventos.alcance.hint' | translate }}</p>
+          <select id="alcance" formControlName="alcance" class="form-control" [attr.aria-label]="'eventos.alcance.titulo' | translate">
+            @for (a of alcances; track a) {
+              <option [value]="a">{{ 'eventos.alcance.' + a | translate }}</option>
+            }
+          </select>
+
+          @switch (alcanceActual) {
+            @case ('escuela') {
+              <label for="id_escuela">{{ 'eventos.alcance.escuela' | translate }} *</label>
+              <select id="id_escuela" formControlName="id_escuela" class="form-control">
+                <option [ngValue]="null">{{ 'usuarios.selectSchool' | translate }}</option>
+                @for (e of escuelas(); track e.id_escuela) {
+                  <option [ngValue]="e.id_escuela">{{ e.nombre_escuela }}</option>
+                }
+              </select>
+            }
+            @case ('semillero') {
+              <label for="id_semillero">{{ 'eventos.alcance.semillero' | translate }} *</label>
+              <select id="id_semillero" formControlName="id_semillero" class="form-control">
+                <option [ngValue]="null">{{ 'eventos.alcance.seleccionarSemillero' | translate }}</option>
+                @for (s of semilleros(); track s.id_semillero) {
+                  <option [ngValue]="s.id_semillero">
+                    {{ s.nombre_semillero }}@if (s.escuela) { — {{ s.escuela.nombre_escuela }}}
+                  </option>
+                }
+              </select>
+            }
+            @case ('externo') {
+              <label for="organizacion_externa">{{ 'eventos.alcance.organizacion' | translate }} *</label>
+              <input
+                type="text"
+                id="organizacion_externa"
+                formControlName="organizacion_externa"
+                class="form-control"
+                [placeholder]="'eventos.alcance.organizacionPlaceholder' | translate"
+              />
+            }
+          }
+        </fieldset>
+
+        @if (!esSolicitudPendiente()) {
+          <div class="form-group">
+            <label for="estado">{{ 'eventos.estado' | translate }} *</label>
+            <select id="estado" formControlName="estado" class="form-control">
+              <option value="planeado">{{ 'eventos.estado.planeado' | translate }}</option>
+              <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
+              <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
+            </select>
+          </div>
+        }
+      }
 
       <div class="form-group checkbox">
         <input type="checkbox" id="requiere_pago" formControlName="requiere_pago" />
         <label for="requiere_pago">{{ 'eventos.requierePago' | translate }}</label>
       </div>
 
+      @if (!modoSolicitud()) {
       <div class="form-group flyer-group">
         <label for="flyer">{{ 'eventos.flyer' | translate }}</label>
         <p class="form-hint">{{ 'eventos.flyerHint' | translate }}</p>
@@ -149,13 +217,14 @@
           </label>
         }
       </div>
+      }
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary" [disabled]="enviando()">
           @if (enviando()) {
             {{ 'common.cargando' | translate }}
           } @else {
-            {{ (modoEdicion() ? 'eventos.guardar' : 'eventos.crear') | translate }}
+            {{ (modoSolicitud() ? 'eventos.solicitud.enviar' : modoEdicion() ? 'eventos.guardar' : 'eventos.crear') | translate }}
           }
         </button>
         <button type="button" class="btn btn-secondary" (click)="volver()">

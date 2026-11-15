@@ -193,3 +193,27 @@
     }
   }
 }
+
+.alcance-group {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-8;
+  margin: 0;
+  padding: t.$space-16;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-md;
+
+  legend {
+    padding: 0 t.$space-4;
+    font-weight: t.$font-weight-bold;
+  }
+
+  label {
+    margin-top: t.$space-8;
+    font-weight: t.$font-weight-bold;
+  }
+}
+
+.form-card > .form-hint {
+  @include ui.form-hint;
+}

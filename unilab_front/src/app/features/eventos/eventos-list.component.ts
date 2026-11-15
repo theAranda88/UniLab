@@ -44,6 +44,8 @@ export class EventosListComponent implements OnInit {
   filtroTipo = signal<string>('');
 
   puedeCrear = computed(() => this.eventoService.puedeCrear());
+  puedeResolverSolicitudes = computed(() => this.eventoService.puedeResolverSolicitudes());
+  solicitudesPendientes = computed(() => this.eventos().filter((e) => e.estado === 'solicitado').length);
 
   eventosFiltrados = computed(() => {
     let filtered = this.eventos();

@@ -482,6 +482,28 @@ export const routes: Routes = [
         children: proyectosEstudianteChildren,
       },
       {
+        // Usuario Externo: solicitudes de evento pendientes de aprobación del administrador
+        path: 'mis-solicitudes',
+        canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard, roleGuard],
+        data: { roles: ['Externo'] },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/eventos/mis-solicitudes/mis-solicitudes.component').then(
+                (m) => m.MisSolicitudesComponent,
+              ),
+            data: { portalTheme: true },
+          },
+          {
+            path: 'nueva',
+            loadComponent: () =>
+              import('./features/eventos/evento-form.component').then((m) => m.EventoFormComponent),
+            data: { portalTheme: true, solicitud: true },
+          },
+        ],
+      },
+      {
         path: 'perfil',
         canActivate: [authGuard, primerLoginGuard, perfilPendienteGuard],
         loadComponent: loadMiPerfil,

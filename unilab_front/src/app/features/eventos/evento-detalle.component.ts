@@ -6,7 +6,14 @@ import { generarQrAsistencia } from '../../core/utils/qr.util';
 import { EventosService } from './eventos.service';
 import { PublicPortalService } from '../home/public-portal.service';
 import { AuthService } from '../../core/auth/auth.service';
-import { Evento, EventoJornada, Inscripcion, JornadaEvidencia } from '../../core/models/evento.model';
+import {
+  Evento,
+  EventoJornada,
+  Inscripcion,
+  JornadaEvidencia,
+  ResolverSolicitudEventoDto,
+} from '../../core/models/evento.model';
+import { alcanceEvento } from '../../core/utils/evento-alcance.util';
 import {
   guardarDocumentoInscripcion,
   obtenerDocumentoInscripcion,
@@ -76,11 +83,21 @@ export class EventoDetalleComponent implements OnInit {
   yaInscrito = signal(false);
   miInscripcion = signal<Inscripcion | null>(null);
 
-  puedeCrear = computed(() => this.eventoService.puedeCrear());
+  puedeCrear = computed(() => this.eventoService.puedeCrear() && !this.esSolicitud());
+  /** Evento externo aún sin aprobar (pendiente o rechazado). */
+  esSolicitud = computed(() => ['solicitado', 'rechazado'].includes(this.evento()?.estado ?? ''));
+  alcance = computed(() => {
+    const ev = this.evento();
+    return ev?.alcance ? alcanceEvento(ev) : null;
+  });
+  puedeResolverSolicitud = computed(() => this.eventoService.puedeResolverSolicitudes());
+  rechazandoSolicitud = signal(false);
+  motivoRechazo = signal('');
+  resolviendo = signal(false);
   puedeEditar = computed(() => this.eventoService.puedeEditar());
   puedeEliminar = computed(() => this.eventoService.puedeEliminar());
   puedeInscribirse = computed(() => {
-    if (this.yaInscrito()) return false;
+    if (this.yaInscrito() || this.esSolicitud()) return false;
     if (!this.auth.isAuthenticated()) return true;
     return this.eventoService.puedeInscribirse();
   });
@@ -426,6 +443,35 @@ export class EventoDetalleComponent implements OnInit {
     if (id) {
       this.router.navigate([this.eventoService.getBasePath(), id, 'editar']);
     }
+  }
+
+  aprobarSolicitud(): void {
+    this.resolverSolicitud({ decision: 'aprobar' }, 'eventos.solicitud.exitoAprobar');
+  }
+
+  rechazarSolicitud(): void {
+    const motivo = this.motivoRechazo().trim();
+    if (!motivo) return;
+    this.resolverSolicitud({ decision: 'rechazar', motivo_rechazo: motivo }, 'eventos.solicitud.exitoRechazar');
+  }
+
+  private resolverSolicitud(data: ResolverSolicitudEventoDto, mensajeExito: string): void {
+    const id = this.evento()?.id_evento;
+    if (!id) return;
+    this.resolviendo.set(true);
+    this.eventoService.resolverSolicitud(id, data).subscribe({
+      next: () => {
+        this.resolviendo.set(false);
+        this.rechazandoSolicitud.set(false);
+        this.motivoRechazo.set('');
+        this.toast.success(mensajeExito);
+        this.cargarEvento();
+      },
+      error: () => {
+        this.resolviendo.set(false);
+        this.toast.error('eventos.solicitud.errorResolver');
+      },
+    });
   }
 
   async eliminarEvento() {

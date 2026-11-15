@@ -10,7 +10,7 @@ import { ConfiguracionService } from '../../configuracion/configuracion.service'
 import { PortalSeccionService } from '../portal-seccion.service';
 import { ViewportScroller } from '@angular/common';
 
-type PortalSection = 'inicio' | 'proyectos' | 'eventos' | 'mis-proyectos' | 'semilleros' | null;
+type PortalSection = 'inicio' | 'proyectos' | 'eventos' | 'mis-proyectos' | 'mis-solicitudes' | 'semilleros' | null;
 
 /** Shell del portal público Eduinova: cabecera, contenido y pie (estático). */
 @Component({
@@ -30,6 +30,7 @@ export class PortalShellComponent {
   readonly isLoggedIn = computed(() => this.auth.isAuthenticated());
   readonly isPortalStudent = computed(() => this.auth.hasAnyRole(['Estudiante', 'Externo']));
   readonly isEstudiante = computed(() => this.auth.hasRole('Estudiante'));
+  readonly isExterno = computed(() => this.auth.hasRole('Externo'));
 
   /** Aviso global configurado por el administrador (RA-013); vacío = sin aviso. */
   readonly mensajePortal = toSignal(
@@ -62,6 +63,7 @@ export class PortalShellComponent {
     if (path.startsWith('/escuelas') || path.startsWith('/proyectos')) return 'proyectos';
     if (path.startsWith('/eventos')) return 'eventos';
     if (path.startsWith('/mis-proyectos')) return 'mis-proyectos';
+    if (path.startsWith('/mis-solicitudes')) return 'mis-solicitudes';
     if (path.startsWith('/semilleros')) return 'semilleros';
     return null;
   });

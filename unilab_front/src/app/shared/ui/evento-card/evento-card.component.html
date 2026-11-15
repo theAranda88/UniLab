@@ -22,6 +22,9 @@
     <ul class="evento-card__meta">
       <li><i class="ti ti-map-pin" aria-hidden="true"></i>{{ ev.lugar }}</li>
       <li><i class="ti ti-presentation" aria-hidden="true"></i>{{ ev.tipo_evento }}</li>
+      @if (alcance(); as a) {
+        <li class="evento-card__alcance"><i class="ti {{ a.icono }}" aria-hidden="true"></i>{{ a.texto ?? (a.clave | translate) }}</li>
+      }
       @if (ev.requiere_pago) {
         <li class="evento-card__pago"><i class="ti ti-cash" aria-hidden="true"></i>{{ 'eventos.requierePago' | translate }}</li>
       }

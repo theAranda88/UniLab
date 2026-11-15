@@ -1,4 +1,10 @@
 // Evento
+/** `solicitado` y `rechazado` solo aplican a eventos externos pendientes de aprobación. */
+export type EstadoEvento = 'planeado' | 'activo' | 'finalizado' | 'solicitado' | 'rechazado';
+
+/** A quién pertenece el evento. */
+export type AlcanceEvento = 'institucional' | 'escuela' | 'semillero' | 'externo';
+
 export interface Evento {
   id_evento: number;
   nombre_evento: string;
@@ -8,8 +14,15 @@ export interface Evento {
   fecha_fin: string;
   lugar: string;
   id_organizador: number;
-  estado: 'planeado' | 'activo' | 'finalizado';
+  estado: EstadoEvento;
   requiere_pago: boolean;
+  alcance: AlcanceEvento;
+  id_escuela: number | null;
+  id_semillero: number | null;
+  organizacion_externa: string | null;
+  motivo_rechazo: string | null;
+  escuela?: { id_escuela: number; nombre_escuela: string } | null;
+  semillero?: { id_semillero: number; nombre_semillero: string } | null;
   url_flyer?: string | null;
   flyer_ruta_archivo?: string | null;
   created_at: string;
@@ -89,6 +102,27 @@ export interface CreateEventoDto {
   lugar: string;
   estado: 'planeado' | 'activo' | 'finalizado';
   requiere_pago?: boolean;
+  alcance?: AlcanceEvento;
+  id_escuela?: number | null;
+  id_semillero?: number | null;
+  organizacion_externa?: string | null;
+}
+
+/** Solicitud de evento externo (rol Externo). */
+export interface SolicitudEventoDto {
+  nombre_evento: string;
+  tipo_evento: string;
+  descripcion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  lugar: string;
+  requiere_pago?: boolean;
+  organizacion_externa: string;
+}
+
+export interface ResolverSolicitudEventoDto {
+  decision: 'aprobar' | 'rechazar';
+  motivo_rechazo?: string;
 }
 
 export interface UpdateEventoDto {
@@ -100,6 +134,10 @@ export interface UpdateEventoDto {
   lugar?: string;
   estado?: 'planeado' | 'activo' | 'finalizado';
   requiere_pago?: boolean;
+  alcance?: AlcanceEvento;
+  id_escuela?: number | null;
+  id_semillero?: number | null;
+  organizacion_externa?: string | null;
 }
 
 export interface CreateJornadaDto {

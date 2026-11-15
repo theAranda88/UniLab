@@ -235,6 +235,18 @@
     border-color: rgba(30, 30, 30, 0.85);
     color: t.$white;
   }
+
+  &.estado-solicitado {
+    background: t.$white;
+    border-color: t.$accent-border;
+    color: t.$accent-ink;
+  }
+
+  &.estado-rechazado {
+    background: t.$white;
+    border-color: t.$danger-border;
+    color: t.$danger-ink;
+  }
 }
 
 // Sobre la imagen las píldoras necesitan fondo opaco para mantener el contraste
