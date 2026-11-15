@@ -43,6 +43,28 @@
   </svg>
 </section>
 
+<!-- Proyectos mejor valorados (solo si hay proyectos publicados) -->
+@if (proyectosDestacados().length > 0) {
+  <section class="recent" data-seccion="proyectos" aria-labelledby="recent-title">
+    <div class="recent__inner">
+      <div class="section-head">
+        <div class="section-head__title">
+          <span class="section-head__kicker">{{ 'home.topRated.kicker' | translate }}</span>
+          <h2 id="recent-title">{{ 'home.topRated.title' | translate }}</h2>
+          <span class="section-head__rule" aria-hidden="true"></span>
+        </div>
+        <p>{{ 'home.topRated.lead' | translate }}</p>
+      </div>
+
+      <div class="recent__grid">
+        @for (proyecto of proyectosDestacados(); track proyecto.id_proyecto) {
+          <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+        }
+      </div>
+    </div>
+  </section>
+}
+
 <!-- Escuelas -->
 <section class="schools" id="escuelas" data-seccion="proyectos" aria-labelledby="schools-title">
   <div class="section-head">
@@ -68,13 +90,18 @@
         } @else {
           <p class="school__no-programs">{{ 'home.schools.noPrograms' | translate }}</p>
         }
-        @if (card.proyectos === 0) {
-          <span class="school__badge">{{ 'home.schools.noProjects' | translate }}</span>
-        } @else {
-          <span class="school__badge school__badge--active">
-            {{ (card.proyectos === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: card.proyectos } }}
+        <span class="school__badges">
+          <span class="school__badge" [class.school__badge--active]="card.semilleros > 0">
+            {{ (card.semilleros === 1 ? 'home.schools.oneSemillero' : 'home.schools.semilleros') | translate: { count: card.semilleros } }}
           </span>
-        }
+          @if (card.proyectos === 0) {
+            <span class="school__badge">{{ 'home.schools.noProjects' | translate }}</span>
+          } @else {
+            <span class="school__badge school__badge--active">
+              {{ (card.proyectos === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: card.proyectos } }}
+            </span>
+          }
+        </span>
       </a>
     }
   </div>
@@ -104,28 +131,6 @@
           }
           <i class="ti ti-arrow-right" aria-hidden="true"></i>
         </a>
-      </div>
-    </div>
-  </section>
-}
-
-<!-- Proyectos recientes (solo si hay proyectos publicados) -->
-@if (proyectosRecientes().length > 0) {
-  <section class="recent" data-seccion="proyectos" aria-labelledby="recent-title">
-    <div class="recent__inner">
-      <div class="section-head">
-        <div class="section-head__title">
-          <span class="section-head__kicker">{{ 'home.recent.kicker' | translate }}</span>
-          <h2 id="recent-title">{{ 'home.recent.title' | translate }}</h2>
-          <span class="section-head__rule" aria-hidden="true"></span>
-        </div>
-        <p>{{ 'home.recent.lead' | translate }}</p>
-      </div>
-
-      <div class="recent__grid">
-        @for (proyecto of proyectosRecientes(); track proyecto.id_proyecto) {
-          <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
-        }
       </div>
     </div>
   </section>

@@ -747,7 +747,10 @@
       "resourcesHint": "Downloading or opening resources requires sign-in.",
       "school": "School",
       "course": "Course",
-      "semillero": "Research group"
+      "semillero": "Research group",
+      "moreFromSemillero": "More projects from {{nombre}}",
+      "moreIndependent": "More independent projects from this school",
+      "seeAllProjects": "See all"
     },
     "academicProgram": "ACADEMIC PROGRAM",
     "director": "Director:",
@@ -809,7 +812,9 @@
       "noProjects": "No published projects",
       "oneProject": "1 published project",
       "projects": "{{count}} published projects",
-      "noPrograms": "Academic programs to be published."
+      "noPrograms": "Academic programs to be published.",
+      "semilleros": "{{count}} research groups",
+      "oneSemillero": "1 research group"
     },
     "nextEvent": {
       "kicker": "Next event",
@@ -873,7 +878,8 @@
       "showAll": "See all {{count}} photos",
       "showLess": "See fewer photos",
       "authors": "Project authors ({{count}})",
-      "school": "School"
+      "school": "School",
+      "schoolEmpty": "This school has no published research groups yet."
     },
     "loadSemilleroError": "Could not load the research group.",
     "schoolPage": {
@@ -905,7 +911,8 @@
       "starLabel": "{{n}} out of 5 stars",
       "loginToRate": "Sign in to rate",
       "saved": "Your rating was saved.",
-      "error": "The rating couldn't be saved."
+      "error": "The rating couldn't be saved.",
+      "average": "Rated {{value}} out of 5 ({{count}} votes)"
     },
     "comments": {
       "title": "Comments",
@@ -960,6 +967,21 @@
         "web": "Listen to audio"
       },
       "newTab": "(opens in a new tab)"
+    },
+    "topRated": {
+      "kicker": "Projects",
+      "title": "Top rated",
+      "lead": "The community’s best-rated projects across all schools."
+    },
+    "independientes": {
+      "kicker": "Outside research groups",
+      "title": "Independent projects",
+      "short": "Independent",
+      "lead": "Published projects from {{escuela}} that do not belong to any research group.",
+      "cardHint": "School projects that do not belong to any research group.",
+      "cta": "View projects",
+      "listTitle": "Independent projects",
+      "listHint": "Published and approved, outside the school’s research groups."
     }
   },
   "proyectosEstudiante": {

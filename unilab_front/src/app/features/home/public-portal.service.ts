@@ -32,8 +32,13 @@ export class PublicPortalService {
     idEscuela?: number;
     idSemillero?: number;
     sinSemillero?: boolean;
+    /** `valorados`: mejor calificados primero. */
+    orden?: 'recientes' | 'valorados';
+    limite?: number;
   }): Observable<ProyectoPublico[]> {
     let params = new HttpParams();
+    if (options?.orden) params = params.set('orden', options.orden);
+    if (options?.limite != null) params = params.set('limite', options.limite.toString());
     if (options?.idEscuela != null) params = params.set('id_escuela', options.idEscuela.toString());
     if (options?.idSemillero != null) params = params.set('id_semillero', options.idSemillero.toString());
     if (options?.sinSemillero) params = params.set('sin_semillero', 'true');

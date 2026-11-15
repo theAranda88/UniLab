@@ -388,3 +388,88 @@
     gap: $space-20;
   }
 }
+
+// Tarjeta «Proyectos independientes»: va junto a los semilleros, con borde punteado para diferenciarla
+.indep-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  padding: $space-24;
+  border: 1.5px dashed $blue-border;
+  border-radius: $radius-lg;
+  background: $white;
+  color: $ink;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $blue;
+    box-shadow: $shadow-card;
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-ring;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-md;
+    background: $blue-tint-strong;
+    color: $blue;
+    font-size: 22px;
+  }
+
+  &__kicker {
+    @include kicker;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-extra-bold;
+  }
+
+  &__text {
+    margin: 0;
+    color: $text-secondary;
+    line-height: $line-height-normal;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-8;
+    margin-top: auto;
+    padding-top: $space-12;
+    border-top: 1px solid $border-subtle;
+  }
+
+  &__count {
+    font-size: $font-size-label;
+    color: $text-secondary;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-4;
+    font-weight: $font-weight-bold;
+    color: $blue;
+  }
+}
+
+.school-semilleros__empty {
+  margin: $space-12 0 0;
+  color: $text-secondary;
+}

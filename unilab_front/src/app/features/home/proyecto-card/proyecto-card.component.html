@@ -34,6 +34,13 @@
         <i class="ti ti-eye" aria-hidden="true"></i>
         {{ 'home.views' | translate: { count: p.contador_vistas } }}
       </span>
+      @if (p.calificacion?.promedio != null) {
+        <span class="pcard__rating" [attr.aria-label]="'home.rating.average' | translate: { value: p.calificacion!.promedio, count: p.calificacion!.total }">
+          <i class="ti ti-star-filled" aria-hidden="true"></i>
+          {{ p.calificacion!.promedio }}
+          <span class="pcard__rating-count">({{ p.calificacion!.total }})</span>
+        </span>
+      }
       <span class="pcard__cta" aria-hidden="true">
         {{ 'home.exploreDeep' | translate }}
         <i class="ti ti-arrow-right"></i>

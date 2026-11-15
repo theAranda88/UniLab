@@ -214,3 +214,23 @@
     transform: none;
   }
 }
+
+.pcard__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-4;
+  margin-right: auto;
+  margin-left: $space-12;
+  font-size: $font-size-label;
+  font-weight: $font-weight-bold;
+  color: $accent-ink;
+
+  .ti-star-filled {
+    color: $accent;
+  }
+}
+
+.pcard__rating-count {
+  font-weight: $font-weight-normal;
+  color: $text-muted;
+}

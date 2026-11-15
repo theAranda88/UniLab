@@ -13,8 +13,10 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 
 /**
- * Pantalla 22 · Portal — una escuela (descripción, color e imágenes), sus programas y sus
- * proyectos publicados.
+ * Pantalla 22 · Portal — una escuela, en dos modos (data `modo` de la ruta):
+ * - `escuela` (/escuelas/:id): descripción, imágenes, programas y sus semilleros, más la tarjeta
+ *   de proyectos independientes. Los proyectos se ven dentro de cada semillero.
+ * - `independientes` (/escuelas/:id/independientes): proyectos publicados sin semillero.
  * Escucha el parámetro de ruta: al pasar de una escuela a otra el componente se reutiliza.
  */
 @Component({
@@ -46,6 +48,7 @@ export class PortalEscuelaProyectosComponent {
   readonly loading = signal(true);
   readonly loadError = signal(false);
   readonly filtroTipo = signal<string | null>(null);
+  readonly modo: 'escuela' | 'independientes' = this.route.snapshot.data['modo'] ?? 'escuela';
 
   readonly escuela = computed(() => this.escuelas().find((e) => e.id_escuela === this.idEscuela()) ?? null);
   readonly estilo = computed(() => estiloDeEscuela(this.escuela()));

@@ -747,7 +747,10 @@
       "resourcesHint": "Descargar o abrir recursos requiere iniciar sesión.",
       "school": "Escuela",
       "course": "Curso",
-      "semillero": "Semillero"
+      "semillero": "Semillero",
+      "moreFromSemillero": "Más proyectos de {{nombre}}",
+      "moreIndependent": "Más proyectos independientes de la escuela",
+      "seeAllProjects": "Ver todos"
     },
     "academicProgram": "PROGRAMA ACADÉMICO",
     "director": "Director:",
@@ -809,7 +812,9 @@
       "noProjects": "Sin proyectos publicados",
       "oneProject": "1 proyecto publicado",
       "projects": "{{count}} proyectos publicados",
-      "noPrograms": "Programas académicos por publicar."
+      "noPrograms": "Programas académicos por publicar.",
+      "semilleros": "{{count}} semilleros",
+      "oneSemillero": "1 semillero"
     },
     "nextEvent": {
       "kicker": "Próximo evento",
@@ -873,7 +878,8 @@
       "showAll": "Ver las {{count}} fotos",
       "showLess": "Ver menos fotos",
       "authors": "Autores en proyectos ({{count}})",
-      "school": "Escuela"
+      "school": "Escuela",
+      "schoolEmpty": "Esta escuela aún no tiene semilleros publicados."
     },
     "loadSemilleroError": "No se pudo cargar el semillero.",
     "schoolPage": {
@@ -905,7 +911,8 @@
       "starLabel": "{{n}} de 5 estrellas",
       "loginToRate": "Inicia sesión para calificar",
       "saved": "Tu calificación se guardó.",
-      "error": "No se pudo guardar la calificación."
+      "error": "No se pudo guardar la calificación.",
+      "average": "Calificación {{value}} de 5 ({{count}} votos)"
     },
     "comments": {
       "title": "Comentarios",
@@ -960,6 +967,21 @@
         "web": "Escuchar audio"
       },
       "newTab": "(se abre en una pestaña nueva)"
+    },
+    "topRated": {
+      "kicker": "Proyectos",
+      "title": "Mejor valorados",
+      "lead": "Los proyectos con mejor calificación de la comunidad, en todas las escuelas."
+    },
+    "independientes": {
+      "kicker": "Fuera de los semilleros",
+      "title": "Proyectos independientes",
+      "short": "Independientes",
+      "lead": "Proyectos publicados de {{escuela}} que no pertenecen a ningún semillero.",
+      "cardHint": "Proyectos de la escuela que no pertenecen a ningún semillero.",
+      "cta": "Ver proyectos",
+      "listTitle": "Proyectos independientes",
+      "listHint": "Publicados y aprobados, fuera de los semilleros de la escuela."
     }
   },
   "proyectosEstudiante": {

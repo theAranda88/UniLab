@@ -659,3 +659,10 @@
     }
   }
 }
+
+.school__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+  margin-top: auto;
+}

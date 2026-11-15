@@ -14,6 +14,7 @@ export interface Escuela {
   icono?: string | null;
   imagenes?: EscuelaImagenPublica[];
   total_proyectos_publicados?: number;
+  total_semilleros?: number;
 }
 
 export interface Curso {
@@ -109,6 +110,8 @@ export interface ProyectoPublico {
   /** Filas del detalle público, con el nombre del autor. */
   comentarios?: ComentarioProyecto[];
   calificaciones?: CalificacionProyecto[];
+  /** Promedio público (null sin votos) y número de calificaciones. */
+  calificacion?: { promedio: number | null; total: number };
 }
 
 export interface ComentarioProyecto {

@@ -449,6 +449,16 @@ export const routes: Routes = [
           import('./features/home/portal-escuela-proyectos/portal-escuela-proyectos.component').then(
             (m) => m.PortalEscuelaProyectosComponent,
           ),
+        data: { modo: 'escuela' },
+      },
+      {
+        // Proyectos publicados de la escuela que no pertenecen a ningún semillero
+        path: 'escuelas/:idEscuela/independientes',
+        loadComponent: () =>
+          import('./features/home/portal-escuela-proyectos/portal-escuela-proyectos.component').then(
+            (m) => m.PortalEscuelaProyectosComponent,
+          ),
+        data: { modo: 'independientes' },
       },
       {
         path: 'proyectos/:idProyecto',

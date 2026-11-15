@@ -36,6 +36,7 @@ interface EscuelaCard {
   color: string;
   programas: string;
   proyectos: number;
+  semilleros: number;
 }
 
 interface Cifra {
@@ -100,14 +101,8 @@ export class HomeDashboardComponent implements OnInit {
   readonly semilleros = signal<SemilleroPublico[]>([]);
   readonly totalSemilleros = signal(0);
 
-  /** Los tres proyectos publicados más recientes de todas las escuelas. */
-  readonly proyectosRecientes = computed(() =>
-    [...this.proyectos()]
-      .sort((a, b) =>
-        (b.fecha_publicacion ?? '').localeCompare(a.fecha_publicacion ?? '') || b.id_proyecto - a.id_proyecto,
-      )
-      .slice(0, 3),
-  );
+  /** Proyectos mejor valorados de todas las escuelas (la API ya los entrega ordenados y limitados). */
+  readonly proyectosDestacados = computed(() => this.proyectos());
 
   /** Valores que se muestran mientras las cifras «cuentan» hasta su valor real. */
   readonly valoresVisibles = signal<number[]>([]);
@@ -122,6 +117,7 @@ export class HomeDashboardComponent implements OnInit {
         color: estilo.color,
         programas: cursos.map((c) => c.nombre_curso).join(', '),
         proyectos: escuela.total_proyectos_publicados ?? 0,
+        semilleros: escuela.total_semilleros ?? 0,
       };
     }),
   );
@@ -230,7 +226,7 @@ export class HomeDashboardComponent implements OnInit {
       },
       error: () => this.eventosCargados.set(true),
     });
-    this.portal.listarProyectos().subscribe({
+    this.portal.listarProyectos({ orden: 'valorados', limite: 6 }).subscribe({
       next: (proyectos) => {
         this.proyectos.set(proyectos);
         this.reanclar();
