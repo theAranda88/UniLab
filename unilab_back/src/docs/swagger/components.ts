@@ -875,8 +875,14 @@ export const schemas = {
         example: 2,
         description: 'Conteo de proyectos con estado `publicado` asociados a cursos de esta escuela',
       },
+      total_semilleros: {
+        type: 'integer',
+        minimum: 0,
+        example: 3,
+        description: 'Semilleros activos de la escuela visibles en el portal',
+      },
     },
-    required: ['id_escuela', 'nombre_escuela', 'total_proyectos_publicados'],
+    required: ['id_escuela', 'nombre_escuela', 'total_proyectos_publicados', 'total_semilleros'],
   },
   ProyectoImagenResponse: {
     type: 'object',
@@ -901,6 +907,14 @@ export const schemas = {
     description: 'Proyecto con estado `publicado`. Incluye array `imagenes` ordenado y `url_imagen` como portada (orden 1).',
     properties: {
       id_proyecto: { type: 'integer', example: 10 },
+      calificacion: {
+        type: 'object',
+        description: 'Promedio (1 decimal, null sin votos) y número de calificaciones',
+        properties: {
+          promedio: { type: 'number', nullable: true, example: 4.5 },
+          total: { type: 'integer', example: 8 },
+        },
+      },
       titulo: { type: 'string', example: 'Plataforma UniLab' },
       descripcion: { type: 'string' },
       tipo_proyecto: { type: 'string', enum: ['web', 'movil', 'podcast', 'otro'] },

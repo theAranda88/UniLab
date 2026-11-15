@@ -1262,6 +1262,21 @@ export const paths = {
           required: false,
           description: 'Si es true, solo proyectos sin `id_semillero`. Usar con `id_escuela` en la ficha de escuela.',
         },
+        {
+          name: 'orden',
+          in: 'query',
+          schema: { type: 'string', enum: ['recientes', 'valorados'], default: 'recientes' },
+          required: false,
+          description:
+            '`valorados`: mayor promedio de calificación primero; a igual promedio, más votos y más vistas. Los no calificados van al final.',
+        },
+        {
+          name: 'limite',
+          in: 'query',
+          schema: { type: 'integer', minimum: 1, maximum: 50 },
+          required: false,
+          description: 'Máximo de proyectos a devolver (p. ej. 6 en la portada).',
+        },
       ],
       responses: {
         200: {

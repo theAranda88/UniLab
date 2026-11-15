@@ -666,6 +666,22 @@
           }
         },
         {
+          "name": "Proyectos mejor valorados (portada)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/proyectos?orden=valorados&limite=6",
+              "host": ["{{base_url}}"],
+              "path": ["public", "proyectos"],
+              "query": [
+                { "key": "orden", "value": "valorados" },
+                { "key": "limite", "value": "6" }
+              ]
+            },
+            "description": "Mayor promedio de calificación primero; cada proyecto trae `calificacion: { promedio, total }`."
+          }
+        },
+        {
           "name": "Detalle proyecto publicado",
           "request": {
             "method": "GET",

@@ -8,7 +8,7 @@ const m = vi.hoisted(() => ({
   },
   escuelaRepository: { findById: vi.fn() },
   semilleroEvidenciaService: { mapEvidencias: vi.fn((evs: unknown[]) => evs) },
-  proyectoRepository: { findMany: vi.fn().mockResolvedValue([]) },
+  proyectoRepository: { findMany: vi.fn().mockResolvedValue([]), calificacionesPorProyecto: vi.fn() },
   proyectoImagenService: { mapImagenes: vi.fn((imgs: unknown[]) => imgs) },
 }));
 
@@ -38,6 +38,7 @@ describe('publicoService · semilleros', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     m.proyectoRepository.findMany.mockResolvedValue([]);
+    m.proyectoRepository.calificacionesPorProyecto.mockResolvedValue({});
   });
 
   it('listarSemilleros valida que la escuela exista', async () => {

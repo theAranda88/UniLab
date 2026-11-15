@@ -117,6 +117,16 @@ export const semilleroRepository = {
     });
   },
 
+  /** Semilleros visibles en el portal agrupados por escuela. */
+  async countPublicosPorEscuela(): Promise<Record<number, number>> {
+    const filas = await prisma.semilleros.groupBy({
+      by: ['id_escuela'],
+      where: whereSemillerosPublicos({}),
+      _count: { _all: true },
+    });
+    return Object.fromEntries(filas.map((f) => [f.id_escuela, f._count._all]));
+  },
+
   countPublicos(filtro: FiltroSemillerosPublicos = {}) {
     return prisma.semilleros.count({ where: whereSemillerosPublicos(filtro) });
   },

@@ -22,6 +22,30 @@ function enriquecerProyectoPublico<T extends ProyectoConImagenes>(proyecto: T) {
   };
 }
 
+/** Añade a cada proyecto su calificación pública: promedio redondeado a un decimal y número de votos. */
+async function conCalificacion<T extends { id_proyecto: number }>(proyectos: T[]) {
+  const calificaciones = await proyectoRepository.calificacionesPorProyecto(proyectos.map((p) => p.id_proyecto));
+  return proyectos.map((p) => {
+    const c = calificaciones[p.id_proyecto];
+    return {
+      ...p,
+      calificacion: c ? { promedio: Math.round(c.promedio * 10) / 10, total: c.total } : { promedio: null, total: 0 },
+    };
+  });
+}
+
+/** Mejor valorados primero; a igual promedio, más votos y luego más vistas. Los no calificados van al final. */
+function compararValoracion(
+  a: { calificacion: { promedio: number | null; total: number }; contador_vistas: number },
+  b: { calificacion: { promedio: number | null; total: number }; contador_vistas: number },
+) {
+  return (
+    (b.calificacion.promedio ?? -1) - (a.calificacion.promedio ?? -1) ||
+    b.calificacion.total - a.calificacion.total ||
+    b.contador_vistas - a.contador_vistas
+  );
+}
+
 type SemilleroPublicoRow = Awaited<ReturnType<typeof semilleroRepository.findManyPublicos>>[number];
 type SemilleroPublicoDetalleRow = NonNullable<Awaited<ReturnType<typeof semilleroRepository.findPublicoById>>>;
 
@@ -49,9 +73,10 @@ function mapSemilleroPublicoResumen(semillero: SemilleroPublicoRow | SemilleroPu
 
 export const publicoService = {
   async listarEscuelas() {
-    const [escuelas, conteos] = await Promise.all([
+    const [escuelas, conteos, semilleros] = await Promise.all([
       escuelaRepository.findMany(),
       proyectoRepository.countPublicadosPorEscuela(),
+      semilleroRepository.countPublicosPorEscuela(),
     ]);
 
     return escuelas.map(({ id_escuela, nombre_escuela, descripcion, color, icono, imagenes }) => ({
@@ -66,6 +91,7 @@ export const publicoService = {
         orden,
       })),
       total_proyectos_publicados: conteos[id_escuela] ?? 0,
+      total_semilleros: semilleros[id_escuela] ?? 0,
     }));
   },
 
@@ -81,6 +107,8 @@ export const publicoService = {
     id_escuela?: number;
     id_semillero?: number;
     sin_semillero?: boolean;
+    orden?: 'recientes' | 'valorados';
+    limite?: number;
   }) {
     if (params?.id_escuela !== undefined) {
       const escuela = await escuelaRepository.findById(params.id_escuela);
@@ -107,8 +135,9 @@ export const publicoService = {
       where.curso = { id_escuela: params.id_escuela };
     }
 
-    const proyectos = await proyectoRepository.findMany(where);
-    return proyectos.map(enriquecerProyectoPublico);
+    const proyectos = await conCalificacion((await proyectoRepository.findMany(where)).map(enriquecerProyectoPublico));
+    if (params?.orden === 'valorados') proyectos.sort(compararValoracion);
+    return params?.limite ? proyectos.slice(0, params.limite) : proyectos;
   },
 
   async obtenerProyectoPublico(id: number) {
@@ -119,7 +148,8 @@ export const publicoService = {
     await proyectoRepository.registrarVista(id, null);
     const actualizado = await proyectoRepository.findById(id);
     if (!actualizado) throw new AppError('Proyecto no encontrado', 404);
-    return enriquecerProyectoPublico(actualizado);
+    const [conNota] = await conCalificacion([enriquecerProyectoPublico(actualizado)]);
+    return conNota;
   },
 
   listarEventosActivos() {

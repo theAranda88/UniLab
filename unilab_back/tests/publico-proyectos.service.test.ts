@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const m = vi.hoisted(() => ({
-  proyectoRepository: { findMany: vi.fn() },
+  proyectoRepository: { findMany: vi.fn(), calificacionesPorProyecto: vi.fn() },
   escuelaRepository: { findById: vi.fn() },
   semilleroRepository: { findPublicoById: vi.fn() },
   proyectoImagenService: { mapImagenes: vi.fn((imgs: unknown[]) => imgs) },
@@ -28,6 +28,7 @@ const PROYECTO = {
 describe('publicoService · proyectos públicos', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    m.proyectoRepository.calificacionesPorProyecto.mockResolvedValue({});
   });
 
   it('listarProyectosPublicados valida escuela', async () => {
@@ -71,5 +72,38 @@ describe('publicoService · proyectos públicos', () => {
       expect.objectContaining({ id_semillero: 1, estado_proyecto: 'publicado' }),
     );
     expect(listado).toHaveLength(1);
+  });
+
+  it('expone la calificación de cada proyecto (null si no tiene votos)', async () => {
+    m.proyectoRepository.findMany.mockResolvedValue([
+      { ...PROYECTO, id_proyecto: 1, contador_vistas: 0 },
+      { ...PROYECTO, id_proyecto: 2, contador_vistas: 0 },
+    ]);
+    m.proyectoRepository.calificacionesPorProyecto.mockResolvedValue({ 1: { promedio: 4.333, total: 3 } });
+
+    const [a, b] = await publicoService.listarProyectosPublicados();
+
+    expect(a.calificacion).toEqual({ promedio: 4.3, total: 3 });
+    expect(b.calificacion).toEqual({ promedio: null, total: 0 });
+  });
+
+  it('orden valorados: promedio, luego votos, luego vistas; sin votos al final; respeta el límite', async () => {
+    m.proyectoRepository.findMany.mockResolvedValue([
+      { ...PROYECTO, id_proyecto: 1, contador_vistas: 500 },
+      { ...PROYECTO, id_proyecto: 2, contador_vistas: 1 },
+      { ...PROYECTO, id_proyecto: 3, contador_vistas: 1 },
+      { ...PROYECTO, id_proyecto: 4, contador_vistas: 9 },
+    ]);
+    m.proyectoRepository.calificacionesPorProyecto.mockResolvedValue({
+      2: { promedio: 4, total: 2 },
+      3: { promedio: 4, total: 5 },
+      4: { promedio: 5, total: 1 },
+    });
+
+    const lista = await publicoService.listarProyectosPublicados({ orden: 'valorados' });
+    expect(lista.map((p) => p.id_proyecto)).toEqual([4, 3, 2, 1]);
+
+    const top = await publicoService.listarProyectosPublicados({ orden: 'valorados', limite: 2 });
+    expect(top.map((p) => p.id_proyecto)).toEqual([4, 3]);
   });
 });

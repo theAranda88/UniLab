@@ -410,6 +410,9 @@ export const publicoProyectosQuerySchema = z
     id_escuela: z.coerce.number().int().positive().optional(),
     id_semillero: z.coerce.number().int().positive().optional(),
     sin_semillero: publicoSinSemilleroQuery,
+    /** `valorados`: mejor calificados primero (portada). Por defecto, más recientes. */
+    orden: z.enum(['recientes', 'valorados']).optional(),
+    limite: z.coerce.number().int().min(1).max(50).optional(),
   })
   .strict()
   .refine((data) => !(data.id_semillero !== undefined && data.sin_semillero === true), {
