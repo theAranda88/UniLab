@@ -24,6 +24,12 @@ export interface UsuarioAdmin {
   rol: Rol;
   created_at?: string;
   perfil_coordinador?: { cargo: string; dependencia: string; profesion: string | null } | null;
+  perfil_profesor?: { codigo_docente: string; id_escuela: number } | null;
+  perfil_estudiante?: {
+    codigo_estudiantil: string;
+    id_escuela: number;
+    id_escuela_secundaria: number | null;
+  } | null;
 }
 
 export interface CrearUsuarioDto {
@@ -36,6 +42,8 @@ export interface CrearUsuarioDto {
   codigo_docente?: string;
   codigo_estudiantil?: string;
   id_escuela?: number;
+  /** Solo Estudiante: segunda escuela opcional (null la quita). */
+  id_escuela_secundaria?: number | null;
   cargo?: string;
   dependencia?: string;
   profesion?: string;
@@ -53,6 +61,8 @@ export interface ActualizarUsuarioDto {
   codigo_docente?: string;
   codigo_estudiantil?: string;
   id_escuela?: number;
+  /** Solo Estudiante: segunda escuela opcional (null la quita). */
+  id_escuela_secundaria?: number | null;
   cargo?: string;
   dependencia?: string;
   profesion?: string;
@@ -134,6 +144,7 @@ export interface UsuarioConsulta {
   rol: 'Profesor' | 'Estudiante';
   codigo: string | null;
   escuela: EscuelaResumen | null;
+  escuelas: EscuelaResumen[];
   redes: RedesContacto;
 }
 

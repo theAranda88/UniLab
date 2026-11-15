@@ -43,3 +43,9 @@
     }
   }
 }
+
+.form-hint {
+  @include ui.form-hint;
+  display: block;
+  margin: t.$space-4 0 0;
+}

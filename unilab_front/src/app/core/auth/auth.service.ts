@@ -25,6 +25,8 @@ export interface User {
   apellidos?: string;
   telefono?: string;
   escuela?: EscuelaResumen | null;
+  /** Escuelas del perfil académico (estudiante: máximo 2). */
+  escuelas?: EscuelaResumen[];
   semilleros?: SemilleroUsuario[];
   redes?: RedesContacto;
   perfil?: PerfilRol;
