@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { escuelaService, cursoService } from '../services/escuela.service';
 import { escuelaImagenService } from '../services/escuela-imagen.service';
+import { usuarioService } from '../services/usuario.service';
 
 export const escuelaController = {
   listar: asyncHandler(async (_req: Request, res: Response) => {
@@ -46,7 +47,8 @@ export const escuelaController = {
 export const cursoController = {
   listar: asyncHandler(async (req: Request, res: Response) => {
     const id_escuela = req.query.id_escuela ? Number(req.query.id_escuela) : undefined;
-    res.status(200).json(await cursoService.listar(id_escuela));
+    const alcance = await usuarioService.escuelasPermitidas(req.user!.id_usuario, req.user!.id_rol);
+    res.status(200).json(await cursoService.listar(id_escuela, alcance));
   }),
 
   obtener: asyncHandler(async (req: Request, res: Response) => {
@@ -79,7 +81,10 @@ export const cursoController = {
 
   listarCoordinadoresDisponibles: asyncHandler(async (req: Request, res: Response) => {
     res.status(200).json(
-      await cursoService.listarCoordinadoresDisponibles(Number(req.params.id)),
+      await cursoService.listarCoordinadoresDisponibles(
+        Number(req.params.id),
+        await usuarioService.escuelasPermitidas(req.user!.id_usuario, req.user!.id_rol),
+      ),
     );
   }),
 };

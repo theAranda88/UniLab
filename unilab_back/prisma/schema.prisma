@@ -133,17 +133,20 @@ model perfiles_profesor {
 }
 
 model perfiles_estudiante {
-  id_usuario         Int      @id
-  codigo_estudiantil String   @db.VarChar(255)
-  id_escuela         Int
-  created_at         DateTime @default(now()) @db.Timestamp(6)
-  updated_at         DateTime @updatedAt @db.Timestamp(6)
-  created_by         Int?
-  deleted_at         DateTime? @db.Timestamp(6)
+  id_usuario            Int      @id
+  codigo_estudiantil    String   @db.VarChar(255)
+  id_escuela            Int
+  /// Segunda escuela opcional: un estudiante pertenece a máximo 2 escuelas.
+  id_escuela_secundaria Int?
+  created_at            DateTime @default(now()) @db.Timestamp(6)
+  updated_at            DateTime @updatedAt @db.Timestamp(6)
+  created_by            Int?
+  deleted_at            DateTime? @db.Timestamp(6)
 
-  usuario usuarios @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
-  escuela escuelas @relation(fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
-  creador usuarios? @relation("perfiles_estudiante_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+  usuario            usuarios  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  escuela            escuelas  @relation("perfiles_estudiante_escuela", fields: [id_escuela], references: [id_escuela], onDelete: Restrict)
+  escuela_secundaria escuelas? @relation("perfiles_estudiante_escuela_secundaria", fields: [id_escuela_secundaria], references: [id_escuela], onDelete: Restrict)
+  creador            usuarios? @relation("perfiles_estudiante_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
 }
 
 model perfiles_externo {
@@ -180,7 +183,8 @@ model escuelas {
   cursos              cursos[]
   imagenes            escuela_imagenes[]
   perfiles_profesor   perfiles_profesor[]
-  perfiles_estudiante perfiles_estudiante[]
+  perfiles_estudiante perfiles_estudiante[] @relation("perfiles_estudiante_escuela")
+  perfiles_estudiante_secundaria perfiles_estudiante[] @relation("perfiles_estudiante_escuela_secundaria")
   semilleros          semilleros[]
 }
 

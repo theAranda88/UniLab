@@ -10,6 +10,7 @@ import { usuarioRepository } from '../models/usuario.repository';
 import { escuelaRepository } from '../models/escuela.repository';
 import type { JwtPayload } from '../middlewares/auth/types';
 import { configuracionService } from './configuracion.service';
+import { escuelasDePerfil } from './usuario.service';
 
 type PerfilSesion = NonNullable<Awaited<ReturnType<typeof usuarioRepository.findPerfilSesion>>>;
 
@@ -41,6 +42,7 @@ export function mapUsuarioSesion(u: PerfilSesion) {
     apellidos: u.apellidos,
     telefono: u.telefono,
     escuela: perfilAcademico?.escuela ?? null,
+    escuelas: escuelasDePerfil(u),
     semilleros: semillerosDeUsuario(u),
     redes: {
       linkedin: u.url_linkedin,

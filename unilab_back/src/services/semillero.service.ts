@@ -14,8 +14,9 @@ async function validarProfesor(id_profesor: number, mensaje = 'Debe ser un Profe
 }
 
 export const semilleroService = {
-  listar() {
-    return semilleroRepository.findMany();
+  /** `alcance` = escuelas permitidas al usuario (`null` = todas). */
+  listar(alcance: number[] | null = null) {
+    return semilleroRepository.findMany(alcance ? { ids_escuela: alcance } : undefined);
   },
 
   async obtener(id: number) {

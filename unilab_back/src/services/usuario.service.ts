@@ -5,6 +5,34 @@ import { prisma } from '../models/prisma.client';
 
 const ROLES_CON_PERFIL = ['Coordinador', 'Profesor', 'Estudiante', 'Externo'] as const;
 
+/** Roles cuyos formularios y catálogos se limitan a las escuelas asignadas al usuario. */
+const ROLES_CON_ALCANCE_ESCUELA = ['Profesor', 'Estudiante'];
+
+type EscuelaResumen = { id_escuela: number; nombre_escuela: string };
+
+/** Escuelas del perfil académico: la del profesor, o la principal y la secundaria del estudiante. */
+export function escuelasDePerfil(u: {
+  perfil_profesor?: { escuela: EscuelaResumen } | null;
+  perfil_estudiante?: { escuela: EscuelaResumen; escuela_secundaria?: EscuelaResumen | null } | null;
+}): EscuelaResumen[] {
+  if (u.perfil_profesor) return [u.perfil_profesor.escuela];
+  if (u.perfil_estudiante) {
+    const { escuela, escuela_secundaria } = u.perfil_estudiante;
+    return escuela_secundaria ? [escuela, escuela_secundaria] : [escuela];
+  }
+  return [];
+}
+
+/** La escuela secundaria es opcional, debe existir y ser distinta de la principal. */
+async function validarEscuelaSecundaria(id_escuela: number | undefined, id_escuela_secundaria: number | null | undefined) {
+  if (id_escuela_secundaria === undefined || id_escuela_secundaria === null) return;
+  if (id_escuela && id_escuela === id_escuela_secundaria) {
+    throw new AppError('La escuela secundaria debe ser distinta de la principal', 422);
+  }
+  const escuela = await prisma.escuelas.findFirst({ where: { id_escuela: id_escuela_secundaria, deleted_at: null } });
+  if (!escuela) throw new AppError('Escuela secundaria no encontrada', 404);
+}
+
 type UsuarioConsultaRow = Awaited<ReturnType<typeof usuarioRepository.findConsulta>>[number];
 
 /** Forma pública de un usuario en los listados de solo lectura. */
@@ -20,6 +48,7 @@ function mapUsuarioConsulta(u: UsuarioConsultaRow) {
     rol: u.rol.nombre_rol,
     codigo: u.perfil_profesor?.codigo_docente ?? u.perfil_estudiante?.codigo_estudiantil ?? null,
     escuela: perfil?.escuela ?? null,
+    escuelas: escuelasDePerfil(u),
     redes: { linkedin: u.url_linkedin, github: u.url_github, portafolio: u.url_portafolio },
   };
 }
@@ -120,6 +149,15 @@ export const usuarioService = {
     };
   },
 
+  /**
+   * Escuelas en las que el usuario puede consultar catálogos y crear contenido.
+   * `null` = sin restricción (Administrador, Coordinador, Externo).
+   */
+  async escuelasPermitidas(id_usuario: number, rol: string): Promise<number[] | null> {
+    if (!ROLES_CON_ALCANCE_ESCUELA.includes(rol)) return null;
+    return usuarioRepository.findEscuelasIds(id_usuario);
+  },
+
   async obtenerPorId(id: number) {
     const usuario = await usuarioRepository.findById(id);
     if (!usuario) throw new AppError('Usuario no encontrado', 404);
@@ -137,6 +175,7 @@ export const usuarioService = {
     codigo_docente?: string;
     codigo_estudiantil?: string;
     id_escuela?: number;
+    id_escuela_secundaria?: number | null;
     cargo?: string;
     dependencia?: string;
     profesion?: string;
@@ -153,6 +192,9 @@ export const usuarioService = {
     if (!rol) throw new AppError('Rol no válido', 422);
 
     validarPerfilObligatorio(data.rol, data);
+    if (data.rol === 'Estudiante') {
+      await validarEscuelaSecundaria(data.id_escuela, data.id_escuela_secundaria);
+    }
 
     const passwordPlano = generarPasswordAleatoria();
     const password_hash = await hashearPassword(passwordPlano);
@@ -186,6 +228,12 @@ export const usuarioService = {
     }
 
     const rolNuevo = data.rol as string | undefined;
+    if ((rolNuevo ?? usuario.rol.nombre_rol) === 'Estudiante' && data.id_escuela_secundaria !== undefined) {
+      await validarEscuelaSecundaria(
+        (data.id_escuela as number | undefined) ?? usuario.perfil_estudiante?.id_escuela,
+        data.id_escuela_secundaria as number | null,
+      );
+    }
     if (rolNuevo && rolNuevo !== usuario.rol.nombre_rol) {
       await cambiarRolUsuario(id, usuario.rol.nombre_rol, rolNuevo, data, usuario.created_by ?? id);
     }
@@ -326,6 +374,9 @@ async function cambiarRolUsuario(
             usuario: { connect: { id_usuario } },
             codigo_estudiantil: perfilData.codigo_estudiantil!,
             escuela: { connect: { id_escuela: perfilData.id_escuela! } },
+            ...(data.id_escuela_secundaria
+              ? { escuela_secundaria: { connect: { id_escuela: data.id_escuela_secundaria as number } } }
+              : {}),
             creador: { connect: { id_usuario: created_by } },
           },
         });
@@ -375,6 +426,7 @@ function construirPerfilCreate(data: {
   codigo_docente?: string;
   codigo_estudiantil?: string;
   id_escuela?: number;
+  id_escuela_secundaria?: number | null;
   cargo?: string;
   dependencia?: string;
   profesion?: string;
@@ -410,6 +462,9 @@ function construirPerfilCreate(data: {
           create: {
             codigo_estudiantil: data.codigo_estudiantil!,
             escuela: { connect: { id_escuela: data.id_escuela! } },
+            ...(data.id_escuela_secundaria
+              ? { escuela_secundaria: { connect: { id_escuela: data.id_escuela_secundaria } } }
+              : {}),
             creador: { connect: { id_usuario: data.created_by } },
           },
         },
@@ -451,12 +506,18 @@ async function actualizarPerfilExtendido(rol: string, id_usuario: number, data: 
       },
     });
   }
-  if (rol === 'Estudiante' && (data.codigo_estudiantil || data.id_escuela)) {
+  if (
+    rol === 'Estudiante' &&
+    (data.codigo_estudiantil || data.id_escuela || data.id_escuela_secundaria !== undefined)
+  ) {
     await prisma.perfiles_estudiante.update({
       where: { id_usuario },
       data: {
         codigo_estudiantil: data.codigo_estudiantil as string | undefined,
         ...(data.id_escuela ? { id_escuela: data.id_escuela as number } : {}),
+        ...(data.id_escuela_secundaria !== undefined
+          ? { id_escuela_secundaria: data.id_escuela_secundaria as number | null }
+          : {}),
       },
     });
   }

@@ -57,9 +57,13 @@ export const escuelaRepository = {
 };
 
 export const cursoRepository = {
-  findMany(filtro?: { id_escuela?: number }) {
+  findMany(filtro?: { id_escuela?: number; ids_escuela?: number[] }) {
     return prisma.cursos.findMany({
-      where: { ...activo, ...(filtro?.id_escuela ? { id_escuela: filtro.id_escuela } : {}) },
+      where: {
+        ...activo,
+        ...(filtro?.id_escuela ? { id_escuela: filtro.id_escuela } : {}),
+        ...(filtro?.ids_escuela ? { id_escuela: { in: filtro.ids_escuela } } : {}),
+      },
       include: { escuela: true },
       orderBy: { id_curso: 'asc' },
     });

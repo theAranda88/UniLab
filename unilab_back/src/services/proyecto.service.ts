@@ -2,6 +2,7 @@ import { AppError } from '../utils/AppError';
 import { proyectoRepository } from '../models/proyecto.repository';
 import { cursoRepository } from '../models/escuela.repository';
 import { semilleroRepository } from '../models/semillero.repository';
+import { usuarioRepository } from '../models/usuario.repository';
 import { proyectoImagenService } from './proyecto-imagen.service';
 import { prisma } from '../models/prisma.client';
 import { activo } from '../models/base.repository';
@@ -44,6 +45,25 @@ async function obtenerProyectoEnriquecido(id: number) {
   const proyecto = await proyectoRepository.findById(id);
   if (!proyecto) throw new AppError('Proyecto no encontrado', 404);
   return enriquecerProyecto(proyecto);
+}
+
+/** El curso y el semillero del proyecto deben pertenecer a alguna de las escuelas del estudiante. */
+async function validarEscuelasProyecto(id_estudiante: number, id_curso: number, id_semillero?: number) {
+  const escuelas = await usuarioRepository.findEscuelasIds(id_estudiante);
+
+  const curso = await cursoRepository.findById(id_curso);
+  if (!curso) throw new AppError('Curso no encontrado', 404);
+  if (!escuelas.includes(curso.id_escuela)) {
+    throw new AppError('El curso no pertenece a ninguna de sus escuelas', 422);
+  }
+
+  if (id_semillero) {
+    const semillero = await semilleroRepository.findById(id_semillero);
+    if (!semillero) throw new AppError('Semillero no encontrado', 404);
+    if (!escuelas.includes(semillero.id_escuela)) {
+      throw new AppError('El semillero no pertenece a ninguna de sus escuelas', 422);
+    }
+  }
 }
 
 async function resolverProfesorCoordinador(
@@ -139,6 +159,8 @@ export const proyectoService = {
     url_youtube?: string;
     url_spotify?: string;
   }) {
+    await validarEscuelasProyecto(data.id_estudiante, data.id_curso, data.id_semillero);
+
     const id_profesor_autorizador = await resolverProfesorCoordinador(
       data.id_curso,
       data.id_estudiante,

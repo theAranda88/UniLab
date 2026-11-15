@@ -159,6 +159,14 @@ export const schemas = {
           nombre_escuela: { type: 'string', example: 'Ingeniería' },
         },
       },
+      escuelas: {
+        type: 'array',
+        description: 'Escuelas del perfil académico: la del profesor, o principal y secundaria (máx. 2) del estudiante.',
+        items: {
+          type: 'object',
+          properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+        },
+      },
       semilleros: {
         type: 'array',
         items: { $ref: '#/components/schemas/SemilleroUsuario' },
@@ -222,6 +230,14 @@ export const schemas = {
         type: 'object',
         nullable: true,
         properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+      },
+      escuelas: {
+        type: 'array',
+        description: 'Escuelas del perfil académico: la del profesor, o principal y secundaria (máx. 2) del estudiante.',
+        items: {
+          type: 'object',
+          properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+        },
       },
       redes: { $ref: '#/components/schemas/RedesContacto' },
     },
@@ -352,6 +368,12 @@ export const schemas = {
       codigo_docente: { type: 'string', description: 'Requerido si rol=Profesor', example: 'DOC-010' },
       codigo_estudiantil: { type: 'string', description: 'Requerido si rol=Estudiante', example: 'EST-010' },
       id_escuela: { type: 'integer', description: 'Requerido si rol=Profesor o Estudiante', example: 5 },
+      id_escuela_secundaria: {
+        type: 'integer',
+        nullable: true,
+        description: 'Solo Estudiante: segunda escuela opcional, distinta de la principal (null la quita)',
+        example: 6,
+      },
       cargo: { type: 'string', description: 'Requerido si rol=Coordinador', example: 'Coordinador de Área' },
       dependencia: { type: 'string', description: 'Requerido si rol=Coordinador', example: 'Vicerrectoría' },
       institucion: { type: 'string', description: 'Requerido si rol=Externo', example: 'ONG Aliada' },
@@ -379,6 +401,12 @@ export const schemas = {
         description: 'Cambio de rol: incluir campos de perfil del nuevo rol',
       },
       id_escuela: { type: 'integer', example: 5 },
+      id_escuela_secundaria: {
+        type: 'integer',
+        nullable: true,
+        description: 'Solo Estudiante: segunda escuela opcional, distinta de la principal (null la quita)',
+        example: 6,
+      },
       codigo_docente: { type: 'string' },
       codigo_estudiantil: { type: 'string' },
       cargo: { type: 'string' },

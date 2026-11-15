@@ -357,6 +357,8 @@ export const paths = {
     get: {
       tags: ['Cursos'],
       summary: 'Listar cursos',
+      description:
+        'Profesores y estudiantes solo reciben cursos de sus escuelas; pedir `id_escuela` ajena responde 403.',
       parameters: [
         {
           name: 'id_escuela',
@@ -646,6 +648,7 @@ export const paths = {
     get: {
       tags: ['Semilleros'],
       summary: 'Listar semilleros',
+      description: 'Profesores y estudiantes solo reciben semilleros de sus escuelas.',
       responses: { 200: { description: 'Lista de semilleros' }, ...err },
     },
     post: {
