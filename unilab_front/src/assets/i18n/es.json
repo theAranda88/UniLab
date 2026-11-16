@@ -1562,14 +1562,87 @@
   "perfilAviso": {
     "titulo": "¡Hola, {{nombre}}! Completa tu perfil",
     "texto": "Tu perfil público reúne tus proyectos, semilleros y eventos. Agrega tus datos para que la comunidad te conozca:",
-    "items": {
-      "titular": "Un titular que te describa",
-      "especialidades": "Tus especialidades y fortalezas",
-      "formacion": "Tu formación académica",
-      "enlaces": "Tus enlaces: LinkedIn, GitHub, CvLAC, ORCID…"
+    "ahoraNo": "Ahora no"
+  },
+  "fotoPerfil": {
+    "subir": "Subir foto de perfil",
+    "cambiar": "Cambiar foto de perfil",
+    "quitar": "Quitar foto",
+    "hint": "Toca la foto para elegir una imagen. JPG, PNG o WebP, hasta 5 MB.",
+    "errores": {
+      "tipo": "Solo se permiten imágenes JPG, PNG o WebP.",
+      "tamano": "La foto debe pesar máximo 5 MB.",
+      "subir": "No se pudo subir la foto. Inténtalo de nuevo.",
+      "quitar": "No se pudo quitar la foto."
+    }
+  },
+  "asistentePerfil": {
+    "abrir": "Completar con el asistente",
+    "pasos": "Pasos para completar tu perfil",
+    "pasoDe": "Paso {{paso}} de {{total}}",
+    "duracion": "Toma unos 3 minutos y puedes saltar cualquier paso.",
+    "empezar": "Empezar",
+    "anterior": "Atrás",
+    "siguiente": "Siguiente",
+    "omitir": "Saltar",
+    "finalizar": "Finalizar",
+    "terminar": "Listo",
+    "foto": {
+      "corto": "Foto",
+      "titulo": "Ponle cara a tu perfil",
+      "texto": "Una foto ayuda a que tus compañeros, profesores y jurados te reconozcan en proyectos y eventos."
     },
-    "nota": "Es opcional: puedes completarlo cuando quieras desde «Mi perfil».",
-    "ahoraNo": "Ahora no",
-    "completar": "Completar ahora"
+    "sobre": {
+      "corto": "Sobre ti",
+      "titulo": "Cuéntanos quién eres",
+      "texto": "Tu titular aparece debajo de tu nombre; la biografía, en tu perfil público."
+    },
+    "habilidades": {
+      "corto": "Habilidades",
+      "titulo": "¿En qué eres bueno?",
+      "texto": "Escribe y pulsa Enter, o toca una sugerencia para agregarla.",
+      "sugerencias": "Sugerencias:"
+    },
+    "formacion": {
+      "corto": "Formación",
+      "titulo": "Tu formación académica",
+      "texto": "Agrega tus estudios terminados o en curso. Se guardan al pulsar «Agregar formación».",
+      "enCurso": "En curso"
+    },
+    "enlaces": {
+      "corto": "Enlaces",
+      "titulo": "¿Dónde más te encuentran?",
+      "texto": "Tus redes profesionales y académicas. Todas son opcionales."
+    },
+    "listo": {
+      "titulo": "¡Tu perfil está listo!",
+      "texto": "Completaste el {{porcentaje}} % de tu perfil. Puedes editarlo cuando quieras desde «Mi perfil»."
+    },
+    "checklist": {
+      "foto": "Foto de perfil",
+      "titular": "Titular",
+      "biografia": "Biografía",
+      "habilidades": "Especialidades y fortalezas",
+      "formacion": "Formación",
+      "enlaces": "Enlaces"
+    },
+    "sugerencias": {
+      "especialidades": [
+        "Investigación",
+        "Desarrollo web",
+        "Análisis de datos",
+        "Diseño",
+        "Emprendimiento",
+        "Innovación social"
+      ],
+      "fortalezas": [
+        "Trabajo en equipo",
+        "Liderazgo",
+        "Comunicación asertiva",
+        "Pensamiento crítico",
+        "Creatividad",
+        "Resolución de problemas"
+      ]
+    }
   }
 }

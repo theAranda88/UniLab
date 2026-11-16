@@ -147,6 +147,7 @@ export interface PerfilPublico {
   nombres: string;
   apellidos: string;
   rol: RolNombre;
+  url_foto: string | null;
   titular: string | null;
   biografia: string | null;
   especialidades: string[];

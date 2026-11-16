@@ -1,0 +1,178 @@
+@use '../../../../styles/design-tokens' as t;
+
+.foto {
+  --foto-size: 72px;
+
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-8;
+
+  &--lg {
+    --foto-size: 136px;
+
+    gap: t.$space-12;
+  }
+}
+
+.foto__marco {
+  position: relative;
+  display: inline-flex;
+  width: var(--foto-size);
+  height: var(--foto-size);
+  border-radius: t.$radius-full;
+  cursor: pointer;
+
+  &:hover .foto__circulo,
+  &:focus-within .foto__circulo {
+    box-shadow: 0 0 0 4px t.$accent;
+    transform: scale(1.03);
+  }
+
+  &:hover .foto__camara,
+  &:focus-within .foto__camara {
+    transform: scale(1.12) rotate(-8deg);
+  }
+
+  &:focus-within {
+    outline: 2px solid t.$blue;
+    outline-offset: 4px;
+  }
+
+  &--cargando {
+    cursor: progress;
+
+    .foto__circulo {
+      opacity: 0.6;
+    }
+  }
+}
+
+.foto__circulo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: t.$radius-full;
+  background: linear-gradient(140deg, t.$blue, #0a438f);
+  box-shadow: 0 0 0 3px t.$accent;
+  color: t.$white;
+  font-size: calc(var(--foto-size) * 0.34);
+  font-weight: t.$font-weight-black;
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease,
+    opacity 200ms ease;
+}
+
+.foto__camara {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max(26px, calc(var(--foto-size) * 0.3));
+  height: max(26px, calc(var(--foto-size) * 0.3));
+  border: 2px solid t.$white;
+  border-radius: t.$radius-full;
+  background: t.$accent;
+  color: t.$accent-ink-strong;
+  font-size: max(14px, calc(var(--foto-size) * 0.15));
+  box-shadow: t.$shadow-card;
+  transition: transform 200ms ease;
+}
+
+.foto__spinner {
+  position: absolute;
+  inset: -6px;
+  border: 3px solid transparent;
+  border-top-color: t.$blue;
+  border-radius: t.$radius-full;
+  animation: foto-giro 800ms linear infinite;
+}
+
+.foto__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.foto__acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-4;
+}
+
+.foto__hint {
+  margin: 0;
+  font-size: t.$font-size-sm;
+  color: t.$text-secondary;
+  text-align: center;
+}
+
+.foto__quitar {
+  display: inline-flex;
+  align-items: center;
+  gap: t.$space-4;
+  padding: t.$space-4 t.$space-8;
+  border: 0;
+  border-radius: t.$radius-md;
+  background: transparent;
+  color: t.$text-secondary;
+  font: inherit;
+  font-size: t.$font-size-sm;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: t.$neutral-soft;
+    color: t.$danger;
+  }
+
+  &--mini {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid t.$border-subtle;
+    border-radius: t.$radius-full;
+    background: t.$white;
+    box-shadow: t.$shadow-card;
+  }
+}
+
+.foto__error {
+  max-width: 220px;
+  margin: 0;
+  font-size: t.$font-size-xs;
+  color: t.$danger;
+  text-align: center;
+}
+
+@keyframes foto-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto__circulo,
+  .foto__camara {
+    transition: none;
+  }
+
+  .foto__spinner {
+    animation-duration: 2s;
+  }
+}

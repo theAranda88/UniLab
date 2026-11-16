@@ -13,7 +13,7 @@
     <!-- Cabecera -->
     <header class="persona-hero">
       <div class="persona__container persona-hero__inner">
-        <span class="persona-hero__avatar" aria-hidden="true">{{ iniciales() }}</span>
+        <span class="persona-hero__avatar" aria-hidden="true"><app-avatar [url]="p.url_foto" [iniciales]="iniciales()" /></span>
         <div class="persona-hero__text">
           <span class="persona-hero__rol">{{ 'roles.' + p.rol | translate }}</span>
           <h1 class="persona-hero__name">{{ nombre() }}</h1>

@@ -326,6 +326,7 @@
 
 .user-card__avatar {
   display: inline-flex;
+  overflow: hidden;
   flex: none;
   align-items: center;
   justify-content: center;

@@ -4,12 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { getShellPrefix } from '../../../core/config/role-redirect';
+import { AvatarComponent } from '../../../shared/ui/avatar/avatar.component';
 import { RedesContactoComponent } from '../../../shared/ui/redes-contacto/redes-contacto.component';
 
 @Component({
   selector: 'app-portal-profile-menu',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe, RedesContactoComponent],
+  imports: [CommonModule, RouterLink, TranslatePipe, RedesContactoComponent, AvatarComponent],
   templateUrl: './portal-profile-menu.component.html',
   styleUrl: './portal-profile-menu.component.scss',
 })

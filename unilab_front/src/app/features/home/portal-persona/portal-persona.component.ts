@@ -10,6 +10,7 @@ import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component'
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { RevealDirective } from '../../../shared/ui/reveal/reveal.directive';
+import { AvatarComponent } from '../../../shared/ui/avatar/avatar.component';
 import { formatearRangoFechas } from '../../../core/utils/date.util';
 
 /**
@@ -20,7 +21,7 @@ import { formatearRangoFechas } from '../../../core/utils/date.util';
 @Component({
   selector: 'app-portal-persona',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, RedesContactoComponent, ProyectoCardComponent, EmptyStateComponent, SkeletonComponent, RevealDirective],
+  imports: [RouterLink, TranslatePipe, RedesContactoComponent, ProyectoCardComponent, EmptyStateComponent, SkeletonComponent, RevealDirective, AvatarComponent],
   templateUrl: './portal-persona.component.html',
   styleUrl: './portal-persona.component.scss',
 })

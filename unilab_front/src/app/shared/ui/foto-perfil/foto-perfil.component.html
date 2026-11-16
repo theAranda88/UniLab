@@ -1,0 +1,47 @@
+<div class="foto" [class.foto--lg]="tamano() === 'lg'">
+  <label class="foto__marco" [class.foto__marco--cargando]="subiendo()" [attr.aria-busy]="subiendo()">
+    <span class="foto__circulo">
+      <app-avatar [url]="url()" [iniciales]="iniciales()" />
+    </span>
+    <span class="foto__camara" aria-hidden="true">
+      <i class="ti" [class.ti-camera-plus]="!tieneFoto()" [class.ti-camera-rotate]="tieneFoto()"></i>
+    </span>
+    @if (subiendo()) {
+      <span class="foto__spinner" aria-hidden="true"></span>
+    }
+    <input
+      class="foto__input"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      [disabled]="subiendo()"
+      [attr.aria-label]="(tieneFoto() ? 'fotoPerfil.cambiar' : 'fotoPerfil.subir') | translate"
+      (change)="elegir($event)"
+    />
+  </label>
+
+  @if (tamano() === 'lg') {
+    <div class="foto__acciones">
+      <p class="foto__hint">{{ 'fotoPerfil.hint' | translate }}</p>
+      @if (tieneFoto()) {
+        <button type="button" class="foto__quitar" (click)="quitar()" [disabled]="subiendo()">
+          <i class="ti ti-trash" aria-hidden="true"></i>{{ 'fotoPerfil.quitar' | translate }}
+        </button>
+      }
+    </div>
+  } @else if (tieneFoto()) {
+    <button
+      type="button"
+      class="foto__quitar foto__quitar--mini"
+      (click)="quitar()"
+      [disabled]="subiendo()"
+      [attr.aria-label]="'fotoPerfil.quitar' | translate"
+      [attr.title]="'fotoPerfil.quitar' | translate"
+    >
+      <i class="ti ti-trash" aria-hidden="true"></i>
+    </button>
+  }
+
+  @if (error()) {
+    <p class="foto__error" role="alert">{{ error()! | translate }}</p>
+  }
+</div>

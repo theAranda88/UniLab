@@ -16,7 +16,7 @@
 
   @if (usuario(); as u) {
     <section class="edu-card mi-perfil__identidad">
-      <span class="mi-perfil__avatar" aria-hidden="true">{{ iniciales() }}</span>
+      <app-foto-perfil />
       <div class="mi-perfil__quien">
         <h2>{{ nombreCompleto() }}</h2>
         <p>{{ u.email }}</p>
@@ -28,6 +28,9 @@
         </span>
       </div>
       <app-redes-contacto class="mi-perfil__redes-resumen" [redes]="u.redes" />
+      <button type="button" class="edu-btn mi-perfil__asistente" (click)="abrirAsistente()">
+        <i class="ti ti-wand" aria-hidden="true"></i>{{ 'asistentePerfil.abrir' | translate }}
+      </button>
     </section>
 
     <div class="mi-perfil__grid">

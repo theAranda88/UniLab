@@ -65,18 +65,11 @@
     gap: t.$space-16;
   }
 
-  &__avatar {
+  &__asistente {
     display: inline-flex;
-    flex: none;
     align-items: center;
-    justify-content: center;
-    width: 64px;
-    height: 64px;
-    border-radius: t.$radius-full;
-    background: t.$blue;
-    color: t.$white;
-    font-size: t.$font-size-xl;
-    font-weight: t.$font-weight-extra-bold;
+    gap: t.$space-8;
+    margin-left: auto;
   }
 
   &__quien {

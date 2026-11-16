@@ -14,6 +14,8 @@ import { DialogService } from '../../../shared/ui/dialog/dialog.service';
 import type { FormacionAcademica, FormacionDto, NivelFormacion } from '../../../core/models/usuario.model';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { RedesContactoComponent } from '../../../shared/ui/redes-contacto/redes-contacto.component';
+import { FotoPerfilComponent } from '../../../shared/ui/foto-perfil/foto-perfil.component';
+import { PerfilAsistenteService } from '../../../shared/ui/perfil-asistente/perfil-asistente.service';
 import {
   CVLAC_DOMINIO,
   GITHUB_DOMINIO,
@@ -58,7 +60,7 @@ function passwordsCoinciden(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, RedesContactoComponent, RouterLink],
+  imports: [ReactiveFormsModule, TranslatePipe, RedesContactoComponent, RouterLink, FotoPerfilComponent],
   templateUrl: './mi-perfil.component.html',
   styleUrl: './mi-perfil.component.scss',
 })
@@ -68,6 +70,7 @@ export class MiPerfilComponent implements OnInit {
   private toast = inject(ToastService);
   private perfilService = inject(PerfilService);
   private dialog = inject(DialogService);
+  private asistente = inject(PerfilAsistenteService);
 
   readonly usuario = this.auth.user;
   readonly cargando = signal(false);
@@ -130,12 +133,6 @@ export class MiPerfilComponent implements OnInit {
     return `${u?.nombres ?? ''} ${u?.apellidos ?? ''}`.trim() || u?.email || '';
   });
 
-  readonly iniciales = computed(() => {
-    const u = this.usuario();
-    const letras = `${u?.nombres?.charAt(0) ?? ''}${u?.apellidos?.charAt(0) ?? ''}`.toUpperCase();
-    return letras || u?.email?.charAt(0).toUpperCase() || '?';
-  });
-
   /** Filas «etiqueta: valor» del perfil según el rol (solo las que tienen dato). */
   readonly datos = computed(() => {
     const u = this.usuario();
@@ -153,6 +150,10 @@ export class MiPerfilComponent implements OnInit {
     ];
     return filas.filter((f) => !!f.valor);
   });
+
+  abrirAsistente(): void {
+    this.asistente.abrir();
+  }
 
   ngOnInit(): void {
     this.perfilService.listarFormacion().subscribe({ next: (lista) => this.formacion.set(lista) });

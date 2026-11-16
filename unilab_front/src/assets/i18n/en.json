@@ -1562,14 +1562,87 @@
   "perfilAviso": {
     "titulo": "Hi, {{nombre}}! Complete your profile",
     "texto": "Your public profile brings together your projects, research groups and events. Add your details so the community gets to know you:",
-    "items": {
-      "titular": "A headline that describes you",
-      "especialidades": "Your specialties and strengths",
-      "formacion": "Your education",
-      "enlaces": "Your links: LinkedIn, GitHub, CvLAC, ORCID…"
+    "ahoraNo": "Not now"
+  },
+  "fotoPerfil": {
+    "subir": "Upload profile photo",
+    "cambiar": "Change profile photo",
+    "quitar": "Remove photo",
+    "hint": "Tap the photo to choose an image. JPG, PNG or WebP, up to 5 MB.",
+    "errores": {
+      "tipo": "Only JPG, PNG or WebP images are allowed.",
+      "tamano": "The photo must be 5 MB or smaller.",
+      "subir": "The photo could not be uploaded. Please try again.",
+      "quitar": "The photo could not be removed."
+    }
+  },
+  "asistentePerfil": {
+    "abrir": "Complete with the wizard",
+    "pasos": "Steps to complete your profile",
+    "pasoDe": "Step {{paso}} of {{total}}",
+    "duracion": "It takes about 3 minutes and you can skip any step.",
+    "empezar": "Get started",
+    "anterior": "Back",
+    "siguiente": "Next",
+    "omitir": "Skip",
+    "finalizar": "Finish",
+    "terminar": "Done",
+    "foto": {
+      "corto": "Photo",
+      "titulo": "Put a face to your profile",
+      "texto": "A photo helps classmates, professors and judges recognize you in projects and events."
     },
-    "nota": "It is optional: you can complete it anytime from “My profile”.",
-    "ahoraNo": "Not now",
-    "completar": "Complete now"
+    "sobre": {
+      "corto": "About you",
+      "titulo": "Tell us who you are",
+      "texto": "Your headline appears under your name; your bio, on your public profile."
+    },
+    "habilidades": {
+      "corto": "Skills",
+      "titulo": "What are you good at?",
+      "texto": "Type and press Enter, or tap a suggestion to add it.",
+      "sugerencias": "Suggestions:"
+    },
+    "formacion": {
+      "corto": "Education",
+      "titulo": "Your education",
+      "texto": "Add completed or ongoing studies. They are saved when you press “Add education”.",
+      "enCurso": "Ongoing"
+    },
+    "enlaces": {
+      "corto": "Links",
+      "titulo": "Where else can people find you?",
+      "texto": "Your professional and academic profiles. All of them are optional."
+    },
+    "listo": {
+      "titulo": "Your profile is ready!",
+      "texto": "You completed {{porcentaje}}% of your profile. You can edit it anytime from “My profile”."
+    },
+    "checklist": {
+      "foto": "Profile photo",
+      "titular": "Headline",
+      "biografia": "Bio",
+      "habilidades": "Specialties and strengths",
+      "formacion": "Education",
+      "enlaces": "Links"
+    },
+    "sugerencias": {
+      "especialidades": [
+        "Research",
+        "Web development",
+        "Data analysis",
+        "Design",
+        "Entrepreneurship",
+        "Social innovation"
+      ],
+      "fortalezas": [
+        "Teamwork",
+        "Leadership",
+        "Assertive communication",
+        "Critical thinking",
+        "Creativity",
+        "Problem solving"
+      ]
+    }
   }
 }
