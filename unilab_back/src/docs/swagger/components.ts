@@ -150,6 +150,7 @@ export const schemas = {
       nombres: { type: 'string', example: 'Ana' },
       apellidos: { type: 'string', example: 'Gómez' },
       telefono: { type: 'string', example: '3001234567' },
+      url_foto: { type: 'string', nullable: true, description: 'Foto de perfil (POST /auth/me/foto)' },
       escuela: {
         type: 'object',
         nullable: true,

@@ -52,6 +52,7 @@ Ajuste `DATABASE_URL` al puerto del host (`5433` con Compose, `5432` si PostgreS
 - Perfiles tipo CvLAC: titular, biografía, especialidades, fortalezas, enlaces académicos y formación.
 
 Las imágenes son enlaces directos (no se descargan archivos), así que se ven igual en local y en Docker.
+Las fotos de perfil son retratos públicos de randomuser.me; los perfiles incompletos no tienen foto.
 
 > **El seed vacía todas las tablas antes de sembrar.** Úselo en una base de pruebas, no sobre datos reales.
 
@@ -62,7 +63,7 @@ Contraseña para todos: `Password123!`
 | Administrador | admin@unilab.edu | Gestión completa, eventos, reportes |
 | Coordinador | coordinador@unilab.edu, coordinadora2@unilab.edu | Escuelas a cargo, estadísticas |
 | Profesor | profesor1@unilab.edu … profesor10@unilab.edu | profesor1 lidera el Semillero de Innovación |
-| Estudiante | estudiante1@unilab.edu … estudiante30@unilab.edu | estudiante1 tiene el perfil completo; estudiante2 ve el aviso de completar perfil |
+| Estudiante | estudiante1@unilab.edu … estudiante30@unilab.edu | estudiante1 tiene el perfil completo; estudiante2 ve el asistente para completar el perfil (sin foto) |
 | Externo | externo@unilab.edu, externo2@unilab.edu, externo3@unilab.edu | Portal e inscripción a eventos |
 
 ## Módulos y endpoints

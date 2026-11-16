@@ -174,6 +174,16 @@ type ClaveEscuela = EscuelaDef['clave'];
 
 const NOMBRES_F = ['Sofía', 'Valentina', 'Isabella', 'Mariana', 'Camila', 'Daniela', 'Laura', 'Natalia', 'Juliana', 'Gabriela', 'Paula', 'Andrea', 'Lucía', 'Sara', 'Manuela', 'Carolina'];
 const NOMBRES_M = ['Diego', 'Santiago', 'Sebastián', 'Mateo', 'Nicolás', 'Samuel', 'Juan Pablo', 'Andrés', 'Felipe', 'Daniel', 'Alejandro', 'Julián', 'David', 'Tomás', 'Esteban', 'Camilo'];
+/** Nombres femeninos de las cuentas fijas (los aleatorios salen de NOMBRES_F). */
+const NOMBRES_F_FIJOS = ['Ana', 'Patricia', 'María', 'Claudia', 'Liliana', 'Adriana', 'Gloria', 'Mónica'];
+const retratosUsados = { women: 0, men: 0 };
+/** Foto de perfil de demostración: retratos públicos de randomuser.me, sin repetir. */
+function retrato(nombres: string): string {
+  const nombre = nombres.split(' ')[0];
+  const genero = NOMBRES_F.includes(nombre) || NOMBRES_F_FIJOS.includes(nombre) ? 'women' : 'men';
+  const indice = (retratosUsados[genero]++ * 7 + 3) % 100;
+  return `https://randomuser.me/api/portraits/${genero}/${indice}.jpg`;
+}
 const APELLIDOS = ['Muñoz', 'Ortega', 'Velasco', 'Cerón', 'Bolaños', 'Chicangana', 'Ordóñez', 'Paz', 'Collazos', 'Mosquera', 'Guevara', 'Sandoval', 'Rengifo', 'Caicedo', 'Burbano', 'Imbachí', 'Zúñiga', 'Hurtado', 'Valencia', 'López', 'Ramírez', 'Quintero', 'Erazo', 'Daza'];
 
 const FORTALEZAS = ['Trabajo en equipo', 'Liderazgo', 'Comunicación asertiva', 'Pensamiento crítico', 'Resolución de problemas', 'Creatividad', 'Gestión del tiempo', 'Adaptabilidad', 'Investigación', 'Orientación a resultados'];
@@ -439,6 +449,8 @@ async function main(): Promise<void> {
       mostrar_telefono: boolean;
     }>;
     perfil_cv_revisado?: boolean;
+    /** Sin foto: perfiles incompletos, para ver el asistente de perfil. */
+    sinFoto?: boolean;
   }): Promise<Persona> => {
     const doc = nuevoDocumento();
     const telefono = `31${doc.slice(-8)}`;
@@ -454,6 +466,7 @@ async function main(): Promise<void> {
         activo: true,
         primer_login: false,
         perfil_cv_revisado: data.perfil_cv_revisado ?? true,
+        foto_ruta: data.sinFoto ? null : retrato(data.nombres),
         created_by: data.created_by,
         ...(data.cv ?? {}),
       },
@@ -612,6 +625,7 @@ async function main(): Promise<void> {
       email: e.email,
       created_by: A,
       perfil_cv_revisado: !e.avisoPendiente,
+      sinFoto: !conPerfil,
       cv: conPerfil
         ? {
             titular: `Estudiante de ${PROGRAMA_TITULAR[e.escuela]} · ${semestre}.º semestre`,

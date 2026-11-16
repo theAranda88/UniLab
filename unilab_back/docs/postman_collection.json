@@ -850,6 +850,25 @@
           }
         },
         {
+          "name": "Subir mi foto de perfil",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": { "mode": "formdata", "formdata": [{ "key": "foto", "type": "file", "src": [] }] },
+            "url": "{{base_url}}/auth/me/foto",
+            "description": "multipart/form-data, campo «foto» (JPEG, PNG o WebP, máx. 5 MB). Devuelve la sesión con url_foto."
+          }
+        },
+        {
+          "name": "Quitar mi foto de perfil",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/auth/me/foto",
+            "description": ""
+          }
+        },
+        {
           "name": "Mi formación",
           "request": {
             "method": "GET",

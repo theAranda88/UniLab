@@ -51,6 +51,8 @@ model usuarios {
   url_orcid           String?  @db.VarChar(500)
   url_google_scholar  String?  @db.VarChar(500)
   url_researchgate    String?  @db.VarChar(500)
+  /// Foto de perfil: ruta en /uploads o URL externa (seed de demostración)
+  foto_ruta           String?  @db.VarChar(500)
   /// El teléfono solo aparece en el perfil público si el usuario lo permite
   mostrar_telefono    Boolean  @default(false)
   /// true cuando el usuario completó u omitió el aviso de perfil del primer ingreso

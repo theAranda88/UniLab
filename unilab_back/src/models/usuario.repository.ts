@@ -75,6 +75,7 @@ export const usuarioRepository = {
         url_orcid: true,
         url_google_scholar: true,
         url_researchgate: true,
+        foto_ruta: true,
         titular: true,
         biografia: true,
         especialidades: true,

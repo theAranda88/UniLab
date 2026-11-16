@@ -51,6 +51,7 @@ export const perfilRepository = {
         url_orcid: true,
         url_google_scholar: true,
         url_researchgate: true,
+        foto_ruta: true,
         rol: { select: { nombre_rol: true } },
         perfil_profesor: { where: activo, select: { escuela: escuelaResumen } },
         perfil_estudiante: { where: activo, select: { escuela: escuelaResumen } },

@@ -16,6 +16,7 @@ import {
 import { verifyTokenOpcional } from '../middlewares/auth/verifyToken';
 import { verifyToken } from '../middlewares/auth/verifyToken';
 import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
+import { subirFotoUsuario } from '../middlewares/upload/subirFotoUsuario.middleware';
 
 const router = Router();
 
@@ -39,6 +40,15 @@ router.post(
   checkPerfilPendiente,
   authController.omitirPerfilCv,
 );
+router.post(
+  '/me/foto',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  subirFotoUsuario,
+  perfilController.subirFoto,
+);
+router.delete('/me/foto', verifyToken, checkPrimerLogin, checkPerfilPendiente, perfilController.eliminarFoto);
 router.get('/me/formacion', verifyToken, checkPrimerLogin, checkPerfilPendiente, perfilController.listarFormacion);
 router.post(
   '/me/formacion',

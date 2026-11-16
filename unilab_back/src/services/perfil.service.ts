@@ -1,6 +1,7 @@
 import { AppError } from '../utils/AppError';
 import { perfilRepository } from '../models/perfil.repository';
 import { publicoService } from './publico.service';
+import { urlPublicaImagen } from '../utils/uploadPaths';
 
 type DatosFormacion = {
   titulo: string;
@@ -67,6 +68,7 @@ export const perfilService = {
       nombres: u.nombres,
       apellidos: u.apellidos,
       rol: u.rol.nombre_rol,
+      url_foto: u.foto_ruta ? urlPublicaImagen(u.foto_ruta) : null,
       titular: u.titular,
       biografia: u.biografia,
       especialidades: u.especialidades,

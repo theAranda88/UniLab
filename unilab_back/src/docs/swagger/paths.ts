@@ -135,6 +135,37 @@ export const paths = {
       responses: { 200: { description: 'Sesión actualizada' }, 401: err[401] },
     },
   },
+  '/auth/me/foto': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Subir mi foto de perfil',
+      description: 'Reemplaza la foto anterior. JPEG, PNG o WebP, máximo 5 MB. Aparece en el perfil público.',
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['foto'],
+              properties: { foto: { type: 'string', format: 'binary' } },
+            },
+          },
+        },
+      },
+      responses: {
+        200: { description: 'Sesión actualizada con `url_foto`', content: { 'application/json': { schema: { $ref: '#/components/schemas/UsuarioSesion' } } } },
+        400: err[400],
+        401: err[401],
+      },
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Quitar mi foto de perfil',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Sesión actualizada (`url_foto: null`)' }, 401: err[401], 404: err[404] },
+    },
+  },
   '/auth/me/formacion': {
     get: {
       tags: ['Auth'],

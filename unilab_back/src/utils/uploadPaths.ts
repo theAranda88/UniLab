@@ -6,6 +6,7 @@ export const PROYECTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'proyectos');
 export const EVENTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'eventos');
 export const ESCUELA_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'escuelas');
 export const SEMILLERO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'semilleros');
+export const USUARIO_FOTOS_DIR = path.join(UPLOADS_ROOT, 'usuarios');
 
 export const IMAGEN_MIME_PERMITIDOS = new Set([
   'image/jpeg',
@@ -55,6 +56,14 @@ export function carpetaSemilleroEvidencias(id_semillero: number): string {
 
 export function rutaPublicaSemilleroEvidencia(id_semillero: number, nombreArchivo: string): string {
   return `/uploads/semilleros/${id_semillero}/evidencias/${nombreArchivo}`;
+}
+
+export function carpetaUsuario(id_usuario: number): string {
+  return path.join(USUARIO_FOTOS_DIR, String(id_usuario));
+}
+
+export function rutaPublicaUsuario(id_usuario: number, nombreArchivo: string): string {
+  return `/uploads/usuarios/${id_usuario}/${nombreArchivo}`;
 }
 
 export function carpetaEvento(id_evento: number): string {
