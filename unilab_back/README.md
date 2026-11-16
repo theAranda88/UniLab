@@ -40,17 +40,30 @@ npm run dev
 
 Ajuste `DATABASE_URL` al puerto del host (`5433` con Compose, `5432` si PostgreSQL es nativo).
 
-## Usuarios de prueba (seed)
+## Datos de demostración (seed)
+
+`npx prisma db seed` deja la plataforma lista para explorar:
+
+- 5 escuelas con descripción e imágenes, 13 cursos y un coordinador encargado por escuela.
+- 11 semilleros con portada, galería de evidencias, profesores y miembros (y solicitudes pendientes).
+- 54 proyectos: 45 publicados (en semilleros e independientes) con imágenes, coautores, calificaciones
+  y comentarios, más proyectos en revisión, borrador y rechazados para probar el panel docente.
+- 7 eventos (finalizados, en curso y planeados) con jornadas, inscripciones, asistencias y evidencias.
+- Perfiles tipo CvLAC: titular, biografía, especialidades, fortalezas, enlaces académicos y formación.
+
+Las imágenes son enlaces directos (no se descargan archivos), así que se ven igual en local y en Docker.
+
+> **El seed vacía todas las tablas antes de sembrar.** Úselo en una base de pruebas, no sobre datos reales.
 
 Contraseña para todos: `Password123!`
 
-| Rol | Email |
-|-----|-------|
-| Administrador | admin@unilab.edu |
-| Coordinador | coordinador@unilab.edu |
-| Profesor | profesor1@unilab.edu |
-| Estudiante | estudiante1@unilab.edu |
-| Externo | externo@unilab.edu |
+| Rol | Email | Para probar |
+|-----|-------|-------------|
+| Administrador | admin@unilab.edu | Gestión completa, eventos, reportes |
+| Coordinador | coordinador@unilab.edu, coordinadora2@unilab.edu | Escuelas a cargo, estadísticas |
+| Profesor | profesor1@unilab.edu … profesor10@unilab.edu | profesor1 lidera el Semillero de Innovación |
+| Estudiante | estudiante1@unilab.edu … estudiante30@unilab.edu | estudiante1 tiene el perfil completo; estudiante2 ve el aviso de completar perfil |
+| Externo | externo@unilab.edu, externo2@unilab.edu, externo3@unilab.edu | Portal e inscripción a eventos |
 
 ## Módulos y endpoints
 

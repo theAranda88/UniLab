@@ -85,5 +85,7 @@ export function urlBaseApi(): string {
 }
 
 export function urlPublicaImagen(ruta_archivo: string): string {
+  // Imágenes externas (p. ej. las del seed de demostración) se guardan con su URL completa
+  if (/^https?:\/\//i.test(ruta_archivo)) return ruta_archivo;
   return `${urlBaseApi()}${ruta_archivo}`;
 }
