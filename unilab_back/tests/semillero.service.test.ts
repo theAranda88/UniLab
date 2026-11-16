@@ -13,6 +13,7 @@ const m = vi.hoisted(() => ({
     buscarMembresia: vi.fn(),
     crearMembresia: vi.fn(),
     actualizarMembresia: vi.fn(),
+    actualizarProfesor: vi.fn(),
   },
   prisma: {
     semillero_profesores: { findUnique: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
@@ -30,7 +31,7 @@ vi.mock('../src/services/configuracion.service', () => ({ configuracionService: 
 
 import { semilleroService } from '../src/services/semillero.service';
 
-const SEMILLERO = { id_semillero: 1, id_profesor_lider: 10, id_escuela: 2, activo: true };
+const SEMILLERO = { id_semillero: 1, id_profesor_lider: 10, id_escuela: 2, activo: true, profesores: [], miembros: [] };
 const usuario = (rol: string) => ({ rol: { nombre_rol: rol } });
 
 describe('semilleroService', () => {
@@ -133,7 +134,7 @@ describe('semilleroService', () => {
         profesor_lider: { connect: { id_usuario: 20 } },
       });
       expect(m.prisma.semillero_profesores.updateMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expect.objectContaining({ id_profesor: 10 }), data: { es_lider: false } }),
+        expect.objectContaining({ where: expect.objectContaining({ id_profesor: 10 }), data: { es_lider: false, rol: 'acompanante' } }),
       );
       expect(m.semilleroRepository.agregarProfesor).toHaveBeenCalledWith(
         expect.objectContaining({ es_lider: true, profesor: { connect: { id_usuario: 20 } } }),
@@ -211,6 +212,46 @@ describe('semilleroService', () => {
       m.semilleroRepository.buscarMembresia.mockResolvedValue({ id_membresia: 4, estado_solicitud: 'pendiente' });
 
       await expect(semilleroService.autorizarPublicacion(1, 30, 10)).rejects.toMatchObject({ statusCode: 422 });
+    });
+  });
+
+  describe('roles dentro del semillero', () => {
+    const admin = { id_usuario: 1, id_rol: 'Administrador' };
+    const lider = { id_usuario: 10, id_rol: 'Profesor' };
+    const otroProfesor = { id_usuario: 11, id_rol: 'Profesor' };
+
+    it('el administrador y el profesor líder cambian el rol de un profesor', async () => {
+      m.semilleroRepository.buscarProfesor.mockResolvedValue({ id_profesor: 11 });
+
+      await semilleroService.cambiarRolProfesor(1, 11, 'coordinador', admin);
+      await semilleroService.cambiarRolProfesor(1, 11, 'acompanante', lider);
+
+      expect(m.semilleroRepository.actualizarProfesor).toHaveBeenNthCalledWith(1, 1, 11, { rol: 'coordinador' });
+      expect(m.semilleroRepository.actualizarProfesor).toHaveBeenNthCalledWith(2, 1, 11, { rol: 'acompanante' });
+    });
+
+    it('otro profesor no puede cambiar roles', async () => {
+      await expect(semilleroService.cambiarRolProfesor(1, 12, 'coordinador', otroProfesor)).rejects.toMatchObject({
+        statusCode: 403,
+      });
+      await expect(semilleroService.cambiarRolMiembro(1, 30, 'lider', otroProfesor)).rejects.toMatchObject({
+        statusCode: 403,
+      });
+    });
+
+    it('el rol del profesor líder no se cambia desde aquí', async () => {
+      await expect(semilleroService.cambiarRolProfesor(1, 10, 'acompanante', admin)).rejects.toMatchObject({
+        statusCode: 422,
+      });
+    });
+
+    it('solo los estudiantes aprobados reciben un rol', async () => {
+      m.semilleroRepository.buscarMembresia.mockResolvedValue({ id_membresia: 4, estado_solicitud: 'pendiente' });
+      await expect(semilleroService.cambiarRolMiembro(1, 30, 'lider', lider)).rejects.toMatchObject({ statusCode: 422 });
+
+      m.semilleroRepository.buscarMembresia.mockResolvedValue({ id_membresia: 4, estado_solicitud: 'aprobado' });
+      await semilleroService.cambiarRolMiembro(1, 30, 'coordinador', lider);
+      expect(m.semilleroRepository.actualizarMembresia).toHaveBeenCalledWith(4, { rol: 'coordinador' });
     });
   });
 });

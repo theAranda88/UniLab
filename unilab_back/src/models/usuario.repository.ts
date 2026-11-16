@@ -93,11 +93,11 @@ export const usuarioRepository = {
         semilleros_como_lider: { where: activo, ...semilleroResumen },
         semilleros_como_profesor: {
           where: { ...activo, semillero: activo },
-          select: { es_lider: true, semillero: semilleroResumen },
+          select: { es_lider: true, rol: true, semillero: semilleroResumen },
         },
         membresias_semillero: {
           where: { ...activo, estado_solicitud: 'aprobado', semillero: activo },
-          select: { semillero: semilleroResumen },
+          select: { rol: true, semillero: semilleroResumen },
         },
       },
     });

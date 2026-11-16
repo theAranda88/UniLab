@@ -6,7 +6,7 @@ import type { MulterError } from 'multer';
 import {
   IMAGEN_EXTENSION_POR_MIME,
   IMAGEN_MIME_PERMITIDOS,
-  MAX_IMAGEN_BYTES,
+  MAX_FOTO_PERFIL_BYTES,
   asegurarDirectorio,
   carpetaUsuario,
 } from '../../utils/uploadPaths';
@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
 
 const fotoUsuarioUpload = multer({
   storage,
-  limits: { fileSize: MAX_IMAGEN_BYTES, files: 1 },
+  limits: { fileSize: MAX_FOTO_PERFIL_BYTES, files: 1 },
   fileFilter: (_req, file, cb) => {
     if (!IMAGEN_MIME_PERMITIDOS.has(file.mimetype)) {
       cb(new Error('Solo se permiten imágenes JPEG, PNG o WebP'));
@@ -45,7 +45,7 @@ export function subirFotoUsuario(req: Request, res: Response, next: NextFunction
     }
     const multerErr = err as MulterError & { message?: string };
     if (multerErr.code === 'LIMIT_FILE_SIZE') {
-      res.status(400).json({ error: 'La foto debe pesar máximo 5 MB' });
+      res.status(400).json({ error: 'La foto debe pesar máximo 2 MB' });
       return;
     }
     if (multerErr.code === 'LIMIT_UNEXPECTED_FILE') {

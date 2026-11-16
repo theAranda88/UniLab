@@ -104,6 +104,8 @@ describe('publicoService · semilleros', () => {
     m.semilleroRepository.findPublicoById.mockResolvedValue({
       ...SEMILLERO_LISTA,
       evidencias: [{ id_evidencia: 3, ruta_archivo: '/x', orden: 1, nombre_original: 'a.webp', mime_type: 'image/webp', id_semillero: 1 }],
+      profesores: [],
+      miembros: [],
     });
     m.semilleroEvidenciaService.mapEvidencias.mockReturnValue([
       { id_evidencia: 3, url: 'http://localhost/x', orden: 1, nombre_original: 'a.webp' },
@@ -114,5 +116,41 @@ describe('publicoService · semilleros', () => {
     expect(detalle.evidencias).toHaveLength(1);
     expect(detalle.evidencias[0].url).toContain('http');
     expect(detalle.proyectos).toEqual([]);
+  });
+
+  it('obtenerSemilleroPublico trae el equipo del semillero ordenado por rol, con su foto', async () => {
+    const persona = (id: number, nombres: string, foto_ruta: string | null = null) => ({
+      id_usuario: id,
+      nombres,
+      apellidos: 'X',
+      titular: null,
+      foto_ruta,
+    });
+    m.semilleroRepository.findPublicoById.mockResolvedValue({
+      ...SEMILLERO_LISTA,
+      evidencias: [],
+      profesores: [
+        { rol: 'acompanante', profesor: persona(3, 'Carla') },
+        { rol: 'lider', profesor: persona(1, 'Zoe', 'https://img/zoe.jpg') },
+        { rol: 'coordinador', profesor: persona(2, 'Ana') },
+      ],
+      miembros: [
+        { rol: 'integrante', estudiante: persona(7, 'Beto') },
+        { rol: 'integrante', estudiante: persona(8, 'Abel') },
+        { rol: 'lider', estudiante: persona(9, 'Zara') },
+      ],
+    });
+    m.semilleroEvidenciaService.mapEvidencias.mockReturnValue([]);
+
+    const { equipo } = await publicoService.obtenerSemilleroPublico(1);
+
+    expect(equipo.profesores.map((p) => [p.nombres, p.rol])).toEqual([
+      ['Zoe', 'lider'],
+      ['Ana', 'coordinador'],
+      ['Carla', 'acompanante'],
+    ]);
+    expect(equipo.profesores[0].url_foto).toBe('https://img/zoe.jpg');
+    expect(equipo.profesores[0]).not.toHaveProperty('foto_ruta');
+    expect(equipo.estudiantes.map((e) => e.nombres)).toEqual(['Zara', 'Abel', 'Beto']);
   });
 });

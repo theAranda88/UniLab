@@ -823,6 +823,26 @@
             "url": "{{base_url}}/semilleros/1/miembros/5/autorizar-publicacion",
             "description": "Solo profesor líder del semillero."
           }
+        },
+        {
+          "name": "Cambiar rol de profesor en el semillero",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"rol\": \"coordinador\"\n}" },
+            "url": "{{base_url}}/semilleros/1/profesores/3/rol",
+            "description": "Administrador o profesor líder. rol: coordinador | acompanante."
+          }
+        },
+        {
+          "name": "Cambiar rol de estudiante en el semillero",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"rol\": \"lider\"\n}" },
+            "url": "{{base_url}}/semilleros/1/miembros/5/rol",
+            "description": "Administrador o profesor líder; solo miembros aprobados. rol: integrante | lider | coordinador."
+          }
         }
       ]
     },
@@ -856,7 +876,7 @@
             "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "body": { "mode": "formdata", "formdata": [{ "key": "foto", "type": "file", "src": [] }] },
             "url": "{{base_url}}/auth/me/foto",
-            "description": "multipart/form-data, campo «foto» (JPEG, PNG o WebP, máx. 5 MB). Devuelve la sesión con url_foto."
+            "description": "multipart/form-data, campo «foto» (JPEG, PNG o WebP, máx. 2 MB). Devuelve la sesión con url_foto."
           }
         },
         {

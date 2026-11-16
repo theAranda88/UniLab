@@ -85,7 +85,7 @@ describe('perfilService.perfilPublico', () => {
     const p = await perfilService.perfilPublico(7);
     expect(p.semilleros).toEqual([
       { id_semillero: 1, nombre_semillero: 'IA', rol: 'lider' },
-      { id_semillero: 2, nombre_semillero: 'Robótica', rol: 'miembro' },
+      { id_semillero: 2, nombre_semillero: 'Robótica', rol: 'estudiante' },
     ]);
   });
 

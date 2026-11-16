@@ -2,6 +2,7 @@ import { AppError } from '../utils/AppError';
 import { perfilRepository } from '../models/perfil.repository';
 import { publicoService } from './publico.service';
 import { urlPublicaImagen } from '../utils/uploadPaths';
+import { rolVisibleEstudiante, rolVisibleProfesor, unirSemillerosConRol } from '../utils/rolSemillero';
 
 type DatosFormacion = {
   titulo: string;
@@ -10,8 +11,6 @@ type DatosFormacion = {
   anio_inicio?: number | null;
   anio_fin?: number | null;
 };
-
-type RolSemillero = 'lider' | 'profesor' | 'miembro';
 
 async function formacionPropia(id_formacion: number, id_usuario: number) {
   const formacion = await perfilRepository.findFormacion(id_formacion);
@@ -47,14 +46,11 @@ export const perfilService = {
     const u = await perfilRepository.findPerfilPublico(id_usuario);
     if (!u) throw new AppError('Perfil no encontrado', 404);
 
-    const semilleros = new Map<number, { id_semillero: number; nombre_semillero: string; rol: RolSemillero }>();
-    const agregar = (s: { id_semillero: number; nombre_semillero: string }, rol: RolSemillero) => {
-      const previo = semilleros.get(s.id_semillero);
-      if (!previo || rol === 'lider') semilleros.set(s.id_semillero, { id_semillero: s.id_semillero, nombre_semillero: s.nombre_semillero, rol });
-    };
-    u.membresias_semillero.forEach((m) => agregar(m.semillero, 'miembro'));
-    u.semilleros_como_profesor.forEach((p) => agregar(p.semillero, p.es_lider ? 'lider' : 'profesor'));
-    u.semilleros_como_lider.forEach((s) => agregar(s, 'lider'));
+    const semilleros = unirSemillerosConRol([
+      ...u.membresias_semillero.map((m) => ({ semillero: m.semillero, rol: rolVisibleEstudiante(m.rol) })),
+      ...u.semilleros_como_profesor.map((p) => ({ semillero: p.semillero, rol: rolVisibleProfesor(p) })),
+      ...u.semilleros_como_lider.map((s) => ({ semillero: s, rol: 'lider' as const })),
+    ]).map(({ semillero, rol }) => ({ id_semillero: semillero.id_semillero, nombre_semillero: semillero.nombre_semillero, rol }));
 
     const [proyectos, inscripciones] = await Promise.all([
       publicoService.listarProyectosPublicados({ id_participante: id_usuario }),
@@ -90,7 +86,7 @@ export const perfilService = {
         researchgate: u.url_researchgate,
       },
       formacion: u.formacion,
-      semilleros: [...semilleros.values()].sort((a, b) => a.nombre_semillero.localeCompare(b.nombre_semillero)),
+      semilleros,
       proyectos: proyectos.map((p) => ({
         ...p,
         participacion: p.coordinadores?.some((c) => c.id_profesor === id_usuario) ? 'director' : 'autor',

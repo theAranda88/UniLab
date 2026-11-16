@@ -25,6 +25,8 @@ export const MAX_EVIDENCIAS_POR_JORNADA = 3;
 export const MAX_IMAGENES_POR_ESCUELA = 5;
 export const MAX_EVIDENCIAS_POR_SEMILLERO = 10;
 export const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
+/** La foto de perfil se reduce en el navegador antes de subirla; esto es el tope por seguridad. */
+export const MAX_FOTO_PERFIL_BYTES = 2 * 1024 * 1024;
 
 export function carpetaProyecto(id_proyecto: number): string {
   return path.join(PROYECTO_IMAGENES_DIR, String(id_proyecto));
@@ -91,6 +93,11 @@ export function asegurarDirectorio(dir: string): void {
 export function urlBaseApi(): string {
   const port = process.env.PORT ?? '3000';
   return process.env.API_PUBLIC_URL ?? `http://localhost:${port}`;
+}
+
+/** URL de la foto de perfil, o null si el usuario no tiene. */
+export function urlFotoUsuario(foto_ruta: string | null | undefined): string | null {
+  return foto_ruta ? urlPublicaImagen(foto_ruta) : null;
 }
 
 export function urlPublicaImagen(ruta_archivo: string): string {

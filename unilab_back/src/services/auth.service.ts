@@ -11,22 +11,17 @@ import { escuelaRepository } from '../models/escuela.repository';
 import type { JwtPayload } from '../middlewares/auth/types';
 import { configuracionService } from './configuracion.service';
 import { urlPublicaImagen } from '../utils/uploadPaths';
+import { rolVisibleEstudiante, rolVisibleProfesor, unirSemillerosConRol } from '../utils/rolSemillero';
 
 type PerfilSesion = NonNullable<Awaited<ReturnType<typeof usuarioRepository.findPerfilSesion>>>;
 
-type RolSemillero = 'lider' | 'profesor' | 'miembro';
-
-/** Une los semilleros del usuario (líder, profesor asignado o miembro aprobado) sin duplicados. */
+/** Une los semilleros del usuario (como profesor, líder o miembro aprobado) sin duplicados y con su rol. */
 function semillerosDeUsuario(u: PerfilSesion) {
-  const porId = new Map<number, { id_semillero: number; nombre_semillero: string; rol_semillero: RolSemillero }>();
-  const agregar = (s: { id_semillero: number; nombre_semillero: string }, rol: RolSemillero) => {
-    const previo = porId.get(s.id_semillero);
-    if (!previo || rol === 'lider') porId.set(s.id_semillero, { ...s, rol_semillero: rol });
-  };
-  u.semilleros_como_profesor.forEach((p) => agregar(p.semillero, p.es_lider ? 'lider' : 'profesor'));
-  u.semilleros_como_lider.forEach((s) => agregar(s, 'lider'));
-  u.membresias_semillero.forEach((m) => agregar(m.semillero, 'miembro'));
-  return [...porId.values()].sort((a, b) => a.nombre_semillero.localeCompare(b.nombre_semillero));
+  return unirSemillerosConRol([
+    ...u.semilleros_como_profesor.map((p) => ({ semillero: p.semillero, rol: rolVisibleProfesor(p) })),
+    ...u.semilleros_como_lider.map((s) => ({ semillero: s, rol: 'lider' as const })),
+    ...u.membresias_semillero.map((m) => ({ semillero: m.semillero, rol: rolVisibleEstudiante(m.rol) })),
+  ]).map(({ semillero, rol }) => ({ ...semillero, rol_semillero: rol }));
 }
 
 /** Respuesta común de login, login con Google, completar perfil y GET /auth/me. */

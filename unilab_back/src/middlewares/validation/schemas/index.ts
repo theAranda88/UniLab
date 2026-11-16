@@ -359,9 +359,22 @@ export const semilleroUpdateSchema = semilleroSchema
     message: 'Debe enviar al menos un campo para actualizar',
   });
 
+/** Roles editables de un profesor del semillero; «lider» se cambia con id_profesor_lider. */
+export const ROLES_PROFESOR_SEMILLERO = ['coordinador', 'acompanante'] as const;
+export const ROLES_ESTUDIANTE_SEMILLERO = ['integrante', 'lider', 'coordinador'] as const;
+
 export const asignarProfesorSemilleroSchema = z.object({
   id_profesor: z.number().int().positive(),
   es_lider: z.boolean().optional(),
+  rol: z.enum(ROLES_PROFESOR_SEMILLERO).optional(),
+});
+
+export const rolProfesorSemilleroSchema = z.object({
+  rol: z.enum(ROLES_PROFESOR_SEMILLERO),
+});
+
+export const rolMiembroSemilleroSchema = z.object({
+  rol: z.enum(ROLES_ESTUDIANTE_SEMILLERO),
 });
 
 export const solicitudMembresiaSchema = z.object({});

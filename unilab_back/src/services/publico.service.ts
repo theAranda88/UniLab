@@ -7,7 +7,7 @@ import { escuelaImagenService } from './escuela-imagen.service';
 import { semilleroEvidenciaService } from './semillero-evidencia.service';
 import { eventoService } from './evento.service';
 import type { Prisma } from '@prisma/client';
-import { urlPublicaImagen } from '../utils/uploadPaths';
+import { urlFotoUsuario, urlPublicaImagen } from '../utils/uploadPaths';
 
 type ProyectoConImagenes = Awaited<ReturnType<typeof proyectoRepository.findMany>>[number];
 
@@ -69,6 +69,22 @@ function mapSemilleroPublicoResumen(semillero: SemilleroPublicoRow | SemilleroPu
     total_miembros_aprobados: semillero._count.miembros,
     total_proyectos_publicados: semillero._count.proyectos,
   };
+}
+
+const ORDEN_ROL_PROFESOR: Record<string, number> = { lider: 0, coordinador: 1, acompanante: 2 };
+const ORDEN_ROL_ESTUDIANTE: Record<string, number> = { lider: 0, coordinador: 1, integrante: 2 };
+
+type PersonaEquipo = { id_usuario: number; nombres: string; apellidos: string; titular: string | null; foto_ruta: string | null };
+
+/** Equipo del semillero ordenado por rol y luego por nombre. */
+function equipoOrdenado(personas: { rol: string; persona: PersonaEquipo }[], orden: Record<string, number>) {
+  return personas
+    .map(({ rol, persona: { foto_ruta, ...p } }) => ({ ...p, url_foto: urlFotoUsuario(foto_ruta), rol }))
+    .sort(
+      (a, b) =>
+        (orden[a.rol] ?? 9) - (orden[b.rol] ?? 9) ||
+        `${a.nombres} ${a.apellidos}`.localeCompare(`${b.nombres} ${b.apellidos}`),
+    );
 }
 
 export const publicoService = {
@@ -238,6 +254,17 @@ export const publicoService = {
       ...mapSemilleroPublicoResumen(semillero),
       evidencias,
       proyectos,
+      // Participantes del semillero (no los autores de sus proyectos): profesores y estudiantes aprobados
+      equipo: {
+        profesores: equipoOrdenado(
+          semillero.profesores.map((p) => ({ rol: p.rol, persona: p.profesor })),
+          ORDEN_ROL_PROFESOR,
+        ),
+        estudiantes: equipoOrdenado(
+          semillero.miembros.map((m) => ({ rol: m.rol, persona: m.estudiante })),
+          ORDEN_ROL_ESTUDIANTE,
+        ),
+      },
     };
   },
 };

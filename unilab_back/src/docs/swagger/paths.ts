@@ -139,7 +139,7 @@ export const paths = {
     post: {
       tags: ['Auth'],
       summary: 'Subir mi foto de perfil',
-      description: 'Reemplaza la foto anterior. JPEG, PNG o WebP, máximo 5 MB. Aparece en el perfil público.',
+      description: 'Reemplaza la foto anterior. JPEG, PNG o WebP, máximo 2 MB (el front la reduce antes de enviarla). Aparece en el perfil público y en el equipo de sus semilleros.',
       security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
@@ -814,6 +814,24 @@ export const paths = {
       responses: { 204: { description: 'Profesor removido' }, ...err },
     },
   },
+  '/semilleros/{id}/profesores/{idProfesor}/rol': {
+    patch: {
+      tags: ['Semilleros'],
+      summary: 'Cambiar el rol de un profesor en el semillero',
+      description:
+        '**Rol requerido:** Administrador o profesor líder del semillero. `coordinador` o `acompanante`; el líder se cambia con `id_profesor_lider` (PATCH /semilleros/{id}).',
+      parameters: [paramId, paramIdProfesor],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { type: 'object', required: ['rol'], properties: { rol: { type: 'string', enum: ['coordinador', 'acompanante'] } } },
+          },
+        },
+      },
+      responses: { 200: { description: 'Rol actualizado' }, ...err },
+    },
+  },
   '/semilleros/{id}/miembros': {
     post: {
       tags: ['Semilleros'],
@@ -841,6 +859,24 @@ export const paths = {
       description: '**Rol requerido:** Profesor líder. Activa `puede_publicar=true` en la membresía.',
       parameters: [paramId, paramIdEstudiante],
       responses: { 200: { description: 'Autorización concedida' }, ...err },
+    },
+  },
+  '/semilleros/{id}/miembros/{idEstudiante}/rol': {
+    patch: {
+      tags: ['Semilleros'],
+      summary: 'Cambiar el rol de un estudiante en el semillero',
+      description:
+        '**Rol requerido:** Administrador o profesor líder del semillero. Solo para membresías aprobadas: `integrante` (estudiante), `lider` (líder estudiantil) o `coordinador` (coordinador estudiantil).',
+      parameters: [paramId, paramIdEstudiante],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { type: 'object', required: ['rol'], properties: { rol: { type: 'string', enum: ['integrante', 'lider', 'coordinador'] } } },
+          },
+        },
+      },
+      responses: { 200: { description: 'Rol actualizado' }, ...err },
     },
   },
   '/semilleros/{id}/portada': {

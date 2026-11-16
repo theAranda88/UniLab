@@ -809,8 +809,9 @@ async function main(): Promise<void> {
     });
     await prisma.semillero_profesores.createMany({
       data: [
-        { id_semillero: sem.id_semillero, id_profesor: lider.id_usuario, es_lider: true, fecha_asignacion: fecha('2026-01-20'), created_by: A },
-        { id_semillero: sem.id_semillero, id_profesor: otro.id_usuario, es_lider: false, fecha_asignacion: fecha('2026-02-05'), created_by: A },
+        { id_semillero: sem.id_semillero, id_profesor: lider.id_usuario, es_lider: true, rol: 'lider', fecha_asignacion: fecha('2026-01-20'), created_by: A },
+        // En la mitad de los semilleros el segundo profesor es coordinador; en la otra, acompañante
+        { id_semillero: sem.id_semillero, id_profesor: otro.id_usuario, es_lider: false, rol: si % 2 === 0 ? 'coordinador' : 'acompanante', fecha_asignacion: fecha('2026-02-05'), created_by: A },
       ],
     });
     await prisma.semillero_evidencias.createMany({
@@ -832,10 +833,12 @@ async function main(): Promise<void> {
     if (esInnovacion && !miembros.some((m) => m.email === 'estudiante1@unilab.edu')) miembros[0] = pool.find((m) => m.email === 'estudiante1@unilab.edu')!;
     const unicos = miembros.filter((m, i) => miembros.findIndex((x) => x.id_usuario === m.id_usuario) === i);
     await prisma.semillero_miembros.createMany({
-      data: unicos.map((m) => ({
+      data: unicos.map((m, k) => ({
         id_semillero: sem.id_semillero,
         id_estudiante: m.id_usuario,
         estado_solicitud: 'aprobado',
+        // Un líder estudiantil por semillero y, en algunos, un coordinador estudiantil
+        rol: k === 0 ? 'lider' : k === 1 && si % 3 === 0 ? 'coordinador' : 'integrante',
         puede_publicar: true,
         fecha_resolucion: fecha('2026-02-15'),
         fecha_autorizacion: fecha('2026-02-15'),

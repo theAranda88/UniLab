@@ -459,6 +459,8 @@ model semillero_profesores {
   id_semillero     Int
   id_profesor      Int
   es_lider         Boolean  @default(false)
+  /// lider | coordinador | acompanante (lider va siempre con es_lider = true)
+  rol              String   @default("acompanante") @db.VarChar(30)
   fecha_asignacion DateTime @db.Date
   created_at       DateTime @default(now()) @db.Timestamp(6)
   updated_at       DateTime @updatedAt @db.Timestamp(6)
@@ -479,6 +481,8 @@ model semillero_miembros {
   estado_solicitud        String    @db.VarChar(50)
   fecha_resolucion        DateTime? @db.Timestamp(6)
   puede_publicar          Boolean   @default(false)
+  /// integrante | lider | coordinador (rol del estudiante dentro del semillero)
+  rol                     String    @default("integrante") @db.VarChar(30)
   fecha_autorizacion      DateTime? @db.Timestamp(6)
   id_profesor_autorizador Int?
   created_at              DateTime  @default(now()) @db.Timestamp(6)

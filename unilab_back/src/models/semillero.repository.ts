@@ -4,7 +4,12 @@ import type { Prisma } from '@prisma/client';
 
 /** Datos de usuario expuestos en semilleros: nunca incluir password_hash ni google_sub. */
 const usuarioResumen = {
-  select: { id_usuario: true, nombres: true, apellidos: true, email: true },
+  select: { id_usuario: true, nombres: true, apellidos: true, email: true, foto_ruta: true },
+} as const;
+
+/** Persona en el equipo público del semillero (sin correo). */
+const personaPublica = {
+  select: { id_usuario: true, nombres: true, apellidos: true, titular: true, foto_ruta: true },
 } as const;
 
 export interface FiltroSemillerosPublicos {
@@ -73,6 +78,13 @@ export const semilleroRepository = {
 
   agregarProfesor(data: Prisma.semillero_profesoresCreateInput) {
     return prisma.semillero_profesores.create({ data });
+  },
+
+  actualizarProfesor(id_semillero: number, id_profesor: number, data: Prisma.semillero_profesoresUpdateInput) {
+    return prisma.semillero_profesores.update({
+      where: { id_semillero_id_profesor: { id_semillero, id_profesor } },
+      data,
+    });
   },
 
   buscarProfesor(id_semillero: number, id_profesor: number) {
@@ -162,6 +174,14 @@ export const semilleroRepository = {
         escuela: { select: { id_escuela: true, nombre_escuela: true, color: true, icono: true } },
         profesor_lider: { select: { nombres: true, apellidos: true } },
         evidencias: { where: activo, orderBy: { orden: 'asc' } },
+        profesores: {
+          where: { ...activo, profesor: activo },
+          select: { rol: true, profesor: personaPublica },
+        },
+        miembros: {
+          where: { ...miembrosAprobados, estudiante: activo },
+          select: { rol: true, estudiante: personaPublica },
+        },
         _count: {
           select: { miembros: { where: miembrosAprobados }, proyectos: { where: proyectosPublicados } },
         },
