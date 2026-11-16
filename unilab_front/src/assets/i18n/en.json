@@ -793,7 +793,8 @@
       "titleEnd": "by our students",
       "lead": "Explore published projects by school, meet the research groups and take part in academic events.",
       "exploreProjects": "Explore projects",
-      "viewEvents": "View events"
+      "viewEvents": "View events",
+      "scrollCue": "Scroll to explore"
     },
     "stats": {
       "title": "The portal in numbers",
@@ -913,7 +914,8 @@
       "loginToRate": "Sign in to rate",
       "saved": "Your rating was saved.",
       "error": "The rating couldn't be saved.",
-      "average": "Rated {{value}} out of 5 ({{count}} votes)"
+      "average": "Rated {{value}} out of 5 ({{count}} votes)",
+      "votes": "({{count}} votes)"
     },
     "comments": {
       "title": "Comments",
@@ -973,7 +975,9 @@
       "kicker": "Projects",
       "title": "Top rated",
       "lead": "The community’s best-rated projects across all schools.",
-      "position": "Rank {{n}}"
+      "position": "Rank {{n}}",
+      "first": "Top rated",
+      "viewProject": "View project"
     },
     "independientes": {
       "kicker": "Outside research groups",
@@ -1000,6 +1004,13 @@
         "title": "Projects",
         "text": "Projects are born in research groups or independently, and are published after review."
       }
+    },
+    "cta": {
+      "kicker": "Join the community",
+      "title": "Got an idea? Bring it to a research group.",
+      "lead": "Discover your school’s research groups, publish your projects and give them the visibility they deserve.",
+      "semilleros": "Explore research groups",
+      "register": "Create account"
     }
   },
   "proyectosEstudiante": {

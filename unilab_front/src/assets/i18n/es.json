@@ -793,7 +793,8 @@
       "titleEnd": "nuestros estudiantes",
       "lead": "Explora los proyectos publicados por escuela, conoce los semilleros de investigación y participa en los eventos académicos.",
       "exploreProjects": "Explorar proyectos",
-      "viewEvents": "Ver eventos"
+      "viewEvents": "Ver eventos",
+      "scrollCue": "Desliza para explorar"
     },
     "stats": {
       "title": "El portal en números",
@@ -913,7 +914,8 @@
       "loginToRate": "Inicia sesión para calificar",
       "saved": "Tu calificación se guardó.",
       "error": "No se pudo guardar la calificación.",
-      "average": "Calificación {{value}} de 5 ({{count}} votos)"
+      "average": "Calificación {{value}} de 5 ({{count}} votos)",
+      "votes": "({{count}} votos)"
     },
     "comments": {
       "title": "Comentarios",
@@ -973,7 +975,9 @@
       "kicker": "Proyectos",
       "title": "Mejor valorados",
       "lead": "Los proyectos con mejor calificación de la comunidad, en todas las escuelas.",
-      "position": "Puesto {{n}}"
+      "position": "Puesto {{n}}",
+      "first": "Mejor valorado",
+      "viewProject": "Ver proyecto"
     },
     "independientes": {
       "kicker": "Fuera de los semilleros",
@@ -1000,6 +1004,13 @@
         "title": "Proyectos",
         "text": "Los proyectos nacen en los semilleros o de forma independiente, y se publican tras su revisión."
       }
+    },
+    "cta": {
+      "kicker": "Haz parte de la comunidad",
+      "title": "¿Tienes una idea? Súmala a un semillero.",
+      "lead": "Conoce los semilleros de tu escuela, publica tus proyectos y dales la visibilidad que merecen.",
+      "semilleros": "Explorar semilleros",
+      "register": "Crear cuenta"
     }
   },
   "proyectosEstudiante": {

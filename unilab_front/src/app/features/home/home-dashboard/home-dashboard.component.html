@@ -1,3 +1,6 @@
+<!-- Progreso de lectura de la página (solo navegadores con animaciones ligadas al scroll) -->
+<div class="scroll-progress" aria-hidden="true"></div>
+
 <!-- Hero -->
 <section class="hero" data-seccion="inicio" aria-labelledby="hero-title">
   <div class="hero__backdrop" aria-hidden="true"></div>
@@ -37,14 +40,35 @@
     </div>
   </div>
 
+  <a class="hero__scroll" routerLink="/" fragment="como-funciona">
+    <span>{{ 'home.hero.scrollCue' | translate }}</span>
+    <i class="ti ti-chevron-down" aria-hidden="true"></i>
+  </a>
+
   <!-- Transición curva hacia la sección clara -->
   <svg class="hero__curve" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0,80 L0,36 C240,76 520,84 760,58 C1000,32 1220,6 1440,22 L1440,80 Z" />
   </svg>
 </section>
 
+<!-- Franja continua con las escuelas (decorativa; el listado navegable está más abajo) -->
+@if (escuelas().length > 0) {
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      @for (vuelta of [0, 1]; track vuelta) {
+        @for (card of escuelaCards(); track card.escuela.id_escuela) {
+          <span class="marquee__item" [style.--school-color]="card.color">
+            <i class="ph-duotone {{ card.icono }}"></i>
+            {{ card.escuela.nombre_escuela }}
+          </span>
+        }
+      }
+    </div>
+  </div>
+}
+
 <!-- Así funciona: la jerarquía del portal en tres pasos -->
-<section class="flow" data-seccion="inicio" aria-labelledby="flow-title">
+<section class="flow" id="como-funciona" data-seccion="inicio" aria-labelledby="flow-title">
   <div class="home-section__inner">
     <div class="section-head section-head--center" appReveal>
       <div class="section-head__title">
@@ -79,14 +103,62 @@
         <p>{{ 'home.topRated.lead' | translate }}</p>
       </div>
 
-      <div class="ranking">
-        @for (proyecto of proyectosDestacados(); track proyecto.id_proyecto; let i = $index) {
-          <div class="ranking__item" [class.ranking__item--top]="i < 3" [appReveal]="(i % 3) * 110">
-            <span class="ranking__badge" [attr.aria-label]="'home.topRated.position' | translate: { n: i + 1 }">#{{ i + 1 }}</span>
-            <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+      @if (proyectoLider(); as lider) {
+        <article class="spotlight" appReveal>
+          <a class="spotlight__media" [routerLink]="['/proyectos', lider.id_proyecto]" tabindex="-1" aria-hidden="true">
+            @if (imagenLider()) {
+              <img [src]="imagenLider()" [alt]="lider.titulo" loading="lazy" (error)="imagenLiderFallida.set(true)" />
+            } @else {
+              <span class="spotlight__placeholder"><i class="ti ti-photo" aria-hidden="true"></i></span>
+            }
+            <span class="spotlight__medal">
+              <i class="ti ti-trophy" aria-hidden="true"></i>
+              {{ 'home.topRated.first' | translate }}
+            </span>
+          </a>
+          <div class="spotlight__body">
+            @if (lider.curso?.escuela?.nombre_escuela) {
+              <span class="spotlight__school">{{ lider.curso!.escuela!.nombre_escuela }}</span>
+            }
+            <h3 class="spotlight__title">
+              <a [routerLink]="['/proyectos', lider.id_proyecto]">{{ lider.titulo }}</a>
+            </h3>
+            <p class="spotlight__desc">{{ lider.descripcion }}</p>
+            <ul class="spotlight__facts">
+              @if (lider.calificacion?.promedio != null) {
+                <li class="spotlight__rating">
+                  <span class="spotlight__stars" aria-hidden="true">
+                    @for (n of [1, 2, 3, 4, 5]; track n) {
+                      <i class="ti" [class.ti-star-filled]="n <= lider.calificacion!.promedio!" [class.ti-star]="n > lider.calificacion!.promedio!"></i>
+                    }
+                  </span>
+                  <strong>{{ lider.calificacion!.promedio }}</strong>
+                  <span>{{ 'home.rating.votes' | translate: { count: lider.calificacion!.total } }}</span>
+                </li>
+              }
+              <li><i class="ti ti-eye" aria-hidden="true"></i>{{ 'home.views' | translate: { count: lider.contador_vistas } }}</li>
+              @if (lider.semillero) {
+                <li><i class="ti ti-flask" aria-hidden="true"></i>{{ lider.semillero.nombre_semillero }}</li>
+              }
+            </ul>
+            <a class="spotlight__cta" [routerLink]="['/proyectos', lider.id_proyecto]">
+              {{ 'home.topRated.viewProject' | translate }}
+              <i class="ti ti-arrow-right" aria-hidden="true"></i>
+            </a>
           </div>
-        }
-      </div>
+        </article>
+      }
+
+      @if (proyectosSiguientes().length > 0) {
+        <div class="ranking">
+          @for (proyecto of proyectosSiguientes(); track proyecto.id_proyecto; let i = $index) {
+            <div class="ranking__item" [class.ranking__item--top]="i < 2" [appReveal]="(i % 3) * 110">
+              <span class="ranking__badge" [attr.aria-label]="'home.topRated.position' | translate: { n: i + 2 }">#{{ i + 2 }}</span>
+              <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+            </div>
+          }
+        </div>
+      }
     </div>
   </section>
 }
@@ -209,6 +281,26 @@
         {{ 'home.events.viewAll' | translate }}
         <i class="ti ti-arrow-right" aria-hidden="true"></i>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- Cierre: llamado a la acción -->
+<section class="cta" aria-labelledby="cta-title">
+  <div class="cta__inner" appReveal>
+    <div class="cta__copy">
+      <span class="cta__kicker">{{ 'home.cta.kicker' | translate }}</span>
+      <h2 id="cta-title">{{ 'home.cta.title' | translate }}</h2>
+      <p>{{ 'home.cta.lead' | translate }}</p>
+    </div>
+    <div class="cta__actions">
+      <a class="hero__btn hero__btn--accent" routerLink="/semilleros/explorar">
+        {{ 'home.cta.semilleros' | translate }}
+        <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </a>
+      @if (!autenticado()) {
+        <a class="hero__btn hero__btn--outline" routerLink="/registro">{{ 'home.cta.register' | translate }}</a>
+      }
     </div>
   </div>
 </section>

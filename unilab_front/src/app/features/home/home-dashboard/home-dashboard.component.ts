@@ -30,6 +30,7 @@ import type { Evento } from '../../../core/models/evento.model';
 import { momentoEvento, type MomentoEvento } from '../../../core/utils/date.util';
 import { PortalSeccionService, type SeccionPortal } from '../portal-seccion.service';
 import { RevealDirective } from '../../../shared/ui/reveal/reveal.directive';
+import { AuthService } from '../../../core/auth/auth.service';
 
 /** «Así funciona»: la jerarquía del portal (escuela → semillero → proyecto). */
 const PASOS = [
@@ -100,6 +101,7 @@ export class HomeDashboardComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private scroller = inject(ViewportScroller);
   private injector = inject(Injector);
+  private auth = inject(AuthService);
 
   readonly burbujas = BURBUJAS;
   readonly pasos = PASOS;
@@ -113,6 +115,16 @@ export class HomeDashboardComponent implements OnInit {
 
   /** Proyectos mejor valorados de todas las escuelas (la API ya los entrega ordenados y limitados). */
   readonly proyectosDestacados = computed(() => this.proyectos());
+  /** El #1 se muestra en grande; el resto del ranking, en tarjetas. */
+  readonly proyectoLider = computed(() => this.proyectos()[0] ?? null);
+  readonly proyectosSiguientes = computed(() => this.proyectos().slice(1));
+  readonly imagenLiderFallida = signal(false);
+  readonly imagenLider = computed(() => {
+    const p = this.proyectoLider();
+    if (!p || this.imagenLiderFallida()) return null;
+    return [...(p.imagenes ?? [])].sort((a, b) => a.orden - b.orden)[0]?.url ?? p.url_imagen ?? null;
+  });
+  readonly autenticado = computed(() => this.auth.isAuthenticated());
 
   /** Valores que se muestran mientras las cifras «cuentan» hasta su valor real. */
   readonly valoresVisibles = signal<number[]>([]);
