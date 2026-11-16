@@ -468,6 +468,12 @@ export const routes: Routes = [
           ),
       },
       {
+        // Perfil público de una persona (tipo CvLAC)
+        path: 'personas/:idUsuario',
+        loadComponent: () =>
+          import('./features/home/portal-persona/portal-persona.component').then((m) => m.PortalPersonaComponent),
+      },
+      {
         path: 'semilleros/explorar',
         loadComponent: () =>
           import('./features/home/portal-semilleros-explorar/portal-semilleros-explorar.component').then(

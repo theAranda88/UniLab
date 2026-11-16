@@ -98,6 +98,7 @@ export class PortalProyectoDetalleComponent {
     const coord = this.proyecto()?.coordinadores?.[0]?.profesor;
     return coord ? `${coord.nombres} ${coord.apellidos}` : null;
   });
+  readonly idDirector = computed(() => this.proyecto()?.coordinadores?.[0]?.profesor?.id_usuario ?? null);
 
   /** Integrantes con su rol; si no hay autores registrados, el estudiante creador. */
   readonly integrantes = computed(() => {
@@ -105,6 +106,7 @@ export class PortalProyectoDetalleComponent {
     if (!p) return [];
     if (p.autores?.length) {
       return p.autores.map((a) => ({
+        id: a.estudiante.id_usuario ?? a.id_estudiante ?? null,
         nombre: `${a.estudiante.nombres} ${a.estudiante.apellidos}`,
         rolKey: `home.authorRoles.${a.rol_autor ?? 'colaborador'}`,
       }));
@@ -112,6 +114,7 @@ export class PortalProyectoDetalleComponent {
     return p.estudiante_creador
       ? [
           {
+            id: p.estudiante_creador.id_usuario ?? null,
             nombre: `${p.estudiante_creador.nombres} ${p.estudiante_creador.apellidos}`,
             rolKey: 'home.authorRoles.principal',
           },

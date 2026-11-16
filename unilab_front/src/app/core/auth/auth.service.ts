@@ -8,6 +8,7 @@ import type {
   CambiarMiPasswordDto,
   CompletarPerfilDto,
   EscuelaResumen,
+  PerfilCv,
   PerfilRol,
   RedesContacto,
   SemilleroUsuario,
@@ -28,6 +29,10 @@ export interface User {
   semilleros?: SemilleroUsuario[];
   redes?: RedesContacto;
   perfil?: PerfilRol;
+  /** Perfil profesional tipo CvLAC. */
+  cv?: PerfilCv;
+  /** false hasta que el usuario completa u omite el aviso de perfil del primer ingreso. */
+  perfil_cv_revisado?: boolean;
 }
 
 export interface LoginRequest {
@@ -118,6 +123,11 @@ export class AuthService {
   /** Teléfono, redes de contacto y (solo Coordinador) profesión. */
   actualizarMiPerfil(data: ActualizarMiPerfilDto): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/me`, data).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /** «Ahora no» en el aviso de completar el perfil: no se vuelve a mostrar. */
+  omitirPerfilCv(): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/me/perfil-cv/omitir`, {}).pipe(tap((user) => this.updateUser(user)));
   }
 
   /** Cambio voluntario de contraseña desde «Mi perfil» (exige la actual). */

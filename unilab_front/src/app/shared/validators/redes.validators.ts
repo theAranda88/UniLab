@@ -22,6 +22,10 @@ export function urlRedValidator(dominio?: RegExp): ValidatorFn {
 
 export const LINKEDIN_DOMINIO = /(^|\.)linkedin\.com$/i;
 export const GITHUB_DOMINIO = /(^|\.)github\.com$/i;
+export const CVLAC_DOMINIO = /(^|\.)minciencias\.gov\.co$/i;
+export const ORCID_DOMINIO = /(^|\.)orcid\.org$/i;
+export const SCHOLAR_DOMINIO = /^scholar\.google\./i;
+export const RESEARCHGATE_DOMINIO = /(^|\.)researchgate\.net$/i;
 
 /** Convierte los campos del formulario en el cuerpo que espera el backend ('' → null). */
 export function redesDesdeFormulario(raw: { url_linkedin: string; url_github: string; url_portafolio: string }) {

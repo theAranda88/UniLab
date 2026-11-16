@@ -26,6 +26,8 @@ export interface Curso {
 }
 
 export interface UsuarioResumen {
+  /** Presente en las respuestas del backend; enlaza al perfil público. */
+  id_usuario?: number;
   nombres: string;
   apellidos: string;
 }
@@ -76,6 +78,7 @@ export interface SemillerosPublicosPaginados {
 }
 
 export interface ProyectoAutor {
+  id_estudiante?: number;
   rol_autor: string | null;
   estudiante: UsuarioResumen;
 }

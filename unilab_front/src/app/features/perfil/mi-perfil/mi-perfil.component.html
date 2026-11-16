@@ -160,6 +160,169 @@
       </form>
     </section>
 
+    <!-- Perfil profesional (tipo CvLAC) -->
+    <section class="edu-card" id="perfil-profesional">
+      <div class="mi-perfil__head">
+        <h3 class="mi-perfil__h3">
+          <i class="ti ti-user-star" aria-hidden="true"></i>{{ 'perfil.cv.titulo' | translate }}
+        </h3>
+        <a class="edu-btn edu-btn--secondary mi-perfil__publico" [routerLink]="['/personas', u.id_usuario]">
+          <i class="ti ti-external-link" aria-hidden="true"></i>{{ 'perfil.cv.verPublico' | translate }}
+        </a>
+      </div>
+      <p class="mi-perfil__hint">{{ 'perfil.cv.hint' | translate }}</p>
+
+      <form class="mi-perfil__form mi-perfil__form--cv" [formGroup]="cvForm" (ngSubmit)="guardarCv()">
+        <label class="edu-field mi-perfil__full">
+          <span class="edu-field__label">{{ 'perfil.cv.titular' | translate }}</span>
+          <input class="edu-control" type="text" formControlName="titular" maxlength="160" [placeholder]="'perfil.cv.titularPlaceholder' | translate" />
+        </label>
+
+        <label class="edu-field mi-perfil__full">
+          <span class="edu-field__label">{{ 'perfil.cv.biografia' | translate }}</span>
+          <textarea class="edu-control mi-perfil__textarea" rows="4" formControlName="biografia" maxlength="2000" [placeholder]="'perfil.cv.biografiaPlaceholder' | translate"></textarea>
+        </label>
+
+        @for (lista of ['especialidades', 'fortalezas']; track lista) {
+          <div class="edu-field">
+            <label class="edu-field__label" [for]="'etiqueta-' + lista">{{ 'perfil.cv.' + lista | translate }}</label>
+            <div class="mi-perfil__tags">
+              @for (valor of (lista === 'especialidades' ? especialidades() : fortalezas()); track valor) {
+                <span class="mi-perfil__tag" [class.mi-perfil__tag--blue]="lista === 'especialidades'">
+                  {{ valor }}
+                  <button type="button" (click)="quitarEtiqueta($any(lista), valor)" [attr.aria-label]="'perfil.cv.quitar' | translate: { valor: valor }">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                </span>
+              }
+              <input
+                class="mi-perfil__tag-input"
+                type="text"
+                maxlength="60"
+                [id]="'etiqueta-' + lista"
+                [placeholder]="'perfil.cv.etiquetaPlaceholder' | translate"
+                (keydown.enter)="agregarEtiqueta($any(lista), $event)"
+                (keydown.comma)="agregarEtiqueta($any(lista), $event)"
+              />
+            </div>
+          </div>
+        }
+
+        <h4 class="mi-perfil__h4 mi-perfil__full">{{ 'perfil.cv.redesAcademicas' | translate }}</h4>
+        @for (red of [
+          { campo: 'url_cvlac', icono: 'ti-certificate', etiqueta: 'perfil.redes.cvlac', ejemplo: 'https://scienti.minciencias.gov.co/cvlac/...' },
+          { campo: 'url_orcid', icono: 'ti-id', etiqueta: 'perfil.redes.orcid', ejemplo: 'https://orcid.org/0000-0000-0000-0000' },
+          { campo: 'url_google_scholar', icono: 'ti-school', etiqueta: 'perfil.redes.google_scholar', ejemplo: 'https://scholar.google.com/citations?user=...' },
+          { campo: 'url_researchgate', icono: 'ti-atom', etiqueta: 'perfil.redes.researchgate', ejemplo: 'https://www.researchgate.net/profile/...' }
+        ]; track red.campo) {
+          <label class="edu-field">
+            <span class="edu-field__label"><i class="ti {{ red.icono }}" aria-hidden="true"></i> {{ red.etiqueta | translate }}</span>
+            <input
+              class="edu-control"
+              type="url"
+              [formControlName]="red.campo"
+              [placeholder]="red.ejemplo"
+              [attr.aria-invalid]="!!errorAcademico($any(red.campo))"
+            />
+            @if (errorAcademico($any(red.campo)); as e) {
+              <small class="edu-field__error">{{ e | translate }}</small>
+            }
+          </label>
+        }
+
+        <label class="mi-perfil__check mi-perfil__full">
+          <input type="checkbox" formControlName="mostrar_telefono" />
+          <span>{{ 'perfil.cv.mostrarTelefono' | translate }}</span>
+        </label>
+
+        <div class="mi-perfil__acciones mi-perfil__full">
+          <button type="submit" class="edu-btn" [disabled]="guardandoCv() || (cvForm.pristine && !etiquetasCambiadas())">
+            {{ (guardandoCv() ? 'common.guardando' : 'common.guardar') | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Formación académica -->
+    <section class="edu-card">
+      <div class="mi-perfil__head">
+        <h3 class="mi-perfil__h3">
+          <i class="ti ti-school" aria-hidden="true"></i>{{ 'perfil.cv.formacion' | translate }}
+        </h3>
+        @if (editandoFormacion() === null) {
+          <button type="button" class="edu-btn edu-btn--secondary" (click)="nuevaFormacion()">
+            <i class="ti ti-plus" aria-hidden="true"></i>{{ 'perfil.cv.agregar' | translate }}
+          </button>
+        }
+      </div>
+      <p class="mi-perfil__hint">{{ 'perfil.cv.formacionHint' | translate }}</p>
+
+      @if (editandoFormacion() !== null) {
+        <form class="mi-perfil__form mi-perfil__formacion-form" [formGroup]="formacionForm" (ngSubmit)="guardarFormacion()">
+          <label class="edu-field mi-perfil__full">
+            <span class="edu-field__label">{{ 'perfil.cv.tituloFormacion' | translate }} *</span>
+            <input class="edu-control" type="text" formControlName="titulo" maxlength="255" />
+          </label>
+          <label class="edu-field mi-perfil__full">
+            <span class="edu-field__label">{{ 'perfil.cv.institucion' | translate }} *</span>
+            <input class="edu-control" type="text" formControlName="institucion" maxlength="255" />
+          </label>
+          <label class="edu-field">
+            <span class="edu-field__label">{{ 'perfil.cv.nivel' | translate }} *</span>
+            <select class="edu-control" formControlName="nivel">
+              @for (n of niveles; track n) {
+                <option [value]="n">{{ 'perfil.cv.niveles.' + n | translate }}</option>
+              }
+            </select>
+          </label>
+          <label class="edu-field">
+            <span class="edu-field__label">{{ 'perfil.cv.anioInicio' | translate }}</span>
+            <input class="edu-control" type="number" min="1950" max="2100" formControlName="anio_inicio" />
+          </label>
+          <label class="edu-field">
+            <span class="edu-field__label">{{ 'perfil.cv.anioFin' | translate }}</span>
+            <input class="edu-control" type="number" min="1950" max="2100" formControlName="anio_fin" />
+            <small class="mi-perfil__hint-sm">{{ 'perfil.cv.anioFinHint' | translate }}</small>
+          </label>
+          <div class="mi-perfil__acciones mi-perfil__full">
+            <button type="button" class="edu-btn edu-btn--secondary" (click)="cancelarFormacion()">{{ 'common.cancelar' | translate }}</button>
+            <button type="submit" class="edu-btn" [disabled]="guardandoFormacion()">
+              {{ (guardandoFormacion() ? 'common.guardando' : 'common.guardar') | translate }}
+            </button>
+          </div>
+        </form>
+      }
+
+      @if (formacion().length) {
+        <ul class="mi-perfil__formacion">
+          @for (f of formacion(); track f.id_formacion) {
+            <li>
+              <span class="mi-perfil__formacion-text">
+                <small>{{ 'perfil.cv.niveles.' + f.nivel | translate }}</small>
+                <strong>{{ f.titulo }}</strong>
+                <span>
+                  {{ f.institucion }}
+                  @if (f.anio_inicio || f.anio_fin) {
+                    · {{ f.anio_inicio ?? '—' }} – {{ f.anio_fin ?? ('perfil.cv.enCurso' | translate) }}
+                  }
+                </span>
+              </span>
+              <span class="mi-perfil__formacion-acciones">
+                <button type="button" class="edu-icon-btn" (click)="editarFormacion(f)" [attr.aria-label]="'perfil.cv.editar' | translate">
+                  <i class="ti ti-pencil" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="edu-icon-btn" (click)="eliminarFormacion(f)" [attr.aria-label]="'perfil.cv.eliminar' | translate">
+                  <i class="ti ti-trash" aria-hidden="true"></i>
+                </button>
+              </span>
+            </li>
+          }
+        </ul>
+      } @else if (editandoFormacion() === null) {
+        <p class="mi-perfil__vacio">{{ 'perfil.cv.sinFormacion' | translate }}</p>
+      }
+    </section>
+
     <section class="edu-card">
       <h3 class="mi-perfil__h3">
         <i class="ti ti-lock" aria-hidden="true"></i>{{ 'perfil.password.titulo' | translate }}

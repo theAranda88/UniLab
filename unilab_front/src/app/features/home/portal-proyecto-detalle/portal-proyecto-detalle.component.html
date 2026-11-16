@@ -86,11 +86,22 @@
             <ul class="pd-team">
               @for (persona of integrantes(); track persona.nombre) {
                 <li class="pd-team__item">
-                  <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
-                  <span class="pd-team__text">
-                    <span class="pd-team__name">{{ persona.nombre }}</span>
-                    <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
-                  </span>
+                  @if (persona.id) {
+                    <a class="pd-team__link" [routerLink]="['/personas', persona.id]" [attr.aria-label]="'home.detail.verPerfil' | translate: { nombre: persona.nombre }">
+                      <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
+                      <span class="pd-team__text">
+                        <span class="pd-team__name">{{ persona.nombre }}</span>
+                        <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
+                      </span>
+                      <i class="ti ti-chevron-right pd-team__go" aria-hidden="true"></i>
+                    </a>
+                  } @else {
+                    <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
+                    <span class="pd-team__text">
+                      <span class="pd-team__name">{{ persona.nombre }}</span>
+                      <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
+                    </span>
+                  }
                 </li>
               }
             </ul>
@@ -254,7 +265,13 @@
             @if (director(); as nombre) {
               <div>
                 <dt>{{ 'home.directorLabel' | translate }}</dt>
-                <dd>{{ nombre }}</dd>
+                <dd>
+                  @if (idDirector(); as id) {
+                    <a class="pd-link" [routerLink]="['/personas', id]">{{ nombre }}</a>
+                  } @else {
+                    {{ nombre }}
+                  }
+                </dd>
               </div>
             }
           </dl>

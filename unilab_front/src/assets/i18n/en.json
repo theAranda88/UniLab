@@ -750,7 +750,8 @@
       "semillero": "Research group",
       "moreFromSemillero": "More projects from {{nombre}}",
       "moreIndependent": "More independent projects from this school",
-      "seeAllProjects": "See all"
+      "seeAllProjects": "See all",
+      "verPerfil": "View {{nombre}}’s profile"
     },
     "academicProgram": "ACADEMIC PROGRAM",
     "director": "Director:",
@@ -1077,7 +1078,17 @@
       "publicado": "Published",
       "rechazado": "Rejected"
     },
-    "sinProyectosHint": "Create your first project to send it for review to your assigned teacher."
+    "sinProyectosHint": "Create your first project to send it for review to your assigned teacher.",
+    "integrantes": {
+      "titulo": "Team members",
+      "hint": "Add your schoolmates. They will appear on their profile once the project is published.",
+      "buscar": "Search a schoolmate by name",
+      "sinResultados": "No schoolmates match.",
+      "agregar": "Add",
+      "quitar": "Remove",
+      "vacio": "For now you are the only author of the project.",
+      "error": "The project was saved, but the team members could not be updated."
+    }
   },
   "proyectosProfesor": {
     "titulo": "Assigned projects",
@@ -1404,8 +1415,16 @@
         "url": "Enter a valid URL starting with http:// or https://",
         "url_linkedin": "Must be a linkedin.com link",
         "url_github": "Must be a github.com link",
-        "url_portafolio": "Enter a valid URL"
-      }
+        "url_portafolio": "Enter a valid URL",
+        "url_cvlac": "Must be a CvLAC link (minciencias.gov.co)",
+        "url_orcid": "Must be an orcid.org link",
+        "url_google_scholar": "Must be a Google Scholar link",
+        "url_researchgate": "Must be a researchgate.net link"
+      },
+      "cvlac": "CvLAC",
+      "orcid": "ORCID",
+      "google_scholar": "Google Scholar",
+      "researchgate": "ResearchGate"
     },
     "rolHint": "Your role is assigned by the administrator.",
     "contacto": "Contact details",
@@ -1432,6 +1451,48 @@
         "igual": "The new password must be different from the current one.",
         "actualIncorrecta": "The current password is incorrect.",
         "general": "The password could not be changed."
+      }
+    },
+    "cv": {
+      "titulo": "Professional profile",
+      "hint": "This is how you appear on your public profile. Projects, research groups and events are added automatically.",
+      "titular": "Headline",
+      "titularPlaceholder": "e.g. Software Engineering student · Web development",
+      "biografia": "About me",
+      "biografiaPlaceholder": "Tell what you work on, what interests you and what you are looking for.",
+      "especialidades": "What I specialize in",
+      "fortalezas": "My strengths",
+      "etiquetaPlaceholder": "Type and press Enter",
+      "quitar": "Remove {{valor}}",
+      "mostrarTelefono": "Show my phone on my public profile",
+      "redesAcademicas": "Academic networks",
+      "verPublico": "View my public profile",
+      "guardado": "Professional profile saved.",
+      "errorGuardar": "The professional profile could not be saved.",
+      "formacion": "Education",
+      "formacionHint": "Completed or ongoing studies.",
+      "sinFormacion": "You have not added your education yet.",
+      "agregar": "Add education",
+      "editar": "Edit",
+      "eliminar": "Delete",
+      "confirmarEliminar": "Remove this education from your profile?",
+      "tituloFormacion": "Degree or program",
+      "institucion": "Institution",
+      "nivel": "Level",
+      "anioInicio": "Start year",
+      "anioFin": "End year",
+      "anioFinHint": "Leave it empty if ongoing.",
+      "enCurso": "(ongoing)",
+      "errorFormacion": "The education could not be saved.",
+      "niveles": {
+        "tecnico": "Technical",
+        "tecnologo": "Technologist",
+        "pregrado": "Undergraduate",
+        "especializacion": "Specialization",
+        "maestria": "Master’s",
+        "doctorado": "Doctorate",
+        "curso": "Course",
+        "otro": "Other"
       }
     }
   },
@@ -1471,5 +1532,44 @@
     "errorTipo": "Only JPEG, PNG or WebP images are allowed.",
     "errorPeso": "Each image must be 5 MB or less.",
     "errorMax": "You exceed the maximum number of images."
+  },
+  "persona": {
+    "noEncontrada": "Profile not available",
+    "noEncontradaHint": "The person does not exist or their account is inactive.",
+    "proyectos": "Projects",
+    "semilleros": "Research groups",
+    "eventos": "Events",
+    "acerca": "About",
+    "especialidades": "Specialties",
+    "fortalezas": "Strengths",
+    "sinDescripcion": "This person has not written their professional profile yet.",
+    "proyectosTitulo": "Published projects",
+    "proyectosHint": "Approved projects where they take part as author or director.",
+    "sinProyectos": "No published projects yet.",
+    "participacion": {
+      "autor": "Author",
+      "director": "Director"
+    },
+    "eventosTitulo": "Events attended",
+    "eventosHint": "Recorded with their attendance on the platform.",
+    "sinEventos": "No event attendance recorded yet.",
+    "jornadas": "{{asistidas}} of {{total}} sessions",
+    "formacion": "Education",
+    "sinFormacion": "No education recorded.",
+    "sinSemilleros": "Not a member of any research group.",
+    "verTodos": "View all ({{total}})"
+  },
+  "perfilAviso": {
+    "titulo": "Hi, {{nombre}}! Complete your profile",
+    "texto": "Your public profile brings together your projects, research groups and events. Add your details so the community gets to know you:",
+    "items": {
+      "titular": "A headline that describes you",
+      "especialidades": "Your specialties and strengths",
+      "formacion": "Your education",
+      "enlaces": "Your links: LinkedIn, GitHub, CvLAC, ORCID…"
+    },
+    "nota": "It is optional: you can complete it anytime from “My profile”.",
+    "ahoraNo": "Not now",
+    "completar": "Complete now"
   }
 }
