@@ -42,13 +42,35 @@
           <li>
             <a
               routerLink="/"
-              fragment="escuelas"
+              fragment="proyectos"
               class="portal__nav-link"
               [class.portal__nav-link--active]="activeSection() === 'proyectos'"
               [attr.aria-current]="activeSection() === 'proyectos' ? 'location' : null"
-              (click)="irASeccion('escuelas')"
+              (click)="irASeccion('proyectos')"
             >
               {{ 'home.nav.proyectos' | translate }}
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/"
+              fragment="escuelas"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'escuelas'"
+              [attr.aria-current]="activeSection() === 'escuelas' ? 'location' : null"
+              (click)="irASeccion('escuelas')"
+            >
+              {{ 'home.nav.escuelas' | translate }}
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="isLoggedIn() && isEstudiante() ? '/semilleros' : '/semilleros/explorar'"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'semilleros'"
+              [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
+            >
+              {{ 'home.semillerosNav' | translate }}
             </a>
           </li>
           <li>
@@ -76,16 +98,6 @@
               </a>
             </li>
           }
-          <li>
-            <a
-              [routerLink]="isLoggedIn() && isEstudiante() ? '/semilleros' : '/semilleros/explorar'"
-              class="portal__nav-link"
-              [class.portal__nav-link--active]="activeSection() === 'semilleros'"
-              [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
-            >
-              {{ 'home.semillerosNav' | translate }}
-            </a>
-          </li>
         </ul>
 
         <div class="portal__actions">

@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { urlImagenDestacadaSemillero, type SemilleroPublico } from '../../../core/models/portal.model';
@@ -22,6 +22,8 @@ export class SemilleroCardComponent {
 
   readonly estilo = computed(() => estiloDeEscuela(this.semillero().escuela));
   readonly imagen = computed(() => urlImagenDestacadaSemillero(this.semillero()));
+  /** Si el archivo de la portada no carga, se muestra el marcador con el ícono de la escuela. */
+  readonly imagenFallida = signal(false);
   readonly totalProyectos = computed(() => this.semillero().total_proyectos_publicados ?? 0);
 
   readonly lider = computed(() => {

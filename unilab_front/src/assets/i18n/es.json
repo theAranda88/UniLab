@@ -779,7 +779,8 @@
       "proyectos": "Proyectos",
       "escuelasProyectos": "Escuelas y proyectos",
       "openMenu": "Abrir menú de navegación",
-      "closeMenu": "Cerrar menú de navegación"
+      "closeMenu": "Cerrar menú de navegación",
+      "escuelas": "Escuelas"
     },
     "footerPortal": "Portal",
     "footerAccess": "Acceso",
@@ -971,7 +972,8 @@
     "topRated": {
       "kicker": "Proyectos",
       "title": "Mejor valorados",
-      "lead": "Los proyectos con mejor calificación de la comunidad, en todas las escuelas."
+      "lead": "Los proyectos con mejor calificación de la comunidad, en todas las escuelas.",
+      "position": "Puesto {{n}}"
     },
     "independientes": {
       "kicker": "Fuera de los semilleros",
@@ -982,6 +984,22 @@
       "cta": "Ver proyectos",
       "listTitle": "Proyectos independientes",
       "listHint": "Publicados y aprobados, fuera de los semilleros de la escuela."
+    },
+    "flow": {
+      "kicker": "Así funciona",
+      "title": "De la escuela al proyecto",
+      "escuela": {
+        "title": "Escuelas",
+        "text": "Cada escuela reúne sus programas académicos y sus semilleros de investigación."
+      },
+      "semillero": {
+        "title": "Semilleros",
+        "text": "Los semilleros agrupan a estudiantes y profesores alrededor de una línea de trabajo."
+      },
+      "proyecto": {
+        "title": "Proyectos",
+        "text": "Los proyectos nacen en los semilleros o de forma independiente, y se publican tras su revisión."
+      }
     }
   },
   "proyectosEstudiante": {

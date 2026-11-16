@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type SeccionPortal = 'inicio' | 'proyectos' | 'eventos';
+export type SeccionPortal = 'inicio' | 'proyectos' | 'escuelas' | 'semilleros' | 'eventos';
 
 /**
  * Sección del inicio que el usuario está viendo (la publica el inicio al desplazarse).

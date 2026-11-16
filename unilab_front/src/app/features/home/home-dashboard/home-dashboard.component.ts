@@ -29,6 +29,14 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
 import type { Evento } from '../../../core/models/evento.model';
 import { momentoEvento, type MomentoEvento } from '../../../core/utils/date.util';
 import { PortalSeccionService, type SeccionPortal } from '../portal-seccion.service';
+import { RevealDirective } from '../../../shared/ui/reveal/reveal.directive';
+
+/** «Así funciona»: la jerarquía del portal (escuela → semillero → proyecto). */
+const PASOS = [
+  { clave: 'escuela', icono: 'ti-building-community' },
+  { clave: 'semillero', icono: 'ti-flask' },
+  { clave: 'proyecto', icono: 'ti-rocket' },
+] as const;
 
 interface EscuelaCard {
   escuela: Escuela;
@@ -79,6 +87,7 @@ const BURBUJAS: Burbuja[] = [
     EventoCardComponent,
     EmptyStateComponent,
     SkeletonComponent,
+    RevealDirective,
   ],
   templateUrl: './home-dashboard.component.html',
   styleUrl: './home-dashboard.component.scss',
@@ -93,6 +102,7 @@ export class HomeDashboardComponent implements OnInit {
   private injector = inject(Injector);
 
   readonly burbujas = BURBUJAS;
+  readonly pasos = PASOS;
 
   readonly escuelas = signal<Escuela[]>([]);
   readonly cursosPorEscuela = signal<Record<number, Curso[]>>({});

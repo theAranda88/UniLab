@@ -779,7 +779,8 @@
       "proyectos": "Projects",
       "escuelasProyectos": "Schools and projects",
       "openMenu": "Open navigation menu",
-      "closeMenu": "Close navigation menu"
+      "closeMenu": "Close navigation menu",
+      "escuelas": "Schools"
     },
     "footerPortal": "Portal",
     "footerAccess": "Access",
@@ -971,7 +972,8 @@
     "topRated": {
       "kicker": "Projects",
       "title": "Top rated",
-      "lead": "The community’s best-rated projects across all schools."
+      "lead": "The community’s best-rated projects across all schools.",
+      "position": "Rank {{n}}"
     },
     "independientes": {
       "kicker": "Outside research groups",
@@ -982,6 +984,22 @@
       "cta": "View projects",
       "listTitle": "Independent projects",
       "listHint": "Published and approved, outside the school’s research groups."
+    },
+    "flow": {
+      "kicker": "How it works",
+      "title": "From school to project",
+      "escuela": {
+        "title": "Schools",
+        "text": "Each school brings together its academic programs and research groups."
+      },
+      "semillero": {
+        "title": "Research groups",
+        "text": "Research groups bring students and professors together around a line of work."
+      },
+      "proyecto": {
+        "title": "Projects",
+        "text": "Projects are born in research groups or independently, and are published after review."
+      }
     }
   },
   "proyectosEstudiante": {

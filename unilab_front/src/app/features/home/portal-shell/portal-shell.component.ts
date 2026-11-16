@@ -10,7 +10,7 @@ import { ConfiguracionService } from '../../configuracion/configuracion.service'
 import { PortalSeccionService } from '../portal-seccion.service';
 import { ViewportScroller } from '@angular/common';
 
-type PortalSection = 'inicio' | 'proyectos' | 'eventos' | 'mis-proyectos' | 'semilleros' | null;
+type PortalSection = 'inicio' | 'proyectos' | 'escuelas' | 'eventos' | 'mis-proyectos' | 'semilleros' | null;
 
 /** Shell del portal público Eduinova: cabecera, contenido y pie (estático). */
 @Component({
@@ -59,7 +59,8 @@ export class PortalShellComponent {
     const path = this.currentPath() || '/';
     // En el inicio, la opción activa es la sección que se está viendo (la publica el inicio)
     if (path === '/') return this.seccionSvc.seccion() ?? 'inicio';
-    if (path.startsWith('/escuelas') || path.startsWith('/proyectos')) return 'proyectos';
+    if (path.startsWith('/escuelas')) return 'escuelas';
+    if (path.startsWith('/proyectos')) return 'proyectos';
     if (path.startsWith('/eventos')) return 'eventos';
     if (path.startsWith('/mis-proyectos')) return 'mis-proyectos';
     if (path.startsWith('/semilleros')) return 'semilleros';

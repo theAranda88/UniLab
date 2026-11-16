@@ -14,7 +14,7 @@
       <span class="hero__rule reveal" style="--d: 160ms" aria-hidden="true"></span>
       <p class="hero__lead reveal" style="--d: 220ms">{{ 'home.hero.lead' | translate }}</p>
       <div class="hero__actions reveal" style="--d: 300ms">
-        <a routerLink="/" fragment="escuelas" class="hero__btn hero__btn--accent">
+        <a routerLink="/" fragment="proyectos" class="hero__btn hero__btn--accent">
           {{ 'home.hero.exploreProjects' | translate }}
           <i class="ti ti-arrow-right" aria-hidden="true"></i>
         </a>
@@ -43,11 +43,34 @@
   </svg>
 </section>
 
+<!-- Así funciona: la jerarquía del portal en tres pasos -->
+<section class="flow" data-seccion="inicio" aria-labelledby="flow-title">
+  <div class="home-section__inner">
+    <div class="section-head section-head--center" appReveal>
+      <div class="section-head__title">
+        <span class="section-head__kicker">{{ 'home.flow.kicker' | translate }}</span>
+        <h2 id="flow-title">{{ 'home.flow.title' | translate }}</h2>
+        <span class="section-head__rule" aria-hidden="true"></span>
+      </div>
+    </div>
+    <ol class="flow__steps">
+      @for (paso of pasos; track paso.clave; let i = $index) {
+        <li class="flow__step" [appReveal]="i * 120">
+          <span class="flow__number" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="flow__icon"><i class="ti {{ paso.icono }}" aria-hidden="true"></i></span>
+          <h3>{{ 'home.flow.' + paso.clave + '.title' | translate }}</h3>
+          <p>{{ 'home.flow.' + paso.clave + '.text' | translate }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
 <!-- Proyectos mejor valorados (solo si hay proyectos publicados) -->
 @if (proyectosDestacados().length > 0) {
-  <section class="recent" data-seccion="proyectos" aria-labelledby="recent-title">
-    <div class="recent__inner">
-      <div class="section-head">
+  <section class="home-section home-section--white" id="proyectos" data-seccion="proyectos" aria-labelledby="recent-title">
+    <div class="home-section__inner">
+      <div class="section-head" appReveal>
         <div class="section-head__title">
           <span class="section-head__kicker">{{ 'home.topRated.kicker' | translate }}</span>
           <h2 id="recent-title">{{ 'home.topRated.title' | translate }}</h2>
@@ -56,9 +79,12 @@
         <p>{{ 'home.topRated.lead' | translate }}</p>
       </div>
 
-      <div class="recent__grid">
-        @for (proyecto of proyectosDestacados(); track proyecto.id_proyecto) {
-          <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+      <div class="ranking">
+        @for (proyecto of proyectosDestacados(); track proyecto.id_proyecto; let i = $index) {
+          <div class="ranking__item" [class.ranking__item--top]="i < 3" [appReveal]="(i % 3) * 110">
+            <span class="ranking__badge" [attr.aria-label]="'home.topRated.position' | translate: { n: i + 1 }">#{{ i + 1 }}</span>
+            <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+          </div>
         }
       </div>
     </div>
@@ -66,51 +92,61 @@
 }
 
 <!-- Escuelas -->
-<section class="schools" id="escuelas" data-seccion="proyectos" aria-labelledby="schools-title">
-  <div class="section-head">
-    <div class="section-head__title">
-      <span class="section-head__kicker">{{ 'home.schools.kicker' | translate }}</span>
-      <h2 id="schools-title">{{ 'home.schools.title' | translate }}</h2>
-      <span class="section-head__rule" aria-hidden="true"></span>
+<section class="home-section home-section--cream" id="escuelas" data-seccion="escuelas" aria-labelledby="schools-title">
+  <div class="home-section__inner">
+    <div class="section-head" appReveal>
+      <div class="section-head__title">
+        <span class="section-head__kicker">{{ 'home.schools.kicker' | translate }}</span>
+        <h2 id="schools-title">{{ 'home.schools.title' | translate }}</h2>
+        <span class="section-head__rule" aria-hidden="true"></span>
+      </div>
+      <p>{{ 'home.schools.lead' | translate }}</p>
     </div>
-    <p>{{ 'home.schools.lead' | translate }}</p>
-  </div>
 
-  <div class="schools__grid">
-    @for (card of escuelaCards(); track card.escuela.id_escuela) {
-      <a class="school" [routerLink]="['/escuelas', card.escuela.id_escuela]" [style.--school-color]="card.color">
-        <i class="school__watermark ph-duotone {{ card.icono }}" aria-hidden="true"></i>
-        <div class="school__top">
-          <span class="school__icon"><i class="ph-duotone {{ card.icono }}" aria-hidden="true"></i></span>
-          <i class="school__arrow ti ti-arrow-up-right" aria-hidden="true"></i>
-        </div>
-        <h3>{{ card.escuela.nombre_escuela }}</h3>
-        @if (card.programas) {
-          <p>{{ card.programas }}</p>
-        } @else {
-          <p class="school__no-programs">{{ 'home.schools.noPrograms' | translate }}</p>
-        }
-        <span class="school__badges">
-          <span class="school__badge" [class.school__badge--active]="card.semilleros > 0">
-            {{ (card.semilleros === 1 ? 'home.schools.oneSemillero' : 'home.schools.semilleros') | translate: { count: card.semilleros } }}
-          </span>
-          @if (card.proyectos === 0) {
-            <span class="school__badge">{{ 'home.schools.noProjects' | translate }}</span>
+    <div class="schools__grid">
+      @for (card of escuelaCards(); track card.escuela.id_escuela; let i = $index) {
+        <a
+          class="school"
+          [routerLink]="['/escuelas', card.escuela.id_escuela]"
+          [style.--school-color]="card.color"
+          [appReveal]="(i % 3) * 90"
+        >
+          <i class="school__watermark ph-duotone {{ card.icono }}" aria-hidden="true"></i>
+          <div class="school__top">
+            <span class="school__icon"><i class="ph-duotone {{ card.icono }}" aria-hidden="true"></i></span>
+            <i class="school__arrow ti ti-arrow-up-right" aria-hidden="true"></i>
+          </div>
+          <h3>{{ card.escuela.nombre_escuela }}</h3>
+          @if (card.programas) {
+            <p>{{ card.programas }}</p>
           } @else {
-            <span class="school__badge school__badge--active">
-              {{ (card.proyectos === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: card.proyectos } }}
-            </span>
+            <p class="school__no-programs">{{ 'home.schools.noPrograms' | translate }}</p>
           }
-        </span>
-      </a>
-    }
+          <span class="school__badges">
+            <span class="school__badge" [class.school__badge--active]="card.semilleros > 0">
+              <i class="ti ti-flask" aria-hidden="true"></i>
+              {{ (card.semilleros === 1 ? 'home.schools.oneSemillero' : 'home.schools.semilleros') | translate: { count: card.semilleros } }}
+            </span>
+            <span class="school__badge" [class.school__badge--active]="card.proyectos > 0">
+              <i class="ti ti-folders" aria-hidden="true"></i>
+              @if (card.proyectos === 0) {
+                {{ 'home.schools.noProjects' | translate }}
+              } @else {
+                {{ (card.proyectos === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: card.proyectos } }}
+              }
+            </span>
+          </span>
+        </a>
+      }
+    </div>
   </div>
 </section>
 
+<!-- Semilleros -->
 @if (semilleros().length > 0) {
-  <section class="semilleros-home" id="semilleros" data-seccion="proyectos" aria-labelledby="semilleros-home-title">
-    <div class="semilleros-home__inner">
-      <div class="section-head">
+  <section class="home-section home-section--white" id="semilleros" data-seccion="semilleros" aria-labelledby="semilleros-home-title">
+    <div class="home-section__inner">
+      <div class="section-head" appReveal>
         <div class="section-head__title">
           <span class="section-head__kicker">{{ 'home.semilleros.kicker' | translate }}</span>
           <h2 id="semilleros-home-title">{{ 'home.semilleros.title' | translate }}</h2>
@@ -118,13 +154,15 @@
         </div>
         <p>{{ 'home.semilleros.lead' | translate }}</p>
       </div>
-      <div class="semilleros-home__grid">
-        @for (s of semilleros(); track s.id_semillero) {
-          <app-semillero-card [semillero]="s" />
+      <div class="home-section__grid">
+        @for (s of semilleros(); track s.id_semillero; let i = $index) {
+          <div [appReveal]="(i % 3) * 110">
+            <app-semillero-card [semillero]="s" />
+          </div>
         }
       </div>
-      <div class="semilleros-home__more">
-        <a class="semilleros-home__all" routerLink="/semilleros/explorar">
+      <div class="home-section__more" appReveal>
+        <a class="home-section__all" routerLink="/semilleros/explorar">
           {{ 'home.semilleros.seeAll' | translate }}
           @if (totalSemilleros() > semilleros().length) {
             <span>({{ totalSemilleros() }})</span>
@@ -137,9 +175,9 @@
 }
 
 <!-- Eventos: vista previa en el inicio + acceso a la página completa -->
-<section class="events" id="eventos" data-seccion="eventos" aria-labelledby="events-title">
-  <div class="events__inner">
-    <div class="section-head">
+<section class="home-section home-section--cream" id="eventos" data-seccion="eventos" aria-labelledby="events-title">
+  <div class="home-section__inner">
+    <div class="section-head" appReveal>
       <div class="section-head__title">
         <span class="section-head__kicker">{{ 'home.events.kicker' | translate }}</span>
         <h2 id="events-title">{{ 'home.events.title' | translate }}</h2>
@@ -157,15 +195,17 @@
         [message]="'eventos.sinEventosHint' | translate"
       />
     } @else {
-      <div class="events__grid">
-        @for (evento of eventosDestacados(); track evento.id_evento) {
-          <app-evento-card [evento]="evento" />
+      <div class="home-section__grid">
+        @for (evento of eventosDestacados(); track evento.id_evento; let i = $index) {
+          <div [appReveal]="i * 110">
+            <app-evento-card [evento]="evento" />
+          </div>
         }
       </div>
     }
 
-    <div class="events__more">
-      <a routerLink="/eventos" class="events__all">
+    <div class="home-section__more" appReveal>
+      <a routerLink="/eventos" class="home-section__all home-section__all--solid">
         {{ 'home.events.viewAll' | translate }}
         <i class="ti ti-arrow-right" aria-hidden="true"></i>
       </a>

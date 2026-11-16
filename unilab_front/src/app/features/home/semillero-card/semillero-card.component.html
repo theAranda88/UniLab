@@ -1,8 +1,8 @@
 @let s = semillero();
 <a class="sc" [routerLink]="['/semilleros', s.id_semillero]" [style.--sc-color]="estilo().color">
   <span class="sc__media">
-    @if (imagen(); as img) {
-      <img class="sc__img" [src]="img" [alt]="s.nombre_semillero" loading="lazy" />
+    @if (imagen() && !imagenFallida()) {
+      <img class="sc__img" [src]="imagen()" [alt]="s.nombre_semillero" loading="lazy" (error)="imagenFallida.set(true)" />
     } @else {
       <span class="sc__placeholder" aria-hidden="true">
         <i class="ph-duotone {{ estilo().icono }}"></i>
