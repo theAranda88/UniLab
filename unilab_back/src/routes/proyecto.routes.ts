@@ -13,6 +13,8 @@ import {
   estadoProyectoSchema,
   comentarioSchema,
   calificacionSchema,
+  autoresProyectoSchema,
+  companerosQuerySchema,
 } from '../middlewares/validation/schemas';
 
 const router = Router();
@@ -20,6 +22,21 @@ const router = Router();
 const auth = [verifyToken, checkPrimerLogin, checkPerfilPendiente] as const;
 
 router.get('/', ...auth, proyectoController.listar);
+// Compañeros de escuela que el estudiante puede agregar como coautores (antes de /:id)
+router.get(
+  '/companeros',
+  ...auth,
+  requireRole(['Estudiante']),
+  validate(companerosQuerySchema, 'query'),
+  proyectoController.companeros,
+);
+router.put(
+  '/:id/autores',
+  ...auth,
+  validate(idParamSchema, 'params'),
+  validate(autoresProyectoSchema),
+  proyectoController.actualizarAutores,
+);
 router.get('/:id', ...auth, validate(idParamSchema, 'params'), proyectoController.obtener);
 router.post(
   '/',

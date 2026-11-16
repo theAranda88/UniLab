@@ -34,6 +34,30 @@ const redesContactoShape = {
   url_portafolio: urlRed(),
 };
 
+/** Redes académicas del perfil tipo CvLAC. */
+const redesAcademicasShape = {
+  url_cvlac: urlRed(/(^|\.)minciencias\.gov\.co$/i, 'Debe ser un enlace de CvLAC (minciencias.gov.co)'),
+  url_orcid: urlRed(/(^|\.)orcid\.org$/i, 'Debe ser un enlace de orcid.org'),
+  url_google_scholar: urlRed(/^scholar\.google\./i, 'Debe ser un enlace de Google Académico'),
+  url_researchgate: urlRed(/(^|\.)researchgate\.net$/i, 'Debe ser un enlace de researchgate.net'),
+};
+
+/** Lista de etiquetas cortas (especialidades, fortalezas): sin vacías ni repetidas. */
+const listaEtiquetas = z
+  .array(z.string().trim().min(1).max(60))
+  .max(15, 'Máximo 15 elementos')
+  .transform((lista) => [...new Set(lista)])
+  .optional();
+
+const textoPerfil = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .transform((v) => v || null)
+    .nullable()
+    .optional();
+
 const telefonoSchema = z
   .string()
   .trim()
@@ -51,9 +75,44 @@ export const actualizarMiPerfilSchema = z
       .nullable()
       .optional(),
     ...redesContactoShape,
+    ...redesAcademicasShape,
+    titular: textoPerfil(160),
+    biografia: textoPerfil(2000),
+    especialidades: listaEtiquetas,
+    fortalezas: listaEtiquetas,
+    mostrar_telefono: z.boolean().optional(),
   })
   .strict()
   .refine((data) => Object.keys(data).length > 0, { message: 'Envíe al menos un campo para actualizar' });
+
+const anioFormacion = z.number().int().min(1950).max(2100);
+
+export const formacionSchema = z
+  .object({
+    titulo: z.string().trim().min(1).max(255),
+    institucion: z.string().trim().min(1).max(255),
+    nivel: z.enum(['tecnico', 'tecnologo', 'pregrado', 'especializacion', 'maestria', 'doctorado', 'curso', 'otro']),
+    anio_inicio: anioFormacion.nullable().optional(),
+    /** null = en curso */
+    anio_fin: anioFormacion.nullable().optional(),
+  })
+  .refine((d) => !d.anio_inicio || !d.anio_fin || d.anio_fin >= d.anio_inicio, {
+    message: 'El año de fin no puede ser anterior al de inicio',
+    path: ['anio_fin'],
+  });
+
+export const formacionParamSchema = z.object({
+  idFormacion: z.coerce.number().int().positive(),
+});
+
+/** PUT /proyectos/:id/autores: compañeros (coautores) del proyecto; el creador se mantiene siempre. */
+export const autoresProyectoSchema = z.object({
+  ids_estudiantes: z.array(z.number().int().positive()).max(9, 'Máximo 9 coautores'),
+});
+
+export const companerosQuerySchema = z.object({
+  busqueda: z.string().trim().max(100).optional(),
+});
 
 export const cambiarMiPasswordSchema = z
   .object({

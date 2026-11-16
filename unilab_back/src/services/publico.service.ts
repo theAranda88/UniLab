@@ -109,6 +109,8 @@ export const publicoService = {
     sin_semillero?: boolean;
     orden?: 'recientes' | 'valorados';
     limite?: number;
+    /** Proyectos donde la persona es creadora, coautora o directora (perfil público). */
+    id_participante?: number;
   }) {
     if (params?.id_escuela !== undefined) {
       const escuela = await escuelaRepository.findById(params.id_escuela);
@@ -123,6 +125,15 @@ export const publicoService = {
     const where: Prisma.proyectosWhereInput = {
       estado_proyecto: 'publicado',
     };
+
+    if (params?.id_participante !== undefined) {
+      const id = params.id_participante;
+      where.OR = [
+        { id_estudiante_creador: id },
+        { autores: { some: { id_estudiante: id, deleted_at: null } } },
+        { coordinadores: { some: { id_profesor: id, deleted_at: null } } },
+      ];
+    }
 
     if (params?.id_semillero !== undefined) {
       where.id_semillero = params.id_semillero;

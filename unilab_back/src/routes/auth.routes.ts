@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authController } from '../controllers/auth.controller';
+import { perfilController } from '../controllers/perfil.controller';
 import { validate } from '../middlewares/validation/validate';
 import {
   loginSchema,
@@ -7,6 +8,8 @@ import {
   cambiarPasswordSchema,
   googleLoginSchema,
   completarPerfilSchema,
+  formacionSchema,
+  formacionParamSchema,
   actualizarMiPerfilSchema,
   cambiarMiPasswordSchema,
 } from '../middlewares/validation/schemas';
@@ -28,6 +31,39 @@ router.patch(
   checkPerfilPendiente,
   validate(actualizarMiPerfilSchema),
   authController.actualizarMiPerfil,
+);
+router.post(
+  '/me/perfil-cv/omitir',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  authController.omitirPerfilCv,
+);
+router.get('/me/formacion', verifyToken, checkPrimerLogin, checkPerfilPendiente, perfilController.listarFormacion);
+router.post(
+  '/me/formacion',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  validate(formacionSchema),
+  perfilController.crearFormacion,
+);
+router.put(
+  '/me/formacion/:idFormacion',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  validate(formacionParamSchema, 'params'),
+  validate(formacionSchema),
+  perfilController.actualizarFormacion,
+);
+router.delete(
+  '/me/formacion/:idFormacion',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  validate(formacionParamSchema, 'params'),
+  perfilController.eliminarFormacion,
 );
 router.post(
   '/me/password',

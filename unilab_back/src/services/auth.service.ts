@@ -46,7 +46,19 @@ export function mapUsuarioSesion(u: PerfilSesion) {
       linkedin: u.url_linkedin,
       github: u.url_github,
       portafolio: u.url_portafolio,
+      cvlac: u.url_cvlac,
+      orcid: u.url_orcid,
+      google_scholar: u.url_google_scholar,
+      researchgate: u.url_researchgate,
     },
+    cv: {
+      titular: u.titular,
+      biografia: u.biografia,
+      especialidades: u.especialidades,
+      fortalezas: u.fortalezas,
+      mostrar_telefono: u.mostrar_telefono,
+    },
+    perfil_cv_revisado: u.perfil_cv_revisado,
     perfil: {
       codigo_docente: u.perfil_profesor?.codigo_docente ?? null,
       codigo_estudiantil: u.perfil_estudiante?.codigo_estudiantil ?? null,
@@ -258,6 +270,15 @@ export const authService = {
       url_linkedin?: string | null;
       url_github?: string | null;
       url_portafolio?: string | null;
+      url_cvlac?: string | null;
+      url_orcid?: string | null;
+      url_google_scholar?: string | null;
+      url_researchgate?: string | null;
+      titular?: string | null;
+      biografia?: string | null;
+      especialidades?: string[];
+      fortalezas?: string[];
+      mostrar_telefono?: boolean;
     },
   ) {
     const { profesion, ...datosUsuario } = data;
@@ -265,12 +286,19 @@ export const authService = {
       throw new AppError('Solo el coordinador puede registrar su profesión', 422);
     }
     if (Object.keys(datosUsuario).length > 0) {
-      await usuarioRepository.update(solicitante.id_usuario, datosUsuario);
+      // Guardar el perfil cuenta como haber atendido el aviso del primer ingreso
+      await usuarioRepository.update(solicitante.id_usuario, { ...datosUsuario, perfil_cv_revisado: true });
     }
     if (profesion !== undefined) {
       await usuarioRepository.updatePerfilCoordinador(solicitante.id_usuario, { profesion });
     }
     return construirSesion(solicitante.id_usuario);
+  },
+
+  /** «Ahora no» en el aviso de completar el perfil: no se vuelve a mostrar. */
+  async omitirPerfilCv(id_usuario: number) {
+    await usuarioRepository.update(id_usuario, { perfil_cv_revisado: true });
+    return construirSesion(id_usuario);
   },
 
   /** Cambio voluntario de contraseña: exige la contraseña actual. */

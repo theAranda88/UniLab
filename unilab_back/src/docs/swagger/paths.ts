@@ -126,6 +126,57 @@ export const paths = {
       },
     },
   },
+  '/auth/me/perfil-cv/omitir': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Omitir el aviso de completar el perfil',
+      description: 'Marca `perfil_cv_revisado = true` («Ahora no»). Guardar el perfil con PATCH /auth/me también lo marca.',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Sesión actualizada' }, 401: err[401] },
+    },
+  },
+  '/auth/me/formacion': {
+    get: {
+      tags: ['Auth'],
+      summary: 'Mi formación académica',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Formación ordenada por año de inicio (más reciente primero)' }, 401: err[401] },
+    },
+    post: {
+      tags: ['Auth'],
+      summary: 'Agregar formación',
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonBody('#/components/schemas/FormacionRequest'),
+      responses: { 201: { description: 'Formación creada' }, 400: err[400], 401: err[401] },
+    },
+  },
+  '/auth/me/formacion/{idFormacion}': {
+    put: {
+      tags: ['Auth'],
+      summary: 'Editar formación propia',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'idFormacion', in: 'path', required: true, schema: { type: 'integer' } }],
+      requestBody: jsonBody('#/components/schemas/FormacionRequest'),
+      responses: { 200: { description: 'Formación actualizada' }, 404: err[404] },
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Eliminar formación propia (soft-delete)',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'idFormacion', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Eliminada' }, 404: err[404] },
+    },
+  },
+  '/public/usuarios/{id}/perfil': {
+    get: {
+      tags: ['Público'],
+      summary: 'Perfil público de una persona (tipo CvLAC)',
+      description:
+        'Titular, biografía, especialidades, fortalezas, enlaces, formación, escuela, semilleros, proyectos publicados en los que participa (`participacion`: autor | director) y eventos asistidos. Nunca expone correo ni documento; el teléfono solo si `mostrar_telefono`.',
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: 'Perfil público' }, 404: err[404] },
+    },
+  },
   '/auth/me/password': {
     post: {
       tags: ['Auth'],
@@ -516,6 +567,26 @@ export const paths = {
       summary: 'Eliminar proyecto (soft-delete)',
       parameters: [paramId],
       responses: { 204: { description: 'Eliminado' }, ...err },
+    },
+  },
+  '/proyectos/companeros': {
+    get: {
+      tags: ['Proyectos'],
+      summary: 'Compañeros de escuela para agregar como coautores',
+      description: '**Rol requerido:** Estudiante. Máximo 20 resultados; `busqueda` filtra por nombre o apellido.',
+      parameters: [{ name: 'busqueda', in: 'query', required: false, schema: { type: 'string' } }],
+      responses: { 200: { description: 'Estudiantes { id_usuario, nombres, apellidos }' }, ...err },
+    },
+  },
+  '/proyectos/{id}/autores': {
+    put: {
+      tags: ['Proyectos'],
+      summary: 'Reemplazar los coautores del proyecto',
+      description:
+        'Mismo permiso que editar el proyecto (creador antes de publicar, profesor coordinador, administrador). Solo estudiantes activos de la escuela del creador; el creador se mantiene como autor principal. En los perfiles públicos solo aparecen proyectos publicados.',
+      parameters: [paramId],
+      requestBody: jsonBody('#/components/schemas/AutoresProyectoRequest'),
+      responses: { 200: { description: 'Proyecto con autores actualizados' }, ...err },
     },
   },
   '/proyectos/{id}/estado': {

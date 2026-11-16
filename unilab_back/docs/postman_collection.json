@@ -827,6 +827,78 @@
       ]
     },
     {
+      "name": "Perfil (CvLAC)",
+      "description": "Perfil profesional del usuario, formación, perfil público y coautores de proyectos.",
+      "item": [
+        {
+          "name": "Actualizar mi perfil (CvLAC)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titular\": \"Desarrolladora full stack\",\n  \"biografia\": \"Estudiante de Ingeniería de Software.\",\n  \"especialidades\": [\n    \"Angular\",\n    \"IA\"\n  ],\n  \"fortalezas\": [\n    \"Liderazgo\"\n  ],\n  \"url_orcid\": \"https://orcid.org/0000-0002-1825-0097\",\n  \"mostrar_telefono\": false\n}" },
+            "url": "{{base_url}}/auth/me",
+            "description": "Guardar el perfil marca perfil_cv_revisado = true."
+          }
+        },
+        {
+          "name": "Omitir aviso de perfil",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/me/perfil-cv/omitir",
+            "description": "«Ahora no» del aviso del primer ingreso."
+          }
+        },
+        {
+          "name": "Mi formación",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/me/formacion",
+            "description": ""
+          }
+        },
+        {
+          "name": "Agregar formación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Ingeniería de Software\",\n  \"institucion\": \"Corporación Universitaria Autónoma del Cauca\",\n  \"nivel\": \"pregrado\",\n  \"anio_inicio\": 2023,\n  \"anio_fin\": null\n}" },
+            "url": "{{base_url}}/auth/me/formacion",
+            "description": "anio_fin null = en curso."
+          }
+        },
+        {
+          "name": "Perfil público",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/public/usuarios/{{id_usuario}}/perfil",
+            "description": "Sin token. Nunca incluye correo ni documento."
+          }
+        },
+        {
+          "name": "Compañeros para coautoría",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/proyectos/companeros?busqueda=",
+            "description": "Solo Estudiante."
+          }
+        },
+        {
+          "name": "Reemplazar coautores",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"ids_estudiantes\": [\n    9\n  ]\n}" },
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/autores",
+            "description": "Solo estudiantes de la escuela del creador; máximo 9."
+          }
+        }
+      ]
+    },
+    {
       "name": "Eventos",
       "description": "Congresos, foros y control de asistencia por QR.\n\n**Portal estudiante (`/eventos`):** listar → detalle → consultar inscripción → inscribirse → listar jornadas → registrar asistencia con QR (`POST /eventos/asistencias/registrar`).\n\n**Admin/Coord:** crear eventos, jornadas, reportes y gestión de pagos.",
       "item": [

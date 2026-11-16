@@ -197,6 +197,41 @@ export const schemas = {
       url_linkedin: { type: 'string', nullable: true, example: 'https://www.linkedin.com/in/ana-gomez' },
       url_github: { type: 'string', nullable: true, example: 'https://github.com/anagomez' },
       url_portafolio: { type: 'string', nullable: true, example: 'https://anagomez.dev' },
+      url_cvlac: { type: 'string', nullable: true, description: 'Dominio minciencias.gov.co' },
+      url_orcid: { type: 'string', nullable: true, example: 'https://orcid.org/0000-0002-1825-0097' },
+      url_google_scholar: { type: 'string', nullable: true, example: 'https://scholar.google.com/citations?user=abc' },
+      url_researchgate: { type: 'string', nullable: true, example: 'https://www.researchgate.net/profile/Ana-Gomez' },
+      titular: { type: 'string', nullable: true, maxLength: 160, example: 'Desarrolladora full stack' },
+      biografia: { type: 'string', nullable: true, maxLength: 2000 },
+      especialidades: { type: 'array', maxItems: 15, items: { type: 'string', maxLength: 60 }, example: ['Angular', 'IA'] },
+      fortalezas: { type: 'array', maxItems: 15, items: { type: 'string', maxLength: 60 }, example: ['Liderazgo'] },
+      mostrar_telefono: { type: 'boolean', description: 'Si es true, el teléfono aparece en el perfil público' },
+    },
+  },
+  FormacionRequest: {
+    type: 'object',
+    required: ['titulo', 'institucion', 'nivel'],
+    properties: {
+      titulo: { type: 'string', example: 'Ingeniería de Software' },
+      institucion: { type: 'string', example: 'Corporación Universitaria Autónoma del Cauca' },
+      nivel: {
+        type: 'string',
+        enum: ['tecnico', 'tecnologo', 'pregrado', 'especializacion', 'maestria', 'doctorado', 'curso', 'otro'],
+      },
+      anio_inicio: { type: 'integer', nullable: true, example: 2023 },
+      anio_fin: { type: 'integer', nullable: true, description: 'null = en curso' },
+    },
+  },
+  AutoresProyectoRequest: {
+    type: 'object',
+    required: ['ids_estudiantes'],
+    properties: {
+      ids_estudiantes: {
+        type: 'array',
+        maxItems: 9,
+        items: { type: 'integer' },
+        description: 'Coautores (sin el creador, que siempre se mantiene). Reemplaza la lista actual.',
+      },
     },
   },
   CambiarMiPasswordRequest: {

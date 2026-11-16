@@ -158,9 +158,11 @@ describe('authService', () => {
       url_github: 'https://github.com/ana',
     });
 
+    // Guardar el perfil también marca como atendido el aviso del primer ingreso
     expect(m.usuarioRepository.update).toHaveBeenCalledWith(7, {
       telefono: '3109876543',
       url_github: 'https://github.com/ana',
+      perfil_cv_revisado: true,
     });
     expect(m.usuarioRepository.updatePerfilCoordinador).not.toHaveBeenCalled();
     expect(r.redes.github).toBe('https://github.com/ana');

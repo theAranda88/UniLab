@@ -42,6 +42,19 @@ model usuarios {
   url_linkedin        String?  @db.VarChar(500)
   url_github          String?  @db.VarChar(500)
   url_portafolio      String?  @db.VarChar(500)
+  /// Perfil tipo CvLAC: lo edita el propio usuario
+  titular             String?  @db.VarChar(160)
+  biografia           String?  @db.Text
+  especialidades      String[] @default([])
+  fortalezas          String[] @default([])
+  url_cvlac           String?  @db.VarChar(500)
+  url_orcid           String?  @db.VarChar(500)
+  url_google_scholar  String?  @db.VarChar(500)
+  url_researchgate    String?  @db.VarChar(500)
+  /// El teléfono solo aparece en el perfil público si el usuario lo permite
+  mostrar_telefono    Boolean  @default(false)
+  /// true cuando el usuario completó u omitió el aviso de perfil del primer ingreso
+  perfil_cv_revisado  Boolean  @default(false)
   created_at          DateTime @default(now()) @db.Timestamp(6)
   updated_at          DateTime @updatedAt @db.Timestamp(6)
   created_by          Int?
@@ -99,9 +112,31 @@ model usuarios {
   autorizaciones_semillero        semillero_miembros[]   @relation("semillero_miembros_profesor")
   eventos_organizados             eventos[]              @relation("eventos_organizador")
   inscripciones                   inscripciones[]
+  formacion                       usuario_formacion[]    @relation("usuario_formacion_usuario")
+  formacion_creada                usuario_formacion[]    @relation("usuario_formacion_creador")
 
   @@unique([email], where: { deleted_at: null })
   @@unique([google_sub], where: { deleted_at: null })
+}
+
+/// Formación académica del perfil (tipo CvLAC). anio_fin null = en curso.
+model usuario_formacion {
+  id_formacion Int       @id @default(autoincrement())
+  id_usuario   Int
+  titulo       String    @db.VarChar(255)
+  institucion  String    @db.VarChar(255)
+  nivel        String    @db.VarChar(50)
+  anio_inicio  Int?      @db.SmallInt
+  anio_fin     Int?      @db.SmallInt
+  created_at   DateTime  @default(now()) @db.Timestamp(6)
+  updated_at   DateTime  @updatedAt @db.Timestamp(6)
+  created_by   Int?
+  deleted_at   DateTime? @db.Timestamp(6)
+
+  usuario usuarios  @relation("usuario_formacion_usuario", fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
+  creador usuarios? @relation("usuario_formacion_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@index([id_usuario])
 }
 
 model perfiles_coordinador {
