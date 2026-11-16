@@ -95,6 +95,12 @@
             <span class="sd-tabs__count">{{ evidencias().length }}</span>
           </button>
         }
+        @if (profesoresEquipo().length || estudiantesEquipo().length) {
+          <button type="button" (click)="irA('sd-equipo')">
+            {{ 'home.semilleros.team' | translate }}
+            <span class="sd-tabs__count">{{ profesoresEquipo().length + estudiantesEquipo().length }}</span>
+          </button>
+        }
         <button type="button" (click)="irA('sd-acerca')">{{ 'home.semilleros.about' | translate }}</button>
       </div>
     </nav>
@@ -186,6 +192,58 @@
         </section>
       }
 
+      <!-- Equipo -->
+      @if (profesoresEquipo().length || estudiantesEquipo().length) {
+        <section class="sd-section" id="sd-equipo" aria-labelledby="sd-equipo-title">
+          <div class="sd-section__head">
+            <div>
+              <h2 id="sd-equipo-title" class="sd__h2">{{ 'home.semilleros.team' | translate }}</h2>
+              <p class="sd-section__hint">{{ 'home.semilleros.teamHint' | translate }}</p>
+            </div>
+          </div>
+
+          @for (grupo of [
+            { clave: 'profesor', titulo: 'home.semilleros.teamProfessors', icono: 'ti-school', personas: profesoresEquipo(), total: profesoresEquipo().length },
+            { clave: 'estudiante', titulo: 'home.semilleros.teamStudents', icono: 'ti-users', personas: estudiantesVisibles(), total: estudiantesEquipo().length }
+          ]; track grupo.clave) {
+            @if (grupo.total) {
+              <div class="sd-team">
+                <h3 class="sd-team__title">
+                  <i class="ti {{ grupo.icono }}" aria-hidden="true"></i>{{ grupo.titulo | translate }}
+                  <span class="sd-team__count">{{ grupo.total }}</span>
+                </h3>
+                <ul class="sd-team__grid">
+                  @for (p of grupo.personas; track p.id_usuario) {
+                    <li>
+                      <a class="sd-person" [routerLink]="['/personas', p.id_usuario]">
+                        <span class="sd-person__foto" [class.sd-person__foto--destacada]="p.rol !== 'integrante' && p.rol !== 'acompanante'">
+                          <app-avatar [url]="p.url_foto" [iniciales]="iniciales(p)" />
+                        </span>
+                        <span class="sd-person__texto">
+                          <strong>{{ p.nombres }} {{ p.apellidos }}</strong>
+                          @if (p.titular) {
+                            <small>{{ p.titular }}</small>
+                          }
+                          <span class="sd-person__rol sd-person__rol--{{ p.rol }}">
+                            {{ 'semilleros.roles.' + grupo.clave + '.' + p.rol | translate }}
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                  }
+                </ul>
+                @if (grupo.clave === 'estudiante' && estudiantesEquipo().length > estudiantesVisibles().length) {
+                  <button type="button" class="edu-btn edu-btn--ghost sd-team__mas" (click)="verTodoEquipo.set(true)">
+                    {{ 'home.semilleros.teamAll' | translate: { count: estudiantesEquipo().length } }}
+                    <i class="ti ti-chevron-down" aria-hidden="true"></i>
+                  </button>
+                }
+              </div>
+            }
+          }
+        </section>
+      }
+
       <!-- Acerca -->
       <section class="sd-section sd-about" id="sd-acerca" aria-labelledby="sd-acerca-title">
         <div class="sd-about__text">
@@ -193,23 +251,6 @@
           <p class="sd__text">{{ s.descripcion }}</p>
         </div>
         <aside class="sd-about__side">
-          <div class="sd-card">
-            <span class="sd-card__label">{{ 'home.semilleros.leader' | translate }}</span>
-            <span class="sd-card__person">
-              <span class="sd-avatar" aria-hidden="true">{{ inicialesLider(s) }}</span>
-              <strong>{{ nombreLider(s) }}</strong>
-            </span>
-          </div>
-          @if (autores().length) {
-            <div class="sd-card">
-              <span class="sd-card__label">{{ 'home.semilleros.authors' | translate: { count: autores().length } }}</span>
-              <ul class="sd-card__list">
-                @for (nombre of autores(); track nombre) {
-                  <li>{{ nombre }}</li>
-                }
-              </ul>
-            </div>
-          }
           <a class="sd-card sd-card--link" [routerLink]="['/escuelas', s.escuela.id_escuela]">
             <span class="sd-card__label">{{ 'home.semilleros.school' | translate }}</span>
             <span class="sd-card__person">

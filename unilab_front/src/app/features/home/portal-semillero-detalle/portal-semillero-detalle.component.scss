@@ -564,24 +564,148 @@
       transform: translateX(3px);
     }
   }
+}
 
-  &__list {
+// Equipo del semillero
+.sd-team {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-12;
+
+  &__title {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    align-items: center;
+    gap: t.$space-8;
+    margin: 0;
+    font-size: t.$font-size-lg;
+    font-weight: t.$font-weight-extra-bold;
+    color: t.$ink;
+
+    i {
+      color: var(--school-color);
+      font-size: 20px;
+    }
+  }
+
+  &__count {
+    padding: 1px 9px;
+    border-radius: t.$radius-full;
+    background: t.$neutral-soft;
+    font-size: t.$font-size-xs;
+    color: t.$text-secondary;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: t.$space-12;
     margin: 0;
     padding: 0;
     list-style: none;
+  }
 
-    li {
-      padding: 3px 10px;
-      border: 1px solid t.$border-subtle;
-      border-radius: t.$radius-full;
-      background: t.$white;
-      font-size: t.$font-size-xs;
-      font-weight: t.$font-weight-semibold;
-      color: t.$ink;
+  &__mas {
+    align-self: center;
+  }
+}
+
+.sd-person {
+  display: flex;
+  align-items: center;
+  gap: t.$space-12;
+  height: 100%;
+  padding: t.$space-12 t.$space-16;
+  border: 1px solid t.$border-subtle;
+  border-radius: t.$radius-lg;
+  background: t.$white;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  &:hover {
+    border-color: var(--school-color);
+    box-shadow: t.$shadow-card;
+    transform: translateY(-2px);
+  }
+
+  &__foto {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border: 2px solid t.$border-subtle;
+    border-radius: t.$radius-full;
+    background: var(--school-color, t.$blue);
+    color: t.$white;
+    font-size: t.$font-size-lg;
+    font-weight: t.$font-weight-extra-bold;
+
+    &--destacada {
+      border-color: t.$accent;
+      box-shadow: 0 0 0 2px rgba(227, 201, 36, 0.25);
     }
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    strong {
+      overflow: hidden;
+      color: t.$ink;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      display: -webkit-box;
+      overflow: hidden;
+      font-size: t.$font-size-xs;
+      color: t.$text-secondary;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+  }
+
+  &__rol {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 2px 9px;
+    border: 1px solid t.$border-subtle;
+    border-radius: t.$radius-full;
+    background: t.$neutral-soft;
+    font-size: t.$font-size-2xs;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: t.$text-secondary;
+
+    &--lider {
+      border-color: transparent;
+      background: t.$accent;
+      color: t.$accent-ink-strong;
+    }
+
+    &--coordinador {
+      border-color: t.$blue-border;
+      background: t.$blue-tint-strong;
+      color: t.$blue;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-person {
+    transition: none;
   }
 }
 

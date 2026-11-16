@@ -880,9 +880,13 @@
       "openImage": "Enlarge image {{n}}",
       "showAll": "See all {{count}} photos",
       "showLess": "See fewer photos",
-      "authors": "Project authors ({{count}})",
       "school": "School",
-      "schoolEmpty": "This school has no published research groups yet."
+      "schoolEmpty": "This school has no published research groups yet.",
+      "team": "Research group team",
+      "teamHint": "Professors and students who are part of this research group.",
+      "teamProfessors": "Professors",
+      "teamStudents": "Students",
+      "teamAll": "See the whole team ({{count}})"
     },
     "loadSemilleroError": "Could not load the research group.",
     "schoolPage": {
@@ -1270,6 +1274,20 @@
       "volverASolicitar": "Ask again",
       "exitoSolicitud": "Request sent. The lead professor will review it.",
       "errorSolicitud": "The request couldn’t be sent"
+    },
+    "roles": {
+      "cambiar": "Change role",
+      "exito": "Role updated.",
+      "profesor": {
+        "lider": "Leader",
+        "coordinador": "Coordinator",
+        "acompanante": "Supporting professor"
+      },
+      "estudiante": {
+        "integrante": "Student",
+        "lider": "Student leader",
+        "coordinador": "Student coordinator"
+      }
     }
   },
   "reportes": {
@@ -1398,8 +1416,11 @@
     "errorCargar": "Your profile could not be refreshed. Showing the last saved data.",
     "rolSemillero": {
       "lider": "Leader",
-      "profesor": "Professor",
-      "miembro": "Member"
+      "coordinador": "Coordinator",
+      "acompanante": "Supporting professor",
+      "lider_estudiantil": "Student leader",
+      "coordinador_estudiantil": "Student coordinator",
+      "estudiante": "Student"
     },
     "redes": {
       "titulo": "Contact links",
@@ -1568,12 +1589,13 @@
     "subir": "Upload profile photo",
     "cambiar": "Change profile photo",
     "quitar": "Remove photo",
-    "hint": "Tap the photo to choose an image. JPG, PNG or WebP, up to 5 MB.",
+    "hint": "Tap the photo to choose an image. It is optimized automatically so it stays light.",
     "errores": {
       "tipo": "Only JPG, PNG or WebP images are allowed.",
-      "tamano": "The photo must be 5 MB or smaller.",
+      "tamano": "The image is too large. Try one under 15 MB.",
       "subir": "The photo could not be uploaded. Please try again.",
-      "quitar": "The photo could not be removed."
+      "quitar": "The photo could not be removed.",
+      "procesar": "The image could not be read. Try another one."
     }
   },
   "asistentePerfil": {

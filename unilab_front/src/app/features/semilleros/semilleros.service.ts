@@ -5,9 +5,12 @@ import type {
   ActualizarSemilleroDto,
   CrearSemilleroDto,
   EstadoMembresia,
+  RolEstudianteSemillero,
+  RolProfesorSemillero,
   Semillero,
   SemilleroEvidencia,
   SemilleroMiembro,
+  SemilleroProfesor,
 } from '../../core/models/semillero.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getShellPrefix } from '../../core/config/role-redirect';
@@ -53,6 +56,16 @@ export class SemillerosService {
 
   quitarProfesor(id: number, idProfesor: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}/profesores/${idProfesor}`);
+  }
+
+  /** Administrador o profesor líder: coordinador o acompañante. */
+  cambiarRolProfesor(id: number, idProfesor: number, rol: RolProfesorSemillero): Observable<SemilleroProfesor> {
+    return this.http.patch<SemilleroProfesor>(`${this.apiUrl}/${id}/profesores/${idProfesor}/rol`, { rol });
+  }
+
+  /** Administrador o profesor líder; solo estudiantes aprobados. */
+  cambiarRolMiembro(id: number, idEstudiante: number, rol: RolEstudianteSemillero): Observable<SemilleroMiembro> {
+    return this.http.patch<SemilleroMiembro>(`${this.apiUrl}/${id}/miembros/${idEstudiante}/rol`, { rol });
   }
 
   solicitarIngreso(id: number): Observable<SemilleroMiembro> {

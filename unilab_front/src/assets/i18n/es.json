@@ -880,9 +880,13 @@
       "openImage": "Ampliar imagen {{n}}",
       "showAll": "Ver las {{count}} fotos",
       "showLess": "Ver menos fotos",
-      "authors": "Autores en proyectos ({{count}})",
       "school": "Escuela",
-      "schoolEmpty": "Esta escuela aún no tiene semilleros publicados."
+      "schoolEmpty": "Esta escuela aún no tiene semilleros publicados.",
+      "team": "Equipo del semillero",
+      "teamHint": "Profesores y estudiantes que hacen parte del semillero.",
+      "teamProfessors": "Profesores",
+      "teamStudents": "Estudiantes",
+      "teamAll": "Ver todo el equipo ({{count}})"
     },
     "loadSemilleroError": "No se pudo cargar el semillero.",
     "schoolPage": {
@@ -1270,6 +1274,20 @@
       "volverASolicitar": "Volver a solicitar",
       "exitoSolicitud": "Solicitud enviada. El profesor líder la revisará.",
       "errorSolicitud": "No se pudo enviar la solicitud"
+    },
+    "roles": {
+      "cambiar": "Cambiar rol",
+      "exito": "Rol actualizado.",
+      "profesor": {
+        "lider": "Líder",
+        "coordinador": "Coordinador",
+        "acompanante": "Profesor acompañante"
+      },
+      "estudiante": {
+        "integrante": "Estudiante",
+        "lider": "Líder estudiantil",
+        "coordinador": "Coordinador estudiantil"
+      }
     }
   },
   "reportes": {
@@ -1398,8 +1416,11 @@
     "errorCargar": "No se pudo actualizar tu perfil. Se muestran los últimos datos guardados.",
     "rolSemillero": {
       "lider": "Líder",
-      "profesor": "Profesor",
-      "miembro": "Miembro"
+      "coordinador": "Coordinador",
+      "acompanante": "Profesor acompañante",
+      "lider_estudiantil": "Líder estudiantil",
+      "coordinador_estudiantil": "Coordinador estudiantil",
+      "estudiante": "Estudiante"
     },
     "redes": {
       "titulo": "Redes de contacto",
@@ -1568,12 +1589,13 @@
     "subir": "Subir foto de perfil",
     "cambiar": "Cambiar foto de perfil",
     "quitar": "Quitar foto",
-    "hint": "Toca la foto para elegir una imagen. JPG, PNG o WebP, hasta 5 MB.",
+    "hint": "Toca la foto para elegir una imagen. Se optimiza automáticamente para que pese poco.",
     "errores": {
       "tipo": "Solo se permiten imágenes JPG, PNG o WebP.",
-      "tamano": "La foto debe pesar máximo 5 MB.",
+      "tamano": "La imagen es demasiado grande. Prueba con una de menos de 15 MB.",
       "subir": "No se pudo subir la foto. Inténtalo de nuevo.",
-      "quitar": "No se pudo quitar la foto."
+      "quitar": "No se pudo quitar la foto.",
+      "procesar": "No se pudo leer la imagen. Prueba con otra."
     }
   },
   "asistentePerfil": {

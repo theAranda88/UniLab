@@ -65,6 +65,20 @@ export interface SemilleroPublico {
   total_proyectos_publicados?: number;
   evidencias?: SemilleroEvidenciaPublica[];
   proyectos?: ProyectoPublico[];
+  /** Participantes del semillero (detalle público), ordenados por rol. */
+  equipo?: {
+    profesores: IntegranteSemillero<'lider' | 'coordinador' | 'acompanante'>[];
+    estudiantes: IntegranteSemillero<'integrante' | 'lider' | 'coordinador'>[];
+  };
+}
+
+export interface IntegranteSemillero<R extends string = string> {
+  id_usuario: number;
+  nombres: string;
+  apellidos: string;
+  titular: string | null;
+  url_foto: string | null;
+  rol: R;
 }
 
 export interface SemillerosPublicosPaginados {

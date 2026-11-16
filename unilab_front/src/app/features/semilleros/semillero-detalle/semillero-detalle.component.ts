@@ -6,10 +6,15 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { SemillerosService } from '../semilleros.service';
 import { UsuariosService } from '../../usuarios/usuarios.service';
-import type {
-  EstadoMembresia,
-  Semillero,
-  SemilleroMiembro,
+import {
+  ROLES_ESTUDIANTE,
+  ROLES_PROFESOR_EDITABLES,
+  type EstadoMembresia,
+  type RolEstudianteSemillero,
+  type RolProfesorSemillero,
+  type Semillero,
+  type SemilleroMiembro,
+  type SemilleroProfesor,
 } from '../../../core/models/semillero.model';
 import type { UsuarioAdmin } from '../../../core/models/usuario.model';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -18,12 +23,14 @@ import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { SemilleroGaleriaComponent } from '../semillero-galeria/semillero-galeria.component';
+import { AvatarComponent } from '../../../shared/ui/avatar/avatar.component';
 
 type FiltroMiembros = EstadoMembresia | 'todos';
 
 /**
  * RF-015 · Detalle de semillero.
  * Administrador: asigna/retira profesores. Profesor líder: resuelve solicitudes y autoriza publicación.
+ * Ambos asignan los roles dentro del semillero (coordinador/acompañante y roles estudiantiles).
  */
 @Component({
   selector: 'app-semillero-detalle',
@@ -36,6 +43,7 @@ type FiltroMiembros = EstadoMembresia | 'todos';
     EmptyStateComponent,
     SkeletonComponent,
     SemilleroGaleriaComponent,
+    AvatarComponent,
   ],
   templateUrl: './semillero-detalle.component.html',
   styleUrl: './semillero-detalle.component.scss',
@@ -64,6 +72,9 @@ export class SemilleroDetalleComponent implements OnInit {
   private idSemillero = 0;
 
   readonly esLider = computed(() => this.semillero()?.id_profesor_lider === this.idUsuario);
+  readonly puedeGestionarRoles = computed(() => this.esAdmin || this.esLider());
+  readonly rolesProfesor = ROLES_PROFESOR_EDITABLES;
+  readonly rolesEstudiante = ROLES_ESTUDIANTE;
 
   readonly conteo = computed(() => {
     const miembros = this.semillero()?.miembros ?? [];
@@ -145,6 +156,24 @@ export class SemilleroDetalleComponent implements OnInit {
       `prof-${idProfesor}`,
       this.semillerosService.quitarProfesor(this.idSemillero, idProfesor),
       'semilleros.exitoQuitarProfesor',
+    );
+  }
+
+  cambiarRolProfesor(p: SemilleroProfesor, rol: RolProfesorSemillero): void {
+    if (rol === p.rol) return;
+    this.ejecutar(
+      `prof-${p.id_profesor}`,
+      this.semillerosService.cambiarRolProfesor(this.idSemillero, p.id_profesor, rol),
+      'semilleros.roles.exito',
+    );
+  }
+
+  cambiarRolMiembro(m: SemilleroMiembro, rol: RolEstudianteSemillero): void {
+    if (rol === m.rol) return;
+    this.ejecutar(
+      `m-${m.id_estudiante}`,
+      this.semillerosService.cambiarRolMiembro(this.idSemillero, m.id_estudiante, rol),
+      'semilleros.roles.exito',
     );
   }
 

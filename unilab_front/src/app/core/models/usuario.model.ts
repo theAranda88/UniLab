@@ -185,7 +185,14 @@ export interface EscuelaResumen {
   nombre_escuela: string;
 }
 
-export type RolSemillero = 'lider' | 'profesor' | 'miembro';
+/** Rol visible en un semillero: los tres primeros son de profesores, los demás de estudiantes. */
+export type RolSemillero =
+  | 'lider'
+  | 'coordinador'
+  | 'acompanante'
+  | 'lider_estudiantil'
+  | 'coordinador_estudiantil'
+  | 'estudiante';
 
 export interface SemilleroUsuario {
   id_semillero: number;

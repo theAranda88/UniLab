@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
-import type { SemilleroPublico, ProyectoPublico } from '../../../core/models/portal.model';
+import type { IntegranteSemillero, SemilleroPublico, ProyectoPublico } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { normalizarUrlUploadPublica } from '../../../core/models/portal.model';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -12,13 +12,17 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { ImageLightboxComponent } from '../../../shared/ui/image-lightbox/image-lightbox.component';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
+import { AvatarComponent } from '../../../shared/ui/avatar/avatar.component';
 
 /** Miniaturas visibles antes de «ver todas»: 1 grande + 4 pequeñas llenan la cuadrícula. */
 const MINIATURAS = 5;
+/** Estudiantes visibles antes de «ver todo el equipo». */
+const ESTUDIANTES_VISIBLES = 8;
 
 /**
  * HU-3.3 · Portal — detalle público de semillero.
- * Portada destacada, indicadores, proyectos (con filtro por tipo), galería con visor y «Acerca».
+ * Portada destacada, indicadores, proyectos (con filtro por tipo), galería con visor, equipo
+ * (profesores y estudiantes del semillero con su rol) y «Acerca».
  */
 @Component({
   selector: 'app-portal-semillero-detalle',
@@ -30,6 +34,7 @@ const MINIATURAS = 5;
     SkeletonComponent,
     ImageLightboxComponent,
     ProyectoCardComponent,
+    AvatarComponent,
   ],
   templateUrl: './portal-semillero-detalle.component.html',
   styleUrl: './portal-semillero-detalle.component.scss',
@@ -46,6 +51,7 @@ export class PortalSemilleroDetalleComponent {
   readonly tipoFiltro = signal<string | null>(null);
   readonly visor = signal<number | null>(null);
   readonly verTodas = signal(false);
+  readonly verTodoEquipo = signal(false);
 
   readonly estilo = computed(() => estiloDeEscuela(this.semillero()?.escuela));
 
@@ -81,19 +87,12 @@ export class PortalSemilleroDetalleComponent {
     return tipo ? this.proyectos().filter((p) => p.tipo_proyecto === tipo) : this.proyectos();
   });
 
-  /** Integrantes de los proyectos publicados del semillero (autores únicos). */
-  readonly autores = computed(() => {
-    const nombres = new Set<string>();
-    for (const p of this.proyectos()) {
-      for (const a of p.autores ?? []) {
-        nombres.add(`${a.estudiante.nombres} ${a.estudiante.apellidos}`.trim());
-      }
-      if (p.estudiante_creador) {
-        nombres.add(`${p.estudiante_creador.nombres} ${p.estudiante_creador.apellidos}`.trim());
-      }
-    }
-    return [...nombres].filter(Boolean).sort((a, b) => a.localeCompare(b));
-  });
+  /** Participantes del semillero (no los autores de sus proyectos), ya ordenados por rol. */
+  readonly profesoresEquipo = computed(() => this.semillero()?.equipo?.profesores ?? []);
+  readonly estudiantesEquipo = computed(() => this.semillero()?.equipo?.estudiantes ?? []);
+  readonly estudiantesVisibles = computed(() =>
+    this.verTodoEquipo() ? this.estudiantesEquipo() : this.estudiantesEquipo().slice(0, ESTUDIANTES_VISIBLES),
+  );
 
   /** Destino del botón «Quiero participar» según la sesión. */
   readonly participar = computed<{ ruta: string; query?: Record<string, string> } | null>(() => {
@@ -130,6 +129,10 @@ export class PortalSemilleroDetalleComponent {
 
   nombreLider(s: SemilleroPublico): string {
     return `${s.lider.nombres} ${s.lider.apellidos}`.trim();
+  }
+
+  iniciales(p: IntegranteSemillero): string {
+    return `${p.nombres?.charAt(0) ?? ''}${p.apellidos?.charAt(0) ?? ''}`.toUpperCase() || '?';
   }
 
   inicialesLider(s: SemilleroPublico): string {

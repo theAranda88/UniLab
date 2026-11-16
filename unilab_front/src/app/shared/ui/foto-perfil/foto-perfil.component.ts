@@ -5,11 +5,37 @@ import { ToastService } from '../toast/toast.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 
 const TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_BYTES = 5 * 1024 * 1024;
+/** Tope del archivo original; lo que se sube es la versión reducida (suele quedar en 50-150 KB). */
+const MAX_BYTES_ORIGINAL = 15 * 1024 * 1024;
+/** Lado mayor de la foto subida: basta para el avatar más grande del sitio. */
+const LADO_MAXIMO = 512;
+const CALIDAD_JPEG = 0.82;
+
+/** Reduce la imagen a LADO_MAXIMO px y la convierte a JPEG para que pese poco. */
+async function optimizarFoto(archivo: File): Promise<File> {
+  const bitmap = await createImageBitmap(archivo);
+  const escala = Math.min(1, LADO_MAXIMO / Math.max(bitmap.width, bitmap.height));
+  const ancho = Math.round(bitmap.width * escala);
+  const alto = Math.round(bitmap.height * escala);
+  const canvas = document.createElement('canvas');
+  canvas.width = ancho;
+  canvas.height = alto;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('canvas');
+  // Fondo blanco: los PNG con transparencia no quedan negros al pasar a JPEG
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, ancho, alto);
+  ctx.drawImage(bitmap, 0, 0, ancho, alto);
+  bitmap.close();
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', CALIDAD_JPEG));
+  if (!blob) throw new Error('toBlob');
+  return new File([blob], 'foto.jpg', { type: 'image/jpeg' });
+}
 
 /**
  * Foto de perfil del usuario en sesión: la muestra y permite subirla, cambiarla o quitarla.
- * Se guarda al elegir el archivo (no depende del botón «Guardar» del formulario que la rodea).
+ * Se guarda al elegir el archivo (no depende del botón «Guardar» del formulario que la rodea) y
+ * antes se reduce en el navegador para que pese poco.
  */
 @Component({
   selector: 'app-foto-perfil',
@@ -37,25 +63,34 @@ export class FotoPerfilComponent {
     return `${u?.nombres?.charAt(0) ?? ''}${u?.apellidos?.charAt(0) ?? ''}`.toUpperCase() || '?';
   });
 
-  elegir(event: Event): void {
+  async elegir(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    const archivo = input.files?.[0];
+    const original = input.files?.[0];
     input.value = '';
-    if (!archivo) return;
+    if (!original) return;
 
-    if (!TIPOS_PERMITIDOS.includes(archivo.type)) {
+    if (!TIPOS_PERMITIDOS.includes(original.type)) {
       this.error.set('fotoPerfil.errores.tipo');
       return;
     }
-    if (archivo.size > MAX_BYTES) {
+    if (original.size > MAX_BYTES_ORIGINAL) {
       this.error.set('fotoPerfil.errores.tamano');
       return;
     }
 
     this.error.set(null);
+    this.subiendo.set(true);
+    let archivo: File;
+    try {
+      archivo = await optimizarFoto(original);
+    } catch {
+      this.subiendo.set(false);
+      this.error.set('fotoPerfil.errores.procesar');
+      return;
+    }
+
     const previa = URL.createObjectURL(archivo);
     this.vistaPrevia.set(previa);
-    this.subiendo.set(true);
     this.auth.subirFoto(archivo).subscribe({
       next: () => this.terminar(previa),
       error: () => {
