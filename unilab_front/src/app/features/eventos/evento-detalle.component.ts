@@ -81,6 +81,10 @@ export class EventoDetalleComponent implements OnInit {
   puedeEliminar = computed(() => this.eventoService.puedeEliminar());
   puedeInscribirse = computed(() => {
     if (this.yaInscrito()) return false;
+    // El portal también muestra eventos planeados y finalizados; la inscripción pública exige uno activo
+    const estado = this.evento()?.estado;
+    if (estado === 'finalizado') return false;
+    if (!this.auth.isAuthenticated() && estado !== 'activo') return false;
     if (!this.auth.isAuthenticated()) return true;
     return this.eventoService.puedeInscribirse();
   });

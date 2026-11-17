@@ -14,6 +14,7 @@ export interface Escuela {
   icono?: string | null;
   imagenes?: EscuelaImagenPublica[];
   total_proyectos_publicados?: number;
+  total_semilleros?: number;
 }
 
 export interface Curso {
@@ -25,6 +26,8 @@ export interface Curso {
 }
 
 export interface UsuarioResumen {
+  /** Presente en las respuestas del backend; enlaza al perfil público. */
+  id_usuario?: number;
   nombres: string;
   apellidos: string;
 }
@@ -58,8 +61,24 @@ export interface SemilleroPublico {
   };
   lider: UsuarioResumen;
   total_miembros_aprobados: number;
+  /** Proyectos publicados asociados (listado público). */
+  total_proyectos_publicados?: number;
   evidencias?: SemilleroEvidenciaPublica[];
   proyectos?: ProyectoPublico[];
+  /** Participantes del semillero (detalle público), ordenados por rol. */
+  equipo?: {
+    profesores: IntegranteSemillero<'lider' | 'coordinador' | 'acompanante'>[];
+    estudiantes: IntegranteSemillero<'integrante' | 'lider' | 'coordinador'>[];
+  };
+}
+
+export interface IntegranteSemillero<R extends string = string> {
+  id_usuario: number;
+  nombres: string;
+  apellidos: string;
+  titular: string | null;
+  url_foto: string | null;
+  rol: R;
 }
 
 export interface SemillerosPublicosPaginados {
@@ -73,6 +92,7 @@ export interface SemillerosPublicosPaginados {
 }
 
 export interface ProyectoAutor {
+  id_estudiante?: number;
   rol_autor: string | null;
   estudiante: UsuarioResumen;
 }
@@ -107,6 +127,8 @@ export interface ProyectoPublico {
   /** Filas del detalle público, con el nombre del autor. */
   comentarios?: ComentarioProyecto[];
   calificaciones?: CalificacionProyecto[];
+  /** Promedio público (null sin votos) y número de calificaciones. */
+  calificacion?: { promedio: number | null; total: number };
 }
 
 export interface ComentarioProyecto {

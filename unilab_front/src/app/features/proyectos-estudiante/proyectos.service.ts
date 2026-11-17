@@ -171,6 +171,19 @@ export class ProyectosService {
     >(`${API}/semilleros`);
   }
 
+  /** Compañeros de escuela que se pueden agregar como coautores. */
+  listarCompaneros(busqueda = ''): Observable<{ id_usuario: number; nombres: string; apellidos: string }[]> {
+    const q = busqueda.trim() ? `?busqueda=${encodeURIComponent(busqueda.trim())}` : '';
+    return this.http.get<{ id_usuario: number; nombres: string; apellidos: string }[]>(
+      `${API}/proyectos/companeros${q}`,
+    );
+  }
+
+  /** Reemplaza los coautores (el creador se mantiene siempre como autor principal). */
+  actualizarAutores(idProyecto: number, idsEstudiantes: number[]): Observable<Proyecto> {
+    return this.http.put<Proyecto>(`${API}/proyectos/${idProyecto}/autores`, { ids_estudiantes: idsEstudiantes });
+  }
+
   listarCoordinadoresDisponibles(idCurso: number): Observable<ProfesorCoordinadorDisponible[]> {
     return this.http.get<ProfesorCoordinadorDisponible[]>(
       `${API}/cursos/${idCurso}/coordinadores-disponibles`,

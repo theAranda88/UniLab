@@ -41,8 +41,30 @@ export const semilleroController = {
       req.body.id_profesor,
       req.user!.id_usuario,
       req.body.es_lider,
+      false,
+      req.body.rol,
     );
     res.status(201).json(asignacion);
+  }),
+
+  cambiarRolProfesor: asyncHandler(async (req: Request, res: Response) => {
+    const asignacion = await semilleroService.cambiarRolProfesor(
+      Number(req.params.id),
+      Number(req.params.idProfesor),
+      req.body.rol,
+      req.user!,
+    );
+    res.status(200).json(asignacion);
+  }),
+
+  cambiarRolMiembro: asyncHandler(async (req: Request, res: Response) => {
+    const membresia = await semilleroService.cambiarRolMiembro(
+      Number(req.params.id),
+      Number(req.params.idEstudiante),
+      req.body.rol,
+      req.user!,
+    );
+    res.status(200).json(membresia);
   }),
 
   quitarProfesor: asyncHandler(async (req: Request, res: Response) => {

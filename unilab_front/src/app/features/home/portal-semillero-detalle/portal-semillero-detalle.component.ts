@@ -4,25 +4,37 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
-import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
-import type { SemilleroPublico, ProyectoPublico } from '../../../core/models/portal.model';
+import type { IntegranteSemillero, SemilleroPublico, ProyectoPublico } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { normalizarUrlUploadPublica } from '../../../core/models/portal.model';
+import { AuthService } from '../../../core/auth/auth.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { ImageLightboxComponent } from '../../../shared/ui/image-lightbox/image-lightbox.component';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
+import { AvatarComponent } from '../../../shared/ui/avatar/avatar.component';
 
-/** HU-3.3 · Portal — detalle público de semillero (portada y galería). */
+/** Miniaturas visibles antes de «ver todas»: 1 grande + 4 pequeñas llenan la cuadrícula. */
+const MINIATURAS = 5;
+/** Estudiantes visibles antes de «ver todo el equipo». */
+const ESTUDIANTES_VISIBLES = 8;
+
+/**
+ * HU-3.3 · Portal — detalle público de semillero.
+ * Portada destacada, indicadores, proyectos (con filtro por tipo), galería con visor, equipo
+ * (profesores y estudiantes del semillero con su rol) y «Acerca».
+ */
 @Component({
   selector: 'app-portal-semillero-detalle',
   standalone: true,
   imports: [
     RouterLink,
     TranslatePipe,
-    ProjectImageCarouselComponent,
     EmptyStateComponent,
     SkeletonComponent,
+    ImageLightboxComponent,
     ProyectoCardComponent,
+    AvatarComponent,
   ],
   templateUrl: './portal-semillero-detalle.component.html',
   styleUrl: './portal-semillero-detalle.component.scss',
@@ -31,25 +43,64 @@ export class PortalSemilleroDetalleComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private portal = inject(PublicPortalService);
+  private auth = inject(AuthService);
 
   readonly semillero = signal<SemilleroPublico | null>(null);
   readonly loading = signal(true);
   readonly loadError = signal(false);
+  readonly tipoFiltro = signal<string | null>(null);
+  readonly visor = signal<number | null>(null);
+  readonly verTodas = signal(false);
+  readonly verTodoEquipo = signal(false);
 
   readonly estilo = computed(() => estiloDeEscuela(this.semillero()?.escuela));
-  readonly imagenesGaleria = computed(() => {
-    const s = this.semillero();
-    if (!s) return [] as string[];
-    const urls = (s.evidencias ?? [])
+
+  /** Fotos de actividades (evidencias), en orden. */
+  readonly evidencias = computed(() =>
+    [...(this.semillero()?.evidencias ?? [])]
       .sort((a, b) => a.orden - b.orden)
-      .map((e) => normalizarUrlUploadPublica(e.url));
-    if (urls.length) return urls;
-    return s.url_foto_portada ? [normalizarUrlUploadPublica(s.url_foto_portada)] : [];
+      .map((e) => normalizarUrlUploadPublica(e.url)),
+  );
+
+  /** Portada; si no hay, la primera evidencia. */
+  readonly imagenHero = computed(() => {
+    const s = this.semillero();
+    return normalizarUrlUploadPublica(s?.url_foto_portada) || this.evidencias()[0] || '';
   });
 
-  readonly urlPortada = computed(() => normalizarUrlUploadPublica(this.semillero()?.url_foto_portada));
+  readonly miniaturas = computed(() =>
+    this.verTodas() ? this.evidencias() : this.evidencias().slice(0, MINIATURAS),
+  );
+  readonly ocultas = computed(() => Math.max(0, this.evidencias().length - MINIATURAS));
 
   readonly proyectos = computed((): ProyectoPublico[] => this.semillero()?.proyectos ?? []);
+
+  /** Tipos presentes en los proyectos, con su cantidad (para los filtros). */
+  readonly tipos = computed(() => {
+    const conteo = new Map<string, number>();
+    for (const p of this.proyectos()) conteo.set(p.tipo_proyecto, (conteo.get(p.tipo_proyecto) ?? 0) + 1);
+    return [...conteo.entries()].map(([tipo, total]) => ({ tipo, total }));
+  });
+
+  readonly proyectosFiltrados = computed(() => {
+    const tipo = this.tipoFiltro();
+    return tipo ? this.proyectos().filter((p) => p.tipo_proyecto === tipo) : this.proyectos();
+  });
+
+  /** Participantes del semillero (no los autores de sus proyectos), ya ordenados por rol. */
+  readonly profesoresEquipo = computed(() => this.semillero()?.equipo?.profesores ?? []);
+  readonly estudiantesEquipo = computed(() => this.semillero()?.equipo?.estudiantes ?? []);
+  readonly estudiantesVisibles = computed(() =>
+    this.verTodoEquipo() ? this.estudiantesEquipo() : this.estudiantesEquipo().slice(0, ESTUDIANTES_VISIBLES),
+  );
+
+  /** Destino del botón «Quiero participar» según la sesión. */
+  readonly participar = computed<{ ruta: string; query?: Record<string, string> } | null>(() => {
+    const rol = this.auth.user()?.id_rol;
+    if (!rol) return { ruta: '/login', query: { returnUrl: this.router.url } };
+    if (rol === 'Estudiante') return { ruta: '/semilleros' };
+    return null;
+  });
 
   constructor() {
     this.route.paramMap
@@ -58,6 +109,8 @@ export class PortalSemilleroDetalleComponent {
         tap(() => {
           this.loading.set(true);
           this.loadError.set(false);
+          this.tipoFiltro.set(null);
+          this.verTodas.set(false);
         }),
         switchMap((id) =>
           this.portal.obtenerSemillero(id).pipe(
@@ -78,12 +131,32 @@ export class PortalSemilleroDetalleComponent {
     return `${s.lider.nombres} ${s.lider.apellidos}`.trim();
   }
 
+  iniciales(p: IntegranteSemillero): string {
+    return `${p.nombres?.charAt(0) ?? ''}${p.apellidos?.charAt(0) ?? ''}`.toUpperCase() || '?';
+  }
+
+  inicialesLider(s: SemilleroPublico): string {
+    return `${s.lider.nombres?.charAt(0) ?? ''}${s.lider.apellidos?.charAt(0) ?? ''}`.toUpperCase();
+  }
+
+  elegirTipo(tipo: string | null): void {
+    this.tipoFiltro.set(this.tipoFiltro() === tipo ? null : tipo);
+  }
+
+  irA(seccion: string): void {
+    document.getElementById(seccion)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  abrirVisor(indice: number): void {
+    this.visor.set(indice);
+  }
+
   volverEscuela(): void {
     const id = this.semillero()?.escuela.id_escuela;
     if (id) {
       void this.router.navigate(['/escuelas', id]);
       return;
     }
-    void this.router.navigate(['/'], { fragment: 'semilleros' });
+    void this.router.navigate(['/semilleros/explorar']);
   }
 }

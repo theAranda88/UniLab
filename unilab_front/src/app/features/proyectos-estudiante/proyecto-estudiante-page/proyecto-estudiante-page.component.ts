@@ -18,6 +18,13 @@ const TIPOS: TipoProyecto[] = ['web', 'movil', 'podcast', 'otro'];
 const MAX_IMAGENES = 3;
 
 import { ToastService } from '../../../shared/ui/toast/toast.service';
+/** Compañero de escuela que se puede agregar como coautor. */
+interface Companero {
+  id_usuario: number;
+  nombres: string;
+  apellidos: string;
+}
+
 @Component({
   selector: 'app-proyecto-estudiante-page',
   standalone: true,
@@ -59,6 +66,18 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
   readonly imagenes = signal<{ id_imagen: number; url: string; orden: number }[]>([]);
   readonly imagenesPendientes = signal<File[]>([]);
   readonly previewsPendientes = signal<string[]>([]);
+
+  // ---- Integrantes (coautores): compañeros de la escuela del creador ----
+  readonly coautores = signal<Companero[]>([]);
+  readonly resultadosCompaneros = signal<Companero[]>([]);
+  readonly buscandoCompaneros = signal(false);
+  readonly textoBusqueda = signal('');
+  private coautoresCambiados = false;
+  private temporizadorBusqueda?: ReturnType<typeof setTimeout>;
+  readonly companerosDisponibles = computed(() => {
+    const elegidos = new Set(this.coautores().map((c) => c.id_usuario));
+    return this.resultadosCompaneros().filter((c) => !elegidos.has(c.id_usuario));
+  });
 
   readonly tipos = TIPOS;
   readonly maxImagenes = MAX_IMAGENES;
@@ -245,6 +264,7 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
         this.proyecto.set(data);
         this.patchForm(data);
         this.syncImagenes(data);
+        this.syncCoautores(data);
         this.cargando.set(false);
       },
       error: () => {
@@ -302,6 +322,72 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     this.router.navigate(['/mis-proyectos']);
   }
 
+  private syncCoautores(p: Proyecto): void {
+    this.coautores.set(
+      (p.autores ?? [])
+        .filter((a) => (a.estudiante.id_usuario ?? a.id_estudiante) !== p.id_estudiante_creador)
+        .map((a) => ({
+          id_usuario: (a.estudiante.id_usuario ?? a.id_estudiante)!,
+          nombres: a.estudiante.nombres,
+          apellidos: a.estudiante.apellidos,
+        })),
+    );
+    this.coautoresCambiados = false;
+  }
+
+  buscarCompaneros(texto: string): void {
+    this.textoBusqueda.set(texto);
+    clearTimeout(this.temporizadorBusqueda);
+    if (texto.trim().length < 2) {
+      this.resultadosCompaneros.set([]);
+      return;
+    }
+    this.temporizadorBusqueda = setTimeout(() => {
+      this.buscandoCompaneros.set(true);
+      this.proyectosService.listarCompaneros(texto).subscribe({
+        next: (lista) => {
+          this.resultadosCompaneros.set(lista);
+          this.buscandoCompaneros.set(false);
+        },
+        error: () => this.buscandoCompaneros.set(false),
+      });
+    }, 250);
+  }
+
+  agregarCoautor(c: Companero): void {
+    if (this.coautores().length >= 9) return;
+    this.coautores.update((lista) => [...lista, c]);
+    this.coautoresCambiados = true;
+  }
+
+  quitarCoautor(c: Companero): void {
+    this.coautores.update((lista) => lista.filter((x) => x.id_usuario !== c.id_usuario));
+    this.coautoresCambiados = true;
+  }
+
+  /** Guarda los coautores si cambiaron; un fallo no deshace el proyecto ya guardado. */
+  private guardarCoautores(idProyecto: number, alTerminar: () => void): void {
+    if (!this.coautoresCambiados) {
+      alTerminar();
+      return;
+    }
+    this.proyectosService
+      .actualizarAutores(
+        idProyecto,
+        this.coautores().map((c) => c.id_usuario),
+      )
+      .subscribe({
+        next: (p) => {
+          this.syncCoautores(p);
+          alTerminar();
+        },
+        error: () => {
+          this.toast.error('proyectosEstudiante.integrantes.error');
+          alTerminar();
+        },
+      });
+  }
+
   guardar(): void {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
@@ -338,7 +424,9 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
 
       this.proyectosService.crear(payload).subscribe({
         next: (creado) => {
-          this.subirYEnviarRevision(creado.id_proyecto, [...this.imagenesPendientes()]);
+          this.guardarCoautores(creado.id_proyecto, () =>
+            this.subirYEnviarRevision(creado.id_proyecto, [...this.imagenesPendientes()]),
+          );
         },
         error: (err: { message?: string }) => {
           this.enviando.set(false);
@@ -354,8 +442,10 @@ export class ProyectoEstudiantePageComponent implements OnInit, OnDestroy {
     this.proyectosService.actualizar(id, payload).subscribe({
       next: (actualizado) => {
         this.proyecto.set(actualizado);
-        this.enviando.set(false);
-        this.toast.success('proyectosEstudiante.exitoGuardar');
+        this.guardarCoautores(id, () => {
+          this.enviando.set(false);
+          this.toast.success('proyectosEstudiante.exitoGuardar');
+        });
       },
       error: (err: { message?: string }) => {
         this.enviando.set(false);

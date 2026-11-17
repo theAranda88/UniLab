@@ -3,13 +3,15 @@ import { RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth/auth.service';
 import { DialogHostComponent } from './shared/ui/dialog/dialog-host.component';
 import { ToastHostComponent } from './shared/ui/toast/toast-host.component';
+import { PerfilAsistenteComponent } from './shared/ui/perfil-asistente/perfil-asistente.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, DialogHostComponent, ToastHostComponent],
+  imports: [RouterOutlet, DialogHostComponent, ToastHostComponent, PerfilAsistenteComponent],
   template: `
     <router-outlet />
+    <app-perfil-asistente />
     <app-dialog-host />
     <app-toast-host />
   `,

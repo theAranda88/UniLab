@@ -8,6 +8,7 @@ import type {
   CambiarMiPasswordDto,
   CompletarPerfilDto,
   EscuelaResumen,
+  PerfilCv,
   PerfilRol,
   RedesContacto,
   SemilleroUsuario,
@@ -24,10 +25,16 @@ export interface User {
   nombres?: string;
   apellidos?: string;
   telefono?: string;
+  /** Foto de perfil; null si no ha subido una. */
+  url_foto?: string | null;
   escuela?: EscuelaResumen | null;
   semilleros?: SemilleroUsuario[];
   redes?: RedesContacto;
   perfil?: PerfilRol;
+  /** Perfil profesional tipo CvLAC. */
+  cv?: PerfilCv;
+  /** false hasta que el usuario completa u omite el aviso de perfil del primer ingreso. */
+  perfil_cv_revisado?: boolean;
 }
 
 export interface LoginRequest {
@@ -118,6 +125,22 @@ export class AuthService {
   /** Teléfono, redes de contacto y (solo Coordinador) profesión. */
   actualizarMiPerfil(data: ActualizarMiPerfilDto): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/me`, data).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /** Sube o reemplaza la foto de perfil (JPEG, PNG o WebP, máx. 5 MB). */
+  subirFoto(archivo: File): Observable<User> {
+    const datos = new FormData();
+    datos.append('foto', archivo);
+    return this.http.post<User>(`${this.apiUrl}/me/foto`, datos).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  eliminarFoto(): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/me/foto`).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /** «Ahora no» en el aviso de completar el perfil: no se vuelve a mostrar. */
+  omitirPerfilCv(): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/me/perfil-cv/omitir`, {}).pipe(tap((user) => this.updateUser(user)));
   }
 
   /** Cambio voluntario de contraseña desde «Mi perfil» (exige la actual). */

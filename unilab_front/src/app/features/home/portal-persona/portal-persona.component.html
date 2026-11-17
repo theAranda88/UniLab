@@ -1,0 +1,191 @@
+<main class="persona">
+  @if (cargando()) {
+    <div class="persona__container persona__loading">
+      <app-skeleton variant="cards" [rows]="2" />
+    </div>
+  } @else if (error() || !perfil()) {
+    <div class="persona__container persona__loading">
+      <app-empty-state icon="ti-user-off" [title]="'persona.noEncontrada' | translate" [message]="'persona.noEncontradaHint' | translate">
+        <a class="edu-btn edu-btn--secondary" routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
+      </app-empty-state>
+    </div>
+  } @else if (perfil(); as p) {
+    <!-- Cabecera -->
+    <header class="persona-hero">
+      <div class="persona__container persona-hero__inner">
+        <span class="persona-hero__avatar" aria-hidden="true"><app-avatar [url]="p.url_foto" [iniciales]="iniciales()" /></span>
+        <div class="persona-hero__text">
+          <span class="persona-hero__rol">{{ 'roles.' + p.rol | translate }}</span>
+          <h1 class="persona-hero__name">{{ nombre() }}</h1>
+          @if (p.titular) {
+            <p class="persona-hero__titular">{{ p.titular }}</p>
+          }
+          <ul class="persona-hero__meta">
+            @for (e of p.escuelas; track e.id_escuela) {
+              <li>
+                <a [routerLink]="['/escuelas', e.id_escuela]"><i class="ti ti-building-community" aria-hidden="true"></i>{{ e.nombre_escuela }}</a>
+              </li>
+            }
+            @for (d of datosRol(); track d.clave) {
+              <li><i class="ti ti-briefcase" aria-hidden="true"></i>{{ d.valor }}</li>
+            }
+            @if (p.telefono) {
+              <li>
+                <a [href]="'tel:' + p.telefono"><i class="ti ti-phone" aria-hidden="true"></i>{{ p.telefono }}</a>
+              </li>
+            }
+          </ul>
+          <app-redes-contacto class="persona-hero__redes" [redes]="p.redes" />
+        </div>
+        <dl class="persona-hero__stats">
+          <div>
+            <dt>{{ 'persona.proyectos' | translate }}</dt>
+            <dd>{{ p.proyectos.length }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'persona.semilleros' | translate }}</dt>
+            <dd>{{ p.semilleros.length }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'persona.eventos' | translate }}</dt>
+            <dd>{{ p.eventos.length }}</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="persona__container persona__layout">
+      <div class="persona__main">
+        <!-- Acerca de -->
+        <section class="persona-card" appReveal aria-labelledby="persona-acerca">
+          <h2 id="persona-acerca" class="persona-card__title">{{ 'persona.acerca' | translate }}</h2>
+          @if (p.biografia) {
+            <p class="persona-card__bio">{{ p.biografia }}</p>
+          }
+          @if (p.especialidades.length) {
+            <h3 class="persona-card__subtitle">{{ 'persona.especialidades' | translate }}</h3>
+            <ul class="persona-chips">
+              @for (e of p.especialidades; track e) {
+                <li class="persona-chips__item persona-chips__item--blue">{{ e }}</li>
+              }
+            </ul>
+          }
+          @if (p.fortalezas.length) {
+            <h3 class="persona-card__subtitle">{{ 'persona.fortalezas' | translate }}</h3>
+            <ul class="persona-chips">
+              @for (f of p.fortalezas; track f) {
+                <li class="persona-chips__item">{{ f }}</li>
+              }
+            </ul>
+          }
+          @if (sinContenidoPropio()) {
+            <p class="persona-card__empty">{{ 'persona.sinDescripcion' | translate }}</p>
+          }
+        </section>
+
+        <!-- Proyectos publicados -->
+        <section class="persona-section" aria-labelledby="persona-proyectos">
+          <div class="persona-section__head" appReveal>
+            <h2 id="persona-proyectos">{{ 'persona.proyectosTitulo' | translate }}</h2>
+            <p>{{ 'persona.proyectosHint' | translate }}</p>
+          </div>
+          @if (p.proyectos.length) {
+            <div class="persona-section__grid">
+              @for (proyecto of proyectosVisibles(); track proyecto.id_proyecto; let i = $index) {
+                <div class="persona-proyecto" [appReveal]="(i % 2) * 100">
+                  <span class="persona-proyecto__rol">{{ 'persona.participacion.' + proyecto.participacion | translate }}</span>
+                  <app-proyecto-card [proyecto]="proyecto" [mostrarEscuela]="true" [carrusel]="false" />
+                </div>
+              }
+            </div>
+            @if (p.proyectos.length > proyectosVisibles().length) {
+              <div class="persona-section__more">
+                <button type="button" class="edu-btn edu-btn--secondary" (click)="verTodosProyectos.set(true)">
+                  {{ 'persona.verTodos' | translate: { total: p.proyectos.length } }}
+                  <i class="ti ti-chevron-down" aria-hidden="true"></i>
+                </button>
+              </div>
+            }
+          } @else {
+            <p class="persona-card__empty">{{ 'persona.sinProyectos' | translate }}</p>
+          }
+        </section>
+
+        <!-- Eventos asistidos -->
+        <section class="persona-section" aria-labelledby="persona-eventos">
+          <div class="persona-section__head" appReveal>
+            <h2 id="persona-eventos">{{ 'persona.eventosTitulo' | translate }}</h2>
+            <p>{{ 'persona.eventosHint' | translate }}</p>
+          </div>
+          @if (p.eventos.length) {
+            <ul class="persona-eventos">
+              @for (ev of p.eventos; track ev.id_evento) {
+                <li class="persona-eventos__item" appReveal>
+                  <span class="persona-eventos__icon"><i class="ti ti-calendar-check" aria-hidden="true"></i></span>
+                  <span class="persona-eventos__text">
+                    <a [routerLink]="['/eventos', ev.id_evento]">{{ ev.nombre_evento }}</a>
+                    <small>{{ rangoEvento(ev.fecha_inicio, ev.fecha_fin) }} · {{ ev.lugar }}</small>
+                  </span>
+                  <span class="persona-eventos__badge">
+                    {{ 'persona.jornadas' | translate: { asistidas: ev.jornadas_asistidas, total: ev.total_jornadas } }}
+                  </span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="persona-card__empty">{{ 'persona.sinEventos' | translate }}</p>
+          }
+        </section>
+      </div>
+
+      <aside class="persona__aside">
+        <!-- Formación -->
+        <section class="persona-card" appReveal aria-labelledby="persona-formacion">
+          <h2 id="persona-formacion" class="persona-card__title">
+            <i class="ti ti-school" aria-hidden="true"></i>{{ 'persona.formacion' | translate }}
+          </h2>
+          @if (p.formacion.length) {
+            <ol class="persona-timeline">
+              @for (f of p.formacion; track f.id_formacion) {
+                <li>
+                  <span class="persona-timeline__nivel">{{ 'perfil.cv.niveles.' + f.nivel | translate }}</span>
+                  <strong>{{ f.titulo }}</strong>
+                  <span>{{ f.institucion }}</span>
+                  @if (periodo(f.anio_inicio, f.anio_fin); as rango) {
+                    <small>
+                      {{ rango }}
+                      @if (!f.anio_fin) {
+                        {{ 'perfil.cv.enCurso' | translate }}
+                      }
+                    </small>
+                  }
+                </li>
+              }
+            </ol>
+          } @else {
+            <p class="persona-card__empty">{{ 'persona.sinFormacion' | translate }}</p>
+          }
+        </section>
+
+        <!-- Semilleros -->
+        <section class="persona-card" appReveal aria-labelledby="persona-semilleros">
+          <h2 id="persona-semilleros" class="persona-card__title">
+            <i class="ti ti-flask" aria-hidden="true"></i>{{ 'persona.semilleros' | translate }}
+          </h2>
+          @if (p.semilleros.length) {
+            <ul class="persona-semilleros">
+              @for (s of p.semilleros; track s.id_semillero) {
+                <li>
+                  <a [routerLink]="['/semilleros', s.id_semillero]">{{ s.nombre_semillero }}</a>
+                  <span class="persona-semilleros__rol">{{ 'perfil.rolSemillero.' + s.rol | translate }}</span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="persona-card__empty">{{ 'persona.sinSemilleros' | translate }}</p>
+          }
+        </section>
+      </aside>
+    </div>
+  }
+</main>

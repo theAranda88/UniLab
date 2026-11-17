@@ -8,7 +8,7 @@ const m = vi.hoisted(() => ({
   },
   escuelaRepository: { findById: vi.fn() },
   semilleroEvidenciaService: { mapEvidencias: vi.fn((evs: unknown[]) => evs) },
-  proyectoRepository: { findMany: vi.fn().mockResolvedValue([]) },
+  proyectoRepository: { findMany: vi.fn().mockResolvedValue([]), calificacionesPorProyecto: vi.fn() },
   proyectoImagenService: { mapImagenes: vi.fn((imgs: unknown[]) => imgs) },
 }));
 
@@ -31,13 +31,14 @@ const SEMILLERO_LISTA = {
   url_foto_portada: null,
   escuela: { id_escuela: 2, nombre_escuela: 'Software' },
   profesor_lider: { nombres: 'Ana', apellidos: 'López' },
-  _count: { miembros: 5 },
+  _count: { miembros: 5, proyectos: 3 },
 };
 
 describe('publicoService · semilleros', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     m.proyectoRepository.findMany.mockResolvedValue([]);
+    m.proyectoRepository.calificacionesPorProyecto.mockResolvedValue({});
   });
 
   it('listarSemilleros valida que la escuela exista', async () => {
@@ -60,6 +61,39 @@ describe('publicoService · semilleros', () => {
     expect(result.data[0].lider).toEqual({ nombres: 'Ana', apellidos: 'López' });
   });
 
+  it('listarSemilleros incluye el total de proyectos publicados', async () => {
+    m.semilleroRepository.countPublicos.mockResolvedValue(1);
+    m.semilleroRepository.findManyPublicos.mockResolvedValue([SEMILLERO_LISTA]);
+
+    const result = await publicoService.listarSemilleros({ pagina: 1, limite: 12 });
+
+    expect(result.data[0].total_proyectos_publicados).toBe(3);
+  });
+
+  it('listarSemilleros aplica la búsqueda al conteo y al listado por igual', async () => {
+    m.semilleroRepository.countPublicos.mockResolvedValue(0);
+    m.semilleroRepository.findManyPublicos.mockResolvedValue([]);
+
+    await publicoService.listarSemilleros({ busqueda: 'robot', pagina: 2, limite: 6 });
+
+    expect(m.semilleroRepository.countPublicos).toHaveBeenCalledWith({ id_escuela: undefined, busqueda: 'robot' });
+    expect(m.semilleroRepository.findManyPublicos).toHaveBeenCalledWith({
+      id_escuela: undefined,
+      busqueda: 'robot',
+      skip: 6,
+      take: 6,
+    });
+  });
+
+  it('listarSemilleros ignora una búsqueda vacía', async () => {
+    m.semilleroRepository.countPublicos.mockResolvedValue(0);
+    m.semilleroRepository.findManyPublicos.mockResolvedValue([]);
+
+    await publicoService.listarSemilleros({ busqueda: '', pagina: 1, limite: 12 });
+
+    expect(m.semilleroRepository.countPublicos).toHaveBeenCalledWith({ id_escuela: undefined, busqueda: undefined });
+  });
+
   it('obtenerSemilleroPublico responde 404 si no existe', async () => {
     m.semilleroRepository.findPublicoById.mockResolvedValue(null);
 
@@ -70,6 +104,8 @@ describe('publicoService · semilleros', () => {
     m.semilleroRepository.findPublicoById.mockResolvedValue({
       ...SEMILLERO_LISTA,
       evidencias: [{ id_evidencia: 3, ruta_archivo: '/x', orden: 1, nombre_original: 'a.webp', mime_type: 'image/webp', id_semillero: 1 }],
+      profesores: [],
+      miembros: [],
     });
     m.semilleroEvidenciaService.mapEvidencias.mockReturnValue([
       { id_evidencia: 3, url: 'http://localhost/x', orden: 1, nombre_original: 'a.webp' },
@@ -80,5 +116,41 @@ describe('publicoService · semilleros', () => {
     expect(detalle.evidencias).toHaveLength(1);
     expect(detalle.evidencias[0].url).toContain('http');
     expect(detalle.proyectos).toEqual([]);
+  });
+
+  it('obtenerSemilleroPublico trae el equipo del semillero ordenado por rol, con su foto', async () => {
+    const persona = (id: number, nombres: string, foto_ruta: string | null = null) => ({
+      id_usuario: id,
+      nombres,
+      apellidos: 'X',
+      titular: null,
+      foto_ruta,
+    });
+    m.semilleroRepository.findPublicoById.mockResolvedValue({
+      ...SEMILLERO_LISTA,
+      evidencias: [],
+      profesores: [
+        { rol: 'acompanante', profesor: persona(3, 'Carla') },
+        { rol: 'lider', profesor: persona(1, 'Zoe', 'https://img/zoe.jpg') },
+        { rol: 'coordinador', profesor: persona(2, 'Ana') },
+      ],
+      miembros: [
+        { rol: 'integrante', estudiante: persona(7, 'Beto') },
+        { rol: 'integrante', estudiante: persona(8, 'Abel') },
+        { rol: 'lider', estudiante: persona(9, 'Zara') },
+      ],
+    });
+    m.semilleroEvidenciaService.mapEvidencias.mockReturnValue([]);
+
+    const { equipo } = await publicoService.obtenerSemilleroPublico(1);
+
+    expect(equipo.profesores.map((p) => [p.nombres, p.rol])).toEqual([
+      ['Zoe', 'lider'],
+      ['Ana', 'coordinador'],
+      ['Carla', 'acompanante'],
+    ]);
+    expect(equipo.profesores[0].url_foto).toBe('https://img/zoe.jpg');
+    expect(equipo.profesores[0]).not.toHaveProperty('foto_ruta');
+    expect(equipo.estudiantes.map((e) => e.nombres)).toEqual(['Zara', 'Abel', 'Beto']);
   });
 });

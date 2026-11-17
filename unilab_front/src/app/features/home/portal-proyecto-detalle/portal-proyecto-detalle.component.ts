@@ -9,6 +9,7 @@ import { PublicPortalService } from '../public-portal.service';
 import { ProyectoInteraccionService } from '../proyecto-interaccion.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
+import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import {
   urlsImagenesProyecto,
   type ComentarioProyecto,
@@ -51,6 +52,7 @@ interface HiloComentario {
     EmptyStateComponent,
     SkeletonComponent,
     RecursosExternosComponent,
+    ProyectoCardComponent,
   ],
   templateUrl: './portal-proyecto-detalle.component.html',
   styleUrl: './portal-proyecto-detalle.component.scss',
@@ -66,6 +68,14 @@ export class PortalProyectoDetalleComponent {
   private dialog = inject(DialogService);
 
   readonly proyecto = signal<ProyectoPublico | null>(null);
+  /** Otros proyectos del mismo semillero (o independientes de la misma escuela). */
+  readonly masProyectos = signal<ProyectoPublico[]>([]);
+  readonly rutaMasProyectos = computed<(string | number)[] | null>(() => {
+    const p = this.proyecto();
+    if (p?.semillero) return ['/semilleros', p.semillero.id_semillero];
+    const idEscuela = p?.curso?.escuela?.id_escuela;
+    return idEscuela ? ['/escuelas', idEscuela, 'independientes'] : null;
+  });
   readonly loading = signal(true);
   readonly loadError = signal(false);
 
@@ -88,6 +98,7 @@ export class PortalProyectoDetalleComponent {
     const coord = this.proyecto()?.coordinadores?.[0]?.profesor;
     return coord ? `${coord.nombres} ${coord.apellidos}` : null;
   });
+  readonly idDirector = computed(() => this.proyecto()?.coordinadores?.[0]?.profesor?.id_usuario ?? null);
 
   /** Integrantes con su rol; si no hay autores registrados, el estudiante creador. */
   readonly integrantes = computed(() => {
@@ -95,6 +106,7 @@ export class PortalProyectoDetalleComponent {
     if (!p) return [];
     if (p.autores?.length) {
       return p.autores.map((a) => ({
+        id: a.estudiante.id_usuario ?? a.id_estudiante ?? null,
         nombre: `${a.estudiante.nombres} ${a.estudiante.apellidos}`,
         rolKey: `home.authorRoles.${a.rol_autor ?? 'colaborador'}`,
       }));
@@ -102,6 +114,7 @@ export class PortalProyectoDetalleComponent {
     return p.estudiante_creador
       ? [
           {
+            id: p.estudiante_creador.id_usuario ?? null,
             nombre: `${p.estudiante_creador.nombres} ${p.estudiante_creador.apellidos}`,
             rolKey: 'home.authorRoles.principal',
           },
@@ -164,7 +177,21 @@ export class PortalProyectoDetalleComponent {
           return;
         }
         this.proyecto.set(data);
+        this.cargarMasProyectos(data);
       });
+  }
+
+  private cargarMasProyectos(p: ProyectoPublico): void {
+    this.masProyectos.set([]);
+    const idEscuela = p.curso?.escuela?.id_escuela;
+    const consulta = p.semillero
+      ? this.portal.listarProyectos({ idSemillero: p.semillero.id_semillero })
+      : idEscuela
+        ? this.portal.listarProyectos({ idEscuela, sinSemillero: true })
+        : null;
+    consulta?.pipe(catchError(() => of([] as ProyectoPublico[]))).subscribe((lista) => {
+      this.masProyectos.set(lista.filter((o) => o.id_proyecto !== p.id_proyecto).slice(0, 3));
+    });
   }
 
   /** Calificar y comentar exigen sesión (lo exige la API): va al login y vuelve a esta ficha. */

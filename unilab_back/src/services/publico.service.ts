@@ -7,7 +7,7 @@ import { escuelaImagenService } from './escuela-imagen.service';
 import { semilleroEvidenciaService } from './semillero-evidencia.service';
 import { eventoService } from './evento.service';
 import type { Prisma } from '@prisma/client';
-import { urlPublicaImagen } from '../utils/uploadPaths';
+import { urlFotoUsuario, urlPublicaImagen } from '../utils/uploadPaths';
 
 type ProyectoConImagenes = Awaited<ReturnType<typeof proyectoRepository.findMany>>[number];
 
@@ -20,6 +20,30 @@ function enriquecerProyectoPublico<T extends ProyectoConImagenes>(proyecto: T) {
     imagenes,
     url_imagen: imagenes[0]?.url ?? proyecto.url_imagen ?? null,
   };
+}
+
+/** Añade a cada proyecto su calificación pública: promedio redondeado a un decimal y número de votos. */
+async function conCalificacion<T extends { id_proyecto: number }>(proyectos: T[]) {
+  const calificaciones = await proyectoRepository.calificacionesPorProyecto(proyectos.map((p) => p.id_proyecto));
+  return proyectos.map((p) => {
+    const c = calificaciones[p.id_proyecto];
+    return {
+      ...p,
+      calificacion: c ? { promedio: Math.round(c.promedio * 10) / 10, total: c.total } : { promedio: null, total: 0 },
+    };
+  });
+}
+
+/** Mejor valorados primero; a igual promedio, más votos y luego más vistas. Los no calificados van al final. */
+function compararValoracion(
+  a: { calificacion: { promedio: number | null; total: number }; contador_vistas: number },
+  b: { calificacion: { promedio: number | null; total: number }; contador_vistas: number },
+) {
+  return (
+    (b.calificacion.promedio ?? -1) - (a.calificacion.promedio ?? -1) ||
+    b.calificacion.total - a.calificacion.total ||
+    b.contador_vistas - a.contador_vistas
+  );
 }
 
 type SemilleroPublicoRow = Awaited<ReturnType<typeof semilleroRepository.findManyPublicos>>[number];
@@ -43,14 +67,32 @@ function mapSemilleroPublicoResumen(semillero: SemilleroPublicoRow | SemilleroPu
     escuela: semillero.escuela,
     lider: semillero.profesor_lider,
     total_miembros_aprobados: semillero._count.miembros,
+    total_proyectos_publicados: semillero._count.proyectos,
   };
+}
+
+const ORDEN_ROL_PROFESOR: Record<string, number> = { lider: 0, coordinador: 1, acompanante: 2 };
+const ORDEN_ROL_ESTUDIANTE: Record<string, number> = { lider: 0, coordinador: 1, integrante: 2 };
+
+type PersonaEquipo = { id_usuario: number; nombres: string; apellidos: string; titular: string | null; foto_ruta: string | null };
+
+/** Equipo del semillero ordenado por rol y luego por nombre. */
+function equipoOrdenado(personas: { rol: string; persona: PersonaEquipo }[], orden: Record<string, number>) {
+  return personas
+    .map(({ rol, persona: { foto_ruta, ...p } }) => ({ ...p, url_foto: urlFotoUsuario(foto_ruta), rol }))
+    .sort(
+      (a, b) =>
+        (orden[a.rol] ?? 9) - (orden[b.rol] ?? 9) ||
+        `${a.nombres} ${a.apellidos}`.localeCompare(`${b.nombres} ${b.apellidos}`),
+    );
 }
 
 export const publicoService = {
   async listarEscuelas() {
-    const [escuelas, conteos] = await Promise.all([
+    const [escuelas, conteos, semilleros] = await Promise.all([
       escuelaRepository.findMany(),
       proyectoRepository.countPublicadosPorEscuela(),
+      semilleroRepository.countPublicosPorEscuela(),
     ]);
 
     return escuelas.map(({ id_escuela, nombre_escuela, descripcion, color, icono, imagenes }) => ({
@@ -65,6 +107,7 @@ export const publicoService = {
         orden,
       })),
       total_proyectos_publicados: conteos[id_escuela] ?? 0,
+      total_semilleros: semilleros[id_escuela] ?? 0,
     }));
   },
 
@@ -80,6 +123,10 @@ export const publicoService = {
     id_escuela?: number;
     id_semillero?: number;
     sin_semillero?: boolean;
+    orden?: 'recientes' | 'valorados';
+    limite?: number;
+    /** Proyectos donde la persona es creadora, coautora o directora (perfil público). */
+    id_participante?: number;
   }) {
     if (params?.id_escuela !== undefined) {
       const escuela = await escuelaRepository.findById(params.id_escuela);
@@ -95,6 +142,15 @@ export const publicoService = {
       estado_proyecto: 'publicado',
     };
 
+    if (params?.id_participante !== undefined) {
+      const id = params.id_participante;
+      where.OR = [
+        { id_estudiante_creador: id },
+        { autores: { some: { id_estudiante: id, deleted_at: null } } },
+        { coordinadores: { some: { id_profesor: id, deleted_at: null } } },
+      ];
+    }
+
     if (params?.id_semillero !== undefined) {
       where.id_semillero = params.id_semillero;
     } else if (params?.sin_semillero) {
@@ -106,8 +162,9 @@ export const publicoService = {
       where.curso = { id_escuela: params.id_escuela };
     }
 
-    const proyectos = await proyectoRepository.findMany(where);
-    return proyectos.map(enriquecerProyectoPublico);
+    const proyectos = await conCalificacion((await proyectoRepository.findMany(where)).map(enriquecerProyectoPublico));
+    if (params?.orden === 'valorados') proyectos.sort(compararValoracion);
+    return params?.limite ? proyectos.slice(0, params.limite) : proyectos;
   },
 
   async obtenerProyectoPublico(id: number) {
@@ -118,7 +175,8 @@ export const publicoService = {
     await proyectoRepository.registrarVista(id, null);
     const actualizado = await proyectoRepository.findById(id);
     if (!actualizado) throw new AppError('Proyecto no encontrado', 404);
-    return enriquecerProyectoPublico(actualizado);
+    const [conNota] = await conCalificacion([enriquecerProyectoPublico(actualizado)]);
+    return conNota;
   },
 
   listarEventosActivos() {
@@ -126,7 +184,7 @@ export const publicoService = {
   },
 
   obtenerEventoActivo(id: number) {
-    return eventoService.obtenerPublico(id);
+    return eventoService.obtenerVisible(id);
   },
 
   inscribirEvento(
@@ -151,16 +209,17 @@ export const publicoService = {
     return eventoService.registrarAsistenciaPublica(codigo_qr, documento_identidad);
   },
 
-  async listarSemilleros(params: { id_escuela?: number; pagina: number; limite: number }) {
+  async listarSemilleros(params: { id_escuela?: number; busqueda?: string; pagina: number; limite: number }) {
     if (params.id_escuela !== undefined) {
       const escuela = await escuelaRepository.findById(params.id_escuela);
       if (!escuela) throw new AppError('Escuela no encontrada', 404);
     }
 
-    const total = await semilleroRepository.countPublicos(params.id_escuela);
+    const filtro = { id_escuela: params.id_escuela, busqueda: params.busqueda || undefined };
+    const total = await semilleroRepository.countPublicos(filtro);
     const skip = (params.pagina - 1) * params.limite;
     const semilleros = await semilleroRepository.findManyPublicos({
-      id_escuela: params.id_escuela,
+      ...filtro,
       skip,
       take: params.limite,
     });
@@ -195,6 +254,17 @@ export const publicoService = {
       ...mapSemilleroPublicoResumen(semillero),
       evidencias,
       proyectos,
+      // Participantes del semillero (no los autores de sus proyectos): profesores y estudiantes aprobados
+      equipo: {
+        profesores: equipoOrdenado(
+          semillero.profesores.map((p) => ({ rol: p.rol, persona: p.profesor })),
+          ORDEN_ROL_PROFESOR,
+        ),
+        estudiantes: equipoOrdenado(
+          semillero.miembros.map((m) => ({ rol: m.rol, persona: m.estudiante })),
+          ORDEN_ROL_ESTUDIANTE,
+        ),
+      },
     };
   },
 };

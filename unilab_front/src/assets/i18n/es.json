@@ -747,7 +747,11 @@
       "resourcesHint": "Descargar o abrir recursos requiere iniciar sesión.",
       "school": "Escuela",
       "course": "Curso",
-      "semillero": "Semillero"
+      "semillero": "Semillero",
+      "moreFromSemillero": "Más proyectos de {{nombre}}",
+      "moreIndependent": "Más proyectos independientes de la escuela",
+      "seeAllProjects": "Ver todos",
+      "verPerfil": "Ver el perfil de {{nombre}}"
     },
     "academicProgram": "PROGRAMA ACADÉMICO",
     "director": "Director:",
@@ -776,7 +780,8 @@
       "proyectos": "Proyectos",
       "escuelasProyectos": "Escuelas y proyectos",
       "openMenu": "Abrir menú de navegación",
-      "closeMenu": "Cerrar menú de navegación"
+      "closeMenu": "Cerrar menú de navegación",
+      "escuelas": "Escuelas"
     },
     "footerPortal": "Portal",
     "footerAccess": "Acceso",
@@ -789,7 +794,8 @@
       "titleEnd": "nuestros estudiantes",
       "lead": "Explora los proyectos publicados por escuela, conoce los semilleros de investigación y participa en los eventos académicos.",
       "exploreProjects": "Explorar proyectos",
-      "viewEvents": "Ver eventos"
+      "viewEvents": "Ver eventos",
+      "scrollCue": "Desliza para explorar"
     },
     "stats": {
       "title": "El portal en números",
@@ -809,7 +815,9 @@
       "noProjects": "Sin proyectos publicados",
       "oneProject": "1 proyecto publicado",
       "projects": "{{count}} proyectos publicados",
-      "noPrograms": "Programas académicos por publicar."
+      "noPrograms": "Programas académicos por publicar.",
+      "semilleros": "{{count}} semilleros",
+      "oneSemillero": "1 semillero"
     },
     "nextEvent": {
       "kicker": "Próximo evento",
@@ -841,7 +849,44 @@
       "noProjects": "Sin proyectos publicados",
       "noProjectsHint": "Cuando se publiquen proyectos asociados a este semillero, aparecerán aquí.",
       "backSchool": "Volver a la escuela",
-      "explore": "Explorar semilleros"
+      "explore": "Explorar semilleros",
+      "projectsCount": "{{count}} proyecto(s)",
+      "membersCount": "{{count}} integrante(s)",
+      "view": "Ver semillero",
+      "seeAll": "Ver todos los semilleros",
+      "catalogLead": "Conoce los grupos de investigación de cada escuela: su enfoque, quién los lidera y los proyectos que han publicado.",
+      "searchLabel": "Buscar semilleros",
+      "searchPlaceholder": "Busca por nombre o tema, p. ej. robótica",
+      "filterSchool": "Filtrar por escuela",
+      "allSchools": "Todas las escuelas",
+      "resultCount": "{{count}} semillero(s)",
+      "loadError": "No se pudieron cargar los semilleros.",
+      "noResults": "Sin resultados",
+      "noResultsHint": "Prueba con otra palabra o quita el filtro de escuela.",
+      "noSemilleros": "Aún no hay semilleros activos",
+      "noSemillerosHint": "Cuando se registren semilleros aparecerán aquí.",
+      "clearFilters": "Quitar filtros",
+      "loadMore": "Cargar más semilleros",
+      "seeProjects": "Ver proyectos",
+      "join": "Quiero participar",
+      "statProjects": "Proyectos",
+      "statMembers": "Integrantes",
+      "statEvidence": "Evidencias",
+      "sections": "Secciones del semillero",
+      "projectsHint": "{{count}} proyecto(s) publicado(s) por este semillero.",
+      "filterType": "Filtrar por tipo de proyecto",
+      "allTypes": "Todos",
+      "galleryHint": "Fotografías de actividades y avances. Toca una imagen para ampliarla.",
+      "openImage": "Ampliar imagen {{n}}",
+      "showAll": "Ver las {{count}} fotos",
+      "showLess": "Ver menos fotos",
+      "school": "Escuela",
+      "schoolEmpty": "Esta escuela aún no tiene semilleros publicados.",
+      "team": "Equipo del semillero",
+      "teamHint": "Profesores y estudiantes que hacen parte del semillero.",
+      "teamProfessors": "Profesores",
+      "teamStudents": "Estudiantes",
+      "teamAll": "Ver todo el equipo ({{count}})"
     },
     "loadSemilleroError": "No se pudo cargar el semillero.",
     "schoolPage": {
@@ -873,7 +918,9 @@
       "starLabel": "{{n}} de 5 estrellas",
       "loginToRate": "Inicia sesión para calificar",
       "saved": "Tu calificación se guardó.",
-      "error": "No se pudo guardar la calificación."
+      "error": "No se pudo guardar la calificación.",
+      "average": "Calificación {{value}} de 5 ({{count}} votos)",
+      "votes": "({{count}} votos)"
     },
     "comments": {
       "title": "Comentarios",
@@ -928,6 +975,47 @@
         "web": "Escuchar audio"
       },
       "newTab": "(se abre en una pestaña nueva)"
+    },
+    "topRated": {
+      "kicker": "Proyectos",
+      "title": "Mejor valorados",
+      "lead": "Los proyectos con mejor calificación de la comunidad, en todas las escuelas.",
+      "position": "Puesto {{n}}",
+      "first": "Mejor valorado",
+      "viewProject": "Ver proyecto"
+    },
+    "independientes": {
+      "kicker": "Fuera de los semilleros",
+      "title": "Proyectos independientes",
+      "short": "Independientes",
+      "lead": "Proyectos publicados de {{escuela}} que no pertenecen a ningún semillero.",
+      "cardHint": "Proyectos de la escuela que no pertenecen a ningún semillero.",
+      "cta": "Ver proyectos",
+      "listTitle": "Proyectos independientes",
+      "listHint": "Publicados y aprobados, fuera de los semilleros de la escuela."
+    },
+    "flow": {
+      "kicker": "Así funciona",
+      "title": "De la escuela al proyecto",
+      "escuela": {
+        "title": "Escuelas",
+        "text": "Cada escuela reúne sus programas académicos y sus semilleros de investigación."
+      },
+      "semillero": {
+        "title": "Semilleros",
+        "text": "Los semilleros agrupan a estudiantes y profesores alrededor de una línea de trabajo."
+      },
+      "proyecto": {
+        "title": "Proyectos",
+        "text": "Los proyectos nacen en los semilleros o de forma independiente, y se publican tras su revisión."
+      }
+    },
+    "cta": {
+      "kicker": "Haz parte de la comunidad",
+      "title": "¿Tienes una idea? Súmala a un semillero.",
+      "lead": "Conoce los semilleros de tu escuela, publica tus proyectos y dales la visibilidad que merecen.",
+      "semilleros": "Explorar semilleros",
+      "register": "Crear cuenta"
     }
   },
   "proyectosEstudiante": {
@@ -994,7 +1082,17 @@
       "publicado": "Publicado",
       "rechazado": "Rechazado"
     },
-    "sinProyectosHint": "Crea tu primer proyecto para enviarlo a revisión de tu profesor asignado."
+    "sinProyectosHint": "Crea tu primer proyecto para enviarlo a revisión de tu profesor asignado.",
+    "integrantes": {
+      "titulo": "Integrantes del equipo",
+      "hint": "Agrega a tus compañeros de escuela. Aparecerán en su perfil cuando el proyecto se publique.",
+      "buscar": "Buscar compañero por nombre",
+      "sinResultados": "No hay compañeros que coincidan.",
+      "agregar": "Agregar",
+      "quitar": "Quitar",
+      "vacio": "Por ahora el proyecto solo te tiene a ti como autor.",
+      "error": "El proyecto se guardó, pero no se pudieron actualizar los integrantes."
+    }
   },
   "proyectosProfesor": {
     "titulo": "Proyectos asignados",
@@ -1176,6 +1274,20 @@
       "volverASolicitar": "Volver a solicitar",
       "exitoSolicitud": "Solicitud enviada. El profesor líder la revisará.",
       "errorSolicitud": "No se pudo enviar la solicitud"
+    },
+    "roles": {
+      "cambiar": "Cambiar rol",
+      "exito": "Rol actualizado.",
+      "profesor": {
+        "lider": "Líder",
+        "coordinador": "Coordinador",
+        "acompanante": "Profesor acompañante"
+      },
+      "estudiante": {
+        "integrante": "Estudiante",
+        "lider": "Líder estudiantil",
+        "coordinador": "Coordinador estudiantil"
+      }
     }
   },
   "reportes": {
@@ -1304,8 +1416,11 @@
     "errorCargar": "No se pudo actualizar tu perfil. Se muestran los últimos datos guardados.",
     "rolSemillero": {
       "lider": "Líder",
-      "profesor": "Profesor",
-      "miembro": "Miembro"
+      "coordinador": "Coordinador",
+      "acompanante": "Profesor acompañante",
+      "lider_estudiantil": "Líder estudiantil",
+      "coordinador_estudiantil": "Coordinador estudiantil",
+      "estudiante": "Estudiante"
     },
     "redes": {
       "titulo": "Redes de contacto",
@@ -1321,8 +1436,16 @@
         "url": "Ingresa una URL válida que empiece por http:// o https://",
         "url_linkedin": "Debe ser un enlace de linkedin.com",
         "url_github": "Debe ser un enlace de github.com",
-        "url_portafolio": "Ingresa una URL válida"
-      }
+        "url_portafolio": "Ingresa una URL válida",
+        "url_cvlac": "Debe ser un enlace de CvLAC (minciencias.gov.co)",
+        "url_orcid": "Debe ser un enlace de orcid.org",
+        "url_google_scholar": "Debe ser un enlace de Google Académico",
+        "url_researchgate": "Debe ser un enlace de researchgate.net"
+      },
+      "cvlac": "CvLAC",
+      "orcid": "ORCID",
+      "google_scholar": "Google Académico",
+      "researchgate": "ResearchGate"
     },
     "rolHint": "El rol lo asigna el administrador.",
     "contacto": "Datos de contacto",
@@ -1349,6 +1472,48 @@
         "igual": "La nueva contraseña debe ser distinta de la actual.",
         "actualIncorrecta": "La contraseña actual no es correcta.",
         "general": "No se pudo cambiar la contraseña."
+      }
+    },
+    "cv": {
+      "titulo": "Perfil profesional",
+      "hint": "Así te verán en tu perfil público. Los proyectos, semilleros y eventos se agregan solos desde la plataforma.",
+      "titular": "Titular",
+      "titularPlaceholder": "Ej.: Estudiante de Ingeniería de Software · Desarrollo web",
+      "biografia": "Sobre mí",
+      "biografiaPlaceholder": "Cuenta en qué trabajas, qué te interesa y qué buscas.",
+      "especialidades": "En qué me especializo",
+      "fortalezas": "Mis fortalezas",
+      "etiquetaPlaceholder": "Escribe y pulsa Enter",
+      "quitar": "Quitar {{valor}}",
+      "mostrarTelefono": "Mostrar mi teléfono en mi perfil público",
+      "redesAcademicas": "Redes académicas",
+      "verPublico": "Ver mi perfil público",
+      "guardado": "Perfil profesional guardado.",
+      "errorGuardar": "No se pudo guardar el perfil profesional.",
+      "formacion": "Formación académica",
+      "formacionHint": "Estudios terminados o en curso.",
+      "sinFormacion": "Aún no has agregado tu formación.",
+      "agregar": "Agregar formación",
+      "editar": "Editar",
+      "eliminar": "Eliminar",
+      "confirmarEliminar": "¿Eliminar esta formación de tu perfil?",
+      "tituloFormacion": "Título o programa",
+      "institucion": "Institución",
+      "nivel": "Nivel",
+      "anioInicio": "Año de inicio",
+      "anioFin": "Año de fin",
+      "anioFinHint": "Déjalo vacío si está en curso.",
+      "enCurso": "(en curso)",
+      "errorFormacion": "No se pudo guardar la formación.",
+      "niveles": {
+        "tecnico": "Técnico",
+        "tecnologo": "Tecnólogo",
+        "pregrado": "Pregrado",
+        "especializacion": "Especialización",
+        "maestria": "Maestría",
+        "doctorado": "Doctorado",
+        "curso": "Curso",
+        "otro": "Otro"
       }
     }
   },
@@ -1388,5 +1553,118 @@
     "errorTipo": "Solo se permiten imágenes JPEG, PNG o WebP.",
     "errorPeso": "Cada imagen debe pesar máximo 5 MB.",
     "errorMax": "Superas el máximo de imágenes permitidas."
+  },
+  "persona": {
+    "noEncontrada": "Perfil no disponible",
+    "noEncontradaHint": "La persona no existe o su cuenta no está activa.",
+    "proyectos": "Proyectos",
+    "semilleros": "Semilleros",
+    "eventos": "Eventos",
+    "acerca": "Acerca de",
+    "especialidades": "Especialidades",
+    "fortalezas": "Fortalezas",
+    "sinDescripcion": "Esta persona aún no ha escrito su perfil profesional.",
+    "proyectosTitulo": "Proyectos publicados",
+    "proyectosHint": "Proyectos aprobados en los que participa como autor o director.",
+    "sinProyectos": "Aún no tiene proyectos publicados.",
+    "participacion": {
+      "autor": "Autor",
+      "director": "Director"
+    },
+    "eventosTitulo": "Eventos en los que participó",
+    "eventosHint": "Registrados con su asistencia en la plataforma.",
+    "sinEventos": "Aún no registra asistencia a eventos.",
+    "jornadas": "{{asistidas}} de {{total}} jornadas",
+    "formacion": "Formación",
+    "sinFormacion": "Sin formación registrada.",
+    "sinSemilleros": "No pertenece a ningún semillero.",
+    "verTodos": "Ver todos ({{total}})"
+  },
+  "perfilAviso": {
+    "titulo": "¡Hola, {{nombre}}! Completa tu perfil",
+    "texto": "Tu perfil público reúne tus proyectos, semilleros y eventos. Agrega tus datos para que la comunidad te conozca:",
+    "ahoraNo": "Ahora no"
+  },
+  "fotoPerfil": {
+    "subir": "Subir foto de perfil",
+    "cambiar": "Cambiar foto de perfil",
+    "quitar": "Quitar foto",
+    "hint": "Toca la foto para elegir una imagen. Se optimiza automáticamente para que pese poco.",
+    "errores": {
+      "tipo": "Solo se permiten imágenes JPG, PNG o WebP.",
+      "tamano": "La imagen es demasiado grande. Prueba con una de menos de 15 MB.",
+      "subir": "No se pudo subir la foto. Inténtalo de nuevo.",
+      "quitar": "No se pudo quitar la foto.",
+      "procesar": "No se pudo leer la imagen. Prueba con otra."
+    }
+  },
+  "asistentePerfil": {
+    "abrir": "Completar con el asistente",
+    "pasos": "Pasos para completar tu perfil",
+    "pasoDe": "Paso {{paso}} de {{total}}",
+    "duracion": "Toma unos 3 minutos y puedes saltar cualquier paso.",
+    "empezar": "Empezar",
+    "anterior": "Atrás",
+    "siguiente": "Siguiente",
+    "omitir": "Saltar",
+    "finalizar": "Finalizar",
+    "terminar": "Listo",
+    "foto": {
+      "corto": "Foto",
+      "titulo": "Ponle cara a tu perfil",
+      "texto": "Una foto ayuda a que tus compañeros, profesores y jurados te reconozcan en proyectos y eventos."
+    },
+    "sobre": {
+      "corto": "Sobre ti",
+      "titulo": "Cuéntanos quién eres",
+      "texto": "Tu titular aparece debajo de tu nombre; la biografía, en tu perfil público."
+    },
+    "habilidades": {
+      "corto": "Habilidades",
+      "titulo": "¿En qué eres bueno?",
+      "texto": "Escribe y pulsa Enter, o toca una sugerencia para agregarla.",
+      "sugerencias": "Sugerencias:"
+    },
+    "formacion": {
+      "corto": "Formación",
+      "titulo": "Tu formación académica",
+      "texto": "Agrega tus estudios terminados o en curso. Se guardan al pulsar «Agregar formación».",
+      "enCurso": "En curso"
+    },
+    "enlaces": {
+      "corto": "Enlaces",
+      "titulo": "¿Dónde más te encuentran?",
+      "texto": "Tus redes profesionales y académicas. Todas son opcionales."
+    },
+    "listo": {
+      "titulo": "¡Tu perfil está listo!",
+      "texto": "Completaste el {{porcentaje}} % de tu perfil. Puedes editarlo cuando quieras desde «Mi perfil»."
+    },
+    "checklist": {
+      "foto": "Foto de perfil",
+      "titular": "Titular",
+      "biografia": "Biografía",
+      "habilidades": "Especialidades y fortalezas",
+      "formacion": "Formación",
+      "enlaces": "Enlaces"
+    },
+    "sugerencias": {
+      "especialidades": [
+        "Investigación",
+        "Desarrollo web",
+        "Análisis de datos",
+        "Diseño",
+        "Emprendimiento",
+        "Innovación social"
+      ],
+      "fortalezas": [
+        "Trabajo en equipo",
+        "Liderazgo",
+        "Comunicación asertiva",
+        "Pensamiento crítico",
+        "Creatividad",
+        "Resolución de problemas"
+      ]
+    }
   }
 }

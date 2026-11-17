@@ -14,6 +14,8 @@ import {
   solicitudMembresiaSchema,
   resolverMembresiaSchema,
   evidenciaSemilleroParamSchema,
+  rolProfesorSemilleroSchema,
+  rolMiembroSemilleroSchema,
 } from '../middlewares/validation/schemas';
 import { subirPortadaSemillero } from '../middlewares/upload/subirPortadaSemillero.middleware';
 import { subirEvidenciasSemillero } from '../middlewares/upload/subirEvidenciasSemillero.middleware';
@@ -24,6 +26,8 @@ const auth = [verifyToken, checkPrimerLogin, checkPerfilPendiente] as const;
 const admin = [...auth, requireRole(['Administrador'])] as const;
 const estudiante = [...auth, requireRole(['Estudiante'])] as const;
 const profesor = [...auth, requireRole(['Profesor'])] as const;
+// El servicio comprueba que el profesor sea el líder de ese semillero
+const gestorRoles = [...auth, requireRole(['Administrador', 'Profesor'])] as const;
 const lectura = [...auth] as const;
 
 router.get('/', ...lectura, semilleroController.listar);
@@ -84,6 +88,14 @@ router.delete(
   semilleroController.quitarProfesor,
 );
 
+router.patch(
+  '/:id/profesores/:idProfesor/rol',
+  ...gestorRoles,
+  validate(idProfesorParamSchema, 'params'),
+  validate(rolProfesorSemilleroSchema),
+  semilleroController.cambiarRolProfesor,
+);
+
 router.post(
   '/:id/miembros',
   ...estudiante,
@@ -97,6 +109,13 @@ router.patch(
   validate(idEstudianteParamSchema, 'params'),
   validate(resolverMembresiaSchema),
   semilleroController.resolverMembresia,
+);
+router.patch(
+  '/:id/miembros/:idEstudiante/rol',
+  ...gestorRoles,
+  validate(idEstudianteParamSchema, 'params'),
+  validate(rolMiembroSemilleroSchema),
+  semilleroController.cambiarRolMiembro,
 );
 router.patch(
   '/:id/miembros/:idEstudiante/autorizar-publicacion',

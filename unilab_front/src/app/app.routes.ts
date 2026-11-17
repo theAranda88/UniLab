@@ -449,12 +449,35 @@ export const routes: Routes = [
           import('./features/home/portal-escuela-proyectos/portal-escuela-proyectos.component').then(
             (m) => m.PortalEscuelaProyectosComponent,
           ),
+        data: { modo: 'escuela' },
+      },
+      {
+        // Proyectos publicados de la escuela que no pertenecen a ningún semillero
+        path: 'escuelas/:idEscuela/independientes',
+        loadComponent: () =>
+          import('./features/home/portal-escuela-proyectos/portal-escuela-proyectos.component').then(
+            (m) => m.PortalEscuelaProyectosComponent,
+          ),
+        data: { modo: 'independientes' },
       },
       {
         path: 'proyectos/:idProyecto',
         loadComponent: () =>
           import('./features/home/portal-proyecto-detalle/portal-proyecto-detalle.component').then(
             (m) => m.PortalProyectoDetalleComponent,
+          ),
+      },
+      {
+        // Perfil público de una persona (tipo CvLAC)
+        path: 'personas/:idUsuario',
+        loadComponent: () =>
+          import('./features/home/portal-persona/portal-persona.component').then((m) => m.PortalPersonaComponent),
+      },
+      {
+        path: 'semilleros/explorar',
+        loadComponent: () =>
+          import('./features/home/portal-semilleros-explorar/portal-semilleros-explorar.component').then(
+            (m) => m.PortalSemillerosExplorarComponent,
           ),
       },
       {

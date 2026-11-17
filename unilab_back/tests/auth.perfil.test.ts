@@ -67,8 +67,8 @@ describe('mapUsuarioSesion', () => {
   it('lista los semilleros del estudiante como miembro', () => {
     const s = mapUsuarioSesion(perfil({ membresias_semillero: [{ semillero: ROBOTICA }, { semillero: IA }] }));
     expect(s.semilleros).toEqual([
-      { ...IA, rol_semillero: 'miembro' },
-      { ...ROBOTICA, rol_semillero: 'miembro' },
+      { ...IA, rol_semillero: 'estudiante' },
+      { ...ROBOTICA, rol_semillero: 'estudiante' },
     ]);
   });
 
@@ -88,7 +88,7 @@ describe('mapUsuarioSesion', () => {
     expect(s.escuela).toEqual({ id_escuela: 4, nombre_escuela: 'Artes' });
     expect(s.semilleros).toEqual([
       { ...IA, rol_semillero: 'lider' },
-      { ...ROBOTICA, rol_semillero: 'profesor' },
+      { ...ROBOTICA, rol_semillero: 'acompanante' },
     ]);
   });
 
@@ -158,9 +158,11 @@ describe('authService', () => {
       url_github: 'https://github.com/ana',
     });
 
+    // Guardar el perfil también marca como atendido el aviso del primer ingreso
     expect(m.usuarioRepository.update).toHaveBeenCalledWith(7, {
       telefono: '3109876543',
       url_github: 'https://github.com/ana',
+      perfil_cv_revisado: true,
     });
     expect(m.usuarioRepository.updatePerfilCoordinador).not.toHaveBeenCalled();
     expect(r.redes.github).toBe('https://github.com/ana');

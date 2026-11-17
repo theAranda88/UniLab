@@ -27,6 +27,7 @@ function semillero(
       id_semillero: id,
       id_estudiante: YO,
       estado_solicitud: 'pendiente',
+      rol: 'integrante',
       puede_publicar: false,
       ...m,
     })),
@@ -40,6 +41,7 @@ async function crear(semilleros: Semillero[], solicitudesAbiertas = true) {
       id_semillero: 1,
       id_estudiante: YO,
       estado_solicitud: 'pendiente',
+      rol: 'integrante',
       puede_publicar: false,
     }),
   );

@@ -10,6 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { SemilleroCardComponent } from '../semillero-card/semillero-card.component';
 import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -20,7 +21,6 @@ import {
   type Burbuja,
 } from '../../../shared/ui/floating-bubbles/floating-bubbles.component';
 import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
-import { urlImagenDestacadaSemillero } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { EventoCardComponent } from '../../../shared/ui/evento-card/evento-card.component';
@@ -29,6 +29,15 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
 import type { Evento } from '../../../core/models/evento.model';
 import { momentoEvento, type MomentoEvento } from '../../../core/utils/date.util';
 import { PortalSeccionService, type SeccionPortal } from '../portal-seccion.service';
+import { RevealDirective } from '../../../shared/ui/reveal/reveal.directive';
+import { AuthService } from '../../../core/auth/auth.service';
+
+/** «Así funciona»: la jerarquía del portal (escuela → semillero → proyecto). */
+const PASOS = [
+  { clave: 'escuela', icono: 'ti-building-community' },
+  { clave: 'semillero', icono: 'ti-flask' },
+  { clave: 'proyecto', icono: 'ti-rocket' },
+] as const;
 
 interface EscuelaCard {
   escuela: Escuela;
@@ -36,6 +45,7 @@ interface EscuelaCard {
   color: string;
   programas: string;
   proyectos: number;
+  semilleros: number;
 }
 
 interface Cifra {
@@ -70,6 +80,7 @@ const BURBUJAS: Burbuja[] = [
   selector: 'app-home-dashboard',
   standalone: true,
   imports: [
+    SemilleroCardComponent,
     RouterLink,
     TranslatePipe,
     FloatingBubblesComponent,
@@ -77,6 +88,7 @@ const BURBUJAS: Burbuja[] = [
     EventoCardComponent,
     EmptyStateComponent,
     SkeletonComponent,
+    RevealDirective,
   ],
   templateUrl: './home-dashboard.component.html',
   styleUrl: './home-dashboard.component.scss',
@@ -89,24 +101,30 @@ export class HomeDashboardComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private scroller = inject(ViewportScroller);
   private injector = inject(Injector);
+  private auth = inject(AuthService);
 
   readonly burbujas = BURBUJAS;
-  readonly urlImagenSemillero = urlImagenDestacadaSemillero;
+  readonly pasos = PASOS;
 
   readonly escuelas = signal<Escuela[]>([]);
   readonly cursosPorEscuela = signal<Record<number, Curso[]>>({});
   readonly eventos = signal<Evento[]>([]);
   readonly proyectos = signal<ProyectoPublico[]>([]);
   readonly semilleros = signal<SemilleroPublico[]>([]);
+  readonly totalSemilleros = signal(0);
 
-  /** Los tres proyectos publicados más recientes de todas las escuelas. */
-  readonly proyectosRecientes = computed(() =>
-    [...this.proyectos()]
-      .sort((a, b) =>
-        (b.fecha_publicacion ?? '').localeCompare(a.fecha_publicacion ?? '') || b.id_proyecto - a.id_proyecto,
-      )
-      .slice(0, 3),
-  );
+  /** Proyectos mejor valorados de todas las escuelas (la API ya los entrega ordenados y limitados). */
+  readonly proyectosDestacados = computed(() => this.proyectos());
+  /** El #1 se muestra en grande; el resto del ranking, en tarjetas. */
+  readonly proyectoLider = computed(() => this.proyectos()[0] ?? null);
+  readonly proyectosSiguientes = computed(() => this.proyectos().slice(1));
+  readonly imagenLiderFallida = signal(false);
+  readonly imagenLider = computed(() => {
+    const p = this.proyectoLider();
+    if (!p || this.imagenLiderFallida()) return null;
+    return [...(p.imagenes ?? [])].sort((a, b) => a.orden - b.orden)[0]?.url ?? p.url_imagen ?? null;
+  });
+  readonly autenticado = computed(() => this.auth.isAuthenticated());
 
   /** Valores que se muestran mientras las cifras «cuentan» hasta su valor real. */
   readonly valoresVisibles = signal<number[]>([]);
@@ -121,6 +139,7 @@ export class HomeDashboardComponent implements OnInit {
         color: estilo.color,
         programas: cursos.map((c) => c.nombre_curso).join(', '),
         proyectos: escuela.total_proyectos_publicados ?? 0,
+        semilleros: escuela.total_semilleros ?? 0,
       };
     }),
   );
@@ -229,14 +248,17 @@ export class HomeDashboardComponent implements OnInit {
       },
       error: () => this.eventosCargados.set(true),
     });
-    this.portal.listarProyectos().subscribe({
+    this.portal.listarProyectos({ orden: 'valorados', limite: 6 }).subscribe({
       next: (proyectos) => {
         this.proyectos.set(proyectos);
         this.reanclar();
       },
     });
     this.portal.listarSemilleros({ pagina: 1, limite: 6 }).subscribe({
-      next: (resp) => this.semilleros.set(resp.data),
+      next: (resp) => {
+        this.semilleros.set(resp.data);
+        this.totalSemilleros.set(resp.paginacion.total);
+      },
     });
   }
 

@@ -1,0 +1,493 @@
+@use '../../../../styles/design-tokens' as *;
+
+// Portal — perfil público de una persona (tipo CvLAC)
+
+:host {
+  display: block;
+  flex: 1;
+}
+
+.persona__container {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  @include respond-to($breakpoint-sm) {
+    padding: 0 16px;
+  }
+}
+
+.persona__loading {
+  padding-top: 48px;
+  padding-bottom: 64px;
+}
+
+// ---------------------------------------------------------------------------
+// Cabecera
+// ---------------------------------------------------------------------------
+.persona-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 90% at 90% 0%, rgba(76, 130, 222, 0.45), transparent 70%),
+    linear-gradient(160deg, #0a438f 0%, $blue 55%, #042b6d 100%);
+  color: $white;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(100deg, transparent 45%, #000);
+    -webkit-mask-image: linear-gradient(100deg, transparent 45%, #000);
+    pointer-events: none;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 28px;
+    padding-top: 52px;
+    padding-bottom: 52px;
+
+    @include respond-to($breakpoint-md) {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    @include respond-to($breakpoint-sm) {
+      grid-template-columns: 1fr;
+      padding-top: 36px;
+      padding-bottom: 36px;
+    }
+  }
+
+  &__avatar {
+    display: inline-flex;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    width: 112px;
+    height: 112px;
+    border: 3px solid $accent;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 40px;
+    font-weight: $font-weight-black;
+    letter-spacing: -0.02em;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__rol {
+    align-self: flex-start;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: $accent;
+    color: $accent-ink-strong;
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-extra-bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    margin: 0;
+    // El estilo global de los títulos usa tinta oscura; aquí va sobre azul
+    color: $white;
+    font-size: clamp(30px, 4.6vw, 46px);
+    font-weight: $font-weight-black;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  &__titular {
+    margin: 0;
+    font-size: $font-size-lg;
+    color: $text-on-blue-secondary;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: $font-size-sm;
+    color: $text-on-blue-secondary;
+
+    li,
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    a {
+      color: $white;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // Los íconos de redes sobre fondo azul
+  &__redes {
+    margin-top: 6px;
+
+    ::ng-deep .redes__link {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: $white;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(88px, 1fr));
+    gap: 10px;
+    margin: 0;
+
+    @include respond-to($breakpoint-md) {
+      grid-column: 1 / -1;
+    }
+
+    div {
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: $radius-lg;
+      background: rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+
+    dt {
+      font-size: $font-size-2xs;
+      font-weight: $font-weight-bold;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: $text-on-blue-secondary;
+    }
+
+    dd {
+      margin: 4px 0 0;
+      font-size: 30px;
+      font-weight: $font-weight-black;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cuerpo
+// ---------------------------------------------------------------------------
+.persona__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 28px;
+  padding-top: 36px;
+  padding-bottom: 64px;
+
+  @include respond-to($breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.persona__main,
+.persona__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.persona-card {
+  padding: 24px;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-lg;
+  background: $white;
+  box-shadow: $shadow-card;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-extra-bold;
+    color: $ink;
+
+    i {
+      color: $blue;
+    }
+  }
+
+  &__subtitle {
+    margin: 18px 0 10px;
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-extra-bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $text-secondary;
+  }
+
+  &__bio {
+    margin: 0;
+    line-height: 1.7;
+    color: $text-primary;
+    white-space: pre-line;
+  }
+
+  &__empty {
+    margin: 0;
+    color: $text-muted;
+  }
+}
+
+.persona-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    padding: 6px 12px;
+    border: 1px solid $border-control;
+    border-radius: 999px;
+    background: $neutral-soft;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $ink;
+
+    &--blue {
+      border-color: $blue-border;
+      background: $blue-tint-strong;
+      color: $blue;
+    }
+  }
+}
+
+.persona-section {
+  &__head {
+    margin-bottom: 16px;
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: 24px;
+      font-weight: $font-weight-black;
+      letter-spacing: -0.02em;
+      color: $ink;
+    }
+
+    p {
+      margin: 0;
+      font-size: $font-size-sm;
+      color: $text-secondary;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 20px;
+  }
+
+  &__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+}
+
+.persona-proyecto {
+  position: relative;
+  display: flex;
+  isolation: isolate;
+
+  > :not(.persona-proyecto__rol) {
+    position: relative;
+    z-index: 0;
+    flex: 1;
+  }
+
+  &__rol {
+    position: absolute;
+    z-index: 2;
+    top: -10px;
+    right: 14px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: $blue;
+    color: $white;
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-extra-bold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow: $shadow-card;
+  }
+}
+
+.persona-eventos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-lg;
+    background: $white;
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
+    background: $ok-tint;
+    color: $ok;
+    font-size: 20px;
+  }
+
+  &__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+
+    a {
+      font-weight: $font-weight-bold;
+      color: $ink;
+      text-decoration: none;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+
+    small {
+      color: $text-secondary;
+    }
+  }
+
+  &__badge {
+    flex: none;
+    padding: 4px 10px;
+    border: 1px solid $ok-border;
+    border-radius: 999px;
+    background: $ok-tint;
+    color: $ok;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.persona-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: none;
+  border-left: 2px solid $blue-border;
+
+  li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: -25px;
+      width: 12px;
+      height: 12px;
+      border: 2px solid $white;
+      border-radius: 50%;
+      background: $blue;
+      box-shadow: 0 0 0 2px $blue-border;
+    }
+  }
+
+  strong {
+    color: $ink;
+  }
+
+  span:not(.persona-timeline__nivel),
+  small {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+  }
+
+  &__nivel {
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-extra-bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $blue;
+  }
+}
+
+.persona-semilleros {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+  }
+
+  a {
+    font-weight: $font-weight-bold;
+    color: $ink;
+    text-decoration: none;
+
+    &:hover {
+      color: $blue;
+    }
+  }
+
+  &__rol {
+    flex: none;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: $text-secondary;
+  }
+}

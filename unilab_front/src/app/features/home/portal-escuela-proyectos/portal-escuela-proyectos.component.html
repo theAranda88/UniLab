@@ -7,39 +7,51 @@
         <a routerLink="/">{{ 'home.nav.inicio' | translate }}</a>
         <i class="ti ti-chevron-right" aria-hidden="true"></i>
         <a routerLink="/" fragment="escuelas">{{ 'home.schools.kicker' | translate }}</a>
+        @if (modo === 'independientes' && escuela(); as esc) {
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
+          <a [routerLink]="['/escuelas', esc.id_escuela]">{{ esc.nombre_escuela }}</a>
+        }
       </nav>
 
       <div class="school-hero__head">
         <span class="school-hero__icon"><i class="ph-duotone {{ estilo().icono }}" aria-hidden="true"></i></span>
         <div class="school-hero__titles">
-          <span class="school-hero__kicker">{{ 'home.schoolPage.kicker' | translate }}</span>
+          <span class="school-hero__kicker">
+            {{ (modo === 'independientes' ? 'home.independientes.kicker' : 'home.schoolPage.kicker') | translate }}
+          </span>
           @if (escuela(); as esc) {
-            <h1 class="school-hero__title">{{ esc.nombre_escuela }}</h1>
+            <h1 class="school-hero__title">
+              {{ modo === 'independientes' ? ('home.independientes.title' | translate) : esc.nombre_escuela }}
+            </h1>
           } @else {
             <span class="school-hero__title-skeleton edu-skeleton" aria-hidden="true"></span>
           }
         </div>
       </div>
 
-      @if (escuela()?.descripcion; as descripcion) {
+      @if (modo === 'independientes') {
+        <p class="school-hero__lead">
+          {{ 'home.independientes.lead' | translate: { escuela: escuela()?.nombre_escuela ?? '' } }}
+        </p>
+      } @else if (escuela()?.descripcion; as descripcion) {
         <p class="school-hero__lead school-hero__lead--descripcion">{{ descripcion }}</p>
       } @else {
         <p class="school-hero__lead">{{ 'home.projectsListHint' | translate }}</p>
       }
 
-      @if (!loading() && !loadError()) {
+      @if (!loading() && !loadError() && modo === 'escuela') {
         <dl class="school-hero__facts">
           <div>
-            <dt>{{ 'home.schoolPage.publishedProjects' | translate }}</dt>
+            <dt>{{ 'home.semilleros.titleShort' | translate }}</dt>
+            <dd>{{ semilleros().length }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'home.independientes.short' | translate }}</dt>
             <dd>{{ proyectos().length }}</dd>
           </div>
           <div>
             <dt>{{ 'home.schoolPage.programs' | translate }}</dt>
             <dd>{{ cursos().length }}</dd>
-          </div>
-          <div>
-            <dt>{{ 'home.semilleros.titleShort' | translate }}</dt>
-            <dd>{{ semilleros().length }}</dd>
           </div>
         </dl>
       }
@@ -48,7 +60,7 @@
 
   <div class="school-page__content">
     <!-- Imágenes de la escuela (se recrea al cambiar de escuela: loading vuelve a true) -->
-    @if (!loading() && imagenes().length > 0) {
+    @if (modo === 'escuela' && !loading() && imagenes().length > 0) {
       <section class="school-gallery" aria-labelledby="gallery-title">
         <h2 id="gallery-title" class="school-page__h2">{{ 'home.schoolPage.galleryTitle' | translate }}</h2>
         <figure class="school-gallery__frame">
@@ -63,7 +75,7 @@
     }
 
     <!-- Programas (cursos) de la escuela -->
-    @if (cursos().length > 0) {
+    @if (modo === 'escuela' && cursos().length > 0) {
       <section class="school-programs" aria-labelledby="programs-title">
         <h2 id="programs-title" class="school-page__h2">{{ 'home.schoolPage.programsTitle' | translate }}</h2>
         <ul class="school-programs__list">
@@ -77,41 +89,55 @@
       </section>
     }
 
-    @if (semilleros().length > 0) {
+    <!-- Semilleros de la escuela: los proyectos se ven dentro de cada semillero -->
+    @if (modo === 'escuela') {
       <section class="school-semilleros" aria-labelledby="semilleros-school-title">
         <h2 id="semilleros-school-title" class="school-page__h2">{{ 'home.semilleros.schoolTitle' | translate }}</h2>
         <p class="school-semilleros__hint">{{ 'home.semilleros.schoolHint' | translate }}</p>
-        <div class="school-semilleros__grid">
-          @for (s of semilleros(); track s.id_semillero) {
-            <a class="semillero-card" [routerLink]="['/semilleros', s.id_semillero]">
-              @if (urlImagenSemillero(s); as imgSemillero) {
-                <img class="semillero-card__img" [src]="imgSemillero" [alt]="s.nombre_semillero" />
-              } @else {
-                <span class="semillero-card__placeholder" aria-hidden="true">
-                  <i class="ti ti-flask"></i>
+        @if (loading()) {
+          <app-skeleton variant="cards" [rows]="3" />
+        } @else if (loadError()) {
+          <app-empty-state
+            icon="ti-cloud-off"
+            tone="error"
+            [title]="'common.loadErrorTitle' | translate"
+            [message]="'home.loadProjectsError' | translate"
+          />
+        } @else {
+          <div class="school-semilleros__grid">
+            @for (s of semilleros(); track s.id_semillero) {
+              <app-semillero-card [semillero]="s" [mostrarEscuela]="false" />
+            }
+            <a class="indep-card" [routerLink]="['/escuelas', idEscuela(), 'independientes']">
+              <span class="indep-card__icon"><i class="ti ti-folders" aria-hidden="true"></i></span>
+              <span class="indep-card__kicker">{{ 'home.independientes.kicker' | translate }}</span>
+              <h3 class="indep-card__title">{{ 'home.independientes.title' | translate }}</h3>
+              <p class="indep-card__text">{{ 'home.independientes.cardHint' | translate }}</p>
+              <span class="indep-card__foot">
+                <span class="indep-card__count">
+                  {{ (proyectos().length === 1 ? 'home.schools.oneProject' : 'home.schools.projects') | translate: { count: proyectos().length } }}
                 </span>
-              }
-              <span class="semillero-card__body">
-                <span class="semillero-card__name">{{ s.nombre_semillero }}</span>
-                <span class="semillero-card__meta">
-                  {{ 'home.semilleros.leader' | translate }}: {{ nombreLider(s) }}
-                </span>
-                <span class="semillero-card__meta">
-                  {{ 'home.semilleros.members' | translate: { count: s.total_miembros_aprobados } }}
+                <span class="indep-card__cta">
+                  {{ 'home.independientes.cta' | translate }}
+                  <i class="ti ti-arrow-right" aria-hidden="true"></i>
                 </span>
               </span>
             </a>
+          </div>
+          @if (semilleros().length === 0) {
+            <p class="school-semilleros__empty">{{ 'home.semilleros.schoolEmpty' | translate }}</p>
           }
-        </div>
+        }
       </section>
     }
 
-    <!-- Proyectos -->
+    <!-- Proyectos independientes (sin semillero) -->
+    @if (modo === 'independientes') {
     <section class="school-projects" aria-labelledby="projects-title">
       <div class="school-projects__head">
         <div>
-          <h2 id="projects-title" class="school-page__h2">{{ 'home.schoolPage.projectsTitle' | translate }}</h2>
-          <p class="school-projects__hint">{{ 'home.schoolPage.projectsSchoolHint' | translate }}</p>
+          <h2 id="projects-title" class="school-page__h2">{{ 'home.independientes.listTitle' | translate }}</h2>
+          <p class="school-projects__hint">{{ 'home.independientes.listHint' | translate }}</p>
         </div>
         @if (tipos().length > 1) {
           <div class="edu-chips" role="group" [attr.aria-label]="'home.schoolPage.filterType' | translate">
@@ -160,6 +186,7 @@
         </div>
       }
     </section>
+    }
 
     <!-- Otras escuelas -->
     @if (otrasEscuelas().length > 0) {

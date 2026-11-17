@@ -16,10 +16,11 @@ import {
 } from '../../../core/config/nav-by-role';
 
 
+import { AvatarComponent } from '../../ui/avatar/avatar.component';
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [RouterModule, RouterOutlet, TranslatePipe],
+  imports: [RouterModule, RouterOutlet, TranslatePipe, AvatarComponent],
   templateUrl: './admin-shell.component.html',
   styleUrl: './admin-shell.component.scss',
 })

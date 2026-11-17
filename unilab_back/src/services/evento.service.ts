@@ -90,6 +90,13 @@ export const eventoService = {
     return evento;
   },
 
+  /** Detalle público: también muestra eventos planeados y finalizados (p. ej. los del perfil de una persona). */
+  async obtenerVisible(id: number) {
+    const evento = await eventoRepository.findByIdVisible(id);
+    if (!evento) throw new AppError('Evento no encontrado', 404);
+    return evento;
+  },
+
   async crear(data: {
     nombre_evento: string;
     tipo_evento: string;
@@ -272,7 +279,7 @@ export const eventoService = {
   },
 
   async obtenerInscripcionPorDocumento(id_evento: number, documento_identidad: string) {
-    await eventoService.obtenerPublico(id_evento);
+    await eventoService.obtenerVisible(id_evento);
     const inscripcion = await eventoRepository.findInscripcionEventoDocumento(
       id_evento,
       documento_identidad,

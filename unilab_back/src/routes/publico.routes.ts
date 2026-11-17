@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { publicoController } from '../controllers/publico.controller';
+import { perfilController } from '../controllers/perfil.controller';
 import { validate } from '../middlewares/validation/validate';
 import { idParamSchema } from '../middlewares/validation/schemas';
 import {
@@ -45,6 +46,8 @@ router.get(
   validate(idParamSchema, 'params'),
   publicoController.obtenerSemillero,
 );
+
+router.get('/usuarios/:id/perfil', validate(idParamSchema, 'params'), perfilController.perfilPublico);
 
 router.get('/eventos', publicoController.listarEventos);
 router.get(

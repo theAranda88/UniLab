@@ -7,7 +7,7 @@
     [attr.aria-label]="nombreCompleto()"
     (click)="toggle()"
   >
-    <span class="portal-profile__avatar">{{ iniciales() }}</span>
+    <span class="portal-profile__avatar"><app-avatar [url]="user()?.url_foto" [iniciales]="iniciales()" /></span>
     <span class="portal-profile__who">
       <strong>{{ nombreCorto() }}</strong>
       <small>{{ rolKey() | translate }}</small>
@@ -18,7 +18,7 @@
   @if (open()) {
     <div class="portal-profile__panel" role="menu">
       <div class="portal-profile__header">
-        <span class="portal-profile__avatar portal-profile__avatar--large">{{ iniciales() }}</span>
+        <span class="portal-profile__avatar portal-profile__avatar--large"><app-avatar [url]="user()?.url_foto" [iniciales]="iniciales()" /></span>
         <div class="portal-profile__identity">
           <p class="portal-profile__name">{{ nombreCompleto() }}</p>
           <p class="portal-profile__email">{{ user()?.email }}</p>
