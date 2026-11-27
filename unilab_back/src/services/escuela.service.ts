@@ -87,8 +87,15 @@ export const escuelaService = {
 };
 
 export const cursoService = {
-  listar(id_escuela?: number) {
-    return cursoRepository.findMany(id_escuela ? { id_escuela } : undefined);
+  /** `alcance` = escuelas permitidas al usuario (`null` = todas). */
+  listar(id_escuela?: number, alcance: number[] | null = null) {
+    if (alcance && id_escuela && !alcance.includes(id_escuela)) {
+      throw new AppError('Solo puede consultar cursos de sus escuelas', 403);
+    }
+    return cursoRepository.findMany({
+      ...(id_escuela ? { id_escuela } : {}),
+      ...(alcance ? { ids_escuela: alcance } : {}),
+    });
   },
 
   async obtener(id: number) {
@@ -160,9 +167,12 @@ export const cursoService = {
     });
   },
 
-  async listarCoordinadoresDisponibles(id_curso: number) {
+  async listarCoordinadoresDisponibles(id_curso: number, alcance: number[] | null = null) {
     const curso = await cursoRepository.findById(id_curso);
     if (!curso) throw new AppError('Curso no encontrado', 404);
+    if (alcance && !alcance.includes(curso.id_escuela)) {
+      throw new AppError('El curso no pertenece a sus escuelas', 403);
+    }
 
     const resultado = await cursoRepository.listarProfesoresCoordinadores(id_curso);
     const perfiles = resultado?.escuela?.perfiles_profesor ?? [];

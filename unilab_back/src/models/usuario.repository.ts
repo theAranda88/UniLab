@@ -23,7 +23,7 @@ const usuarioConsultaSelect = {
   },
   perfil_estudiante: {
     where: activo,
-    select: { codigo_estudiantil: true, escuela: escuelaResumen },
+    select: { codigo_estudiantil: true, escuela: escuelaResumen, escuela_secundaria: escuelaResumen },
   },
 } satisfies Prisma.usuariosSelect;
 
@@ -49,10 +49,28 @@ export const usuarioRepository = {
         rol: true,
         perfil_coordinador: { where: activo },
         perfil_profesor: { where: activo, include: { escuela: true } },
-        perfil_estudiante: { where: activo, include: { escuela: true } },
+        perfil_estudiante: { where: activo, include: { escuela: true, escuela_secundaria: true } },
         perfil_externo: { where: activo },
       },
     });
+  },
+
+  /** Escuelas a las que pertenece el usuario según su perfil académico (profesor o estudiante). */
+  async findEscuelasIds(id_usuario: number): Promise<number[]> {
+    const u = await prisma.usuarios.findFirst({
+      where: { id_usuario, ...activo },
+      select: {
+        perfil_profesor: { where: activo, select: { id_escuela: true } },
+        perfil_estudiante: { where: activo, select: { id_escuela: true, id_escuela_secundaria: true } },
+      },
+    });
+    if (!u) return [];
+    const ids = [
+      u.perfil_profesor?.id_escuela,
+      u.perfil_estudiante?.id_escuela,
+      u.perfil_estudiante?.id_escuela_secundaria,
+    ];
+    return [...new Set(ids.filter((id): id is number => typeof id === 'number'))];
   },
 
   /** Usuario con escuela, semilleros y redes: base de la respuesta de login y de /auth/me. */
@@ -88,7 +106,7 @@ export const usuarioRepository = {
         perfil_profesor: { where: activo, select: { codigo_docente: true, escuela: escuelaResumen } },
         perfil_estudiante: {
           where: activo,
-          select: { codigo_estudiantil: true, escuela: escuelaResumen },
+          select: { codigo_estudiantil: true, escuela: escuelaResumen, escuela_secundaria: escuelaResumen },
         },
         perfil_externo: { where: activo, select: { institucion: true, ocupacion: true } },
         semilleros_como_lider: { where: activo, ...semilleroResumen },
@@ -114,6 +132,7 @@ export const usuarioRepository = {
       where.OR = [
         { perfil_profesor: { id_escuela: filtro.id_escuela, ...activo } },
         { perfil_estudiante: { id_escuela: filtro.id_escuela, ...activo } },
+        { perfil_estudiante: { id_escuela_secundaria: filtro.id_escuela, ...activo } },
       ];
     }
     if (filtro.busqueda) {

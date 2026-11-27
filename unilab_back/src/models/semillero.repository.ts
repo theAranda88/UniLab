@@ -32,9 +32,9 @@ function whereSemillerosPublicos(filtro: FiltroSemillerosPublicos): Prisma.semil
 }
 
 export const semilleroRepository = {
-  findMany() {
+  findMany(filtro?: { ids_escuela?: number[] }) {
     return prisma.semilleros.findMany({
-      where: activo,
+      where: { ...activo, ...(filtro?.ids_escuela ? { id_escuela: { in: filtro.ids_escuela } } : {}) },
       include: {
         escuela: true,
         profesor_lider: usuarioResumen,

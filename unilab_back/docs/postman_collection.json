@@ -241,6 +241,22 @@
           }
         },
         {
+          "name": "Crear usuario (estudiante con 2 escuelas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Nueva\",\n  \"apellidos\": \"Estudiante\",\n  \"email\": \"nueva.estudiante@unilab.edu\",\n  \"documento_identidad\": \"1077777777\",\n  \"telefono\": \"3007777777\",\n  \"rol\": \"Estudiante\",\n  \"codigo_estudiantil\": \"EST-777\",\n  \"id_escuela\": 5,\n  \"id_escuela_secundaria\": 6\n}"
+            },
+            "url": "{{base_url}}/usuarios",
+            "description": "Un estudiante pertenece a máximo 2 escuelas. `id_escuela_secundaria` es opcional y debe ser distinta de `id_escuela`."
+          }
+        },
+        {
           "name": "Actualizar usuario",
           "request": {
             "method": "PATCH",

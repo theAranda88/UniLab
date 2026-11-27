@@ -13,6 +13,7 @@ import type { JwtPayload } from '../middlewares/auth/types';
 import { configuracionService } from './configuracion.service';
 import { urlPublicaImagen } from '../utils/uploadPaths';
 import { rolVisibleEstudiante, rolVisibleProfesor, unirSemillerosConRol } from '../utils/rolSemillero';
+import { escuelasDePerfil } from './usuario.service';
 
 type PerfilSesion = NonNullable<Awaited<ReturnType<typeof usuarioRepository.findPerfilSesion>>>;
 
@@ -40,6 +41,7 @@ export function mapUsuarioSesion(u: PerfilSesion) {
     url_foto: u.foto_ruta ? urlPublicaImagen(u.foto_ruta) : null,
     url_firma: u.firma_ruta ? urlPublicaImagen(u.firma_ruta) : null,
     escuela: perfilAcademico?.escuela ?? null,
+    escuelas: escuelasDePerfil(u),
     semilleros: semillerosDeUsuario(u),
     redes: {
       linkedin: u.url_linkedin,

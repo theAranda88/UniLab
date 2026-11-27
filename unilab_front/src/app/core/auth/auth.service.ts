@@ -30,6 +30,8 @@ export interface User {
   /** Firma que se imprime en los certificados de los eventos que organiza. */
   url_firma?: string | null;
   escuela?: EscuelaResumen | null;
+  /** Escuelas del perfil académico (estudiante: máximo 2). */
+  escuelas?: EscuelaResumen[];
   semilleros?: SemilleroUsuario[];
   redes?: RedesContacto;
   perfil?: PerfilRol;

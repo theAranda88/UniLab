@@ -3,10 +3,12 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { semilleroService } from '../services/semillero.service';
 import { semilleroPortadaService } from '../services/semillero-portada.service';
 import { semilleroEvidenciaService } from '../services/semillero-evidencia.service';
+import { usuarioService } from '../services/usuario.service';
 
 export const semilleroController = {
-  listar: asyncHandler(async (_req: Request, res: Response) => {
-    res.status(200).json(await semilleroService.listar());
+  listar: asyncHandler(async (req: Request, res: Response) => {
+    const alcance = await usuarioService.escuelasPermitidas(req.user!.id_usuario, req.user!.id_rol);
+    res.status(200).json(await semilleroService.listar(alcance));
   }),
 
   obtener: asyncHandler(async (req: Request, res: Response) => {

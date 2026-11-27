@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -40,6 +40,12 @@ export class UsuariosFormComponent implements OnInit {
   readonly escuelas = signal<EscuelaAdmin[]>([]);
   readonly roles = ROLES;
 
+  /** La escuela secundaria no puede repetir la principal. */
+  readonly escuelasSecundarias = computed(() =>
+    this.escuelas().filter((e) => e.id_escuela !== this.idEscuelaPrincipal()),
+  );
+  private readonly idEscuelaPrincipal = signal<number | null>(null);
+
   private idUsuario: number | null = null;
   private rolInicial: RolNombre | null = null;
 
@@ -53,6 +59,7 @@ export class UsuariosFormComponent implements OnInit {
     codigo_docente: [''],
     codigo_estudiantil: [''],
     id_escuela: [null as number | null],
+    id_escuela_secundaria: [null as number | null],
     cargo: [''],
     dependencia: [''],
     profesion: [''],
@@ -75,6 +82,12 @@ export class UsuariosFormComponent implements OnInit {
     }
 
     this.form.controls.rol.valueChanges.subscribe((rol) => this.aplicarValidadoresRol(rol));
+    this.form.controls.id_escuela.valueChanges.subscribe((id) => {
+      this.idEscuelaPrincipal.set(id);
+      if (id !== null && id === this.form.controls.id_escuela_secundaria.value) {
+        this.form.controls.id_escuela_secundaria.setValue(null);
+      }
+    });
   }
 
   private cargar(id: number): void {
@@ -89,6 +102,10 @@ export class UsuariosFormComponent implements OnInit {
           documento_identidad: usuario.documento_identidad,
           telefono: usuario.telefono,
           rol: usuario.rol.nombre_rol,
+          codigo_docente: usuario.perfil_profesor?.codigo_docente ?? '',
+          codigo_estudiantil: usuario.perfil_estudiante?.codigo_estudiantil ?? '',
+          id_escuela: usuario.perfil_profesor?.id_escuela ?? usuario.perfil_estudiante?.id_escuela ?? null,
+          id_escuela_secundaria: usuario.perfil_estudiante?.id_escuela_secundaria ?? null,
           cargo: usuario.perfil_coordinador?.cargo ?? '',
           dependencia: usuario.perfil_coordinador?.dependencia ?? '',
           profesion: usuario.perfil_coordinador?.profesion ?? '',
@@ -156,7 +173,11 @@ export class UsuariosFormComponent implements OnInit {
         ? { codigo_docente: raw.codigo_docente, id_escuela: Number(raw.id_escuela) }
         : {}),
       ...(raw.rol === 'Estudiante'
-        ? { codigo_estudiantil: raw.codigo_estudiantil, id_escuela: Number(raw.id_escuela) }
+        ? {
+            codigo_estudiantil: raw.codigo_estudiantil,
+            id_escuela: Number(raw.id_escuela),
+            id_escuela_secundaria: raw.id_escuela_secundaria ? Number(raw.id_escuela_secundaria) : null,
+          }
         : {}),
       ...(raw.rol === 'Coordinador'
         ? { cargo: raw.cargo, dependencia: raw.dependencia, profesion: raw.profesion }

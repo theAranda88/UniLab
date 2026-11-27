@@ -153,7 +153,12 @@ export class MiPerfilComponent implements OnInit {
     if (!u) return [];
     const p = u.perfil;
     const filas: { etiqueta: string; valor: string | null | undefined }[] = [
-      { etiqueta: 'perfil.escuela', valor: u.escuela?.nombre_escuela },
+      {
+        etiqueta: (u.escuelas?.length ?? 0) > 1 ? 'perfil.escuelas' : 'perfil.escuela',
+        valor: u.escuelas?.length
+          ? u.escuelas.map((e) => e.nombre_escuela).join(' · ')
+          : u.escuela?.nombre_escuela,
+      },
       { etiqueta: 'usuarios.codigoDocente', valor: p?.codigo_docente },
       { etiqueta: 'usuarios.codigoEstudiantil', valor: p?.codigo_estudiantil },
       { etiqueta: 'usuarios.cargo', valor: p?.cargo },

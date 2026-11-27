@@ -88,6 +88,18 @@
               </select>
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'usuarios.escuelaSecundaria' | translate }}</label>
+              <select formControlName="id_escuela_secundaria" class="form-control">
+                <option [ngValue]="null">{{ 'usuarios.sinEscuelaSecundaria' | translate }}</option>
+                @for (escuela of escuelasSecundarias(); track escuela.id_escuela) {
+                  <option [ngValue]="escuela.id_escuela">{{ escuela.nombre_escuela }}</option>
+                }
+              </select>
+              <small class="form-hint">{{ 'usuarios.escuelaSecundariaHint' | translate }}</small>
+            </div>
+          </div>
         }
 
         @if (rolActual() === 'Coordinador') {

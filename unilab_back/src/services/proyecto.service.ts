@@ -2,6 +2,7 @@ import { AppError } from '../utils/AppError';
 import { proyectoRepository } from '../models/proyecto.repository';
 import { cursoRepository } from '../models/escuela.repository';
 import { semilleroRepository } from '../models/semillero.repository';
+import { usuarioRepository } from '../models/usuario.repository';
 import { proyectoImagenService } from './proyecto-imagen.service';
 import { prisma } from '../models/prisma.client';
 import { activo } from '../models/base.repository';
@@ -44,6 +45,25 @@ async function obtenerProyectoEnriquecido(id: number) {
   const proyecto = await proyectoRepository.findById(id);
   if (!proyecto) throw new AppError('Proyecto no encontrado', 404);
   return enriquecerProyecto(proyecto);
+}
+
+/** El curso y el semillero del proyecto deben pertenecer a alguna de las escuelas del estudiante. */
+async function validarEscuelasProyecto(id_estudiante: number, id_curso: number, id_semillero?: number) {
+  const escuelas = await usuarioRepository.findEscuelasIds(id_estudiante);
+
+  const curso = await cursoRepository.findById(id_curso);
+  if (!curso) throw new AppError('Curso no encontrado', 404);
+  if (!escuelas.includes(curso.id_escuela)) {
+    throw new AppError('El curso no pertenece a ninguna de sus escuelas', 422);
+  }
+
+  if (id_semillero) {
+    const semillero = await semilleroRepository.findById(id_semillero);
+    if (!semillero) throw new AppError('Semillero no encontrado', 404);
+    if (!escuelas.includes(semillero.id_escuela)) {
+      throw new AppError('El semillero no pertenece a ninguna de sus escuelas', 422);
+    }
+  }
 }
 
 async function resolverProfesorCoordinador(
@@ -139,6 +159,8 @@ export const proyectoService = {
     url_youtube?: string;
     url_spotify?: string;
   }) {
+    await validarEscuelasProyecto(data.id_estudiante, data.id_curso, data.id_semillero);
+
     const id_profesor_autorizador = await resolverProfesorCoordinador(
       data.id_curso,
       data.id_estudiante,
@@ -223,14 +245,14 @@ export const proyectoService = {
     const creador = proyecto.id_estudiante_creador;
     const ids = [...new Set(ids_estudiantes)].filter((i) => i !== creador);
     if (ids.length > 0) {
-      const escuelas = await escuelasDelEstudiante(creador);
+      const escuelas = await usuarioRepository.findEscuelasIds(creador);
       const validos = await prisma.usuarios.count({
         where: {
           id_usuario: { in: ids },
           ...activo,
           activo: true,
           rol: { nombre_rol: 'Estudiante' },
-          perfil_estudiante: { ...activo, id_escuela: { in: escuelas } },
+          perfil_estudiante: { ...activo, OR: [{ id_escuela: { in: escuelas } }, { id_escuela_secundaria: { in: escuelas } }] },
         },
       });
       if (validos !== ids.length) {
@@ -257,7 +279,7 @@ export const proyectoService = {
 
   /** Estudiantes de la misma escuela que el solicitante, para elegir coautores. */
   async companeros(id_usuario: number, busqueda?: string) {
-    const escuelas = await escuelasDelEstudiante(id_usuario);
+    const escuelas = await usuarioRepository.findEscuelasIds(id_usuario);
     if (escuelas.length === 0) return [];
     const contiene = busqueda ? { contains: busqueda, mode: 'insensitive' as const } : null;
     return prisma.usuarios.findMany({
@@ -266,7 +288,7 @@ export const proyectoService = {
         ...activo,
         activo: true,
         rol: { nombre_rol: 'Estudiante' },
-        perfil_estudiante: { ...activo, id_escuela: { in: escuelas } },
+        perfil_estudiante: { ...activo, OR: [{ id_escuela: { in: escuelas } }, { id_escuela_secundaria: { in: escuelas } }] },
         ...(contiene ? { OR: [{ nombres: contiene }, { apellidos: contiene }] } : {}),
       },
       select: { id_usuario: true, nombres: true, apellidos: true },
@@ -376,15 +398,6 @@ export const proyectoService = {
     });
   },
 };
-
-/** Escuelas del perfil de estudiante (para elegir y validar coautores). */
-async function escuelasDelEstudiante(id_usuario: number): Promise<number[]> {
-  const perfil = await prisma.perfiles_estudiante.findFirst({
-    where: { id_usuario, ...activo },
-    select: { id_escuela: true },
-  });
-  return perfil ? [perfil.id_escuela] : [];
-}
 
 async function verificarPermisoGestion(id_proyecto: number, rol: string, id_usuario: number) {
   const proyecto = await proyectoRepository.findById(id_proyecto);

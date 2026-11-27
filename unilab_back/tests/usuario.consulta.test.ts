@@ -108,6 +108,7 @@ describe('usuarioService.listarConsulta', () => {
       rol: 'Estudiante',
       codigo: 'E7',
       escuela: { id_escuela: 1, nombre_escuela: 'Ing' },
+      escuelas: [{ id_escuela: 1, nombre_escuela: 'Ing' }],
       redes: { linkedin: null, github: null, portafolio: null },
     });
   });
