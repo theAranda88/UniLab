@@ -126,13 +126,13 @@ export const paths = {
       },
     },
   },
-  '/auth/me/perfil-cv/omitir': {
+  '/auth/me/perfil-cv/completar': {
     post: {
       tags: ['Auth'],
-      summary: 'Omitir el aviso de completar el perfil',
-      description: 'Marca `perfil_cv_revisado = true` («Ahora no»). Guardar el perfil con PATCH /auth/me también lo marca.',
+      summary: 'Completar el perfil del primer ingreso',
+      description: 'Cierra el asistente obligatorio del primer ingreso: marca `perfil_cv_revisado = true` solo si el perfil tiene foto, titular, biografía, al menos una especialidad o fortaleza y al menos un estudio. Los enlaces son opcionales.',
       security: [{ bearerAuth: [] }],
-      responses: { 200: { description: 'Sesión actualizada' }, 401: err[401] },
+      responses: { 200: { description: 'Sesión actualizada' }, 401: err[401], 422: err[422] },
     },
   },
   '/auth/me/foto': {

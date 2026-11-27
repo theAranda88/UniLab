@@ -8,12 +8,14 @@ const m = vi.hoisted(() => ({
     update: vi.fn(),
     updatePerfilCoordinador: vi.fn(),
   },
+  perfilRepository: { listarFormacion: vi.fn() },
   verificarPassword: vi.fn(),
   hashearPassword: vi.fn(),
 }));
 
 vi.mock('../src/models/usuario.repository', () => ({ usuarioRepository: m.usuarioRepository }));
 vi.mock('../src/models/escuela.repository', () => ({ escuelaRepository: {} }));
+vi.mock('../src/models/perfil.repository', () => ({ perfilRepository: m.perfilRepository }));
 vi.mock('../src/services/configuracion.service', () => ({ configuracionService: { obtener: vi.fn() } }));
 vi.mock('../src/utils/password', () => ({
   verificarPassword: m.verificarPassword,
@@ -21,7 +23,7 @@ vi.mock('../src/utils/password', () => ({
   generarPasswordAleatoria: vi.fn(),
 }));
 
-import { authService, mapUsuarioSesion } from '../src/services/auth.service';
+import { authService, camposPerfilFaltantes, mapUsuarioSesion } from '../src/services/auth.service';
 
 const IA = { id_semillero: 2, nombre_semillero: 'IA aplicada' };
 const ROBOTICA = { id_semillero: 3, nombre_semillero: 'Robótica' };
@@ -158,11 +160,10 @@ describe('authService', () => {
       url_github: 'https://github.com/ana',
     });
 
-    // Guardar el perfil también marca como atendido el aviso del primer ingreso
+    // Guardar un paso no cierra el primer ingreso: eso lo hace completarPerfilCv
     expect(m.usuarioRepository.update).toHaveBeenCalledWith(7, {
       telefono: '3109876543',
       url_github: 'https://github.com/ana',
-      perfil_cv_revisado: true,
     });
     expect(m.usuarioRepository.updatePerfilCoordinador).not.toHaveBeenCalled();
     expect(r.redes.github).toBe('https://github.com/ana');
@@ -200,5 +201,42 @@ describe('authService', () => {
 
     expect(m.hashearPassword).toHaveBeenCalledWith('NuevaClave2026');
     expect(m.usuarioRepository.update).toHaveBeenCalledWith(7, { password_hash: 'nuevo-hash', primer_login: false });
+  });
+});
+
+describe('primer ingreso obligatorio', () => {
+  const completo = {
+    foto_ruta: '/uploads/usuarios/7/foto.jpg',
+    titular: 'Estudiante de software',
+    biografia: 'Me gusta construir cosas.',
+    especialidades: ['Angular'],
+    fortalezas: [],
+  };
+
+  beforeEach(() => vi.resetAllMocks());
+
+  it('lista lo que falta del perfil', () => {
+    expect(camposPerfilFaltantes(completo, 1)).toEqual([]);
+    expect(
+      camposPerfilFaltantes({ foto_ruta: null, titular: ' ', biografia: null, especialidades: [], fortalezas: [] }, 0),
+    ).toEqual(['foto', 'titular', 'biografía', 'habilidades', 'formación']);
+    // Una fortaleza también cuenta como habilidad
+    expect(camposPerfilFaltantes({ ...completo, especialidades: [], fortalezas: ['Liderazgo'] }, 1)).toEqual([]);
+  });
+
+  it('no deja completar un perfil incompleto', async () => {
+    m.usuarioRepository.findPerfilSesion.mockResolvedValue(perfil({ ...completo, foto_ruta: null }));
+    m.perfilRepository.listarFormacion.mockResolvedValue([]);
+
+    await expect(authService.completarPerfilCv(7)).rejects.toMatchObject({ statusCode: 422 });
+    expect(m.usuarioRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('marca el perfil como revisado cuando está completo', async () => {
+    m.usuarioRepository.findPerfilSesion.mockResolvedValue(perfil(completo));
+    m.perfilRepository.listarFormacion.mockResolvedValue([{ id_formacion: 1 }]);
+
+    await authService.completarPerfilCv(7);
+    expect(m.usuarioRepository.update).toHaveBeenCalledWith(7, { perfil_cv_revisado: true });
   });
 });

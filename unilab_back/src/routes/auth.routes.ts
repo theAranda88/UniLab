@@ -35,11 +35,11 @@ router.patch(
   authController.actualizarMiPerfil,
 );
 router.post(
-  '/me/perfil-cv/omitir',
+  '/me/perfil-cv/completar',
   verifyToken,
   checkPrimerLogin,
   checkPerfilPendiente,
-  authController.omitirPerfilCv,
+  authController.completarPerfilCv,
 );
 router.post(
   '/me/foto',

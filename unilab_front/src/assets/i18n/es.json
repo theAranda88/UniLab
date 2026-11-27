@@ -1587,7 +1587,8 @@
   "perfilAviso": {
     "titulo": "¡Hola, {{nombre}}! Completa tu perfil",
     "texto": "Tu perfil público reúne tus proyectos, semilleros y eventos. Agrega tus datos para que la comunidad te conozca:",
-    "ahoraNo": "Ahora no"
+    "ahoraNo": "Ahora no",
+    "textoObligatorio": "Antes de empezar, completa tu perfil: foto, presentación, habilidades y formación. Así la comunidad sabrá quién eres en proyectos, semilleros y eventos."
   },
   "fotoPerfil": {
     "subir": "Subir foto de perfil",
@@ -1606,7 +1607,7 @@
     "abrir": "Completar con el asistente",
     "pasos": "Pasos para completar tu perfil",
     "pasoDe": "Paso {{paso}} de {{total}}",
-    "duracion": "Toma unos 3 minutos y puedes saltar cualquier paso.",
+    "duracion": "Toma unos 3 minutos. Solo los enlaces son opcionales.",
     "empezar": "Empezar",
     "anterior": "Atrás",
     "siguiente": "Siguiente",
@@ -1669,6 +1670,12 @@
         "Creatividad",
         "Resolución de problemas"
       ]
+    },
+    "requerido": {
+      "foto": "Sube tu foto de perfil para continuar.",
+      "sobre": "Escribe tu titular y tu biografía para continuar.",
+      "habilidades": "Agrega al menos una especialidad o fortaleza para continuar.",
+      "formacion": "Agrega al menos un estudio con el botón «Agregar» para continuar."
     }
   },
   "certificados": {

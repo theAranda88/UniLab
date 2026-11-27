@@ -150,9 +150,9 @@ export class AuthService {
     return this.http.delete<User>(`${this.apiUrl}/me/firma`).pipe(tap((user) => this.updateUser(user)));
   }
 
-  /** «Ahora no» en el aviso de completar el perfil: no se vuelve a mostrar. */
-  omitirPerfilCv(): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/me/perfil-cv/omitir`, {}).pipe(tap((user) => this.updateUser(user)));
+  /** Cierra el asistente obligatorio del primer ingreso (el backend valida que el perfil esté completo). */
+  completarPerfilCv(): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/me/perfil-cv/completar`, {}).pipe(tap((user) => this.updateUser(user)));
   }
 
   /** Cambio voluntario de contraseña desde «Mi perfil» (exige la actual). */

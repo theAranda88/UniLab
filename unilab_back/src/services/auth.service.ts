@@ -7,6 +7,7 @@ import {
   verificarGoogleIdToken,
 } from '../utils/googleAuth';
 import { usuarioRepository } from '../models/usuario.repository';
+import { perfilRepository } from '../models/perfil.repository';
 import { escuelaRepository } from '../models/escuela.repository';
 import type { JwtPayload } from '../middlewares/auth/types';
 import { configuracionService } from './configuracion.service';
@@ -67,6 +68,20 @@ export function mapUsuarioSesion(u: PerfilSesion) {
       ocupacion: u.perfil_externo?.ocupacion ?? null,
     },
   };
+}
+
+/** Datos obligatorios del perfil en el primer ingreso (los enlaces son opcionales). */
+export function camposPerfilFaltantes(
+  u: { foto_ruta: string | null; titular: string | null; biografia: string | null; especialidades: string[]; fortalezas: string[] },
+  totalFormacion: number,
+): string[] {
+  const faltan: string[] = [];
+  if (!u.foto_ruta) faltan.push('foto');
+  if (!u.titular?.trim()) faltan.push('titular');
+  if (!u.biografia?.trim()) faltan.push('biografía');
+  if (u.especialidades.length + u.fortalezas.length === 0) faltan.push('habilidades');
+  if (totalFormacion === 0) faltan.push('formación');
+  return faltan;
 }
 
 async function construirSesion(id_usuario: number) {
@@ -284,8 +299,7 @@ export const authService = {
       throw new AppError('Solo el coordinador puede registrar su profesión', 422);
     }
     if (Object.keys(datosUsuario).length > 0) {
-      // Guardar el perfil cuenta como haber atendido el aviso del primer ingreso
-      await usuarioRepository.update(solicitante.id_usuario, { ...datosUsuario, perfil_cv_revisado: true });
+      await usuarioRepository.update(solicitante.id_usuario, datosUsuario);
     }
     if (profesion !== undefined) {
       await usuarioRepository.updatePerfilCoordinador(solicitante.id_usuario, { profesion });
@@ -293,8 +307,18 @@ export const authService = {
     return construirSesion(solicitante.id_usuario);
   },
 
-  /** «Ahora no» en el aviso de completar el perfil: no se vuelve a mostrar. */
-  async omitirPerfilCv(id_usuario: number) {
+  /**
+   * Cierra el asistente obligatorio del primer ingreso. Solo se marca el perfil como revisado
+   * si tiene foto, titular, biografía, al menos una habilidad y al menos un estudio.
+   */
+  async completarPerfilCv(id_usuario: number) {
+    const usuario = await usuarioRepository.findPerfilSesion(id_usuario);
+    if (!usuario) throw new AppError('Usuario no encontrado', 404);
+    const formacion = await perfilRepository.listarFormacion(id_usuario);
+    const faltan = camposPerfilFaltantes(usuario, formacion.length);
+    if (faltan.length > 0) {
+      throw new AppError(`Para continuar completa tu perfil: ${faltan.join(', ')}`, 422);
+    }
     await usuarioRepository.update(id_usuario, { perfil_cv_revisado: true });
     return construirSesion(id_usuario);
   },

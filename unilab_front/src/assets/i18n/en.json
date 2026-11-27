@@ -1587,7 +1587,8 @@
   "perfilAviso": {
     "titulo": "Hi, {{nombre}}! Complete your profile",
     "texto": "Your public profile brings together your projects, research groups and events. Add your details so the community gets to know you:",
-    "ahoraNo": "Not now"
+    "ahoraNo": "Not now",
+    "textoObligatorio": "Before you start, complete your profile: photo, introduction, skills and education. This way the community will know who you are in projects, research groups and events."
   },
   "fotoPerfil": {
     "subir": "Upload profile photo",
@@ -1606,7 +1607,7 @@
     "abrir": "Complete with the wizard",
     "pasos": "Steps to complete your profile",
     "pasoDe": "Step {{paso}} of {{total}}",
-    "duracion": "It takes about 3 minutes and you can skip any step.",
+    "duracion": "It takes about 3 minutes. Only the links are optional.",
     "empezar": "Get started",
     "anterior": "Back",
     "siguiente": "Next",
@@ -1669,6 +1670,12 @@
         "Creativity",
         "Problem solving"
       ]
+    },
+    "requerido": {
+      "foto": "Upload your profile photo to continue.",
+      "sobre": "Write your headline and bio to continue.",
+      "habilidades": "Add at least one specialty or strength to continue.",
+      "formacion": "Add at least one degree with the Add button to continue."
     }
   },
   "certificados": {

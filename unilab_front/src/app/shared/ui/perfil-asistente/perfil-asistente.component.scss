@@ -979,3 +979,18 @@ $ease-salida: cubic-bezier(0.2, 0.8, 0.2, 1);
     transition: none;
   }
 }
+
+// Dato obligatorio pendiente en el primer ingreso
+.asis__aviso {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 28px 4px;
+  padding: 10px 14px;
+  border-left: 3px solid t.$accent-pressed;
+  border-radius: 8px;
+  background: t.$cream;
+  color: t.$accent-ink-strong;
+  font-size: 14px;
+  font-weight: 600;
+}

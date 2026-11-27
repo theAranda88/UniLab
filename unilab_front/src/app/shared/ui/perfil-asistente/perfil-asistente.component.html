@@ -10,9 +10,11 @@
     tabindex="-1"
     (keydown.escape)="cerrar()"
   >
-    <button type="button" class="asis__cerrar" (click)="cerrar()" [attr.aria-label]="'common.close' | translate">
-      <i class="ti ti-x" aria-hidden="true"></i>
-    </button>
+    @if (!obligatorio()) {
+      <button type="button" class="asis__cerrar" (click)="cerrar()" [attr.aria-label]="'common.close' | translate">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    }
 
     <!-- Indicador de pasos -->
     @if (pasoId() !== 'bienvenida') {
@@ -56,7 +58,7 @@
               <span class="asis-hero-icono__chispa asis-hero-icono__chispa--2"><i class="ti ti-star-filled"></i></span>
             </span>
             <h2 id="asis-titulo">{{ 'perfilAviso.titulo' | translate: { nombre: nombre() } }}</h2>
-            <p class="asis-paso__texto">{{ 'perfilAviso.texto' | translate }}</p>
+            <p class="asis-paso__texto">{{ 'perfilAviso.textoObligatorio' | translate }}</p>
             <ul class="asis-bienvenida">
               @for (p of pasos; track p.id; let i = $index) {
                 <li [style.animation-delay.ms]="150 + i * 70">
@@ -91,14 +93,14 @@
             </header>
             <form class="asis-form" [formGroup]="sobreForm" (ngSubmit)="siguiente()">
               <label class="edu-field">
-                <span class="edu-field__label">{{ 'perfil.cv.titular' | translate }}</span>
+                <span class="edu-field__label">{{ 'perfil.cv.titular' | translate }}@if (obligatorio()) { *}</span>
                 <span class="asis-input">
                   <i class="ti ti-id-badge-2" aria-hidden="true"></i>
                   <input class="edu-control" type="text" formControlName="titular" maxlength="160" [placeholder]="'perfil.cv.titularPlaceholder' | translate" />
                 </span>
               </label>
               <label class="edu-field">
-                <span class="edu-field__label">{{ 'perfil.cv.biografia' | translate }}</span>
+                <span class="edu-field__label">{{ 'perfil.cv.biografia' | translate }}@if (obligatorio()) { *}</span>
                 <textarea class="edu-control asis-form__textarea" rows="5" formControlName="biografia" maxlength="2000" [placeholder]="'perfil.cv.biografiaPlaceholder' | translate"></textarea>
                 <small class="asis-form__contador">{{ sobreForm.controls.biografia.value.length }}/2000</small>
               </label>
@@ -273,11 +275,14 @@
       }
     </div>
 
+    @if (aviso()) {
+      <p class="asis__aviso" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i>{{ aviso()! | translate }}</p>
+    }
+
     <!-- Acciones -->
     <footer class="asis__acciones">
       @switch (pasoId()) {
         @case ('bienvenida') {
-          <button type="button" class="edu-btn edu-btn--secondary" (click)="ahoraNo()">{{ 'perfilAviso.ahoraNo' | translate }}</button>
           <button type="button" class="edu-btn asis__principal" (click)="empezar()">
             {{ 'asistentePerfil.empezar' | translate }}<i class="ti ti-arrow-right" aria-hidden="true"></i>
           </button>
@@ -295,9 +300,11 @@
             <i class="ti ti-arrow-left" aria-hidden="true"></i>{{ 'asistentePerfil.anterior' | translate }}
           </button>
           <span class="asis__espacio"></span>
-          <button type="button" class="asis__omitir" (click)="omitir()" [disabled]="guardando()">
-            {{ 'asistentePerfil.omitir' | translate }}
-          </button>
+          @if (puedeOmitir()) {
+            <button type="button" class="asis__omitir" (click)="omitir()" [disabled]="guardando()">
+              {{ 'asistentePerfil.omitir' | translate }}
+            </button>
+          }
           <button type="button" class="edu-btn asis__principal" (click)="siguiente()" [disabled]="guardando()">
             @if (guardando()) {
               <span class="asis__mini-spinner" aria-hidden="true"></span>{{ 'common.guardando' | translate }}

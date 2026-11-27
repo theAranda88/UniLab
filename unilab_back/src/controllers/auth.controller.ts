@@ -28,8 +28,8 @@ export const authController = {
     res.status(200).json(usuario);
   }),
 
-  omitirPerfilCv: asyncHandler(async (req: Request, res: Response) => {
-    res.status(200).json(await authService.omitirPerfilCv(req.user!.id_usuario));
+  completarPerfilCv: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await authService.completarPerfilCv(req.user!.id_usuario));
   }),
 
   cambiarMiPassword: asyncHandler(async (req: Request, res: Response) => {

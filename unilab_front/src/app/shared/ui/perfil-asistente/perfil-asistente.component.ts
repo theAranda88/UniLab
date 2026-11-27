@@ -57,8 +57,9 @@ const MAX_ETIQUETAS = 15;
 
 /**
  * Asistente para completar el perfil tipo CvLAC, paso a paso: foto, titular y biografía,
- * especialidades y fortalezas, formación y enlaces. Se abre solo en el primer ingreso
- * (con «Ahora no» para descartarlo) o a pedido desde «Mi perfil». Cada paso se guarda al avanzar.
+ * especialidades y fortalezas, formación y enlaces. En el primer ingreso es obligatorio: no se puede
+ * cerrar hasta completar los datos requeridos (los enlaces son opcionales). Desde «Mi perfil» se abre
+ * a pedido y se puede cerrar. Cada paso se guarda al avanzar.
  */
 @Component({
   selector: 'app-perfil-asistente',
@@ -89,10 +90,8 @@ export class PerfilAsistenteComponent {
   readonly enlaces = ENLACES;
   readonly niveles = NIVELES;
 
-  /** Queda abierto aunque guardar un paso marque el perfil como revisado. */
+  /** Queda abierto hasta llegar al cierre aunque el perfil ya quede marcado como revisado. */
   private readonly abiertoAuto = signal(false);
-  /** Descartado en esta sesión aunque falle la petición de «Ahora no». */
-  private readonly descartado = signal(false);
 
   readonly visible = computed(() => this.abiertoAuto() || this.asistente.abierto());
   readonly paso = signal(0);
@@ -106,6 +105,10 @@ export class PerfilAsistenteComponent {
 
   readonly usuario = this.auth.user;
   readonly nombre = computed(() => this.usuario()?.nombres ?? '');
+  /** Primer ingreso: hay que completar el perfil antes de usar la plataforma. */
+  readonly obligatorio = computed(() => this.usuario()?.perfil_cv_revisado === false);
+  /** Mensaje del dato que falta en el paso actual (clave de traducción). */
+  readonly aviso = signal<string | null>(null);
 
   readonly sobreForm = this.fb.nonNullable.group({
     titular: ['', Validators.maxLength(160)],
@@ -158,16 +161,27 @@ export class PerfilAsistenteComponent {
   readonly perfilPublico = computed(() => ['/personas', this.usuario()?.id_usuario ?? 0]);
 
   constructor() {
-    // Primer ingreso: se abre una vez si el usuario no ha completado ni omitido su perfil
+    // Primer ingreso: se abre (y no se puede cerrar) mientras el perfil no esté completo
     effect(() => {
       const u = this.usuario();
       const url = this.url();
-      if (!u || this.descartado() || u.primer_login || u.perfil_pendiente || u.perfil_cv_revisado !== false) return;
-      // No interrumpe en el propio perfil ni en los flujos de acceso
-      if (/\/(perfil|login|registro|cambiar-password|completar-perfil)(\/|$|\?)/.test(url)) return;
+      if (!u || u.primer_login || u.perfil_pendiente || u.perfil_cv_revisado !== false) return;
+      // Los flujos de acceso van primero
+      if (/\/(login|registro|cambiar-password|completar-perfil)(\/|$|\?)/.test(url)) return;
       untracked(() => {
         if (!this.abiertoAuto()) this.preparar(0);
         this.abiertoAuto.set(true);
+      });
+    });
+
+    // El aviso desaparece en cuanto el paso tiene su dato (foto subida, etiqueta o estudio agregado)
+    effect(() => {
+      this.usuario();
+      this.formacion();
+      this.especialidades();
+      this.fortalezas();
+      untracked(() => {
+        if (this.aviso() && !this.faltaEnPaso(this.pasoId())) this.aviso.set(null);
       });
     });
 
@@ -195,31 +209,42 @@ export class PerfilAsistenteComponent {
   /** Guarda el paso actual y, si todo va bien, pasa al indicado. */
   ir(destino: number): void {
     if (this.guardando() || destino === this.paso() || destino < 1 || destino >= ORDEN.length) return;
+    // En el primer ingreso no se avanza sin el dato obligatorio del paso
+    const falta = destino > this.paso() && this.obligatorio() ? this.faltaEnPaso(this.pasoId()) : null;
+    this.aviso.set(falta);
+    if (falta) return;
     this.guardando.set(true);
     this.guardarPasoActual().subscribe((ok) => {
+      if (!ok) {
+        this.guardando.set(false);
+        return;
+      }
+      // Al terminar el último paso del primer ingreso se valida el perfil completo
+      if (ORDEN[destino] === 'listo' && this.obligatorio()) {
+        this.completar();
+        return;
+      }
       this.guardando.set(false);
-      if (ok) this.mover(destino);
+      this.mover(destino);
     });
   }
 
-  /** Pasa al siguiente sin guardar lo que haya en este paso. */
+  /** Pasa al siguiente sin guardar lo que haya en este paso (solo pasos opcionales en el primer ingreso). */
   omitir(): void {
-    if (!this.guardando()) this.mover(this.paso() + 1);
+    if (this.guardando() || !this.puedeOmitir()) return;
+    this.ir(this.paso() + 1);
   }
 
-  ahoraNo(): void {
-    this.cerrar();
+  /** En el primer ingreso solo los enlaces son opcionales. */
+  puedeOmitir(): boolean {
+    return !this.obligatorio() || this.pasoId() === 'enlaces';
   }
 
   cerrar(): void {
-    const u = this.usuario();
+    // El primer ingreso no se puede cerrar hasta completar el perfil
+    if (this.obligatorio()) return;
     this.abiertoAuto.set(false);
-    this.descartado.set(true);
     this.asistente.cerrar();
-    // Cerrar sin guardar nada también cuenta como «Ahora no»
-    if (u && u.perfil_cv_revisado === false) {
-      this.auth.omitirPerfilCv().subscribe({ error: () => undefined });
-    }
   }
 
   verPerfilPublico(): void {
@@ -305,6 +330,45 @@ export class PerfilAsistenteComponent {
 
   // ---- Internos ----
 
+  /** Clave del mensaje del dato obligatorio que falta en el paso, o null si está completo. */
+  private faltaEnPaso(id: PasoId): string | null {
+    const u = this.usuario();
+    switch (id) {
+      case 'foto':
+        return u?.url_foto ? null : 'asistentePerfil.requerido.foto';
+      case 'sobre': {
+        const { titular, biografia } = this.sobreForm.getRawValue();
+        return titular.trim() && biografia.trim() ? null : 'asistentePerfil.requerido.sobre';
+      }
+      case 'habilidades':
+        return this.especialidades().length + this.fortalezas().length > 0 ? null : 'asistentePerfil.requerido.habilidades';
+      case 'formacion':
+        return this.formacion().length > 0 ? null : 'asistentePerfil.requerido.formacion';
+      default:
+        return null;
+    }
+  }
+
+  private completar(): void {
+    this.auth.completarPerfilCv().subscribe({
+      next: () => {
+        this.guardando.set(false);
+        this.mover(ORDEN.indexOf('listo'));
+      },
+      error: () => {
+        this.guardando.set(false);
+        // Lleva al primer paso al que le falta información
+        const pendiente = PASOS.find((p) => this.faltaEnPaso(p.id));
+        if (pendiente) {
+          this.mover(ORDEN.indexOf(pendiente.id));
+          this.aviso.set(this.faltaEnPaso(pendiente.id));
+        } else {
+          this.toast.error('perfil.cv.errorGuardar');
+        }
+      },
+    });
+  }
+
   private preparar(paso: number): void {
     this.cargarFormularios(this.usuario());
     this.perfilService.listarFormacion().subscribe({ next: (lista) => this.formacion.set(lista), error: () => undefined });
@@ -314,6 +378,7 @@ export class PerfilAsistenteComponent {
   }
 
   private mover(destino: number): void {
+    if (destino !== this.paso()) this.aviso.set(null);
     this.direccion.set(destino > this.paso() ? 'adelante' : 'atras');
     this.paso.set(destino);
     this.enfocar();
