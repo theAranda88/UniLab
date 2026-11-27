@@ -1,4 +1,4 @@
-# UniLab · Eduinova
+# UniLab · Eduinnova
 
 Plataforma de la **Corporación Universitaria Autónoma del Cauca** para gestionar proyectos académicos, escuelas y cursos, semilleros de investigación y eventos.
 

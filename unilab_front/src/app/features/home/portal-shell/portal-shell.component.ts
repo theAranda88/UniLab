@@ -12,7 +12,7 @@ import { ViewportScroller } from '@angular/common';
 
 type PortalSection = 'inicio' | 'proyectos' | 'escuelas' | 'eventos' | 'mis-proyectos' | 'semilleros' | null;
 
-/** Shell del portal público Eduinova: cabecera, contenido y pie (estático). */
+/** Shell del portal público Eduinnova: cabecera, contenido y pie (estático). */
 @Component({
   selector: 'app-portal-shell',
   standalone: true,

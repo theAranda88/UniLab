@@ -1,5 +1,5 @@
 /**
- * SEED DE DATOS DE DEMOSTRACIÓN — UniLab / Eduinova
+ * SEED DE DATOS DE DEMOSTRACIÓN — UniLab / Eduinnova
  *
  * Contraseña para TODOS los usuarios sembrados: Password123!
  *
@@ -479,7 +479,7 @@ async function main(): Promise<void> {
     nombres: 'Ana',
     apellidos: 'Administradora',
     email: 'admin@unilab.edu',
-    cv: { titular: 'Administradora de la plataforma Eduinova' },
+    cv: { titular: 'Administradora de la plataforma Eduinnova' },
   });
   const A = admin.id_usuario;
 

@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Eduinova",
+    "title": "Eduinnova",
     "subtitle": "Academic Management Platform"
   },
   "shell": {
     "brand": {
-      "title": "Eduinova",
+      "title": "Eduinnova",
       "subtitle": "Academic management"
     },
     "nav": {
@@ -41,7 +41,7 @@
         "miGestion": "My management",
         "proyectos": "Projects",
         "recursos": "Resources",
-        "portal": "Eduinova"
+        "portal": "Eduinnova"
       },
       "label": "Panel navigation",
       "soon": "Soon"
@@ -122,7 +122,7 @@
       "googleError": "Could not sign in with Google",
       "heading": "Sign in",
       "welcome": "Welcome to",
-      "welcomeBrand": "Eduinova",
+      "welcomeBrand": "Eduinnova",
       "intro": "Academic management platform for projects, schools and events of the Corporación Universitaria Autónoma del Cauca.",
       "feature1": "Research group projects and their review",
       "feature2": "Events, sessions and QR attendance",
@@ -161,7 +161,7 @@
     },
     "brand": {
       "caption": "Academic management",
-      "home": "Go to the Eduinova portal home",
+      "home": "Go to the Eduinnova portal home",
       "backToPortal": "Back to portal",
       "universityName": "Corporación Universitaria",
       "universityPlace": "Autónoma del Cauca",
@@ -216,7 +216,7 @@
     }
   },
   "dashboard": {
-    "title": "Eduinova - Dashboard",
+    "title": "Eduinnova - Dashboard",
     "welcome": "Welcome,",
     "logout": "Sign Out",
     "heading": "Welcome to the System",
@@ -654,7 +654,7 @@
     "exito": "You have successfully registered for the event!",
     "yaInscrito": "Already registered",
     "errorRegistrar": "Could not complete registration.",
-    "sinCuenta": "You do not need a Eduinova account to register for this event."
+    "sinCuenta": "You do not need a Eduinnova account to register for this event."
   },
   "asistencia": {
     "titulo": "Register Attendance",
@@ -757,7 +757,7 @@
     "director": "Director:",
     "unknownLeader": "Research team",
     "exploreDeep": "Explore",
-    "footer": "Eduinova · Portal of academic projects, research groups and events.",
+    "footer": "Eduinnova · Portal of academic projects, research groups and events.",
     "mobileMenu": "Select school",
     "facultyProjects": "Projects from {{escuela}}",
     "coursesTitle": "Courses",
@@ -1118,14 +1118,14 @@
     "urlAplicativo": "Web app",
     "aprobar": "Approve and publish",
     "aprobarTitulo": "Approve and publish project",
-    "aprobarMensaje": "The project will be visible on the Eduinova public portal. Confirm approval?",
+    "aprobarMensaje": "The project will be visible on the Eduinnova public portal. Confirm approval?",
     "rechazar": "Reject",
     "publicar": "Publish to portal",
     "verEnPortal": "View on public portal",
     "rechazarTitulo": "Reject project",
     "rechazarMensaje": "The student will not be able to publish this project. Confirm rejection?",
     "publicarTitulo": "Publish project",
-    "publicarMensaje": "The project will be visible on the Eduinova public portal.",
+    "publicarMensaje": "The project will be visible on the Eduinnova public portal.",
     "exitoAprobar": "Project approved and published on the portal.",
     "exitoRechazar": "Project rejected.",
     "exitoPublicar": "Project published on the portal.",

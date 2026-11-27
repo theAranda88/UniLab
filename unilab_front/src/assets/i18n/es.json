@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Eduinova",
+    "title": "Eduinnova",
     "subtitle": "Plataforma de Gestión Académica"
   },
   "shell": {
     "brand": {
-      "title": "Eduinova",
+      "title": "Eduinnova",
       "subtitle": "Gestión académica"
     },
     "nav": {
@@ -41,7 +41,7 @@
         "miGestion": "Mi gestión",
         "proyectos": "Proyectos",
         "recursos": "Recursos",
-        "portal": "Eduinova"
+        "portal": "Eduinnova"
       },
       "label": "Navegación del panel",
       "soon": "Pronto"
@@ -122,7 +122,7 @@
       "googleError": "No se pudo iniciar sesión con Google",
       "heading": "Iniciar sesión",
       "welcome": "Bienvenido a",
-      "welcomeBrand": "Eduinova",
+      "welcomeBrand": "Eduinnova",
       "intro": "Plataforma de gestión académica de proyectos, escuelas y eventos de la Corporación Universitaria Autónoma del Cauca.",
       "feature1": "Proyectos de semilleros y su revisión",
       "feature2": "Eventos, jornadas y asistencia por QR",
@@ -161,7 +161,7 @@
     },
     "brand": {
       "caption": "Gestión académica",
-      "home": "Ir al inicio del portal Eduinova",
+      "home": "Ir al inicio del portal Eduinnova",
       "backToPortal": "Volver al portal",
       "universityName": "Corporación Universitaria",
       "universityPlace": "Autónoma del Cauca",
@@ -216,7 +216,7 @@
     }
   },
   "dashboard": {
-    "title": "Eduinova - Dashboard",
+    "title": "Eduinnova - Dashboard",
     "welcome": "Bienvenido,",
     "logout": "Cerrar Sesión",
     "heading": "Bienvenido al Sistema",
@@ -654,7 +654,7 @@
     "exito": "¡Te has inscrito correctamente al evento!",
     "yaInscrito": "Ya estás inscrito",
     "errorRegistrar": "No se pudo completar la inscripción.",
-    "sinCuenta": "No necesitas cuenta Eduinova para inscribirte a este evento."
+    "sinCuenta": "No necesitas cuenta Eduinnova para inscribirte a este evento."
   },
   "asistencia": {
     "titulo": "Registrar Asistencia",
@@ -757,7 +757,7 @@
     "director": "Director:",
     "unknownLeader": "Equipo investigador",
     "exploreDeep": "Explorar",
-    "footer": "Eduinova · Portal de proyectos académicos, semilleros y eventos.",
+    "footer": "Eduinnova · Portal de proyectos académicos, semilleros y eventos.",
     "mobileMenu": "Seleccionar escuela",
     "facultyProjects": "Proyectos de {{escuela}}",
     "coursesTitle": "Cursos",
@@ -1121,11 +1121,11 @@
     "publicar": "Publicar en portal",
     "verEnPortal": "Ver en portal público",
     "aprobarTitulo": "Aprobar y publicar proyecto",
-    "aprobarMensaje": "El proyecto quedará visible en el portal público de Eduinova. ¿Confirmas la aprobación?",
+    "aprobarMensaje": "El proyecto quedará visible en el portal público de Eduinnova. ¿Confirmas la aprobación?",
     "rechazarTitulo": "Rechazar proyecto",
     "rechazarMensaje": "El estudiante no podrá publicar este proyecto. ¿Confirmas el rechazo?",
     "publicarTitulo": "Publicar proyecto",
-    "publicarMensaje": "El proyecto será visible en el portal público de Eduinova.",
+    "publicarMensaje": "El proyecto será visible en el portal público de Eduinnova.",
     "exitoAprobar": "Proyecto aprobado y publicado en el portal.",
     "exitoRechazar": "Proyecto rechazado.",
     "exitoPublicar": "Proyecto publicado en el portal.",
