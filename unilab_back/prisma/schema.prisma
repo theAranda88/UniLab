@@ -53,6 +53,8 @@ model usuarios {
   url_researchgate    String?  @db.VarChar(500)
   /// Foto de perfil: ruta en /uploads o URL externa (seed de demostración)
   foto_ruta           String?  @db.VarChar(500)
+  /// Imagen de la firma que se imprime en los certificados de los eventos que organiza
+  firma_ruta          String?  @db.VarChar(500)
   /// El teléfono solo aparece en el perfil público si el usuario lo permite
   mostrar_telefono    Boolean  @default(false)
   /// true cuando el usuario completó u omitió el aviso de perfil del primer ingreso
@@ -93,6 +95,7 @@ model usuarios {
   semillero_evidencias_creadas      semillero_evidencias[]      @relation("semillero_evidencias_creador")
   inscripciones_creadas         inscripciones[]         @relation("inscripciones_creador")
   asistencias_creadas           asistencias[]           @relation("asistencias_creador")
+  certificados_emitidos         certificados[]          @relation("certificados_creador")
 
   perfil_coordinador            perfiles_coordinador?
   perfil_profesor               perfiles_profesor?
@@ -583,6 +586,7 @@ model inscripciones {
   usuario     usuarios?     @relation(fields: [id_usuario], references: [id_usuario], onDelete: Restrict)
   creador     usuarios?     @relation("inscripciones_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
   asistencias asistencias[]
+  certificados certificados[]
 
   @@unique([id_evento, id_usuario], where: { deleted_at: null })
   @@unique([id_evento, documento_identidad], where: { deleted_at: null })
@@ -603,6 +607,30 @@ model asistencias {
   creador     usuarios?       @relation("asistencias_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
 
   @@unique([id_inscripcion, id_jornada], where: { deleted_at: null })
+}
+
+/// Certificado de asistencia a un evento. Guarda una copia de los datos impresos
+/// para que el diploma no cambie si después se edita la inscripción o el evento.
+model certificados {
+  id_certificado        Int      @id @default(autoincrement())
+  id_inscripcion        Int
+  codigo_verificacion   String   @unique @db.VarChar(64)
+  nombre_completo       String   @db.VarChar(255)
+  documento_identidad   String   @db.VarChar(255)
+  nombre_evento         String   @db.VarChar(255)
+  jornadas_asistidas    Int
+  jornadas_totales      Int
+  porcentaje_asistencia Int
+  fecha_emision         DateTime @default(now()) @db.Timestamp(6)
+  created_at            DateTime @default(now()) @db.Timestamp(6)
+  updated_at            DateTime @updatedAt @db.Timestamp(6)
+  created_by            Int?
+  deleted_at            DateTime? @db.Timestamp(6)
+
+  inscripcion inscripciones @relation(fields: [id_inscripcion], references: [id_inscripcion], onDelete: Restrict)
+  creador     usuarios?     @relation("certificados_creador", fields: [created_by], references: [id_usuario], onDelete: Restrict)
+
+  @@unique([id_inscripcion], where: { deleted_at: null })
 }
 
 // =============================================================================

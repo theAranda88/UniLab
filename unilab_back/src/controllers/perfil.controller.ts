@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { perfilService } from '../services/perfil.service';
-import { usuarioFotoService } from '../services/usuario-foto.service';
+import { usuarioFotoService, usuarioFirmaService } from '../services/usuario-foto.service';
 
 export const perfilController = {
   listarFormacion: asyncHandler(async (req: Request, res: Response) => {
@@ -29,6 +29,14 @@ export const perfilController = {
 
   eliminarFoto: asyncHandler(async (req: Request, res: Response) => {
     res.status(200).json(await usuarioFotoService.eliminar(req.user!.id_usuario));
+  }),
+
+  subirFirma: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await usuarioFirmaService.subir(req.user!.id_usuario, req.file));
+  }),
+
+  eliminarFirma: asyncHandler(async (req: Request, res: Response) => {
+    res.status(200).json(await usuarioFirmaService.eliminar(req.user!.id_usuario));
   }),
 
   perfilPublico: asyncHandler(async (req: Request, res: Response) => {

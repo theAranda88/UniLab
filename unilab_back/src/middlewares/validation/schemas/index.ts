@@ -458,6 +458,7 @@ export const configuracionUpdateSchema = z
     registro_abierto: z.boolean(),
     semilleros_solicitudes_abiertas: z.boolean(),
     mensaje_portal: z.string().trim().max(280),
+    certificado_porcentaje_minimo: z.number().int().min(1).max(100),
   })
   .partial()
   .strict()
@@ -490,3 +491,13 @@ export const publicoProyectosQuerySchema = z
   .refine((data) => !(data.id_semillero !== undefined && data.sin_semillero === true), {
     message: 'No combine id_semillero con sin_semillero',
   });
+
+export const certificadoCodigoSchema = z.object({
+  codigo: z.string().uuid('Código de verificación inválido'),
+});
+
+/** Descarga del certificado sin cuenta: cédula y correo de la inscripción. */
+export const certificadoPublicoSchema = z.object({
+  documento_identidad: z.string().trim().min(3, 'Documento inválido').max(50),
+  email: z.string().trim().email('Correo inválido'),
+});

@@ -37,6 +37,7 @@ export function mapUsuarioSesion(u: PerfilSesion) {
     apellidos: u.apellidos,
     telefono: u.telefono,
     url_foto: u.foto_ruta ? urlPublicaImagen(u.foto_ruta) : null,
+    url_firma: u.firma_ruta ? urlPublicaImagen(u.firma_ruta) : null,
     escuela: perfilAcademico?.escuela ?? null,
     semilleros: semillerosDeUsuario(u),
     redes: {

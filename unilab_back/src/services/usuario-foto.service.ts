@@ -37,3 +37,29 @@ export const usuarioFotoService = {
     return authService.obtenerSesion(id_usuario);
   },
 };
+
+/** Firma que se imprime en los certificados de los eventos que organiza el usuario. */
+export const usuarioFirmaService = {
+  async subir(id_usuario: number, file: Express.Multer.File | undefined) {
+    if (!file) throw new AppError('Debe enviar la firma', 400);
+
+    const usuario = await usuarioRepository.findPerfilSesion(id_usuario);
+    if (!usuario) throw new AppError('Usuario no encontrado', 404);
+
+    eliminarArchivoFisico(usuario.firma_ruta);
+    await usuarioRepository.update(id_usuario, {
+      firma_ruta: rutaPublicaUsuario(id_usuario, path.basename(file.path)),
+    });
+    return authService.obtenerSesion(id_usuario);
+  },
+
+  async eliminar(id_usuario: number) {
+    const usuario = await usuarioRepository.findPerfilSesion(id_usuario);
+    if (!usuario) throw new AppError('Usuario no encontrado', 404);
+    if (!usuario.firma_ruta) throw new AppError('No tiene firma registrada', 404);
+
+    eliminarArchivoFisico(usuario.firma_ruta);
+    await usuarioRepository.update(id_usuario, { firma_ruta: null });
+    return authService.obtenerSesion(id_usuario);
+  },
+};

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { publicoController } from '../controllers/publico.controller';
 import { perfilController } from '../controllers/perfil.controller';
+import { certificadoController } from '../controllers/certificado.controller';
 import { validate } from '../middlewares/validation/validate';
 import { idParamSchema } from '../middlewares/validation/schemas';
 import {
@@ -9,6 +10,8 @@ import {
   asistenciaPublicaSchema,
   publicoProyectosQuerySchema,
   publicoSemillerosQuerySchema,
+  certificadoCodigoSchema,
+  certificadoPublicoSchema,
 } from '../middlewares/validation/schemas';
 import { z } from 'zod';
 
@@ -66,6 +69,17 @@ router.post(
   validate(idParamSchema, 'params'),
   validate(inscripcionPublicaSchema),
   publicoController.inscribirEvento,
+);
+router.post(
+  '/eventos/:id/certificado',
+  validate(idParamSchema, 'params'),
+  validate(certificadoPublicoSchema),
+  certificadoController.descargarPublico,
+);
+router.get(
+  '/certificados/:codigo',
+  validate(certificadoCodigoSchema, 'params'),
+  certificadoController.verificar,
 );
 router.post(
   '/asistencias/registrar',

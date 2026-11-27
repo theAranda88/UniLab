@@ -1698,4 +1698,106 @@ export const paths = {
       responses: { 200: { description: 'Parámetros actuales' } },
     },
   },
+
+  '/auth/me/firma': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Subir mi firma',
+      description: 'Imagen de la firma que se imprime en los certificados de los eventos que organiza. PNG (ideal con fondo transparente) o JPEG, máximo 2 MB.',
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: { type: 'object', required: ['firma'], properties: { firma: { type: 'string', format: 'binary' } } },
+          },
+        },
+      },
+      responses: { 200: { description: 'Sesión actualizada con `url_firma`' }, 400: err[400], 401: err[401] },
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Quitar mi firma',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Sesión actualizada (`url_firma: null`)' }, 401: err[401], 404: err[404] },
+    },
+  },
+  '/eventos/{id}/certificados': {
+    get: {
+      tags: ['Certificados'],
+      summary: 'Estado de certificados del evento',
+      description: '**Rol requerido:** Administrador u organizador del evento. Por inscrito: jornadas asistidas, porcentaje, si cumple el mínimo (`certificado_porcentaje_minimo`) y el certificado vigente.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: 'Resumen del evento e inscritos' }, 401: err[401], 403: err[403], 404: err[404] },
+    },
+    post: {
+      tags: ['Certificados'],
+      summary: 'Emitir certificados',
+      description: '**Rol requerido:** Administrador u organizador. El evento debe estar finalizado y tener jornadas. Emite a quienes cumplen el mínimo de asistencia (y pago confirmado o exento si el evento es pago) y aún no lo tienen.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: '`{ emitidos, ya_emitidos, no_cumplen }`' }, 401: err[401], 403: err[403], 404: err[404], 422: err[422] },
+    },
+  },
+  '/certificados/mios': {
+    get: {
+      tags: ['Certificados'],
+      summary: 'Mis certificados',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Certificados vigentes del usuario en sesión' }, 401: err[401] },
+    },
+  },
+  '/certificados/{id}/pdf': {
+    get: {
+      tags: ['Certificados'],
+      summary: 'Descargar certificado',
+      description: 'Lo descargan el titular, el organizador del evento o el administrador.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: 'PDF del certificado', content: { 'application/pdf': { schema: { type: 'string', format: 'binary' } } } }, 401: err[401], 403: err[403], 404: err[404] },
+    },
+  },
+  '/certificados/{id}': {
+    delete: {
+      tags: ['Certificados'],
+      summary: 'Anular certificado',
+      description: '**Rol requerido:** Administrador u organizador del evento. Borrado lógico: el código deja de verificarse.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Anulado' }, 401: err[401], 403: err[403], 404: err[404] },
+    },
+  },
+  '/public/certificados/{codigo}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Verificar un certificado',
+      description: 'Página de verificación del QR. Muestra el documento parcialmente oculto.',
+      security: [],
+      parameters: [{ name: 'codigo', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+      responses: { 200: { description: 'Certificado válido' }, 400: err[400], 404: err[404] },
+    },
+  },
+  '/public/eventos/{id}/certificado': {
+    post: {
+      tags: ['Público'],
+      summary: 'Descargar certificado sin cuenta',
+      description: 'La cédula y el correo deben coincidir con los de la inscripción.',
+      security: [],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['documento_identidad', 'email'],
+              properties: { documento_identidad: { type: 'string' }, email: { type: 'string', format: 'email' } },
+            },
+          },
+        },
+      },
+      responses: { 200: { description: 'PDF del certificado', content: { 'application/pdf': { schema: { type: 'string', format: 'binary' } } } }, 400: err[400], 404: err[404] },
+    },
+  },
 };
