@@ -1,0 +1,63 @@
+@use '../../../../styles/design-tokens' as t;
+
+.mi-cert {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 24px;
+  padding: 18px 20px;
+  border: 1px solid t.$border-subtle;
+  border-left: 4px solid t.$gray-500;
+  border-radius: 12px;
+  background: t.$white;
+}
+
+.mi-cert--listo {
+  border-left-color: t.$accent;
+  background: t.$cream;
+}
+
+.mi-cert__icono {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  background: t.$blue;
+  color: t.$white;
+  font-size: 22px;
+  flex: none;
+}
+
+.mi-cert__cuerpo {
+  flex: 1;
+  min-width: 220px;
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    color: t.$blue;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: t.$text-secondary;
+  }
+}
+
+.mi-cert__form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: end;
+  margin-top: 12px;
+}
+
+.mi-cert__error {
+  margin-top: 8px !important;
+  color: t.$danger !important;
+  font-weight: 600;
+}

@@ -304,3 +304,132 @@
     @include ui.btn-danger;
   }
 }
+
+// Integrantes del equipo (coautores)
+.equipo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: t.$space-8;
+  margin: 0 0 t.$space-12;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: t.$space-8;
+    padding: 4px 6px 4px 4px;
+    border: 1px solid t.$blue-border;
+    border-radius: 999px;
+    background: t.$blue-tint-strong;
+  }
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: t.$blue;
+    color: t.$white;
+    font-size: t.$font-size-2xs;
+    font-weight: t.$font-weight-extra-bold;
+  }
+
+  &__nombre {
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-semibold;
+    color: t.$ink;
+  }
+
+  &__quitar {
+    display: inline-flex;
+    padding: 4px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: t.$text-secondary;
+    cursor: pointer;
+
+    &:hover {
+      background: t.$neutral-tint;
+      color: t.$danger;
+    }
+  }
+
+  &__vacio {
+    margin: 0 0 t.$space-12;
+    font-size: t.$font-size-sm;
+    color: t.$text-muted;
+  }
+
+  &__buscador {
+    display: flex;
+    align-items: center;
+    gap: t.$space-8;
+    padding: 0 t.$space-12;
+    border: 1px solid t.$border-control;
+    border-radius: t.$radius-md;
+    background: t.$white;
+
+    &:focus-within {
+      border-color: t.$blue;
+      box-shadow: t.$focus-ring;
+    }
+
+    i {
+      color: t.$text-muted;
+    }
+
+    input {
+      flex: 1;
+      min-height: 42px;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font: inherit;
+    }
+  }
+
+  &__resultados {
+    display: flex;
+    flex-direction: column;
+    margin: t.$space-8 0 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid t.$border-subtle;
+    border-radius: t.$radius-md;
+    list-style: none;
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: t.$space-8;
+      padding: t.$space-8 t.$space-12;
+
+      & + li {
+        border-top: 1px solid t.$border-subtle;
+      }
+    }
+  }
+
+  &__agregar {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid t.$blue;
+    border-radius: t.$radius-md;
+    background: t.$white;
+    color: t.$blue;
+    font-weight: t.$font-weight-bold;
+    cursor: pointer;
+
+    &:hover {
+      background: t.$blue;
+      color: t.$white;
+    }
+  }
+}

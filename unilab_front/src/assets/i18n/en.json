@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Eduinova",
+    "title": "Eduinnova",
     "subtitle": "Academic Management Platform"
   },
   "shell": {
     "brand": {
-      "title": "Eduinova",
+      "title": "Eduinnova",
       "subtitle": "Academic management"
     },
     "nav": {
@@ -41,7 +41,7 @@
         "miGestion": "My management",
         "proyectos": "Projects",
         "recursos": "Resources",
-        "portal": "Eduinova"
+        "portal": "Eduinnova"
       },
       "label": "Panel navigation",
       "soon": "Soon"
@@ -122,7 +122,7 @@
       "googleError": "Could not sign in with Google",
       "heading": "Sign in",
       "welcome": "Welcome to",
-      "welcomeBrand": "Eduinova",
+      "welcomeBrand": "Eduinnova",
       "intro": "Academic management platform for projects, schools and events of the Corporación Universitaria Autónoma del Cauca.",
       "feature1": "Research group projects and their review",
       "feature2": "Events, sessions and QR attendance",
@@ -161,7 +161,7 @@
     },
     "brand": {
       "caption": "Academic management",
-      "home": "Go to the Eduinova portal home",
+      "home": "Go to the Eduinnova portal home",
       "backToPortal": "Back to portal",
       "universityName": "Corporación Universitaria",
       "universityPlace": "Autónoma del Cauca",
@@ -216,7 +216,7 @@
     }
   },
   "dashboard": {
-    "title": "Eduinova - Dashboard",
+    "title": "Eduinnova - Dashboard",
     "welcome": "Welcome,",
     "logout": "Sign Out",
     "heading": "Welcome to the System",
@@ -654,7 +654,7 @@
     "exito": "You have successfully registered for the event!",
     "yaInscrito": "Already registered",
     "errorRegistrar": "Could not complete registration.",
-    "sinCuenta": "You do not need a Eduinova account to register for this event."
+    "sinCuenta": "You do not need a Eduinnova account to register for this event."
   },
   "asistencia": {
     "titulo": "Register Attendance",
@@ -747,13 +747,17 @@
       "resourcesHint": "Downloading or opening resources requires sign-in.",
       "school": "School",
       "course": "Course",
-      "semillero": "Research group"
+      "semillero": "Research group",
+      "moreFromSemillero": "More projects from {{nombre}}",
+      "moreIndependent": "More independent projects from this school",
+      "seeAllProjects": "See all",
+      "verPerfil": "View {{nombre}}’s profile"
     },
     "academicProgram": "ACADEMIC PROGRAM",
     "director": "Director:",
     "unknownLeader": "Research team",
     "exploreDeep": "Explore",
-    "footer": "Eduinova · Portal of academic projects, research groups and events.",
+    "footer": "Eduinnova · Portal of academic projects, research groups and events.",
     "mobileMenu": "Select school",
     "facultyProjects": "Projects from {{escuela}}",
     "coursesTitle": "Courses",
@@ -776,7 +780,8 @@
       "proyectos": "Projects",
       "escuelasProyectos": "Schools and projects",
       "openMenu": "Open navigation menu",
-      "closeMenu": "Close navigation menu"
+      "closeMenu": "Close navigation menu",
+      "escuelas": "Schools"
     },
     "footerPortal": "Portal",
     "footerAccess": "Access",
@@ -789,7 +794,8 @@
       "titleEnd": "by our students",
       "lead": "Explore published projects by school, meet the research groups and take part in academic events.",
       "exploreProjects": "Explore projects",
-      "viewEvents": "View events"
+      "viewEvents": "View events",
+      "scrollCue": "Scroll to explore"
     },
     "stats": {
       "title": "The portal in numbers",
@@ -809,7 +815,9 @@
       "noProjects": "No published projects",
       "oneProject": "1 published project",
       "projects": "{{count}} published projects",
-      "noPrograms": "Academic programs to be published."
+      "noPrograms": "Academic programs to be published.",
+      "semilleros": "{{count}} research groups",
+      "oneSemillero": "1 research group"
     },
     "nextEvent": {
       "kicker": "Next event",
@@ -826,12 +834,68 @@
       "title": "Recently published",
       "lead": "The latest projects published on the portal, across all schools."
     },
+    "semilleros": {
+      "kicker": "Research groups",
+      "title": "Research groups",
+      "titleShort": "Groups",
+      "lead": "Active groups by school: explore their focus, leader and community.",
+      "schoolTitle": "Groups in this school",
+      "schoolHint": "Open a group to see its gallery and published projects.",
+      "leader": "Leader",
+      "members": "{{count}} approved member(s)",
+      "gallery": "Evidence gallery",
+      "about": "About the group",
+      "projectsTitle": "Group projects",
+      "noProjects": "No published projects",
+      "noProjectsHint": "When projects linked to this group are published, they will appear here.",
+      "backSchool": "Back to school",
+      "explore": "Explore groups",
+      "projectsCount": "{{count}} project(s)",
+      "membersCount": "{{count}} member(s)",
+      "view": "View group",
+      "seeAll": "See all research groups",
+      "catalogLead": "Discover each school's research groups: their focus, who leads them and the projects they have published.",
+      "searchLabel": "Search research groups",
+      "searchPlaceholder": "Search by name or topic, e.g. robotics",
+      "filterSchool": "Filter by school",
+      "allSchools": "All schools",
+      "resultCount": "{{count}} research group(s)",
+      "loadError": "Research groups could not be loaded.",
+      "noResults": "No results",
+      "noResultsHint": "Try another word or clear the school filter.",
+      "noSemilleros": "No active research groups yet",
+      "noSemillerosHint": "Research groups will appear here once they are registered.",
+      "clearFilters": "Clear filters",
+      "loadMore": "Load more groups",
+      "seeProjects": "See projects",
+      "join": "I want to join",
+      "statProjects": "Projects",
+      "statMembers": "Members",
+      "statEvidence": "Evidence",
+      "sections": "Research group sections",
+      "projectsHint": "{{count}} project(s) published by this group.",
+      "filterType": "Filter by project type",
+      "allTypes": "All",
+      "galleryHint": "Photos of activities and progress. Tap an image to enlarge it.",
+      "openImage": "Enlarge image {{n}}",
+      "showAll": "See all {{count}} photos",
+      "showLess": "See fewer photos",
+      "school": "School",
+      "schoolEmpty": "This school has no published research groups yet.",
+      "team": "Research group team",
+      "teamHint": "Professors and students who are part of this research group.",
+      "teamProfessors": "Professors",
+      "teamStudents": "Students",
+      "teamAll": "See the whole team ({{count}})"
+    },
+    "loadSemilleroError": "Could not load the research group.",
     "schoolPage": {
       "kicker": "School",
       "publishedProjects": "Published projects",
       "programs": "Academic programs",
       "programsTitle": "Academic programs",
       "projectsTitle": "School projects",
+      "projectsSchoolHint": "Only published projects without a research group. Others are listed inside each group.",
       "filterType": "Filter by project type",
       "allTypes": "All",
       "exploreOthers": "Explore other schools",
@@ -854,7 +918,9 @@
       "starLabel": "{{n}} out of 5 stars",
       "loginToRate": "Sign in to rate",
       "saved": "Your rating was saved.",
-      "error": "The rating couldn't be saved."
+      "error": "The rating couldn't be saved.",
+      "average": "Rated {{value}} out of 5 ({{count}} votes)",
+      "votes": "({{count}} votes)"
     },
     "comments": {
       "title": "Comments",
@@ -909,6 +975,47 @@
         "web": "Listen to audio"
       },
       "newTab": "(opens in a new tab)"
+    },
+    "topRated": {
+      "kicker": "Projects",
+      "title": "Top rated",
+      "lead": "The community’s best-rated projects across all schools.",
+      "position": "Rank {{n}}",
+      "first": "Top rated",
+      "viewProject": "View project"
+    },
+    "independientes": {
+      "kicker": "Outside research groups",
+      "title": "Independent projects",
+      "short": "Independent",
+      "lead": "Published projects from {{escuela}} that do not belong to any research group.",
+      "cardHint": "School projects that do not belong to any research group.",
+      "cta": "View projects",
+      "listTitle": "Independent projects",
+      "listHint": "Published and approved, outside the school’s research groups."
+    },
+    "flow": {
+      "kicker": "How it works",
+      "title": "From school to project",
+      "escuela": {
+        "title": "Schools",
+        "text": "Each school brings together its academic programs and research groups."
+      },
+      "semillero": {
+        "title": "Research groups",
+        "text": "Research groups bring students and professors together around a line of work."
+      },
+      "proyecto": {
+        "title": "Projects",
+        "text": "Projects are born in research groups or independently, and are published after review."
+      }
+    },
+    "cta": {
+      "kicker": "Join the community",
+      "title": "Got an idea? Bring it to a research group.",
+      "lead": "Discover your school’s research groups, publish your projects and give them the visibility they deserve.",
+      "semilleros": "Explore research groups",
+      "register": "Create account"
     }
   },
   "proyectosEstudiante": {
@@ -975,7 +1082,17 @@
       "publicado": "Published",
       "rechazado": "Rejected"
     },
-    "sinProyectosHint": "Create your first project to send it for review to your assigned teacher."
+    "sinProyectosHint": "Create your first project to send it for review to your assigned teacher.",
+    "integrantes": {
+      "titulo": "Team members",
+      "hint": "Add your schoolmates. They will appear on their profile once the project is published.",
+      "buscar": "Search a schoolmate by name",
+      "sinResultados": "No schoolmates match.",
+      "agregar": "Add",
+      "quitar": "Remove",
+      "vacio": "For now you are the only author of the project.",
+      "error": "The project was saved, but the team members could not be updated."
+    }
   },
   "proyectosProfesor": {
     "titulo": "Assigned projects",
@@ -1001,14 +1118,14 @@
     "urlAplicativo": "Web app",
     "aprobar": "Approve and publish",
     "aprobarTitulo": "Approve and publish project",
-    "aprobarMensaje": "The project will be visible on the Eduinova public portal. Confirm approval?",
+    "aprobarMensaje": "The project will be visible on the Eduinnova public portal. Confirm approval?",
     "rechazar": "Reject",
     "publicar": "Publish to portal",
     "verEnPortal": "View on public portal",
     "rechazarTitulo": "Reject project",
     "rechazarMensaje": "The student will not be able to publish this project. Confirm rejection?",
     "publicarTitulo": "Publish project",
-    "publicarMensaje": "The project will be visible on the Eduinova public portal.",
+    "publicarMensaje": "The project will be visible on the Eduinnova public portal.",
     "exitoAprobar": "Project approved and published on the portal.",
     "exitoRechazar": "Project rejected.",
     "exitoPublicar": "Project published on the portal.",
@@ -1089,6 +1206,21 @@
     "descripcionCampo": "Description",
     "descripcionMin": "Write a description of at least 10 characters.",
     "escuela": "School",
+    "portada": "Cover photo",
+    "portadaHint": "Optional. JPEG, PNG or WebP, max 5 MB.",
+    "portadaSeleccionar": "Choose image",
+    "portadaEliminar": "Remove cover",
+    "portadaError": "Could not upload cover photo",
+    "portadaExitoEliminar": "Cover photo removed successfully",
+    "galeria": "Evidence gallery",
+    "evidenciasHint": "Up to 10 images per group. JPEG, PNG or WebP, max 5 MB each.",
+    "subirEvidencias": "Upload evidence",
+    "sinEvidencias": "No evidence uploaded yet",
+    "sinEvidenciasHint": "Upload photos of activities, workshops or outcomes.",
+    "evidenciasExito": "Evidence uploaded successfully",
+    "evidenciasError": "Could not manage evidence",
+    "evidenciaEliminada": "Evidence deleted",
+    "evidenciaEliminar": "Delete evidence",
     "sinProfesores": "There are no active professors. Create one in “Users”.",
     "activoCampo": "Active group",
     "activoHint": "If deactivated, students can’t send new requests.",
@@ -1142,6 +1274,20 @@
       "volverASolicitar": "Ask again",
       "exitoSolicitud": "Request sent. The lead professor will review it.",
       "errorSolicitud": "The request couldn’t be sent"
+    },
+    "roles": {
+      "cambiar": "Change role",
+      "exito": "Role updated.",
+      "profesor": {
+        "lider": "Leader",
+        "coordinador": "Coordinator",
+        "acompanante": "Supporting professor"
+      },
+      "estudiante": {
+        "integrante": "Student",
+        "lider": "Student leader",
+        "coordinador": "Student coordinator"
+      }
     }
   },
   "reportes": {
@@ -1194,7 +1340,8 @@
     "errorCargar": "Error loading settings",
     "secciones": {
       "acceso": "Sign-up and requests",
-      "portal": "Public portal"
+      "portal": "Public portal",
+      "certificados": "Event certificates"
     },
     "registroAbierto": "Allow new account sign-ups",
     "registroAbiertoHint": "Students and external users can create their account (form and Google). If disabled, only administrators create users.",
@@ -1207,7 +1354,10 @@
     "descartar": "Discard changes",
     "guardar": "Save changes",
     "exitoGuardar": "Settings saved.",
-    "errorGuardar": "Settings couldn’t be saved"
+    "errorGuardar": "Settings couldn’t be saved",
+    "porcentajeMinimo": "Minimum attendance for the certificate",
+    "porcentajeMinimoHint": "Share of sessions a person must attend to receive an event certificate.",
+    "porcentajeMinimoError": "Enter a number between 1 and 100."
   },
   "panel": {
     "saludo": {
@@ -1270,8 +1420,11 @@
     "errorCargar": "Your profile could not be refreshed. Showing the last saved data.",
     "rolSemillero": {
       "lider": "Leader",
-      "profesor": "Professor",
-      "miembro": "Member"
+      "coordinador": "Coordinator",
+      "acompanante": "Supporting professor",
+      "lider_estudiantil": "Student leader",
+      "coordinador_estudiantil": "Student coordinator",
+      "estudiante": "Student"
     },
     "redes": {
       "titulo": "Contact links",
@@ -1287,8 +1440,16 @@
         "url": "Enter a valid URL starting with http:// or https://",
         "url_linkedin": "Must be a linkedin.com link",
         "url_github": "Must be a github.com link",
-        "url_portafolio": "Enter a valid URL"
-      }
+        "url_portafolio": "Enter a valid URL",
+        "url_cvlac": "Must be a CvLAC link (minciencias.gov.co)",
+        "url_orcid": "Must be an orcid.org link",
+        "url_google_scholar": "Must be a Google Scholar link",
+        "url_researchgate": "Must be a researchgate.net link"
+      },
+      "cvlac": "CvLAC",
+      "orcid": "ORCID",
+      "google_scholar": "Google Scholar",
+      "researchgate": "ResearchGate"
     },
     "rolHint": "Your role is assigned by the administrator.",
     "contacto": "Contact details",
@@ -1315,6 +1476,48 @@
         "igual": "The new password must be different from the current one.",
         "actualIncorrecta": "The current password is incorrect.",
         "general": "The password could not be changed."
+      }
+    },
+    "cv": {
+      "titulo": "Professional profile",
+      "hint": "This is how you appear on your public profile. Projects, research groups and events are added automatically.",
+      "titular": "Headline",
+      "titularPlaceholder": "e.g. Software Engineering student · Web development",
+      "biografia": "About me",
+      "biografiaPlaceholder": "Tell what you work on, what interests you and what you are looking for.",
+      "especialidades": "What I specialize in",
+      "fortalezas": "My strengths",
+      "etiquetaPlaceholder": "Type and press Enter",
+      "quitar": "Remove {{valor}}",
+      "mostrarTelefono": "Show my phone on my public profile",
+      "redesAcademicas": "Academic networks",
+      "verPublico": "View my public profile",
+      "guardado": "Professional profile saved.",
+      "errorGuardar": "The professional profile could not be saved.",
+      "formacion": "Education",
+      "formacionHint": "Completed or ongoing studies.",
+      "sinFormacion": "You have not added your education yet.",
+      "agregar": "Add education",
+      "editar": "Edit",
+      "eliminar": "Delete",
+      "confirmarEliminar": "Remove this education from your profile?",
+      "tituloFormacion": "Degree or program",
+      "institucion": "Institution",
+      "nivel": "Level",
+      "anioInicio": "Start year",
+      "anioFin": "End year",
+      "anioFinHint": "Leave it empty if ongoing.",
+      "enCurso": "(ongoing)",
+      "errorFormacion": "The education could not be saved.",
+      "niveles": {
+        "tecnico": "Technical",
+        "tecnologo": "Technologist",
+        "pregrado": "Undergraduate",
+        "especializacion": "Specialization",
+        "maestria": "Master’s",
+        "doctorado": "Doctorate",
+        "curso": "Course",
+        "otro": "Other"
       }
     }
   },
@@ -1354,5 +1557,195 @@
     "errorTipo": "Only JPEG, PNG or WebP images are allowed.",
     "errorPeso": "Each image must be 5 MB or less.",
     "errorMax": "You exceed the maximum number of images."
+  },
+  "persona": {
+    "noEncontrada": "Profile not available",
+    "noEncontradaHint": "The person does not exist or their account is inactive.",
+    "proyectos": "Projects",
+    "semilleros": "Research groups",
+    "eventos": "Events",
+    "acerca": "About",
+    "especialidades": "Specialties",
+    "fortalezas": "Strengths",
+    "sinDescripcion": "This person has not written their professional profile yet.",
+    "proyectosTitulo": "Published projects",
+    "proyectosHint": "Approved projects where they take part as author or director.",
+    "sinProyectos": "No published projects yet.",
+    "participacion": {
+      "autor": "Author",
+      "director": "Director"
+    },
+    "eventosTitulo": "Events attended",
+    "eventosHint": "Recorded with their attendance on the platform.",
+    "sinEventos": "No event attendance recorded yet.",
+    "jornadas": "{{asistidas}} of {{total}} sessions",
+    "formacion": "Education",
+    "sinFormacion": "No education recorded.",
+    "sinSemilleros": "Not a member of any research group.",
+    "verTodos": "View all ({{total}})"
+  },
+  "perfilAviso": {
+    "titulo": "Hi, {{nombre}}! Complete your profile",
+    "texto": "Your public profile brings together your projects, research groups and events. Add your details so the community gets to know you:",
+    "ahoraNo": "Not now",
+    "textoObligatorio": "Before you start, complete your profile: photo, introduction, skills and education. This way the community will know who you are in projects, research groups and events."
+  },
+  "fotoPerfil": {
+    "subir": "Upload profile photo",
+    "cambiar": "Change profile photo",
+    "quitar": "Remove photo",
+    "hint": "Tap the photo to choose an image. It is optimized automatically so it stays light.",
+    "errores": {
+      "tipo": "Only JPG, PNG or WebP images are allowed.",
+      "tamano": "The image is too large. Try one under 15 MB.",
+      "subir": "The photo could not be uploaded. Please try again.",
+      "quitar": "The photo could not be removed.",
+      "procesar": "The image could not be read. Try another one."
+    }
+  },
+  "asistentePerfil": {
+    "abrir": "Complete with the wizard",
+    "pasos": "Steps to complete your profile",
+    "pasoDe": "Step {{paso}} of {{total}}",
+    "duracion": "It takes about 3 minutes. Only the links are optional.",
+    "empezar": "Get started",
+    "anterior": "Back",
+    "siguiente": "Next",
+    "omitir": "Skip",
+    "finalizar": "Finish",
+    "terminar": "Done",
+    "foto": {
+      "corto": "Photo",
+      "titulo": "Put a face to your profile",
+      "texto": "A photo helps classmates, professors and judges recognize you in projects and events."
+    },
+    "sobre": {
+      "corto": "About you",
+      "titulo": "Tell us who you are",
+      "texto": "Your headline appears under your name; your bio, on your public profile."
+    },
+    "habilidades": {
+      "corto": "Skills",
+      "titulo": "What are you good at?",
+      "texto": "Type and press Enter, or tap a suggestion to add it.",
+      "sugerencias": "Suggestions:"
+    },
+    "formacion": {
+      "corto": "Education",
+      "titulo": "Your education",
+      "texto": "Add completed or ongoing studies. They are saved when you press “Add education”.",
+      "enCurso": "Ongoing"
+    },
+    "enlaces": {
+      "corto": "Links",
+      "titulo": "Where else can people find you?",
+      "texto": "Your professional and academic profiles. All of them are optional."
+    },
+    "listo": {
+      "titulo": "Your profile is ready!",
+      "texto": "You completed {{porcentaje}}% of your profile. You can edit it anytime from “My profile”."
+    },
+    "checklist": {
+      "foto": "Profile photo",
+      "titular": "Headline",
+      "biografia": "Bio",
+      "habilidades": "Specialties and strengths",
+      "formacion": "Education",
+      "enlaces": "Links"
+    },
+    "sugerencias": {
+      "especialidades": [
+        "Research",
+        "Web development",
+        "Data analysis",
+        "Design",
+        "Entrepreneurship",
+        "Social innovation"
+      ],
+      "fortalezas": [
+        "Teamwork",
+        "Leadership",
+        "Assertive communication",
+        "Critical thinking",
+        "Creativity",
+        "Problem solving"
+      ]
+    },
+    "requerido": {
+      "foto": "Upload your profile photo to continue.",
+      "sobre": "Write your headline and bio to continue.",
+      "habilidades": "Add at least one specialty or strength to continue.",
+      "formacion": "Add at least one degree with the Add button to continue."
+    }
+  },
+  "certificados": {
+    "titulo": "Attendance certificates",
+    "regla": "Issued to attendees of at least {{minimo}}% of the {{jornadas}} session(s), once the event has finished.",
+    "emitir": "Issue certificates",
+    "emitirTitulo": "Issue certificates",
+    "emitirMensaje": "{{n}} certificate(s) will be issued to attendees who meet the minimum attendance. Continue?",
+    "emitidos": "{{n}} certificate(s) issued.",
+    "soloFinalizado": "Certificates are issued when the event has finished.",
+    "sinJornadas": "The event has no sessions: there is no attendance to certify.",
+    "inscritos": "registered",
+    "conCertificado": "with certificate",
+    "porEmitir": "pending",
+    "asistente": "Attendee",
+    "asistencia": "Attendance",
+    "estado": "Status",
+    "estados": {
+      "emitido": "Issued",
+      "cumple": "Eligible",
+      "pago": "Payment pending",
+      "noCumple": "Not eligible"
+    },
+    "descargar": "Download certificate",
+    "anular": "Revoke",
+    "anularTitulo": "Revoke certificate",
+    "anularMensaje": "Revoke the certificate of {{nombre}}? Its verification code will no longer be valid.",
+    "anulado": "Certificate revoked.",
+    "errorCargar": "Certificates could not be loaded.",
+    "errorDescargar": "The certificate could not be downloaded.",
+    "errorAnular": "The certificate could not be revoked.",
+    "miCertificado": "Attendance certificate",
+    "listo": "Your certificate is ready: you attended {{asistidas}} of {{total}} session(s) ({{porcentaje}}%).",
+    "noDisponible": "You do not have a certificate for this event yet. It is issued to attendees who meet the minimum attendance.",
+    "mios": "My certificates",
+    "miosHint": "Certificates for the events you attended. Each one has a QR code to verify it.",
+    "sinCertificados": "You do not have certificates yet.",
+    "asistenciaDe": "{{asistidas}} of {{total}} session(s) · {{porcentaje}}%",
+    "verificar": "Verify",
+    "publico": {
+      "texto": "Registered without an account? Download your certificate with the ID and email you registered with.",
+      "boton": "Download my certificate",
+      "documento": "ID number",
+      "email": "Registration email",
+      "noEncontrado": "We could not find a certificate with those details for this event."
+    },
+    "firma": {
+      "titulo": "My signature",
+      "hint": "Printed on the certificates of the events you organize. Use a PNG with a transparent background (or a JPG with a white background), up to 2 MB.",
+      "sinFirma": "No signature yet",
+      "subir": "Upload signature",
+      "cambiar": "Change signature",
+      "quitar": "Remove",
+      "guardada": "Signature saved.",
+      "errorTipo": "The signature must be a PNG or JPG image.",
+      "errorTamano": "The signature must be 2 MB or less.",
+      "errorSubir": "The signature could not be saved.",
+      "errorQuitar": "The signature could not be removed."
+    },
+    "verificacion": {
+      "kicker": "Certificate verification",
+      "valido": "Authentic certificate",
+      "invalido": "Invalid certificate",
+      "invalidoTexto": "This code does not match any valid Eduinnova certificate. It may have been revoked or mistyped.",
+      "titular": "Awarded to",
+      "documento": "ID",
+      "evento": "Event",
+      "organizador": "Organizer",
+      "emision": "Issue date",
+      "codigo": "Verification code"
+    }
   }
 }

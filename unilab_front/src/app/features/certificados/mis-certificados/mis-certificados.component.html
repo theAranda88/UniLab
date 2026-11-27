@@ -1,0 +1,38 @@
+<h3 class="mis-cert__h3">
+  <i class="ti ti-certificate" aria-hidden="true"></i>{{ 'certificados.mios' | translate }}
+  @if (certificados().length) {
+    <span class="mis-cert__contador">{{ certificados().length }}</span>
+  }
+</h3>
+<p class="mis-cert__hint">{{ 'certificados.miosHint' | translate }}</p>
+
+@if (cargando()) {
+  <p class="mis-cert__vacio">{{ 'common.cargando' | translate }}</p>
+} @else if (certificados().length === 0) {
+  <p class="mis-cert__vacio">{{ 'certificados.sinCertificados' | translate }}</p>
+} @else {
+  <ul class="mis-cert__lista">
+    @for (c of certificados(); track c.id_certificado) {
+      <li class="mis-cert__item">
+        <span class="mis-cert__sello" aria-hidden="true"><i class="ti ti-certificate"></i></span>
+        <div class="mis-cert__info">
+          <strong>{{ c.nombre_evento }}</strong>
+          <small>{{ c.tipo_evento }} · {{ rango(c) }}</small>
+          <small>
+            {{ 'certificados.asistenciaDe' | translate: { asistidas: c.jornadas_asistidas, total: c.jornadas_totales, porcentaje: c.porcentaje_asistencia } }}
+            · <a [routerLink]="['/certificados/verificar', c.codigo_verificacion]">{{ 'certificados.verificar' | translate }}</a>
+          </small>
+        </div>
+        <button
+          type="button"
+          class="edu-btn edu-btn--secondary edu-btn--sm"
+          (click)="descargar(c)"
+          [disabled]="descargandoId() === c.id_certificado"
+        >
+          <i class="ti ti-download" aria-hidden="true"></i>
+          {{ (descargandoId() === c.id_certificado ? 'common.cargando' : 'certificados.descargar') | translate }}
+        </button>
+      </li>
+    }
+  </ul>
+}

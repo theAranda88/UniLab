@@ -1,0 +1,321 @@
+@if (visible()) {
+  <div class="asis__backdrop" aria-hidden="true"></div>
+  <section
+    #dialogo
+    class="asis"
+    [class.asis--pasos]="pasoId() !== 'bienvenida'"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="asis-titulo"
+    tabindex="-1"
+    (keydown.escape)="cerrar()"
+  >
+    @if (!obligatorio()) {
+      <button type="button" class="asis__cerrar" (click)="cerrar()" [attr.aria-label]="'common.close' | translate">
+        <i class="ti ti-x" aria-hidden="true"></i>
+      </button>
+    }
+
+    <!-- Indicador de pasos -->
+    @if (pasoId() !== 'bienvenida') {
+      <nav class="asis-stepper" [attr.aria-label]="'asistentePerfil.pasos' | translate">
+        <div class="asis-stepper__riel" aria-hidden="true">
+          <span class="asis-stepper__relleno" [style.width.%]="progresoPasos()"></span>
+        </div>
+        <ol class="asis-stepper__lista">
+          @for (p of pasos; track p.id; let i = $index) {
+            <li
+              class="asis-stepper__item"
+              [class.asis-stepper__item--activo]="i === indicePaso()"
+              [class.asis-stepper__item--hecho]="i < indicePaso()"
+            >
+              <button
+                type="button"
+                class="asis-stepper__boton"
+                (click)="ir(i + 1)"
+                [disabled]="guardando()"
+                [attr.aria-current]="i === indicePaso() ? 'step' : null"
+              >
+                <span class="asis-stepper__icono">
+                  <i class="ti {{ i < indicePaso() ? 'ti-check' : p.icono }}" aria-hidden="true"></i>
+                </span>
+                <span class="asis-stepper__label">{{ 'asistentePerfil.' + p.id + '.corto' | translate }}</span>
+              </button>
+            </li>
+          }
+        </ol>
+      </nav>
+    }
+
+    <div class="asis__cuerpo" [class.asis__cuerpo--atras]="direccion() === 'atras'">
+      @switch (pasoId()) {
+        <!-- Bienvenida -->
+        @case ('bienvenida') {
+          <div class="asis-paso asis-paso--centro">
+            <span class="asis-hero-icono" aria-hidden="true">
+              <i class="ti ti-id-badge-2"></i>
+              <span class="asis-hero-icono__chispa asis-hero-icono__chispa--1"><i class="ti ti-sparkles"></i></span>
+              <span class="asis-hero-icono__chispa asis-hero-icono__chispa--2"><i class="ti ti-star-filled"></i></span>
+            </span>
+            <h2 id="asis-titulo">{{ 'perfilAviso.titulo' | translate: { nombre: nombre() } }}</h2>
+            <p class="asis-paso__texto">{{ 'perfilAviso.textoObligatorio' | translate }}</p>
+            <ul class="asis-bienvenida">
+              @for (p of pasos; track p.id; let i = $index) {
+                <li [style.animation-delay.ms]="150 + i * 70">
+                  <span><i class="ti {{ p.icono }}" aria-hidden="true"></i></span>
+                  {{ 'asistentePerfil.' + p.id + '.corto' | translate }}
+                </li>
+              }
+            </ul>
+            <p class="asis-paso__nota"><i class="ti ti-clock" aria-hidden="true"></i>{{ 'asistentePerfil.duracion' | translate }}</p>
+          </div>
+        }
+
+        <!-- 1 · Foto -->
+        @case ('foto') {
+          <div class="asis-paso asis-paso--centro">
+            <header class="asis-paso__head">
+              <span class="asis-paso__kicker">{{ 'asistentePerfil.pasoDe' | translate: { paso: 1, total: pasos.length } }}</span>
+              <h2 id="asis-titulo">{{ 'asistentePerfil.foto.titulo' | translate }}</h2>
+              <p>{{ 'asistentePerfil.foto.texto' | translate }}</p>
+            </header>
+            <app-foto-perfil tamano="lg" />
+          </div>
+        }
+
+        <!-- 2 · Sobre ti -->
+        @case ('sobre') {
+          <div class="asis-paso">
+            <header class="asis-paso__head">
+              <span class="asis-paso__kicker">{{ 'asistentePerfil.pasoDe' | translate: { paso: 2, total: pasos.length } }}</span>
+              <h2 id="asis-titulo">{{ 'asistentePerfil.sobre.titulo' | translate }}</h2>
+              <p>{{ 'asistentePerfil.sobre.texto' | translate }}</p>
+            </header>
+            <form class="asis-form" [formGroup]="sobreForm" (ngSubmit)="siguiente()">
+              <label class="edu-field">
+                <span class="edu-field__label">{{ 'perfil.cv.titular' | translate }}@if (obligatorio()) { *}</span>
+                <span class="asis-input">
+                  <i class="ti ti-id-badge-2" aria-hidden="true"></i>
+                  <input class="edu-control" type="text" formControlName="titular" maxlength="160" [placeholder]="'perfil.cv.titularPlaceholder' | translate" />
+                </span>
+              </label>
+              <label class="edu-field">
+                <span class="edu-field__label">{{ 'perfil.cv.biografia' | translate }}@if (obligatorio()) { *}</span>
+                <textarea class="edu-control asis-form__textarea" rows="5" formControlName="biografia" maxlength="2000" [placeholder]="'perfil.cv.biografiaPlaceholder' | translate"></textarea>
+                <small class="asis-form__contador">{{ sobreForm.controls.biografia.value.length }}/2000</small>
+              </label>
+            </form>
+          </div>
+        }
+
+        <!-- 3 · Especialidades y fortalezas -->
+        @case ('habilidades') {
+          <div class="asis-paso">
+            <header class="asis-paso__head">
+              <span class="asis-paso__kicker">{{ 'asistentePerfil.pasoDe' | translate: { paso: 3, total: pasos.length } }}</span>
+              <h2 id="asis-titulo">{{ 'asistentePerfil.habilidades.titulo' | translate }}</h2>
+              <p>{{ 'asistentePerfil.habilidades.texto' | translate }}</p>
+            </header>
+            @for (lista of ['especialidades', 'fortalezas']; track lista) {
+              <div class="edu-field asis-etiquetas">
+                <label class="edu-field__label" [for]="'asis-etiqueta-' + lista">{{ 'perfil.cv.' + lista | translate }}</label>
+                <div class="asis-etiquetas__caja">
+                  @for (valor of lista === 'especialidades' ? especialidades() : fortalezas(); track valor) {
+                    <span class="asis-tag" [class.asis-tag--azul]="lista === 'especialidades'">
+                      {{ valor }}
+                      <button type="button" (click)="quitarEtiqueta($any(lista), valor)" [attr.aria-label]="'perfil.cv.quitar' | translate: { valor: valor }">
+                        <i class="ti ti-x" aria-hidden="true"></i>
+                      </button>
+                    </span>
+                  }
+                  <input
+                    class="asis-etiquetas__input"
+                    type="text"
+                    maxlength="60"
+                    [id]="'asis-etiqueta-' + lista"
+                    [placeholder]="'perfil.cv.etiquetaPlaceholder' | translate"
+                    (keydown.enter)="agregarEtiqueta($any(lista), $event)"
+                    (keydown.comma)="agregarEtiqueta($any(lista), $event)"
+                  />
+                </div>
+                <div class="asis-sugerencias">
+                  <span class="asis-sugerencias__label">{{ 'asistentePerfil.habilidades.sugerencias' | translate }}</span>
+                  @for (s of $any('asistentePerfil.sugerencias.' + lista | translate); track s) {
+                    @if (!tieneEtiqueta($any(lista), s)) {
+                      <button type="button" class="asis-sugerencias__chip" (click)="sumarEtiqueta($any(lista), s)">
+                        <i class="ti ti-plus" aria-hidden="true"></i>{{ s }}
+                      </button>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- 4 · Formación -->
+        @case ('formacion') {
+          <div class="asis-paso">
+            <header class="asis-paso__head">
+              <span class="asis-paso__kicker">{{ 'asistentePerfil.pasoDe' | translate: { paso: 4, total: pasos.length } }}</span>
+              <h2 id="asis-titulo">{{ 'asistentePerfil.formacion.titulo' | translate }}</h2>
+              <p>{{ 'asistentePerfil.formacion.texto' | translate }}</p>
+            </header>
+
+            @if (formacion().length) {
+              <ul class="asis-formacion">
+                @for (f of formacion(); track f.id_formacion) {
+                  <li class="asis-formacion__item">
+                    <span class="asis-formacion__icono"><i class="ti ti-school" aria-hidden="true"></i></span>
+                    <span class="asis-formacion__texto">
+                      <strong>{{ f.titulo }}</strong>
+                      <small>{{ 'perfil.cv.niveles.' + f.nivel | translate }} · {{ f.institucion }}</small>
+                    </span>
+                    <button type="button" class="asis-formacion__quitar" (click)="eliminarFormacion(f)" [attr.aria-label]="'perfil.cv.eliminar' | translate">
+                      <i class="ti ti-trash" aria-hidden="true"></i>
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+
+            <form class="asis-form asis-form--grid" [formGroup]="formacionForm" (ngSubmit)="guardarFormacion()">
+              <label class="edu-field asis-form__full">
+                <span class="edu-field__label">{{ 'perfil.cv.tituloFormacion' | translate }}</span>
+                <input class="edu-control" type="text" formControlName="titulo" maxlength="255" [attr.aria-invalid]="errorFormacion('titulo')" />
+              </label>
+              <label class="edu-field asis-form__full">
+                <span class="edu-field__label">{{ 'perfil.cv.institucion' | translate }}</span>
+                <input class="edu-control" type="text" formControlName="institucion" maxlength="255" [attr.aria-invalid]="errorFormacion('institucion')" />
+              </label>
+              <label class="edu-field">
+                <span class="edu-field__label">{{ 'perfil.cv.nivel' | translate }}</span>
+                <select class="edu-control" formControlName="nivel">
+                  @for (n of niveles; track n) {
+                    <option [value]="n">{{ 'perfil.cv.niveles.' + n | translate }}</option>
+                  }
+                </select>
+              </label>
+              <div class="asis-form__anios">
+                <label class="edu-field">
+                  <span class="edu-field__label">{{ 'perfil.cv.anioInicio' | translate }}</span>
+                  <input class="edu-control" type="number" formControlName="anio_inicio" min="1950" max="2100" />
+                </label>
+                <label class="edu-field">
+                  <span class="edu-field__label">{{ 'perfil.cv.anioFin' | translate }}</span>
+                  <input class="edu-control" type="number" formControlName="anio_fin" min="1950" max="2100" [placeholder]="'asistentePerfil.formacion.enCurso' | translate" />
+                </label>
+              </div>
+              <div class="asis-form__full">
+                <button type="submit" class="edu-btn edu-btn--secondary" [disabled]="agregandoFormacion()">
+                  <i class="ti ti-plus" aria-hidden="true"></i>{{ 'perfil.cv.agregar' | translate }}
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- 5 · Enlaces -->
+        @case ('enlaces') {
+          <div class="asis-paso">
+            <header class="asis-paso__head">
+              <span class="asis-paso__kicker">{{ 'asistentePerfil.pasoDe' | translate: { paso: 5, total: pasos.length } }}</span>
+              <h2 id="asis-titulo">{{ 'asistentePerfil.enlaces.titulo' | translate }}</h2>
+              <p>{{ 'asistentePerfil.enlaces.texto' | translate }}</p>
+            </header>
+            <form class="asis-form asis-form--grid" [formGroup]="enlacesForm" (ngSubmit)="siguiente()">
+              @for (e of enlaces; track e.campo) {
+                <label class="edu-field">
+                  <span class="edu-field__label">{{ e.etiqueta | translate }}</span>
+                  <span class="asis-input">
+                    <i class="ti {{ e.icono }}" aria-hidden="true"></i>
+                    <input class="edu-control" type="url" [formControlName]="e.campo" [placeholder]="e.ejemplo" [attr.aria-invalid]="!!errorEnlace(e.campo)" />
+                  </span>
+                  @if (errorEnlace(e.campo); as err) {
+                    <small class="edu-field__error">{{ err | translate }}</small>
+                  }
+                </label>
+              }
+              <label class="asis-switch asis-form__full">
+                <input type="checkbox" formControlName="mostrar_telefono" />
+                <span class="asis-switch__pista" aria-hidden="true"></span>
+                <span>{{ 'perfil.cv.mostrarTelefono' | translate }}</span>
+              </label>
+            </form>
+          </div>
+        }
+
+        <!-- Listo -->
+        @case ('listo') {
+          <div class="asis-paso asis-paso--centro">
+            <span class="asis-listo" aria-hidden="true">
+              @for (c of [1, 2, 3, 4, 5, 6, 7, 8]; track c) {
+                <span class="asis-listo__confeti asis-listo__confeti--{{ c }}"></span>
+              }
+              <svg class="asis-listo__anillo" viewBox="0 0 120 120">
+                <circle class="asis-listo__fondo" cx="60" cy="60" r="52" />
+                <circle class="asis-listo__avance" cx="60" cy="60" r="52" [style.stroke-dashoffset]="326.7 * (1 - porcentaje() / 100)" />
+              </svg>
+              <span class="asis-listo__centro">
+                <i class="ti ti-check"></i>
+              </span>
+            </span>
+            <h2 id="asis-titulo">{{ 'asistentePerfil.listo.titulo' | translate }}</h2>
+            <p class="asis-paso__texto">{{ 'asistentePerfil.listo.texto' | translate: { porcentaje: porcentaje() } }}</p>
+            <ul class="asis-checklist">
+              @for (item of checklist(); track item.clave; let i = $index) {
+                <li [class.asis-checklist__item--hecho]="item.hecho" [style.animation-delay.ms]="200 + i * 60">
+                  <i class="ti {{ item.hecho ? 'ti-circle-check-filled' : 'ti-circle-dashed' }}" aria-hidden="true"></i>
+                  {{ 'asistentePerfil.checklist.' + item.clave | translate }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </div>
+
+    @if (aviso()) {
+      <p class="asis__aviso" role="alert"><i class="ti ti-alert-circle" aria-hidden="true"></i>{{ aviso()! | translate }}</p>
+    }
+
+    <!-- Acciones -->
+    <footer class="asis__acciones">
+      @switch (pasoId()) {
+        @case ('bienvenida') {
+          <button type="button" class="edu-btn asis__principal" (click)="empezar()">
+            {{ 'asistentePerfil.empezar' | translate }}<i class="ti ti-arrow-right" aria-hidden="true"></i>
+          </button>
+        }
+        @case ('listo') {
+          <button type="button" class="edu-btn edu-btn--secondary" (click)="verPerfilPublico()">
+            <i class="ti ti-external-link" aria-hidden="true"></i>{{ 'perfil.cv.verPublico' | translate }}
+          </button>
+          <button type="button" class="edu-btn asis__principal" (click)="cerrar()">
+            {{ 'asistentePerfil.terminar' | translate }}<i class="ti ti-check" aria-hidden="true"></i>
+          </button>
+        }
+        @default {
+          <button type="button" class="edu-btn edu-btn--secondary" (click)="anterior()" [disabled]="guardando() || paso() <= 1">
+            <i class="ti ti-arrow-left" aria-hidden="true"></i>{{ 'asistentePerfil.anterior' | translate }}
+          </button>
+          <span class="asis__espacio"></span>
+          @if (puedeOmitir()) {
+            <button type="button" class="asis__omitir" (click)="omitir()" [disabled]="guardando()">
+              {{ 'asistentePerfil.omitir' | translate }}
+            </button>
+          }
+          <button type="button" class="edu-btn asis__principal" (click)="siguiente()" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="asis__mini-spinner" aria-hidden="true"></span>{{ 'common.guardando' | translate }}
+            } @else if (pasoId() === 'enlaces') {
+              {{ 'asistentePerfil.finalizar' | translate }}<i class="ti ti-check" aria-hidden="true"></i>
+            } @else {
+              {{ 'asistentePerfil.siguiente' | translate }}<i class="ti ti-arrow-right" aria-hidden="true"></i>
+            }
+          </button>
+        }
+      }
+    </footer>
+  </section>
+}

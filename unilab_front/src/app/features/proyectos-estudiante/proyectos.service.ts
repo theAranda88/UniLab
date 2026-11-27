@@ -11,8 +11,9 @@ import type {
 } from '../../core/models/proyecto.model';
 import type { Curso, ProyectoImagen } from '../../core/models/portal.model';
 import { getProyectosBasePath } from '../../core/config/proyectos-paths';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api';
+const API = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class ProyectosService {
@@ -168,6 +169,19 @@ export class ProyectosService {
         profesor_lider?: { nombres: string; apellidos: string };
       }[]
     >(`${API}/semilleros`);
+  }
+
+  /** Compañeros de escuela que se pueden agregar como coautores. */
+  listarCompaneros(busqueda = ''): Observable<{ id_usuario: number; nombres: string; apellidos: string }[]> {
+    const q = busqueda.trim() ? `?busqueda=${encodeURIComponent(busqueda.trim())}` : '';
+    return this.http.get<{ id_usuario: number; nombres: string; apellidos: string }[]>(
+      `${API}/proyectos/companeros${q}`,
+    );
+  }
+
+  /** Reemplaza los coautores (el creador se mantiene siempre como autor principal). */
+  actualizarAutores(idProyecto: number, idsEstudiantes: number[]): Observable<Proyecto> {
+    return this.http.put<Proyecto>(`${API}/proyectos/${idProyecto}/autores`, { ids_estudiantes: idsEstudiantes });
   }
 
   listarCoordinadoresDisponibles(idCurso: number): Observable<ProfesorCoordinadorDisponible[]> {

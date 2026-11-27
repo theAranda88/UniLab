@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type { CalificacionProyecto, ComentarioProyecto } from '../../core/models/portal.model';
+import { environment } from '../../../environments/environment';
 
 /**
  * Calificar y comentar proyectos publicados. Usa los endpoints del backend
@@ -11,7 +12,7 @@ import type { CalificacionProyecto, ComentarioProyecto } from '../../core/models
 @Injectable({ providedIn: 'root' })
 export class ProyectoInteraccionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/proyectos';
+  private apiUrl = `${environment.apiUrl}/proyectos`;
 
   /** Crea o reemplaza la calificación (1–5) del usuario actual. */
   calificar(idProyecto: number, puntuacion: number): Observable<CalificacionProyecto> {
@@ -28,6 +29,6 @@ export class ProyectoInteraccionService {
 
   /** Borrado lógico; solo el autor (o el administrador) puede eliminar el comentario. */
   eliminarComentario(idComentario: number): Observable<void> {
-    return this.http.delete<void>(`http://localhost:3000/api/comentarios/${idComentario}`);
+    return this.http.delete<void>(`${environment.apiUrl}/comentarios/${idComentario}`);
   }
 }

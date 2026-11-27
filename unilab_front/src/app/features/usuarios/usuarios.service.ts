@@ -11,6 +11,7 @@ import type {
   UsuarioAdmin,
   UsuarioConsulta,
 } from '../../core/models/usuario.model';
+import { environment } from '../../../environments/environment';
 
 export interface FiltroConsultaUsuarios {
   rol?: 'Profesor' | 'Estudiante';
@@ -21,7 +22,7 @@ export interface FiltroConsultaUsuarios {
 @Injectable({ providedIn: 'root' })
 export class UsuariosService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/usuarios';
+  private apiUrl = `${environment.apiUrl}/usuarios`;
 
   listar(filtroRol?: RolNombre): Observable<UsuarioAdmin[]> {
     const params = filtroRol ? { rol: filtroRol } : undefined;
@@ -39,7 +40,7 @@ export class UsuariosService {
 
   /** Estudiantes de los semilleros y proyectos del profesor autenticado. */
   estudiantesDeProfesor(): Observable<EstudiantesProfesorResponse> {
-    return this.http.get<EstudiantesProfesorResponse>('http://localhost:3000/api/profesores/me/estudiantes');
+    return this.http.get<EstudiantesProfesorResponse>(`${environment.apiUrl}/profesores/me/estudiantes`);
   }
 
   listarRoles(): Observable<Rol[]> {

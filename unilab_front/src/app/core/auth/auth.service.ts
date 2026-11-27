@@ -8,10 +8,12 @@ import type {
   CambiarMiPasswordDto,
   CompletarPerfilDto,
   EscuelaResumen,
+  PerfilCv,
   PerfilRol,
   RedesContacto,
   SemilleroUsuario,
 } from '../models/usuario.model';
+import { environment } from '../../../environments/environment';
 
 /** Sesión del usuario: respuesta de login, Google, completar perfil y GET /auth/me. */
 export interface User {
@@ -23,10 +25,18 @@ export interface User {
   nombres?: string;
   apellidos?: string;
   telefono?: string;
+  /** Foto de perfil; null si no ha subido una. */
+  url_foto?: string | null;
+  /** Firma que se imprime en los certificados de los eventos que organiza. */
+  url_firma?: string | null;
   escuela?: EscuelaResumen | null;
   semilleros?: SemilleroUsuario[];
   redes?: RedesContacto;
   perfil?: PerfilRol;
+  /** Perfil profesional tipo CvLAC. */
+  cv?: PerfilCv;
+  /** false hasta que el usuario completa u omite el aviso de perfil del primer ingreso. */
+  perfil_cv_revisado?: boolean;
 }
 
 export interface LoginRequest {
@@ -54,7 +64,7 @@ export interface RecuperarPasswordResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenSignal = signal<string | null>(this.readToken());
   private userSignal = signal<User | null>(this.readUser());
 
@@ -117,6 +127,32 @@ export class AuthService {
   /** Teléfono, redes de contacto y (solo Coordinador) profesión. */
   actualizarMiPerfil(data: ActualizarMiPerfilDto): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/me`, data).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /** Sube o reemplaza la foto de perfil (JPEG, PNG o WebP, máx. 5 MB). */
+  subirFoto(archivo: File): Observable<User> {
+    const datos = new FormData();
+    datos.append('foto', archivo);
+    return this.http.post<User>(`${this.apiUrl}/me/foto`, datos).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  eliminarFoto(): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/me/foto`).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  subirFirma(archivo: File): Observable<User> {
+    const datos = new FormData();
+    datos.append('firma', archivo);
+    return this.http.post<User>(`${this.apiUrl}/me/firma`, datos).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  eliminarFirma(): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/me/firma`).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  /** Cierra el asistente obligatorio del primer ingreso (el backend valida que el perfil esté completo). */
+  completarPerfilCv(): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/me/perfil-cv/completar`, {}).pipe(tap((user) => this.updateUser(user)));
   }
 
   /** Cambio voluntario de contraseña desde «Mi perfil» (exige la actual). */

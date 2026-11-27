@@ -1,0 +1,71 @@
+@use '../../../styles/design-tokens' as *;
+
+.semillero-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $white;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: $shadow-card;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-card;
+  }
+
+  &__img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__placeholder {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    background: $blue-tint;
+    color: $blue;
+    font-size: 2rem;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    padding: $space-12 $space-16 $space-16;
+  }
+
+  &__school {
+    font-size: $font-size-label;
+    font-weight: $font-weight-bold;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__name {
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $ink;
+    line-height: 1.3;
+  }
+
+  &__meta {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+  }
+}
+
+.semillero-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: $space-16;
+}

@@ -5,6 +5,8 @@ export const UPLOADS_ROOT = path.join(process.cwd(), 'uploads');
 export const PROYECTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'proyectos');
 export const EVENTO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'eventos');
 export const ESCUELA_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'escuelas');
+export const SEMILLERO_IMAGENES_DIR = path.join(UPLOADS_ROOT, 'semilleros');
+export const USUARIO_FOTOS_DIR = path.join(UPLOADS_ROOT, 'usuarios');
 
 export const IMAGEN_MIME_PERMITIDOS = new Set([
   'image/jpeg',
@@ -21,7 +23,10 @@ export const IMAGEN_EXTENSION_POR_MIME: Record<string, string> = {
 export const MAX_IMAGENES_POR_PROYECTO = 3;
 export const MAX_EVIDENCIAS_POR_JORNADA = 3;
 export const MAX_IMAGENES_POR_ESCUELA = 5;
+export const MAX_EVIDENCIAS_POR_SEMILLERO = 10;
 export const MAX_IMAGEN_BYTES = 5 * 1024 * 1024;
+/** La foto de perfil se reduce en el navegador antes de subirla; esto es el tope por seguridad. */
+export const MAX_FOTO_PERFIL_BYTES = 2 * 1024 * 1024;
 
 export function carpetaProyecto(id_proyecto: number): string {
   return path.join(PROYECTO_IMAGENES_DIR, String(id_proyecto));
@@ -37,6 +42,30 @@ export function carpetaEscuela(id_escuela: number): string {
 
 export function rutaPublicaEscuela(id_escuela: number, nombreArchivo: string): string {
   return `/uploads/escuelas/${id_escuela}/${nombreArchivo}`;
+}
+
+export function carpetaSemillero(id_semillero: number): string {
+  return path.join(SEMILLERO_IMAGENES_DIR, String(id_semillero));
+}
+
+export function rutaPublicaSemillero(id_semillero: number, nombreArchivo: string): string {
+  return `/uploads/semilleros/${id_semillero}/${nombreArchivo}`;
+}
+
+export function carpetaSemilleroEvidencias(id_semillero: number): string {
+  return path.join(carpetaSemillero(id_semillero), 'evidencias');
+}
+
+export function rutaPublicaSemilleroEvidencia(id_semillero: number, nombreArchivo: string): string {
+  return `/uploads/semilleros/${id_semillero}/evidencias/${nombreArchivo}`;
+}
+
+export function carpetaUsuario(id_usuario: number): string {
+  return path.join(USUARIO_FOTOS_DIR, String(id_usuario));
+}
+
+export function rutaPublicaUsuario(id_usuario: number, nombreArchivo: string): string {
+  return `/uploads/usuarios/${id_usuario}/${nombreArchivo}`;
 }
 
 export function carpetaEvento(id_evento: number): string {
@@ -66,6 +95,13 @@ export function urlBaseApi(): string {
   return process.env.API_PUBLIC_URL ?? `http://localhost:${port}`;
 }
 
+/** URL de la foto de perfil, o null si el usuario no tiene. */
+export function urlFotoUsuario(foto_ruta: string | null | undefined): string | null {
+  return foto_ruta ? urlPublicaImagen(foto_ruta) : null;
+}
+
 export function urlPublicaImagen(ruta_archivo: string): string {
+  // Imágenes externas (p. ej. las del seed de demostración) se guardan con su URL completa
+  if (/^https?:\/\//i.test(ruta_archivo)) return ruta_archivo;
   return `${urlBaseApi()}${ruta_archivo}`;
 }

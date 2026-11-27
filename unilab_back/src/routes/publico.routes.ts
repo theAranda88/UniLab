@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import { publicoController } from '../controllers/publico.controller';
+import { perfilController } from '../controllers/perfil.controller';
+import { certificadoController } from '../controllers/certificado.controller';
 import { validate } from '../middlewares/validation/validate';
 import { idParamSchema } from '../middlewares/validation/schemas';
 import {
   inscripcionPublicaSchema,
   inscripcionDocumentoQuerySchema,
   asistenciaPublicaSchema,
+  publicoProyectosQuerySchema,
+  publicoSemillerosQuerySchema,
+  certificadoCodigoSchema,
+  certificadoPublicoSchema,
 } from '../middlewares/validation/schemas';
 import { z } from 'zod';
 
@@ -24,7 +30,7 @@ router.get(
 );
 router.get(
   '/proyectos',
-  validate(escuelaQuerySchema, 'query'),
+  validate(publicoProyectosQuerySchema, 'query'),
   publicoController.listarProyectos,
 );
 router.get(
@@ -32,6 +38,19 @@ router.get(
   validate(idParamSchema, 'params'),
   publicoController.obtenerProyecto,
 );
+
+router.get(
+  '/semilleros',
+  validate(publicoSemillerosQuerySchema, 'query'),
+  publicoController.listarSemilleros,
+);
+router.get(
+  '/semilleros/:id',
+  validate(idParamSchema, 'params'),
+  publicoController.obtenerSemillero,
+);
+
+router.get('/usuarios/:id/perfil', validate(idParamSchema, 'params'), perfilController.perfilPublico);
 
 router.get('/eventos', publicoController.listarEventos);
 router.get(
@@ -50,6 +69,17 @@ router.post(
   validate(idParamSchema, 'params'),
   validate(inscripcionPublicaSchema),
   publicoController.inscribirEvento,
+);
+router.post(
+  '/eventos/:id/certificado',
+  validate(idParamSchema, 'params'),
+  validate(certificadoPublicoSchema),
+  certificadoController.descargarPublico,
+);
+router.get(
+  '/certificados/:codigo',
+  validate(certificadoCodigoSchema, 'params'),
+  certificadoController.verificar,
 );
 router.post(
   '/asistencias/registrar',

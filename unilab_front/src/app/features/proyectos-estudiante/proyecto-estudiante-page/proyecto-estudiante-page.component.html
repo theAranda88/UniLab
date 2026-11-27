@@ -135,6 +135,63 @@
         </div>
       </section>
 
+      <!-- Integrantes del equipo (coautores) -->
+      <section class="proyecto-form__section">
+        <div class="section-head">
+          <h2>{{ 'proyectosEstudiante.integrantes.titulo' | translate }}</h2>
+          <p class="section-hint">{{ 'proyectosEstudiante.integrantes.hint' | translate }}</p>
+        </div>
+
+        @if (coautores().length) {
+          <ul class="equipo">
+            @for (c of coautores(); track c.id_usuario) {
+              <li class="equipo__item">
+                <span class="equipo__avatar" aria-hidden="true">{{ c.nombres.charAt(0) }}{{ c.apellidos.charAt(0) }}</span>
+                <span class="equipo__nombre">{{ c.nombres }} {{ c.apellidos }}</span>
+                @if (puedeEditar()) {
+                  <button type="button" class="equipo__quitar" (click)="quitarCoautor(c)" [attr.aria-label]="'proyectosEstudiante.integrantes.quitar' | translate">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="equipo__vacio">{{ 'proyectosEstudiante.integrantes.vacio' | translate }}</p>
+        }
+
+        @if (puedeEditar() && coautores().length < 9) {
+          <div class="equipo__buscador">
+            <label class="sr-only" for="buscar-companero">{{ 'proyectosEstudiante.integrantes.buscar' | translate }}</label>
+            <i class="ti ti-search" aria-hidden="true"></i>
+            <input
+              id="buscar-companero"
+              type="search"
+              autocomplete="off"
+              [placeholder]="'proyectosEstudiante.integrantes.buscar' | translate"
+              [value]="textoBusqueda()"
+              (input)="buscarCompaneros($any($event.target).value)"
+            />
+          </div>
+          @if (textoBusqueda().trim().length >= 2 && !buscandoCompaneros()) {
+            @if (companerosDisponibles().length) {
+              <ul class="equipo__resultados">
+                @for (c of companerosDisponibles(); track c.id_usuario) {
+                  <li>
+                    <span>{{ c.nombres }} {{ c.apellidos }}</span>
+                    <button type="button" class="equipo__agregar" (click)="agregarCoautor(c)">
+                      <i class="ti ti-plus" aria-hidden="true"></i>{{ 'proyectosEstudiante.integrantes.agregar' | translate }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="equipo__vacio">{{ 'proyectosEstudiante.integrantes.sinResultados' | translate }}</p>
+            }
+          }
+        }
+      </section>
+
       @if (mostrarSeccionImagenes()) {
         <section class="proyecto-form__section">
           <div class="section-head">

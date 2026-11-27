@@ -16,6 +16,13 @@ export const eventoRepository = {
     });
   },
 
+  /** Eventos que el portal puede mostrar: los ya aprobados que no se cancelaron. */
+  findByIdVisible(id: number) {
+    return prisma.eventos.findFirst({
+      where: { id_evento: id, estado: { in: ['planeado', 'activo', 'finalizado'] }, ...activo },
+    });
+  },
+
   findMany() {
     return prisma.eventos.findMany({
       where: activo,

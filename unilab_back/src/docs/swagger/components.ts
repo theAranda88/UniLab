@@ -150,6 +150,7 @@ export const schemas = {
       nombres: { type: 'string', example: 'Ana' },
       apellidos: { type: 'string', example: 'Gómez' },
       telefono: { type: 'string', example: '3001234567' },
+      url_foto: { type: 'string', nullable: true, description: 'Foto de perfil (POST /auth/me/foto)' },
       escuela: {
         type: 'object',
         nullable: true,
@@ -197,6 +198,41 @@ export const schemas = {
       url_linkedin: { type: 'string', nullable: true, example: 'https://www.linkedin.com/in/ana-gomez' },
       url_github: { type: 'string', nullable: true, example: 'https://github.com/anagomez' },
       url_portafolio: { type: 'string', nullable: true, example: 'https://anagomez.dev' },
+      url_cvlac: { type: 'string', nullable: true, description: 'Dominio minciencias.gov.co' },
+      url_orcid: { type: 'string', nullable: true, example: 'https://orcid.org/0000-0002-1825-0097' },
+      url_google_scholar: { type: 'string', nullable: true, example: 'https://scholar.google.com/citations?user=abc' },
+      url_researchgate: { type: 'string', nullable: true, example: 'https://www.researchgate.net/profile/Ana-Gomez' },
+      titular: { type: 'string', nullable: true, maxLength: 160, example: 'Desarrolladora full stack' },
+      biografia: { type: 'string', nullable: true, maxLength: 2000 },
+      especialidades: { type: 'array', maxItems: 15, items: { type: 'string', maxLength: 60 }, example: ['Angular', 'IA'] },
+      fortalezas: { type: 'array', maxItems: 15, items: { type: 'string', maxLength: 60 }, example: ['Liderazgo'] },
+      mostrar_telefono: { type: 'boolean', description: 'Si es true, el teléfono aparece en el perfil público' },
+    },
+  },
+  FormacionRequest: {
+    type: 'object',
+    required: ['titulo', 'institucion', 'nivel'],
+    properties: {
+      titulo: { type: 'string', example: 'Ingeniería de Software' },
+      institucion: { type: 'string', example: 'Corporación Universitaria Autónoma del Cauca' },
+      nivel: {
+        type: 'string',
+        enum: ['tecnico', 'tecnologo', 'pregrado', 'especializacion', 'maestria', 'doctorado', 'curso', 'otro'],
+      },
+      anio_inicio: { type: 'integer', nullable: true, example: 2023 },
+      anio_fin: { type: 'integer', nullable: true, description: 'null = en curso' },
+    },
+  },
+  AutoresProyectoRequest: {
+    type: 'object',
+    required: ['ids_estudiantes'],
+    properties: {
+      ids_estudiantes: {
+        type: 'array',
+        maxItems: 9,
+        items: { type: 'integer' },
+        description: 'Coautores (sin el creador, que siempre se mantiene). Reemplaza la lista actual.',
+      },
     },
   },
   CambiarMiPasswordRequest: {
@@ -567,6 +603,106 @@ export const schemas = {
       id_profesor_lider: { type: 'integer', example: 3, description: 'ID del profesor líder (profesor1@unilab.edu)' },
     },
   },
+  SemilleroResponse: {
+    type: 'object',
+    description: 'Semillero con relación escuela, líder, profesores y miembros.',
+    properties: {
+      id_semillero: { type: 'integer', example: 1 },
+      nombre_semillero: { type: 'string' },
+      descripcion: { type: 'string' },
+      id_escuela: { type: 'integer' },
+      id_profesor_lider: { type: 'integer' },
+      url_foto_portada: {
+        type: 'string',
+        nullable: true,
+        example: 'http://localhost:3000/uploads/semilleros/1/portada-abc.webp',
+      },
+      foto_portada_ruta: { type: 'string', nullable: true },
+      activo: { type: 'boolean' },
+      escuela: {
+        type: 'object',
+        properties: {
+          id_escuela: { type: 'integer' },
+          nombre_escuela: { type: 'string' },
+        },
+      },
+    },
+  },
+  SemilleroPortadaResponse: {
+    type: 'object',
+    properties: {
+      url_foto_portada: { type: 'string', example: 'http://localhost:3000/uploads/semilleros/1/portada-abc.webp' },
+      foto_portada_ruta: { type: 'string', example: '/uploads/semilleros/1/portada-abc.webp' },
+    },
+  },
+  SemilleroEvidenciaResponse: {
+    type: 'object',
+    properties: {
+      id_evidencia: { type: 'integer', example: 1 },
+      id_semillero: { type: 'integer', example: 1 },
+      ruta_archivo: { type: 'string', example: '/uploads/semilleros/1/evidencias/abc.webp' },
+      url: { type: 'string', example: 'http://localhost:3000/uploads/semilleros/1/evidencias/abc.webp' },
+      nombre_original: { type: 'string', example: 'taller.webp' },
+      mime_type: { type: 'string', example: 'image/webp' },
+      orden: { type: 'integer', example: 1 },
+    },
+  },
+  SemilleroPublicoResponse: {
+    type: 'object',
+    properties: {
+      id_semillero: { type: 'integer', example: 1 },
+      nombre_semillero: { type: 'string' },
+      descripcion: { type: 'string' },
+      url_foto_portada: { type: 'string', nullable: true },
+      url_imagen_destacada: {
+        type: 'string',
+        nullable: true,
+        description: 'Portada o primera evidencia; útil en tarjetas del portal',
+      },
+      escuela: {
+        type: 'object',
+        properties: { id_escuela: { type: 'integer' }, nombre_escuela: { type: 'string' } },
+      },
+      lider: {
+        type: 'object',
+        properties: { nombres: { type: 'string' }, apellidos: { type: 'string' } },
+      },
+      total_miembros_aprobados: { type: 'integer', example: 12 },
+      total_proyectos_publicados: { type: 'integer', example: 4 },
+      evidencias: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id_evidencia: { type: 'integer' },
+            url: { type: 'string' },
+            orden: { type: 'integer' },
+            nombre_original: { type: 'string' },
+          },
+        },
+      },
+      proyectos: {
+        type: 'array',
+        description: 'Proyectos publicados asociados a este semillero',
+        items: { $ref: '#/components/schemas/ProyectoPublicoResponse' },
+      },
+    },
+  },
+  SemillerosPublicosPaginadosResponse: {
+    type: 'object',
+    properties: {
+      data: { type: 'array', items: { $ref: '#/components/schemas/SemilleroPublicoResponse' } },
+      paginacion: {
+        type: 'object',
+        properties: {
+          pagina: { type: 'integer', example: 1 },
+          limite: { type: 'integer', example: 12 },
+          total: { type: 'integer', example: 25 },
+          total_paginas: { type: 'integer', example: 3 },
+        },
+      },
+    },
+  },
   AsignarProfesorSemilleroRequest: {
     type: 'object',
     required: ['id_profesor'],
@@ -775,8 +911,14 @@ export const schemas = {
         example: 2,
         description: 'Conteo de proyectos con estado `publicado` asociados a cursos de esta escuela',
       },
+      total_semilleros: {
+        type: 'integer',
+        minimum: 0,
+        example: 3,
+        description: 'Semilleros activos de la escuela visibles en el portal',
+      },
     },
-    required: ['id_escuela', 'nombre_escuela', 'total_proyectos_publicados'],
+    required: ['id_escuela', 'nombre_escuela', 'total_proyectos_publicados', 'total_semilleros'],
   },
   ProyectoImagenResponse: {
     type: 'object',
@@ -801,6 +943,14 @@ export const schemas = {
     description: 'Proyecto con estado `publicado`. Incluye array `imagenes` ordenado y `url_imagen` como portada (orden 1).',
     properties: {
       id_proyecto: { type: 'integer', example: 10 },
+      calificacion: {
+        type: 'object',
+        description: 'Promedio (1 decimal, null sin votos) y número de calificaciones',
+        properties: {
+          promedio: { type: 'number', nullable: true, example: 4.5 },
+          total: { type: 'integer', example: 8 },
+        },
+      },
       titulo: { type: 'string', example: 'Plataforma UniLab' },
       descripcion: { type: 'string' },
       tipo_proyecto: { type: 'string', enum: ['web', 'movil', 'podcast', 'otro'] },

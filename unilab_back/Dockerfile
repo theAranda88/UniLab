@@ -30,6 +30,7 @@ ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/unilab?schema=pu
 RUN npm install --omit=dev && npx prisma generate
 
 COPY --from=builder /app/dist ./dist
+COPY assets ./assets/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN sed -i 's/\r$//' /docker-entrypoint.sh \

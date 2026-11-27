@@ -1,3 +1,5 @@
+import type { ProyectoPublico } from './portal.model';
+
 export type RolNombre =
   | 'Administrador'
   | 'Coordinador'
@@ -79,6 +81,11 @@ export interface RedesContacto {
   linkedin: string | null;
   github: string | null;
   portafolio: string | null;
+  /** Redes académicas del perfil tipo CvLAC (pueden no venir en respuestas antiguas). */
+  cvlac?: string | null;
+  orcid?: string | null;
+  google_scholar?: string | null;
+  researchgate?: string | null;
 }
 
 /** Redes de contacto editables: cadena vacía o null borran el valor. */
@@ -92,6 +99,80 @@ export interface ActualizarRedesDto {
 export interface ActualizarMiPerfilDto extends ActualizarRedesDto {
   telefono?: string;
   profesion?: string | null;
+  url_cvlac?: string | null;
+  url_orcid?: string | null;
+  url_google_scholar?: string | null;
+  url_researchgate?: string | null;
+  titular?: string | null;
+  biografia?: string | null;
+  especialidades?: string[];
+  fortalezas?: string[];
+  mostrar_telefono?: boolean;
+}
+
+/** Datos profesionales que el usuario escribe en su perfil (tipo CvLAC). */
+export interface PerfilCv {
+  titular: string | null;
+  biografia: string | null;
+  especialidades: string[];
+  fortalezas: string[];
+  mostrar_telefono: boolean;
+}
+
+export type NivelFormacion =
+  | 'tecnico'
+  | 'tecnologo'
+  | 'pregrado'
+  | 'especializacion'
+  | 'maestria'
+  | 'doctorado'
+  | 'curso'
+  | 'otro';
+
+export interface FormacionAcademica {
+  id_formacion: number;
+  titulo: string;
+  institucion: string;
+  nivel: NivelFormacion;
+  anio_inicio: number | null;
+  /** null = en curso */
+  anio_fin: number | null;
+}
+
+export type FormacionDto = Omit<FormacionAcademica, 'id_formacion'>;
+
+/** Perfil público (GET /public/usuarios/:id/perfil): sin correo ni documento. */
+export interface PerfilPublico {
+  id_usuario: number;
+  nombres: string;
+  apellidos: string;
+  rol: RolNombre;
+  url_foto: string | null;
+  titular: string | null;
+  biografia: string | null;
+  especialidades: string[];
+  fortalezas: string[];
+  telefono: string | null;
+  escuelas: EscuelaResumen[];
+  cargo: string | null;
+  dependencia: string | null;
+  profesion: string | null;
+  institucion: string | null;
+  ocupacion: string | null;
+  redes: RedesContacto;
+  formacion: FormacionAcademica[];
+  semilleros: { id_semillero: number; nombre_semillero: string; rol: RolSemillero }[];
+  proyectos: (ProyectoPublico & { participacion: 'autor' | 'director' })[];
+  eventos: {
+    id_evento: number;
+    nombre_evento: string;
+    tipo_evento: string;
+    fecha_inicio: string;
+    fecha_fin: string;
+    lugar: string;
+    total_jornadas: number;
+    jornadas_asistidas: number;
+  }[];
 }
 
 export interface CambiarMiPasswordDto {
@@ -104,7 +185,14 @@ export interface EscuelaResumen {
   nombre_escuela: string;
 }
 
-export type RolSemillero = 'lider' | 'profesor' | 'miembro';
+/** Rol visible en un semillero: los tres primeros son de profesores, los demás de estudiantes. */
+export type RolSemillero =
+  | 'lider'
+  | 'coordinador'
+  | 'acompanante'
+  | 'lider_estudiantil'
+  | 'coordinador_estudiantil'
+  | 'estudiante';
 
 export interface SemilleroUsuario {
   id_semillero: number;

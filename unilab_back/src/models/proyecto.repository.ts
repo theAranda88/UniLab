@@ -117,6 +117,22 @@ export const proyectoRepository = {
     });
   },
 
+  /** Promedio y número de calificaciones activas por proyecto. */
+  async calificacionesPorProyecto(ids: number[]): Promise<Record<number, { promedio: number; total: number }>> {
+    if (ids.length === 0) return {};
+    const filas = await prisma.calificaciones.groupBy({
+      by: ['id_proyecto'],
+      where: { ...activo, id_proyecto: { in: ids } },
+      _avg: { puntuacion: true },
+      _count: { _all: true },
+    });
+    const resultado: Record<number, { promedio: number; total: number }> = {};
+    for (const fila of filas) {
+      resultado[fila.id_proyecto] = { promedio: fila._avg.puntuacion ?? 0, total: fila._count._all };
+    }
+    return resultado;
+  },
+
   async countPublicadosPorEscuela(): Promise<Record<number, number>> {
     const proyectos = await prisma.proyectos.findMany({
       where: { ...activo, estado_proyecto: 'publicado' },

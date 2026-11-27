@@ -642,12 +642,43 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{base_url}}/public/proyectos?id_escuela={{id_escuela}}",
+              "raw": "{{base_url}}/public/proyectos?id_escuela={{id_escuela}}&sin_semillero=true",
               "host": ["{{base_url}}"],
               "path": ["public", "proyectos"],
-              "query": [{ "key": "id_escuela", "value": "{{id_escuela}}" }]
+              "query": [
+                { "key": "id_escuela", "value": "{{id_escuela}}" },
+                { "key": "sin_semillero", "value": "true" }
+              ]
             },
-            "description": "Respuesta incluye array `imagenes[]` con URLs servidas en `/uploads/...`."
+            "description": "Ficha de escuela en portal: solo publicados sin semillero. Respuesta incluye `imagenes[]`."
+          }
+        },
+        {
+          "name": "Listar proyectos publicados por semillero",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/proyectos?id_semillero={{id_semillero}}",
+              "host": ["{{base_url}}"],
+              "path": ["public", "proyectos"],
+              "query": [{ "key": "id_semillero", "value": "{{id_semillero}}" }]
+            }
+          }
+        },
+        {
+          "name": "Proyectos mejor valorados (portada)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/proyectos?orden=valorados&limite=6",
+              "host": ["{{base_url}}"],
+              "path": ["public", "proyectos"],
+              "query": [
+                { "key": "orden", "value": "valorados" },
+                { "key": "limite", "value": "6" }
+              ]
+            },
+            "description": "Mayor promedio de calificación primero; cada proyecto trae `calificacion: { promedio, total }`."
           }
         },
         {
@@ -656,6 +687,29 @@
             "method": "GET",
             "url": "{{base_url}}/public/proyectos/{{id_proyecto}}",
             "description": "Registra una vista e incrementa `contador_vistas`."
+          }
+        },
+        {
+          "name": "Listar semilleros públicos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/public/semilleros?id_escuela={{id_escuela}}&pagina=1&limite=12",
+              "host": ["{{base_url}}"],
+              "path": ["public", "semilleros"],
+              "query": [
+                { "key": "id_escuela", "value": "{{id_escuela}}" },
+                { "key": "pagina", "value": "1" },
+                { "key": "limite", "value": "12" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle semillero público",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/semilleros/1"
           }
         }
       ]
@@ -697,6 +751,58 @@
           }
         },
         {
+          "name": "Subir portada semillero",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "portada", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/semilleros/1/portada",
+            "description": "Solo Administrador. JPEG, PNG o WebP, máx. 5 MB."
+          }
+        },
+        {
+          "name": "Eliminar portada semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/portada",
+            "description": "Solo Administrador."
+          }
+        },
+        {
+          "name": "Listar evidencias semillero",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/evidencias"
+          }
+        },
+        {
+          "name": "Subir evidencias semillero",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "evidencias", "type": "file", "src": [] }]
+            },
+            "url": "{{base_url}}/semilleros/1/evidencias",
+            "description": "Solo Administrador. Hasta 10 imágenes por semillero."
+          }
+        },
+        {
+          "name": "Eliminar evidencia semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/semilleros/1/evidencias/1",
+            "description": "Solo Administrador."
+          }
+        },
+        {
           "name": "Solicitar membresía",
           "request": {
             "method": "POST",
@@ -716,6 +822,117 @@
             "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": "{{base_url}}/semilleros/1/miembros/5/autorizar-publicacion",
             "description": "Solo profesor líder del semillero."
+          }
+        },
+        {
+          "name": "Cambiar rol de profesor en el semillero",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"rol\": \"coordinador\"\n}" },
+            "url": "{{base_url}}/semilleros/1/profesores/3/rol",
+            "description": "Administrador o profesor líder. rol: coordinador | acompanante."
+          }
+        },
+        {
+          "name": "Cambiar rol de estudiante en el semillero",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"rol\": \"lider\"\n}" },
+            "url": "{{base_url}}/semilleros/1/miembros/5/rol",
+            "description": "Administrador o profesor líder; solo miembros aprobados. rol: integrante | lider | coordinador."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Perfil (CvLAC)",
+      "description": "Perfil profesional del usuario, formación, perfil público y coautores de proyectos.",
+      "item": [
+        {
+          "name": "Actualizar mi perfil (CvLAC)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titular\": \"Desarrolladora full stack\",\n  \"biografia\": \"Estudiante de Ingeniería de Software.\",\n  \"especialidades\": [\n    \"Angular\",\n    \"IA\"\n  ],\n  \"fortalezas\": [\n    \"Liderazgo\"\n  ],\n  \"url_orcid\": \"https://orcid.org/0000-0002-1825-0097\",\n  \"mostrar_telefono\": false\n}" },
+            "url": "{{base_url}}/auth/me",
+            "description": "Guardar el perfil marca perfil_cv_revisado = true."
+          }
+        },
+        {
+          "name": "Omitir aviso de perfil",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/me/perfil-cv/omitir",
+            "description": "«Ahora no» del aviso del primer ingreso."
+          }
+        },
+        {
+          "name": "Subir mi foto de perfil",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": { "mode": "formdata", "formdata": [{ "key": "foto", "type": "file", "src": [] }] },
+            "url": "{{base_url}}/auth/me/foto",
+            "description": "multipart/form-data, campo «foto» (JPEG, PNG o WebP, máx. 2 MB). Devuelve la sesión con url_foto."
+          }
+        },
+        {
+          "name": "Quitar mi foto de perfil",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/auth/me/foto",
+            "description": ""
+          }
+        },
+        {
+          "name": "Mi formación",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/me/formacion",
+            "description": ""
+          }
+        },
+        {
+          "name": "Agregar formación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Ingeniería de Software\",\n  \"institucion\": \"Corporación Universitaria Autónoma del Cauca\",\n  \"nivel\": \"pregrado\",\n  \"anio_inicio\": 2023,\n  \"anio_fin\": null\n}" },
+            "url": "{{base_url}}/auth/me/formacion",
+            "description": "anio_fin null = en curso."
+          }
+        },
+        {
+          "name": "Perfil público",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/public/usuarios/{{id_usuario}}/perfil",
+            "description": "Sin token. Nunca incluye correo ni documento."
+          }
+        },
+        {
+          "name": "Compañeros para coautoría",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/proyectos/companeros?busqueda=",
+            "description": "Solo Estudiante."
+          }
+        },
+        {
+          "name": "Reemplazar coautores",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"ids_estudiantes\": [\n    9\n  ]\n}" },
+            "url": "{{base_url}}/proyectos/{{id_proyecto}}/autores",
+            "description": "Solo estudiantes de la escuela del creador; máximo 9."
           }
         }
       ]

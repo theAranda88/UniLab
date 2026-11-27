@@ -1,0 +1,996 @@
+@use '../../../../styles/design-tokens' as t;
+
+$ease-salida: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+// ---------------------------------------------------------------------------
+// Contenedor
+// ---------------------------------------------------------------------------
+.asis__backdrop {
+  position: fixed;
+  z-index: 900;
+  inset: 0;
+  background: t.$overlay;
+  backdrop-filter: blur(3px);
+  animation: asis-fade 220ms ease both;
+}
+
+.asis {
+  position: fixed;
+  z-index: 901;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border-radius: 18px;
+  background: t.$white;
+  box-shadow: 0 30px 80px rgba(5, 30, 80, 0.35);
+  transform: translate(-50%, -50%);
+  animation: asis-in 340ms $ease-salida both;
+
+  &:focus {
+    outline: none;
+  }
+
+  // Alto estable entre pasos para que el indicador no salte
+  &--pasos {
+    min-height: min(640px, calc(100dvh - 32px));
+  }
+
+  // Franja de color superior
+  &::before {
+    content: '';
+    height: 5px;
+    flex: none;
+    background: linear-gradient(90deg, t.$blue, #2f6fd6 60%, t.$accent);
+  }
+}
+
+.asis__cerrar {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: t.$radius-full;
+  background: t.$neutral-soft;
+  color: t.$text-secondary;
+  font-size: 18px;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+
+  &:hover {
+    background: t.$blue-tint-strong;
+    color: t.$blue;
+    transform: rotate(90deg);
+  }
+}
+
+.asis__cuerpo {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: t.$space-24 t.$space-32 t.$space-8;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-20 t.$space-16 t.$space-8;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Indicador de pasos
+// ---------------------------------------------------------------------------
+.asis-stepper {
+  position: relative;
+  flex: none;
+  padding: t.$space-24 t.$space-32 0;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    // Deja libre la esquina del botón de cerrar
+    padding: t.$space-20 52px 0 t.$space-12;
+  }
+
+  &__riel {
+    position: absolute;
+    top: calc(t.$space-24 + 20px);
+    right: calc(t.$space-32 + 10%);
+    left: calc(t.$space-32 + 10%);
+    height: 3px;
+    border-radius: 3px;
+    background: t.$border-subtle;
+
+    @include t.respond-to(t.$breakpoint-sm) {
+      top: calc(t.$space-20 + 20px);
+      right: calc(52px + 10%);
+      left: calc(t.$space-12 + 10%);
+    }
+  }
+
+  &__relleno {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, t.$blue, #2f6fd6);
+    transition: width 450ms $ease-salida;
+  }
+
+  &__lista {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__boton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: progress;
+    }
+
+    &:focus-visible {
+      outline: none;
+
+      .asis-stepper__icono {
+        box-shadow: 0 0 0 3px t.$white, 0 0 0 5px t.$blue;
+      }
+    }
+  }
+
+  &__icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid t.$border-control;
+    border-radius: t.$radius-full;
+    background: t.$white;
+    color: t.$text-muted;
+    font-size: 19px;
+    transition:
+      background 300ms ease,
+      border-color 300ms ease,
+      color 300ms ease,
+      transform 300ms $ease-salida;
+  }
+
+  &__label {
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-semibold;
+    color: t.$text-muted;
+    text-align: center;
+    transition: color 300ms ease;
+
+    @include t.respond-to(t.$breakpoint-sm) {
+      display: none;
+    }
+  }
+
+  &__boton:hover &__icono {
+    border-color: t.$blue-border;
+    color: t.$blue;
+  }
+
+  &__item--hecho &__icono {
+    border-color: t.$blue;
+    background: t.$blue;
+    color: t.$white;
+    animation: asis-pop 360ms $ease-salida;
+  }
+
+  &__item--hecho &__label {
+    color: t.$ink;
+  }
+
+  &__item--activo &__icono {
+    border-color: t.$blue;
+    background: t.$white;
+    color: t.$blue;
+    box-shadow: 0 0 0 5px t.$blue-tint-strong;
+    transform: scale(1.12);
+    animation: asis-pulso 2.2s ease-in-out infinite;
+  }
+
+  &__item--activo &__label {
+    display: block;
+    color: t.$blue;
+    font-weight: t.$font-weight-extra-bold;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pasos (cada uno entra deslizándose según la dirección)
+// ---------------------------------------------------------------------------
+.asis-paso {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-16;
+  animation: asis-entra-derecha 380ms $ease-salida both;
+
+  .asis__cuerpo--atras & {
+    animation-name: asis-entra-izquierda;
+  }
+
+  &--centro {
+    align-items: center;
+    text-align: center;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(22px, 4vw, 26px);
+    font-weight: t.$font-weight-black;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: t.$ink;
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 36px;
+
+    p {
+      margin: 0;
+      line-height: t.$line-height-normal;
+      color: t.$text-secondary;
+    }
+  }
+
+  &--centro &__head {
+    align-items: center;
+    padding-right: 0;
+  }
+
+  &__kicker {
+    font-size: t.$font-size-2xs;
+    font-weight: t.$font-weight-extra-bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: t.$blue;
+  }
+
+  &__texto {
+    max-width: 460px;
+    margin: 0;
+    line-height: t.$line-height-normal;
+    color: t.$text-secondary;
+  }
+
+  &__nota {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: t.$font-size-sm;
+    color: t.$text-muted;
+  }
+}
+
+// Bienvenida
+.asis-hero-icono {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: 92px;
+  margin-top: t.$space-8;
+  border-radius: 26px;
+  background: linear-gradient(140deg, t.$blue, #2f6fd6);
+  color: t.$white;
+  font-size: 46px;
+  box-shadow: 0 16px 34px -10px rgba(5, 54, 134, 0.55);
+  animation: asis-flota 3.6s ease-in-out infinite;
+
+  &__chispa {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: t.$radius-full;
+    background: t.$accent;
+    color: t.$accent-ink-strong;
+    font-size: 16px;
+    box-shadow: t.$shadow-card;
+    animation: asis-pop 500ms 250ms $ease-salida both;
+
+    &--1 {
+      top: -10px;
+      right: -12px;
+    }
+
+    &--2 {
+      bottom: -8px;
+      left: -12px;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      animation-delay: 380ms;
+    }
+  }
+}
+
+.asis-bienvenida {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: t.$space-8;
+  width: 100%;
+  margin: t.$space-4 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: t.$space-12 t.$space-8;
+    border: 1px solid t.$border-subtle;
+    border-radius: 14px;
+    background: t.$white;
+    font-size: t.$font-size-sm;
+    font-weight: t.$font-weight-bold;
+    color: t.$ink;
+    animation: asis-sube 420ms $ease-salida both;
+    transition:
+      transform 200ms ease,
+      border-color 200ms ease;
+
+    &:hover {
+      border-color: t.$blue-border;
+      transform: translateY(-3px);
+    }
+  }
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: t.$blue-tint-strong;
+    color: t.$blue;
+    font-size: 20px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Formularios
+// ---------------------------------------------------------------------------
+.asis-form {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-16;
+
+  &--grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: t.$space-12 t.$space-16;
+
+    @include t.respond-to(t.$breakpoint-sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__full {
+    grid-column: 1 / -1;
+  }
+
+  &__textarea {
+    resize: vertical;
+  }
+
+  &__contador {
+    align-self: flex-end;
+    font-size: t.$font-size-xs;
+    color: t.$text-muted;
+  }
+
+  &__anios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: t.$space-8;
+  }
+}
+
+// Campo con ícono a la izquierda
+.asis-input {
+  position: relative;
+  display: block;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: t.$text-muted;
+    font-size: 18px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: color 160ms ease;
+  }
+
+  .edu-control {
+    width: 100%;
+    padding-left: 38px;
+  }
+
+  &:focus-within > i {
+    color: t.$blue;
+  }
+}
+
+// Etiquetas
+.asis-etiquetas {
+  &__caja {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 46px;
+    padding: 6px 8px;
+    border: 1px solid t.$border-control;
+    border-radius: t.$radius-md;
+    background: t.$white;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+
+    &:focus-within {
+      border-color: t.$blue;
+      box-shadow: 0 0 0 3px t.$blue-tint-strong;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 140px;
+    padding: 6px 4px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: t.$ink;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.asis-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 12px;
+  border: 1px solid t.$border-control;
+  border-radius: t.$radius-full;
+  background: t.$neutral-soft;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  color: t.$ink;
+  animation: asis-pop 260ms $ease-salida both;
+
+  &--azul {
+    border-color: t.$blue-border;
+    background: t.$blue-tint-strong;
+    color: t.$blue;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: t.$radius-full;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+.asis-sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+
+  &__label {
+    font-size: t.$font-size-xs;
+    font-weight: t.$font-weight-bold;
+    color: t.$text-muted;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 10px 3px 6px;
+    border: 1px dashed t.$border-control;
+    border-radius: t.$radius-full;
+    background: t.$white;
+    font: inherit;
+    font-size: t.$font-size-xs;
+    color: t.$text-secondary;
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+
+    &:hover {
+      border-color: t.$blue;
+      color: t.$blue;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Formación
+.asis-formacion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid t.$border-subtle;
+    border-radius: 12px;
+    background: t.$white;
+    animation: asis-sube 320ms $ease-salida both;
+  }
+
+  &__icono {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: t.$blue-tint-strong;
+    color: t.$blue;
+    font-size: 18px;
+  }
+
+  &__texto {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+
+    strong {
+      overflow: hidden;
+      color: t.$ink;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      color: t.$text-secondary;
+    }
+  }
+
+  &__quitar {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: t.$radius-md;
+    background: transparent;
+    color: t.$text-muted;
+    cursor: pointer;
+
+    &:hover {
+      background: t.$danger-tint;
+      color: t.$danger;
+    }
+  }
+}
+
+// Interruptor «mostrar teléfono»
+.asis-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: t.$space-4;
+  font-size: t.$font-size-sm;
+  color: t.$ink;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  &__pista {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: t.$border-control;
+    transition: background 200ms ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: t.$radius-full;
+      background: t.$white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      transition: transform 220ms $ease-salida;
+    }
+  }
+
+  input:checked + &__pista {
+    background: t.$blue;
+
+    &::after {
+      transform: translateX(18px);
+    }
+  }
+
+  input:focus-visible + &__pista {
+    box-shadow: 0 0 0 3px t.$blue-tint-strong;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cierre
+// ---------------------------------------------------------------------------
+.asis-listo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 128px;
+  height: 128px;
+  margin-top: t.$space-8;
+
+  &__anillo {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+  }
+
+  &__fondo,
+  &__avance {
+    fill: none;
+    stroke-width: 8;
+  }
+
+  &__fondo {
+    stroke: t.$blue-tint-strong;
+  }
+
+  &__avance {
+    stroke: t.$blue;
+    stroke-linecap: round;
+    stroke-dasharray: 326.7;
+    animation: asis-anillo 1100ms 150ms $ease-salida both;
+    transition: stroke-dashoffset 600ms ease;
+  }
+
+  &__centro {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 82px;
+    height: 82px;
+    border-radius: t.$radius-full;
+    background: linear-gradient(140deg, t.$ok, #2c9a59);
+    color: t.$white;
+    font-size: 44px;
+    box-shadow: 0 12px 28px -10px rgba(31, 109, 63, 0.6);
+    animation: asis-pop 600ms 300ms $ease-salida both;
+  }
+
+  &__confeti {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    background: t.$accent;
+    opacity: 0;
+    animation: asis-confeti 900ms 350ms ease-out both;
+
+    @for $i from 1 through 8 {
+      &--#{$i} {
+        --angulo: #{($i - 1) * 45deg + 20deg};
+
+        @if $i % 3 == 0 {
+          background: t.$blue;
+        } @else if $i % 3 == 1 {
+          background: #2c9a59;
+        }
+      }
+    }
+  }
+}
+
+.asis-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 18px;
+  width: min(100%, 420px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: t.$font-size-sm;
+    color: t.$text-muted;
+    animation: asis-sube 360ms $ease-salida both;
+
+    i {
+      font-size: 18px;
+    }
+  }
+
+  &__item--hecho {
+    color: t.$ink;
+    font-weight: t.$font-weight-semibold;
+
+    i {
+      color: t.$ok;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Acciones
+// ---------------------------------------------------------------------------
+.asis__acciones {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: t.$space-8;
+  padding: t.$space-16 t.$space-32 t.$space-20;
+  border-top: 1px solid t.$border-subtle;
+  background: linear-gradient(180deg, t.$white, #fafbfe);
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-12 t.$space-16 t.$space-16;
+  }
+
+  .edu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.asis__espacio {
+  flex: 1;
+}
+
+.asis__principal {
+  i {
+    transition: transform 200ms ease;
+  }
+
+  &:hover:not(:disabled) i {
+    transform: translateX(3px);
+  }
+}
+
+.asis__omitir {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: t.$radius-md;
+  background: transparent;
+  font: inherit;
+  font-size: t.$font-size-sm;
+  font-weight: t.$font-weight-semibold;
+  color: t.$text-secondary;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: t.$neutral-soft;
+    color: t.$ink;
+  }
+}
+
+.asis__mini-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: t.$white;
+  border-radius: t.$radius-full;
+  animation: asis-giro 700ms linear infinite;
+}
+
+// ---------------------------------------------------------------------------
+// Animaciones
+// ---------------------------------------------------------------------------
+@keyframes asis-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes asis-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.97);
+  }
+}
+
+@keyframes asis-entra-derecha {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+}
+
+@keyframes asis-entra-izquierda {
+  from {
+    opacity: 0;
+    transform: translateX(-36px);
+  }
+}
+
+@keyframes asis-sube {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes asis-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  70% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes asis-pulso {
+  0%,
+  100% {
+    box-shadow: 0 0 0 5px t.$blue-tint-strong;
+  }
+
+  50% {
+    box-shadow: 0 0 0 9px rgba(5, 54, 134, 0.05);
+  }
+}
+
+@keyframes asis-flota {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+
+  50% {
+    transform: translateY(-6px) rotate(3deg);
+  }
+}
+
+@keyframes asis-anillo {
+  from {
+    stroke-dashoffset: 326.7;
+  }
+}
+
+@keyframes asis-confeti {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--angulo)) translateY(0) scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angulo)) translateY(-86px) scale(1) rotate(160deg);
+  }
+}
+
+@keyframes asis-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // Selectores con el prefijo .asis para ganarle a los estados (activo, hecho, atrás)
+  .asis,
+  .asis .asis__cuerpo .asis-paso,
+  .asis .asis-hero-icono,
+  .asis .asis-hero-icono__chispa,
+  .asis .asis-bienvenida li,
+  .asis .asis-stepper__item .asis-stepper__icono,
+  .asis .asis-listo__avance,
+  .asis .asis-listo__centro,
+  .asis .asis-listo__confeti,
+  .asis .asis-checklist li,
+  .asis .asis-tag,
+  .asis .asis-formacion__item {
+    animation: none;
+  }
+
+  .asis .asis-stepper__relleno {
+    transition: none;
+  }
+}
+
+// Dato obligatorio pendiente en el primer ingreso
+.asis__aviso {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 28px 4px;
+  padding: 10px 14px;
+  border-left: 3px solid t.$accent-pressed;
+  border-radius: 8px;
+  background: t.$cream;
+  color: t.$accent-ink-strong;
+  font-size: 14px;
+  font-weight: 600;
+}

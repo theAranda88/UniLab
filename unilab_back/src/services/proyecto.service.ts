@@ -210,6 +210,71 @@ export const proyectoService = {
     return obtenerProyectoEnriquecido(id);
   },
 
+  /**
+   * Reemplaza los coautores del proyecto (el creador siempre queda como autor principal).
+   * Solo estudiantes activos de la escuela del creador. Aparecen en los perfiles públicos
+   * únicamente cuando el proyecto se publica.
+   */
+  async actualizarAutores(id: number, rol: string, id_usuario: number, ids_estudiantes: number[]) {
+    await verificarPermisoGestion(id, rol, id_usuario);
+    const proyecto = await proyectoRepository.findById(id);
+    if (!proyecto) throw new AppError('Proyecto no encontrado', 404);
+
+    const creador = proyecto.id_estudiante_creador;
+    const ids = [...new Set(ids_estudiantes)].filter((i) => i !== creador);
+    if (ids.length > 0) {
+      const escuelas = await escuelasDelEstudiante(creador);
+      const validos = await prisma.usuarios.count({
+        where: {
+          id_usuario: { in: ids },
+          ...activo,
+          activo: true,
+          rol: { nombre_rol: 'Estudiante' },
+          perfil_estudiante: { ...activo, id_escuela: { in: escuelas } },
+        },
+      });
+      if (validos !== ids.length) {
+        throw new AppError('Solo puede agregar estudiantes activos de la escuela del proyecto', 422);
+      }
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.proyecto_autores.updateMany({
+        where: { id_proyecto: id, ...activo, id_estudiante: { notIn: [creador, ...ids] } },
+        data: { deleted_at: new Date() },
+      });
+      for (const id_estudiante of ids) {
+        await tx.proyecto_autores.upsert({
+          where: { id_proyecto_id_estudiante: { id_proyecto: id, id_estudiante } },
+          update: { deleted_at: null, rol_autor: 'coautor' },
+          create: { id_proyecto: id, id_estudiante, rol_autor: 'coautor', created_by: id_usuario },
+        });
+      }
+    });
+
+    return obtenerProyectoEnriquecido(id);
+  },
+
+  /** Estudiantes de la misma escuela que el solicitante, para elegir coautores. */
+  async companeros(id_usuario: number, busqueda?: string) {
+    const escuelas = await escuelasDelEstudiante(id_usuario);
+    if (escuelas.length === 0) return [];
+    const contiene = busqueda ? { contains: busqueda, mode: 'insensitive' as const } : null;
+    return prisma.usuarios.findMany({
+      where: {
+        id_usuario: { not: id_usuario },
+        ...activo,
+        activo: true,
+        rol: { nombre_rol: 'Estudiante' },
+        perfil_estudiante: { ...activo, id_escuela: { in: escuelas } },
+        ...(contiene ? { OR: [{ nombres: contiene }, { apellidos: contiene }] } : {}),
+      },
+      select: { id_usuario: true, nombres: true, apellidos: true },
+      orderBy: [{ apellidos: 'asc' }, { nombres: 'asc' }],
+      take: 20,
+    });
+  },
+
   async eliminar(id: number, rol: string, id_usuario: number) {
     await verificarPermisoGestion(id, rol, id_usuario);
     await proyectoRepository.softDelete(id);
@@ -311,6 +376,15 @@ export const proyectoService = {
     });
   },
 };
+
+/** Escuelas del perfil de estudiante (para elegir y validar coautores). */
+async function escuelasDelEstudiante(id_usuario: number): Promise<number[]> {
+  const perfil = await prisma.perfiles_estudiante.findFirst({
+    where: { id_usuario, ...activo },
+    select: { id_escuela: true },
+  });
+  return perfil ? [perfil.id_escuela] : [];
+}
 
 async function verificarPermisoGestion(id_proyecto: number, rol: string, id_usuario: number) {
   const proyecto = await proyectoRepository.findById(id_proyecto);

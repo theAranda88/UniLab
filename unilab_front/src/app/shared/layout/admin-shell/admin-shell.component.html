@@ -6,7 +6,7 @@
     <div class="logo-area">
       <img
         src="assets/images/recursos/Logoeduinova.svg"
-        alt="Eduinova"
+        alt="Eduinnova"
         class="logo-img"
       />
       <div class="logo-text">
@@ -78,7 +78,7 @@
           [attr.aria-label]="'perfil.titulo' | translate"
           [attr.title]="'perfil.titulo' | translate"
         >
-          <span class="user-card__avatar" aria-hidden="true">{{ iniciales() }}</span>
+          <span class="user-card__avatar" aria-hidden="true"><app-avatar [url]="usuario()?.url_foto" [iniciales]="iniciales()" /></span>
           <span class="user-card__text">
             <span class="user-card__name">{{ nombreUsuario() }}</span>
             <span class="user-card__role">

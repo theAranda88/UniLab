@@ -4,7 +4,7 @@
       <a class="portal__brand" routerLink="/" [attr.aria-label]="'auth.brand.home' | translate">
         <img src="assets/images/recursos/Logoeduinova.svg" alt="" class="portal__brand-mark" />
         <span class="portal__brand-text">
-          <img src="assets/images/recursos/Ttulo.svg" alt="Eduinova" class="portal__brand-title" />
+          <img src="assets/images/recursos/Ttulo.svg" alt="Eduinnova" class="portal__brand-title" />
           <span class="portal__brand-caption">{{ 'home.caption' | translate }}</span>
         </span>
       </a>
@@ -42,13 +42,35 @@
           <li>
             <a
               routerLink="/"
-              fragment="escuelas"
+              fragment="proyectos"
               class="portal__nav-link"
               [class.portal__nav-link--active]="activeSection() === 'proyectos'"
               [attr.aria-current]="activeSection() === 'proyectos' ? 'location' : null"
-              (click)="irASeccion('escuelas')"
+              (click)="irASeccion('proyectos')"
             >
               {{ 'home.nav.proyectos' | translate }}
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/"
+              fragment="escuelas"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'escuelas'"
+              [attr.aria-current]="activeSection() === 'escuelas' ? 'location' : null"
+              (click)="irASeccion('escuelas')"
+            >
+              {{ 'home.nav.escuelas' | translate }}
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="isLoggedIn() && isEstudiante() ? '/semilleros' : '/semilleros/explorar'"
+              class="portal__nav-link"
+              [class.portal__nav-link--active]="activeSection() === 'semilleros'"
+              [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
+            >
+              {{ 'home.semillerosNav' | translate }}
             </a>
           </li>
           <li>
@@ -73,16 +95,6 @@
                 [attr.aria-current]="activeSection() === 'mis-proyectos' ? 'page' : null"
               >
                 {{ 'home.projectsNav' | translate }}
-              </a>
-            </li>
-            <li>
-              <a
-                routerLink="/semilleros"
-                class="portal__nav-link"
-                [class.portal__nav-link--active]="activeSection() === 'semilleros'"
-                [attr.aria-current]="activeSection() === 'semilleros' ? 'page' : null"
-              >
-                {{ 'home.semillerosNav' | translate }}
               </a>
             </li>
           }

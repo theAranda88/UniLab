@@ -12,6 +12,8 @@ export const CONFIGURACION_POR_DEFECTO = {
   semilleros_solicitudes_abiertas: true,
   /** Aviso visible en el portal público; vacío = sin aviso. */
   mensaje_portal: '',
+  /** Porcentaje mínimo de jornadas asistidas para recibir el certificado de un evento. */
+  certificado_porcentaje_minimo: 80,
 };
 
 export type Configuracion = typeof CONFIGURACION_POR_DEFECTO;
@@ -24,6 +26,10 @@ function esClave(clave: string): clave is ClaveConfiguracion {
 function deserializar<K extends ClaveConfiguracion>(clave: K, valor: string): Configuracion[K] {
   const defecto = CONFIGURACION_POR_DEFECTO[clave];
   if (typeof defecto === 'boolean') return (valor === 'true') as Configuracion[K];
+  if (typeof defecto === 'number') {
+    const numero = Number(valor);
+    return (Number.isFinite(numero) ? numero : defecto) as Configuracion[K];
+  }
   return valor as Configuracion[K];
 }
 

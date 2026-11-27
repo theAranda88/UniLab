@@ -7,25 +7,22 @@ import {
   verificarGoogleIdToken,
 } from '../utils/googleAuth';
 import { usuarioRepository } from '../models/usuario.repository';
+import { perfilRepository } from '../models/perfil.repository';
 import { escuelaRepository } from '../models/escuela.repository';
 import type { JwtPayload } from '../middlewares/auth/types';
 import { configuracionService } from './configuracion.service';
+import { urlPublicaImagen } from '../utils/uploadPaths';
+import { rolVisibleEstudiante, rolVisibleProfesor, unirSemillerosConRol } from '../utils/rolSemillero';
 
 type PerfilSesion = NonNullable<Awaited<ReturnType<typeof usuarioRepository.findPerfilSesion>>>;
 
-type RolSemillero = 'lider' | 'profesor' | 'miembro';
-
-/** Une los semilleros del usuario (líder, profesor asignado o miembro aprobado) sin duplicados. */
+/** Une los semilleros del usuario (como profesor, líder o miembro aprobado) sin duplicados y con su rol. */
 function semillerosDeUsuario(u: PerfilSesion) {
-  const porId = new Map<number, { id_semillero: number; nombre_semillero: string; rol_semillero: RolSemillero }>();
-  const agregar = (s: { id_semillero: number; nombre_semillero: string }, rol: RolSemillero) => {
-    const previo = porId.get(s.id_semillero);
-    if (!previo || rol === 'lider') porId.set(s.id_semillero, { ...s, rol_semillero: rol });
-  };
-  u.semilleros_como_profesor.forEach((p) => agregar(p.semillero, p.es_lider ? 'lider' : 'profesor'));
-  u.semilleros_como_lider.forEach((s) => agregar(s, 'lider'));
-  u.membresias_semillero.forEach((m) => agregar(m.semillero, 'miembro'));
-  return [...porId.values()].sort((a, b) => a.nombre_semillero.localeCompare(b.nombre_semillero));
+  return unirSemillerosConRol([
+    ...u.semilleros_como_profesor.map((p) => ({ semillero: p.semillero, rol: rolVisibleProfesor(p) })),
+    ...u.semilleros_como_lider.map((s) => ({ semillero: s, rol: 'lider' as const })),
+    ...u.membresias_semillero.map((m) => ({ semillero: m.semillero, rol: rolVisibleEstudiante(m.rol) })),
+  ]).map(({ semillero, rol }) => ({ ...semillero, rol_semillero: rol }));
 }
 
 /** Respuesta común de login, login con Google, completar perfil y GET /auth/me. */
@@ -40,13 +37,27 @@ export function mapUsuarioSesion(u: PerfilSesion) {
     nombres: u.nombres,
     apellidos: u.apellidos,
     telefono: u.telefono,
+    url_foto: u.foto_ruta ? urlPublicaImagen(u.foto_ruta) : null,
+    url_firma: u.firma_ruta ? urlPublicaImagen(u.firma_ruta) : null,
     escuela: perfilAcademico?.escuela ?? null,
     semilleros: semillerosDeUsuario(u),
     redes: {
       linkedin: u.url_linkedin,
       github: u.url_github,
       portafolio: u.url_portafolio,
+      cvlac: u.url_cvlac,
+      orcid: u.url_orcid,
+      google_scholar: u.url_google_scholar,
+      researchgate: u.url_researchgate,
     },
+    cv: {
+      titular: u.titular,
+      biografia: u.biografia,
+      especialidades: u.especialidades,
+      fortalezas: u.fortalezas,
+      mostrar_telefono: u.mostrar_telefono,
+    },
+    perfil_cv_revisado: u.perfil_cv_revisado,
     perfil: {
       codigo_docente: u.perfil_profesor?.codigo_docente ?? null,
       codigo_estudiantil: u.perfil_estudiante?.codigo_estudiantil ?? null,
@@ -57,6 +68,20 @@ export function mapUsuarioSesion(u: PerfilSesion) {
       ocupacion: u.perfil_externo?.ocupacion ?? null,
     },
   };
+}
+
+/** Datos obligatorios del perfil en el primer ingreso (los enlaces son opcionales). */
+export function camposPerfilFaltantes(
+  u: { foto_ruta: string | null; titular: string | null; biografia: string | null; especialidades: string[]; fortalezas: string[] },
+  totalFormacion: number,
+): string[] {
+  const faltan: string[] = [];
+  if (!u.foto_ruta) faltan.push('foto');
+  if (!u.titular?.trim()) faltan.push('titular');
+  if (!u.biografia?.trim()) faltan.push('biografía');
+  if (u.especialidades.length + u.fortalezas.length === 0) faltan.push('habilidades');
+  if (totalFormacion === 0) faltan.push('formación');
+  return faltan;
 }
 
 async function construirSesion(id_usuario: number) {
@@ -258,6 +283,15 @@ export const authService = {
       url_linkedin?: string | null;
       url_github?: string | null;
       url_portafolio?: string | null;
+      url_cvlac?: string | null;
+      url_orcid?: string | null;
+      url_google_scholar?: string | null;
+      url_researchgate?: string | null;
+      titular?: string | null;
+      biografia?: string | null;
+      especialidades?: string[];
+      fortalezas?: string[];
+      mostrar_telefono?: boolean;
     },
   ) {
     const { profesion, ...datosUsuario } = data;
@@ -271,6 +305,22 @@ export const authService = {
       await usuarioRepository.updatePerfilCoordinador(solicitante.id_usuario, { profesion });
     }
     return construirSesion(solicitante.id_usuario);
+  },
+
+  /**
+   * Cierra el asistente obligatorio del primer ingreso. Solo se marca el perfil como revisado
+   * si tiene foto, titular, biografía, al menos una habilidad y al menos un estudio.
+   */
+  async completarPerfilCv(id_usuario: number) {
+    const usuario = await usuarioRepository.findPerfilSesion(id_usuario);
+    if (!usuario) throw new AppError('Usuario no encontrado', 404);
+    const formacion = await perfilRepository.listarFormacion(id_usuario);
+    const faltan = camposPerfilFaltantes(usuario, formacion.length);
+    if (faltan.length > 0) {
+      throw new AppError(`Para continuar completa tu perfil: ${faltan.join(', ')}`, 422);
+    }
+    await usuarioRepository.update(id_usuario, { perfil_cv_revisado: true });
+    return construirSesion(id_usuario);
   },
 
   /** Cambio voluntario de contraseña: exige la contraseña actual. */

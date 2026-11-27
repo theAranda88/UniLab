@@ -22,6 +22,12 @@
           @if (p.curso?.escuela; as esc) {
             <a [routerLink]="['/escuelas', esc.id_escuela]">{{ esc.nombre_escuela }}</a>
             <i class="ti ti-chevron-right" aria-hidden="true"></i>
+            @if (p.semillero; as sem) {
+              <a [routerLink]="['/semilleros', sem.id_semillero]">{{ sem.nombre_semillero }}</a>
+            } @else {
+              <a [routerLink]="['/escuelas', esc.id_escuela, 'independientes']">{{ 'home.independientes.title' | translate }}</a>
+            }
+            <i class="ti ti-chevron-right" aria-hidden="true"></i>
           }
           <span aria-current="page">{{ p.titulo }}</span>
         </nav>
@@ -80,11 +86,22 @@
             <ul class="pd-team">
               @for (persona of integrantes(); track persona.nombre) {
                 <li class="pd-team__item">
-                  <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
-                  <span class="pd-team__text">
-                    <span class="pd-team__name">{{ persona.nombre }}</span>
-                    <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
-                  </span>
+                  @if (persona.id) {
+                    <a class="pd-team__link" [routerLink]="['/personas', persona.id]" [attr.aria-label]="'home.detail.verPerfil' | translate: { nombre: persona.nombre }">
+                      <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
+                      <span class="pd-team__text">
+                        <span class="pd-team__name">{{ persona.nombre }}</span>
+                        <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
+                      </span>
+                      <i class="ti ti-chevron-right pd-team__go" aria-hidden="true"></i>
+                    </a>
+                  } @else {
+                    <span class="edu-avatar" aria-hidden="true">{{ persona.nombre.charAt(0) }}</span>
+                    <span class="pd-team__text">
+                      <span class="pd-team__name">{{ persona.nombre }}</span>
+                      <span class="pd-team__role">{{ persona.rolKey | translate }}</span>
+                    </span>
+                  }
                 </li>
               }
             </ul>
@@ -242,13 +259,19 @@
             @if (p.semillero) {
               <div>
                 <dt>{{ 'home.detail.semillero' | translate }}</dt>
-                <dd>{{ p.semillero.nombre_semillero }}</dd>
+                <dd><a class="pd-link" [routerLink]="['/semilleros', p.semillero.id_semillero]">{{ p.semillero.nombre_semillero }}</a></dd>
               </div>
             }
             @if (director(); as nombre) {
               <div>
                 <dt>{{ 'home.directorLabel' | translate }}</dt>
-                <dd>{{ nombre }}</dd>
+                <dd>
+                  @if (idDirector(); as id) {
+                    <a class="pd-link" [routerLink]="['/personas', id]">{{ nombre }}</a>
+                  } @else {
+                    {{ nombre }}
+                  }
+                </dd>
               </div>
             }
           </dl>
@@ -312,5 +335,26 @@
         </section>
       </aside>
     </div>
+
+    @if (masProyectos().length > 0) {
+      <section class="pd__container pd-more" aria-labelledby="pd-more-title">
+        <div class="pd-more__head">
+          <h2 id="pd-more-title" class="pd-section__title">
+            {{ (p.semillero ? 'home.detail.moreFromSemillero' : 'home.detail.moreIndependent') | translate: { nombre: p.semillero?.nombre_semillero ?? '' } }}
+          </h2>
+          @if (rutaMasProyectos(); as ruta) {
+            <a class="pd-link" [routerLink]="ruta">
+              {{ 'home.detail.seeAllProjects' | translate }}
+              <i class="ti ti-arrow-right" aria-hidden="true"></i>
+            </a>
+          }
+        </div>
+        <div class="pd-more__grid">
+          @for (otro of masProyectos(); track otro.id_proyecto) {
+            <app-proyecto-card [proyecto]="otro" [carrusel]="false" />
+          }
+        </div>
+      </section>
+    }
   }
 </main>

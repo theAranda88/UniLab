@@ -14,6 +14,21 @@ export const proyectoController = {
     res.status(200).json(proyecto);
   }),
 
+  actualizarAutores: asyncHandler(async (req: Request, res: Response) => {
+    const proyecto = await proyectoService.actualizarAutores(
+      Number(req.params.id),
+      req.user!.id_rol,
+      req.user!.id_usuario,
+      req.body.ids_estudiantes,
+    );
+    res.status(200).json(proyecto);
+  }),
+
+  companeros: asyncHandler(async (req: Request, res: Response) => {
+    const busqueda = typeof req.query.busqueda === 'string' ? req.query.busqueda : undefined;
+    res.status(200).json(await proyectoService.companeros(req.user!.id_usuario, busqueda));
+  }),
+
   crear: asyncHandler(async (req: Request, res: Response) => {
     const proyecto = await proyectoService.crear({
       ...req.body,

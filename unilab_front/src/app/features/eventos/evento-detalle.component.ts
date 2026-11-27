@@ -31,6 +31,8 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { ImageLightboxComponent } from '../../shared/ui/image-lightbox/image-lightbox.component';
+import { CertificadosEventoComponent } from '../certificados/certificados-evento/certificados-evento.component';
+import { MiCertificadoEventoComponent } from '../certificados/mi-certificado-evento/mi-certificado-evento.component';
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
@@ -45,6 +47,8 @@ import { ImageLightboxComponent } from '../../shared/ui/image-lightbox/image-lig
     BreadcrumbComponent,
     EmptyStateComponent,
     SkeletonComponent,
+    CertificadosEventoComponent,
+    MiCertificadoEventoComponent,
   ],
   templateUrl: './evento-detalle.component.html',
   styleUrl: './evento-detalle.component.scss',
@@ -81,6 +85,10 @@ export class EventoDetalleComponent implements OnInit {
   puedeEliminar = computed(() => this.eventoService.puedeEliminar());
   puedeInscribirse = computed(() => {
     if (this.yaInscrito()) return false;
+    // El portal también muestra eventos planeados y finalizados; la inscripción pública exige uno activo
+    const estado = this.evento()?.estado;
+    if (estado === 'finalizado') return false;
+    if (!this.auth.isAuthenticated() && estado !== 'activo') return false;
     if (!this.auth.isAuthenticated()) return true;
     return this.eventoService.puedeInscribirse();
   });
@@ -113,6 +121,16 @@ export class EventoDetalleComponent implements OnInit {
     if (!this.pagoConfirmado()) return 'jornadas.pagoPendiente';
     return null;
   });
+
+  /** El administrador y el organizador del evento emiten y gestionan los certificados. */
+  gestionaCertificados = computed(() => {
+    const ev = this.evento();
+    const usuario = this.auth.getCurrentUser();
+    if (!ev || !usuario) return false;
+    return usuario.id_rol === 'Administrador' || usuario.id_usuario === ev.id_organizador;
+  });
+  /** Los participantes descargan su certificado cuando el evento terminó. */
+  muestraMiCertificado = computed(() => this.evento()?.estado === 'finalizado' && !this.gestionaCertificados());
 
   breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const ev = this.evento();

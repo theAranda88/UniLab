@@ -12,9 +12,13 @@ const ICONOS: Record<keyof RedesContacto, string> = {
   linkedin: 'ti-brand-linkedin',
   github: 'ti-brand-github',
   portafolio: 'ti-world',
+  cvlac: 'ti-certificate',
+  orcid: 'ti-id',
+  google_scholar: 'ti-school',
+  researchgate: 'ti-atom',
 };
 
-/** Íconos enlazados a las redes de contacto de un usuario (LinkedIn, GitHub, portafolio). */
+/** Íconos enlazados a las redes de un usuario (LinkedIn, GitHub, portafolio y redes académicas). */
 @Component({
   selector: 'app-redes-contacto',
   standalone: true,

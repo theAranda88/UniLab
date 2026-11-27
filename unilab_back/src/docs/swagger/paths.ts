@@ -126,6 +126,88 @@ export const paths = {
       },
     },
   },
+  '/auth/me/perfil-cv/completar': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Completar el perfil del primer ingreso',
+      description: 'Cierra el asistente obligatorio del primer ingreso: marca `perfil_cv_revisado = true` solo si el perfil tiene foto, titular, biografía, al menos una especialidad o fortaleza y al menos un estudio. Los enlaces son opcionales.',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Sesión actualizada' }, 401: err[401], 422: err[422] },
+    },
+  },
+  '/auth/me/foto': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Subir mi foto de perfil',
+      description: 'Reemplaza la foto anterior. JPEG, PNG o WebP, máximo 2 MB (el front la reduce antes de enviarla). Aparece en el perfil público y en el equipo de sus semilleros.',
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['foto'],
+              properties: { foto: { type: 'string', format: 'binary' } },
+            },
+          },
+        },
+      },
+      responses: {
+        200: { description: 'Sesión actualizada con `url_foto`', content: { 'application/json': { schema: { $ref: '#/components/schemas/UsuarioSesion' } } } },
+        400: err[400],
+        401: err[401],
+      },
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Quitar mi foto de perfil',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Sesión actualizada (`url_foto: null`)' }, 401: err[401], 404: err[404] },
+    },
+  },
+  '/auth/me/formacion': {
+    get: {
+      tags: ['Auth'],
+      summary: 'Mi formación académica',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Formación ordenada por año de inicio (más reciente primero)' }, 401: err[401] },
+    },
+    post: {
+      tags: ['Auth'],
+      summary: 'Agregar formación',
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonBody('#/components/schemas/FormacionRequest'),
+      responses: { 201: { description: 'Formación creada' }, 400: err[400], 401: err[401] },
+    },
+  },
+  '/auth/me/formacion/{idFormacion}': {
+    put: {
+      tags: ['Auth'],
+      summary: 'Editar formación propia',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'idFormacion', in: 'path', required: true, schema: { type: 'integer' } }],
+      requestBody: jsonBody('#/components/schemas/FormacionRequest'),
+      responses: { 200: { description: 'Formación actualizada' }, 404: err[404] },
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Eliminar formación propia (soft-delete)',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'idFormacion', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Eliminada' }, 404: err[404] },
+    },
+  },
+  '/public/usuarios/{id}/perfil': {
+    get: {
+      tags: ['Público'],
+      summary: 'Perfil público de una persona (tipo CvLAC)',
+      description:
+        'Titular, biografía, especialidades, fortalezas, enlaces, formación, escuela, semilleros, proyectos publicados en los que participa (`participacion`: autor | director) y eventos asistidos. Nunca expone correo ni documento; el teléfono solo si `mostrar_telefono`.',
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: 'Perfil público' }, 404: err[404] },
+    },
+  },
   '/auth/me/password': {
     post: {
       tags: ['Auth'],
@@ -518,6 +600,26 @@ export const paths = {
       responses: { 204: { description: 'Eliminado' }, ...err },
     },
   },
+  '/proyectos/companeros': {
+    get: {
+      tags: ['Proyectos'],
+      summary: 'Compañeros de escuela para agregar como coautores',
+      description: '**Rol requerido:** Estudiante. Máximo 20 resultados; `busqueda` filtra por nombre o apellido.',
+      parameters: [{ name: 'busqueda', in: 'query', required: false, schema: { type: 'string' } }],
+      responses: { 200: { description: 'Estudiantes { id_usuario, nombres, apellidos }' }, ...err },
+    },
+  },
+  '/proyectos/{id}/autores': {
+    put: {
+      tags: ['Proyectos'],
+      summary: 'Reemplazar los coautores del proyecto',
+      description:
+        'Mismo permiso que editar el proyecto (creador antes de publicar, profesor coordinador, administrador). Solo estudiantes activos de la escuela del creador; el creador se mantiene como autor principal. En los perfiles públicos solo aparecen proyectos publicados.',
+      parameters: [paramId],
+      requestBody: jsonBody('#/components/schemas/AutoresProyectoRequest'),
+      responses: { 200: { description: 'Proyecto con autores actualizados' }, ...err },
+    },
+  },
   '/proyectos/{id}/estado': {
     patch: {
       tags: ['Proyectos'],
@@ -712,6 +814,24 @@ export const paths = {
       responses: { 204: { description: 'Profesor removido' }, ...err },
     },
   },
+  '/semilleros/{id}/profesores/{idProfesor}/rol': {
+    patch: {
+      tags: ['Semilleros'],
+      summary: 'Cambiar el rol de un profesor en el semillero',
+      description:
+        '**Rol requerido:** Administrador o profesor líder del semillero. `coordinador` o `acompanante`; el líder se cambia con `id_profesor_lider` (PATCH /semilleros/{id}).',
+      parameters: [paramId, paramIdProfesor],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { type: 'object', required: ['rol'], properties: { rol: { type: 'string', enum: ['coordinador', 'acompanante'] } } },
+          },
+        },
+      },
+      responses: { 200: { description: 'Rol actualizado' }, ...err },
+    },
+  },
   '/semilleros/{id}/miembros': {
     post: {
       tags: ['Semilleros'],
@@ -739,6 +859,125 @@ export const paths = {
       description: '**Rol requerido:** Profesor líder. Activa `puede_publicar=true` en la membresía.',
       parameters: [paramId, paramIdEstudiante],
       responses: { 200: { description: 'Autorización concedida' }, ...err },
+    },
+  },
+  '/semilleros/{id}/miembros/{idEstudiante}/rol': {
+    patch: {
+      tags: ['Semilleros'],
+      summary: 'Cambiar el rol de un estudiante en el semillero',
+      description:
+        '**Rol requerido:** Administrador o profesor líder del semillero. Solo para membresías aprobadas: `integrante` (estudiante), `lider` (líder estudiantil) o `coordinador` (coordinador estudiantil).',
+      parameters: [paramId, paramIdEstudiante],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: { type: 'object', required: ['rol'], properties: { rol: { type: 'string', enum: ['integrante', 'lider', 'coordinador'] } } },
+          },
+        },
+      },
+      responses: { 200: { description: 'Rol actualizado' }, ...err },
+    },
+  },
+  '/semilleros/{id}/portada': {
+    put: {
+      tags: ['Semilleros'],
+      summary: 'Subir o reemplazar portada del semillero',
+      description: '**Rol requerido:** Administrador. Multipart con campo `portada` (JPEG, PNG o WebP, máx. 5 MB).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['portada'],
+              properties: {
+                portada: { type: 'string', format: 'binary' },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: 'Portada actualizada',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/SemilleroPortadaResponse' } } },
+        },
+        ...err,
+      },
+    },
+    delete: {
+      tags: ['Semilleros'],
+      summary: 'Eliminar portada del semillero',
+      description: '**Rol requerido:** Administrador',
+      parameters: [paramId],
+      responses: { 204: { description: 'Portada eliminada' }, ...err },
+    },
+  },
+  '/semilleros/{id}/evidencias': {
+    get: {
+      tags: ['Semilleros'],
+      summary: 'Listar evidencias del semillero',
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Galería ordenada',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/SemilleroEvidenciaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+    post: {
+      tags: ['Semilleros'],
+      summary: 'Subir evidencias al semillero',
+      description:
+        '**Rol requerido:** Administrador. Multipart con campo `evidencias` (hasta 10 imágenes JPEG/PNG/WebP, 5 MB c/u).',
+      parameters: [paramId],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['evidencias'],
+              properties: {
+                evidencias: { type: 'array', items: { type: 'string', format: 'binary' } },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: 'Evidencias registradas',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/SemilleroEvidenciaResponse' },
+              },
+            },
+          },
+        },
+        ...err,
+      },
+    },
+  },
+  '/semilleros/{id}/evidencias/{idEvidencia}': {
+    delete: {
+      tags: ['Semilleros'],
+      summary: 'Eliminar evidencia del semillero',
+      description: '**Rol requerido:** Administrador (soft-delete y reordenación).',
+      parameters: [paramId, { name: 'idEvidencia', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Evidencia eliminada' }, ...err },
     },
   },
 
@@ -1131,7 +1370,12 @@ export const paths = {
     get: {
       tags: ['Público'],
       summary: 'Listar proyectos publicados (portal público)',
-      description: 'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.',
+      description:
+        'Sin autenticación. Solo proyectos con `estado_proyecto = publicado`. Incluye array `imagenes`.\n\n' +
+        'Filtros opcionales:\n' +
+        '- `id_escuela`: proyectos de cursos de esa escuela (todos, con o sin semillero).\n' +
+        '- `sin_semillero=true` con `id_escuela`: solo publicados sin semillero asignado (ficha de escuela).\n' +
+        '- `id_semillero`: publicados del semillero; el semillero debe estar activo (404 si no).',
       security: [],
       parameters: [
         {
@@ -1141,6 +1385,35 @@ export const paths = {
           required: false,
           description: 'Filtrar por escuela del curso',
           example: 31,
+        },
+        {
+          name: 'id_semillero',
+          in: 'query',
+          schema: { type: 'integer' },
+          required: false,
+          description: 'Filtrar por semillero (debe estar activo en portal)',
+        },
+        {
+          name: 'sin_semillero',
+          in: 'query',
+          schema: { type: 'boolean' },
+          required: false,
+          description: 'Si es true, solo proyectos sin `id_semillero`. Usar con `id_escuela` en la ficha de escuela.',
+        },
+        {
+          name: 'orden',
+          in: 'query',
+          schema: { type: 'string', enum: ['recientes', 'valorados'], default: 'recientes' },
+          required: false,
+          description:
+            '`valorados`: mayor promedio de calificación primero; a igual promedio, más votos y más vistas. Los no calificados van al final.',
+        },
+        {
+          name: 'limite',
+          in: 'query',
+          schema: { type: 'integer', minimum: 1, maximum: 50 },
+          required: false,
+          description: 'Máximo de proyectos a devolver (p. ej. 6 en la portada).',
         },
       ],
       responses: {
@@ -1172,6 +1445,58 @@ export const paths = {
           content: {
             'application/json': {
               schema: { $ref: '#/components/schemas/ProyectoPublicoResponse' },
+            },
+          },
+        },
+        404: err[404],
+      },
+    },
+  },
+  '/public/semilleros': {
+    get: {
+      tags: ['Público'],
+      summary: 'Listar semilleros activos (portal público)',
+      description:
+        'Sin autenticación. Solo semilleros activos. Incluye escuela, líder, total de miembros aprobados y de proyectos publicados.',
+      security: [],
+      parameters: [
+        { name: 'id_escuela', in: 'query', schema: { type: 'integer' }, required: false },
+        {
+          name: 'busqueda',
+          in: 'query',
+          schema: { type: 'string', maxLength: 100 },
+          required: false,
+          description: 'Texto en el nombre o la descripción',
+        },
+        { name: 'pagina', in: 'query', schema: { type: 'integer', default: 1 } },
+        { name: 'limite', in: 'query', schema: { type: 'integer', default: 12, maximum: 50 } },
+      ],
+      responses: {
+        200: {
+          description: 'Listado paginado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SemillerosPublicosPaginadosResponse' },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/public/semilleros/{id}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Detalle público de semillero',
+      description:
+        'Sin autenticación. Portada, evidencias, proyectos publicados del semillero y escuela.',
+      security: [],
+      parameters: [paramId],
+      responses: {
+        200: {
+          description: 'Semillero activo',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/SemilleroPublicoResponse' },
             },
           },
         },
@@ -1371,6 +1696,108 @@ export const paths = {
       summary: 'Parámetros públicos del sistema',
       security: [],
       responses: { 200: { description: 'Parámetros actuales' } },
+    },
+  },
+
+  '/auth/me/firma': {
+    post: {
+      tags: ['Auth'],
+      summary: 'Subir mi firma',
+      description: 'Imagen de la firma que se imprime en los certificados de los eventos que organiza. PNG (ideal con fondo transparente) o JPEG, máximo 2 MB.',
+      security: [{ bearerAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: { type: 'object', required: ['firma'], properties: { firma: { type: 'string', format: 'binary' } } },
+          },
+        },
+      },
+      responses: { 200: { description: 'Sesión actualizada con `url_firma`' }, 400: err[400], 401: err[401] },
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Quitar mi firma',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Sesión actualizada (`url_firma: null`)' }, 401: err[401], 404: err[404] },
+    },
+  },
+  '/eventos/{id}/certificados': {
+    get: {
+      tags: ['Certificados'],
+      summary: 'Estado de certificados del evento',
+      description: '**Rol requerido:** Administrador u organizador del evento. Por inscrito: jornadas asistidas, porcentaje, si cumple el mínimo (`certificado_porcentaje_minimo`) y el certificado vigente.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: 'Resumen del evento e inscritos' }, 401: err[401], 403: err[403], 404: err[404] },
+    },
+    post: {
+      tags: ['Certificados'],
+      summary: 'Emitir certificados',
+      description: '**Rol requerido:** Administrador u organizador. El evento debe estar finalizado y tener jornadas. Emite a quienes cumplen el mínimo de asistencia (y pago confirmado o exento si el evento es pago) y aún no lo tienen.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: '`{ emitidos, ya_emitidos, no_cumplen }`' }, 401: err[401], 403: err[403], 404: err[404], 422: err[422] },
+    },
+  },
+  '/certificados/mios': {
+    get: {
+      tags: ['Certificados'],
+      summary: 'Mis certificados',
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: 'Certificados vigentes del usuario en sesión' }, 401: err[401] },
+    },
+  },
+  '/certificados/{id}/pdf': {
+    get: {
+      tags: ['Certificados'],
+      summary: 'Descargar certificado',
+      description: 'Lo descargan el titular, el organizador del evento o el administrador.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 200: { description: 'PDF del certificado', content: { 'application/pdf': { schema: { type: 'string', format: 'binary' } } } }, 401: err[401], 403: err[403], 404: err[404] },
+    },
+  },
+  '/certificados/{id}': {
+    delete: {
+      tags: ['Certificados'],
+      summary: 'Anular certificado',
+      description: '**Rol requerido:** Administrador u organizador del evento. Borrado lógico: el código deja de verificarse.',
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      responses: { 204: { description: 'Anulado' }, 401: err[401], 403: err[403], 404: err[404] },
+    },
+  },
+  '/public/certificados/{codigo}': {
+    get: {
+      tags: ['Público'],
+      summary: 'Verificar un certificado',
+      description: 'Página de verificación del QR. Muestra el documento parcialmente oculto.',
+      security: [],
+      parameters: [{ name: 'codigo', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } }],
+      responses: { 200: { description: 'Certificado válido' }, 400: err[400], 404: err[404] },
+    },
+  },
+  '/public/eventos/{id}/certificado': {
+    post: {
+      tags: ['Público'],
+      summary: 'Descargar certificado sin cuenta',
+      description: 'La cédula y el correo deben coincidir con los de la inscripción.',
+      security: [],
+      parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['documento_identidad', 'email'],
+              properties: { documento_identidad: { type: 'string' }, email: { type: 'string', format: 'email' } },
+            },
+          },
+        },
+      },
+      responses: { 200: { description: 'PDF del certificado', content: { 'application/pdf': { schema: { type: 'string', format: 'binary' } } } }, 400: err[400], 404: err[404] },
     },
   },
 };

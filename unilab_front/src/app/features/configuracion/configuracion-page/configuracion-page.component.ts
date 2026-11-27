@@ -31,6 +31,7 @@ export class ConfiguracionPageComponent implements OnInit {
     registro_abierto: [true],
     semilleros_solicitudes_abiertas: [true],
     mensaje_portal: ['', [Validators.maxLength(MAX_MENSAJE_PORTAL)]],
+    certificado_porcentaje_minimo: [80, [Validators.required, Validators.min(1), Validators.max(100)]],
   });
 
   ngOnInit(): void {
@@ -60,7 +61,11 @@ export class ConfiguracionPageComponent implements OnInit {
     this.guardando.set(true);
     const valores = this.formulario.getRawValue();
     this.configuracion
-      .actualizar({ ...valores, mensaje_portal: valores.mensaje_portal.trim() })
+      .actualizar({
+        ...valores,
+        mensaje_portal: valores.mensaje_portal.trim(),
+        certificado_porcentaje_minimo: Number(valores.certificado_porcentaje_minimo),
+      })
       .subscribe({
         next: (config) => {
           this.aplicar(config);

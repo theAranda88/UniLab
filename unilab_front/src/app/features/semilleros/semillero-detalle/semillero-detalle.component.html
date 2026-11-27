@@ -35,6 +35,14 @@
       </div>
     </header>
 
+    @if (s.url_foto_portada) {
+      <figure class="semillero-detalle__portada">
+        <img [src]="s.url_foto_portada" [alt]="s.nombre_semillero" />
+      </figure>
+    }
+
+    <app-semillero-galeria [idSemillero]="s.id_semillero" [puedeGestionar]="esAdmin" />
+
     <div class="semillero-detalle__layout">
       <!-- Profesores -->
       <section class="edu-card semillero-detalle__section" aria-labelledby="titulo-profesores">
@@ -46,14 +54,33 @@
         <ul class="semillero-detalle__people">
           @for (p of s.profesores; track p.id_profesor) {
             <li class="semillero-detalle__person">
-              <span class="edu-avatar">{{ iniciales(p.profesor) }}</span>
+              <span class="edu-avatar semillero-detalle__avatar">
+                <app-avatar [url]="p.profesor?.url_foto" [iniciales]="iniciales(p.profesor)" />
+              </span>
               <span class="semillero-detalle__person-text">
                 <span class="semillero-detalle__person-name">{{ nombre(p.profesor) }}</span>
                 <span class="semillero-detalle__muted">{{ p.profesor?.email }}</span>
               </span>
               @if (p.id_profesor === s.id_profesor_lider) {
-                <span class="edu-badge edu-badge--info">{{ 'semilleros.lider' | translate }}</span>
-              } @else if (esAdmin) {
+                <span class="edu-badge edu-badge--info">
+                  <i class="ti ti-crown" aria-hidden="true"></i>{{ 'semilleros.roles.profesor.lider' | translate }}
+                </span>
+              } @else if (puedeGestionarRoles()) {
+                <select
+                  class="edu-control semillero-detalle__rol"
+                  [ngModel]="p.rol"
+                  (ngModelChange)="cambiarRolProfesor(p, $event)"
+                  [disabled]="ocupado() === 'prof-' + p.id_profesor"
+                  [attr.aria-label]="('semilleros.roles.cambiar' | translate) + ': ' + nombre(p.profesor)"
+                >
+                  @for (r of rolesProfesor; track r) {
+                    <option [ngValue]="r">{{ 'semilleros.roles.profesor.' + r | translate }}</option>
+                  }
+                </select>
+              } @else {
+                <span class="edu-badge">{{ 'semilleros.roles.profesor.' + p.rol | translate }}</span>
+              }
+              @if (p.id_profesor !== s.id_profesor_lider && esAdmin) {
                 <button
                   type="button"
                   class="edu-icon-btn edu-icon-btn--danger"
@@ -144,7 +171,9 @@
           <ul class="semillero-detalle__people">
             @for (m of miembrosFiltrados(); track m.id_membresia) {
               <li class="semillero-detalle__person semillero-detalle__person--member">
-                <span class="edu-avatar">{{ iniciales(m.estudiante) }}</span>
+                <span class="edu-avatar semillero-detalle__avatar">
+                  <app-avatar [url]="m.estudiante?.url_foto" [iniciales]="iniciales(m.estudiante)" />
+                </span>
                 <span class="semillero-detalle__person-text">
                   <span class="semillero-detalle__person-name">{{ nombre(m.estudiante) }}</span>
                   <span class="semillero-detalle__muted">
@@ -157,9 +186,27 @@
                 </span>
 
                 <span class="semillero-detalle__status">
-                  <span [class]="'edu-badge edu-badge--' + m.estado_solicitud">
-                    {{ 'semilleros.estados.' + m.estado_solicitud | translate }}
-                  </span>
+                  @if (m.estado_solicitud === 'aprobado') {
+                    @if (puedeGestionarRoles()) {
+                      <select
+                        class="edu-control semillero-detalle__rol"
+                        [ngModel]="m.rol"
+                        (ngModelChange)="cambiarRolMiembro(m, $event)"
+                        [disabled]="ocupado() === 'm-' + m.id_estudiante"
+                        [attr.aria-label]="('semilleros.roles.cambiar' | translate) + ': ' + nombre(m.estudiante)"
+                      >
+                        @for (r of rolesEstudiante; track r) {
+                          <option [ngValue]="r">{{ 'semilleros.roles.estudiante.' + r | translate }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <span class="edu-badge edu-badge--info">{{ 'semilleros.roles.estudiante.' + m.rol | translate }}</span>
+                    }
+                  } @else {
+                    <span [class]="'edu-badge edu-badge--' + m.estado_solicitud">
+                      {{ 'semilleros.estados.' + m.estado_solicitud | translate }}
+                    </span>
+                  }
                   @if (m.puede_publicar) {
                     <span class="edu-badge edu-badge--publicado">
                       <i class="ti ti-world-upload" aria-hidden="true"></i>

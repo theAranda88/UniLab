@@ -1,0 +1,135 @@
+@use '../../../../styles/design-tokens' as t;
+
+.verificar {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px 64px;
+}
+
+.verificar__cargando {
+  color: t.$text-secondary;
+}
+
+.verificar__card {
+  width: 100%;
+  max-width: 620px;
+  border: 1px solid t.$border-subtle;
+  border-radius: 16px;
+  background: t.$white;
+  box-shadow: 0 24px 60px rgba(5, 54, 134, 0.1);
+  overflow: hidden;
+}
+
+.verificar__estado {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 24px 28px;
+  color: t.$white;
+
+  h1 {
+    margin: 2px 0 0;
+    font-size: 24px;
+    font-weight: 900;
+    color: t.$white;
+  }
+}
+
+.verificar__estado--ok {
+  background: linear-gradient(135deg, t.$blue 0%, t.$blue-pressed 100%);
+}
+
+.verificar__estado--mal {
+  background: t.$ink;
+}
+
+.verificar__icono {
+  display: inline-flex;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  background: t.$accent;
+  color: t.$blue-pressed;
+  font-size: 28px;
+  flex: none;
+}
+
+.verificar__kicker {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.verificar__datos {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 8px 28px;
+
+  div {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid t.$border-subtle;
+  }
+
+  dt {
+    font-size: 13px;
+    font-weight: 700;
+    color: t.$text-secondary;
+  }
+
+  dd {
+    margin: 0;
+
+    a {
+      color: t.$blue;
+      font-weight: 800;
+    }
+
+    small {
+      display: block;
+      margin-top: 2px;
+      font-size: 13px;
+      color: t.$text-secondary;
+    }
+  }
+
+  @media (max-width: 520px) {
+    div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+}
+
+.verificar__texto {
+  margin: 0;
+  padding: 20px 28px 4px;
+  color: t.$text-secondary;
+}
+
+.verificar__codigo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 16px 28px 22px;
+  font-size: 12px;
+  color: t.$text-secondary;
+
+  code {
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: t.$cream;
+    color: t.$blue;
+    font-weight: 700;
+    word-break: break-all;
+  }
+}

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import type { Curso, Escuela, ProyectoPublico } from '../../core/models/portal.model';
+import type { Curso, Escuela, ProyectoPublico, SemilleroPublico, SemillerosPublicosPaginados } from '../../core/models/portal.model';
 import type {
   Evento,
   Inscripcion,
@@ -10,7 +10,9 @@ import type {
   Asistencia,
 } from '../../core/models/evento.model';
 
-const API = 'http://localhost:3000/api/public';
+import { environment } from '../../../environments/environment';
+
+const API = `${environment.apiUrl}/public`;
 
 @Injectable({ providedIn: 'root' })
 export class PublicPortalService {
@@ -26,13 +28,43 @@ export class PublicPortalService {
   }
 
   /** Proyectos publicados; sin `idEscuela`, los de todas las escuelas. */
-  listarProyectos(idEscuela?: number): Observable<ProyectoPublico[]> {
-    const params = idEscuela ? new HttpParams().set('id_escuela', idEscuela.toString()) : undefined;
-    return this.http.get<ProyectoPublico[]>(`${API}/proyectos`, { params });
+  listarProyectos(options?: {
+    idEscuela?: number;
+    idSemillero?: number;
+    sinSemillero?: boolean;
+    /** `valorados`: mejor calificados primero. */
+    orden?: 'recientes' | 'valorados';
+    limite?: number;
+  }): Observable<ProyectoPublico[]> {
+    let params = new HttpParams();
+    if (options?.orden) params = params.set('orden', options.orden);
+    if (options?.limite != null) params = params.set('limite', options.limite.toString());
+    if (options?.idEscuela != null) params = params.set('id_escuela', options.idEscuela.toString());
+    if (options?.idSemillero != null) params = params.set('id_semillero', options.idSemillero.toString());
+    if (options?.sinSemillero) params = params.set('sin_semillero', 'true');
+    return this.http.get<ProyectoPublico[]>(`${API}/proyectos`, { params: params.keys().length ? params : undefined });
   }
 
   obtenerProyecto(idProyecto: number): Observable<ProyectoPublico> {
     return this.http.get<ProyectoPublico>(`${API}/proyectos/${idProyecto}`);
+  }
+
+  listarSemilleros(params?: {
+    idEscuela?: number;
+    busqueda?: string;
+    pagina?: number;
+    limite?: number;
+  }): Observable<SemillerosPublicosPaginados> {
+    let httpParams = new HttpParams();
+    if (params?.idEscuela != null) httpParams = httpParams.set('id_escuela', params.idEscuela.toString());
+    if (params?.busqueda?.trim()) httpParams = httpParams.set('busqueda', params.busqueda.trim());
+    httpParams = httpParams.set('pagina', String(params?.pagina ?? 1));
+    httpParams = httpParams.set('limite', String(params?.limite ?? 12));
+    return this.http.get<SemillerosPublicosPaginados>(`${API}/semilleros`, { params: httpParams });
+  }
+
+  obtenerSemillero(idSemillero: number): Observable<SemilleroPublico> {
+    return this.http.get<SemilleroPublico>(`${API}/semilleros/${idSemillero}`);
   }
 
   listarEventosActivos(): Observable<Evento[]> {

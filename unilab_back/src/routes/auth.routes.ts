@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authController } from '../controllers/auth.controller';
+import { perfilController } from '../controllers/perfil.controller';
 import { validate } from '../middlewares/validation/validate';
 import {
   loginSchema,
@@ -7,12 +8,16 @@ import {
   cambiarPasswordSchema,
   googleLoginSchema,
   completarPerfilSchema,
+  formacionSchema,
+  formacionParamSchema,
   actualizarMiPerfilSchema,
   cambiarMiPasswordSchema,
 } from '../middlewares/validation/schemas';
 import { verifyTokenOpcional } from '../middlewares/auth/verifyToken';
 import { verifyToken } from '../middlewares/auth/verifyToken';
 import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
+import { subirFotoUsuario } from '../middlewares/upload/subirFotoUsuario.middleware';
+import { subirFirmaUsuario } from '../middlewares/upload/subirFirmaUsuario.middleware';
 
 const router = Router();
 
@@ -28,6 +33,57 @@ router.patch(
   checkPerfilPendiente,
   validate(actualizarMiPerfilSchema),
   authController.actualizarMiPerfil,
+);
+router.post(
+  '/me/perfil-cv/completar',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  authController.completarPerfilCv,
+);
+router.post(
+  '/me/foto',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  subirFotoUsuario,
+  perfilController.subirFoto,
+);
+router.delete('/me/foto', verifyToken, checkPrimerLogin, checkPerfilPendiente, perfilController.eliminarFoto);
+router.post(
+  '/me/firma',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  subirFirmaUsuario,
+  perfilController.subirFirma,
+);
+router.delete('/me/firma', verifyToken, checkPrimerLogin, checkPerfilPendiente, perfilController.eliminarFirma);
+router.get('/me/formacion', verifyToken, checkPrimerLogin, checkPerfilPendiente, perfilController.listarFormacion);
+router.post(
+  '/me/formacion',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  validate(formacionSchema),
+  perfilController.crearFormacion,
+);
+router.put(
+  '/me/formacion/:idFormacion',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  validate(formacionParamSchema, 'params'),
+  validate(formacionSchema),
+  perfilController.actualizarFormacion,
+);
+router.delete(
+  '/me/formacion/:idFormacion',
+  verifyToken,
+  checkPrimerLogin,
+  checkPerfilPendiente,
+  validate(formacionParamSchema, 'params'),
+  perfilController.eliminarFormacion,
 );
 router.post(
   '/me/password',

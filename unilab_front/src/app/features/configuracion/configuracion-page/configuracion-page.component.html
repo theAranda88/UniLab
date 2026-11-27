@@ -80,6 +80,35 @@
         }
       </section>
 
+      <section class="edu-card configuracion__section" aria-labelledby="conf-certificados">
+        <h2 id="conf-certificados" class="configuracion__h2">
+          {{ 'configuracion.secciones.certificados' | translate }}
+        </h2>
+
+        <div class="edu-field configuracion__porcentaje">
+          <label class="edu-field__label" for="certificado_porcentaje_minimo">{{
+            'configuracion.porcentajeMinimo' | translate
+          }}</label>
+          <div class="configuracion__porcentaje-control">
+            <input
+              id="certificado_porcentaje_minimo"
+              class="edu-control"
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              formControlName="certificado_porcentaje_minimo"
+              aria-describedby="porcentaje_hint"
+            />
+            <span aria-hidden="true">%</span>
+          </div>
+          <span id="porcentaje_hint" class="edu-field__hint">{{ 'configuracion.porcentajeMinimoHint' | translate }}</span>
+          @if (formulario.controls.certificado_porcentaje_minimo.invalid) {
+            <small class="edu-field__error">{{ 'configuracion.porcentajeMinimoError' | translate }}</small>
+          }
+        </div>
+      </section>
+
       <div class="configuracion__actions">
         <button
           type="button"

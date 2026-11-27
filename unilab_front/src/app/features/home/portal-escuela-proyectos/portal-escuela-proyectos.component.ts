@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { SemilleroCardComponent } from '../semillero-card/semillero-card.component';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -6,20 +7,23 @@ import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { PublicPortalService } from '../public-portal.service';
 import { ProyectoCardComponent } from '../proyecto-card/proyecto-card.component';
 import { ProjectImageCarouselComponent } from '../project-image-carousel/project-image-carousel.component';
-import type { Curso, Escuela, ProyectoPublico } from '../../../core/models/portal.model';
+import type { Curso, Escuela, ProyectoPublico, SemilleroPublico } from '../../../core/models/portal.model';
 import { estiloDeEscuela } from '../../../core/utils/portal-theme.util';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 
 /**
- * Pantalla 22 · Portal — una escuela (descripción, color e imágenes), sus programas y sus
- * proyectos publicados.
+ * Pantalla 22 · Portal — una escuela, en dos modos (data `modo` de la ruta):
+ * - `escuela` (/escuelas/:id): descripción, imágenes, programas y sus semilleros, más la tarjeta
+ *   de proyectos independientes. Los proyectos se ven dentro de cada semillero.
+ * - `independientes` (/escuelas/:id/independientes): proyectos publicados sin semillero.
  * Escucha el parámetro de ruta: al pasar de una escuela a otra el componente se reutiliza.
  */
 @Component({
   selector: 'app-portal-escuela-proyectos',
   standalone: true,
   imports: [
+    SemilleroCardComponent,
     RouterLink,
     TranslatePipe,
     ProyectoCardComponent,
@@ -35,13 +39,16 @@ export class PortalEscuelaProyectosComponent {
   private router = inject(Router);
   private portal = inject(PublicPortalService);
 
+
   readonly escuelas = signal<Escuela[]>([]);
   readonly idEscuela = signal<number | null>(null);
   readonly proyectos = signal<ProyectoPublico[]>([]);
+  readonly semilleros = signal<SemilleroPublico[]>([]);
   readonly cursos = signal<Curso[]>([]);
   readonly loading = signal(true);
   readonly loadError = signal(false);
   readonly filtroTipo = signal<string | null>(null);
+  readonly modo: 'escuela' | 'independientes' = this.route.snapshot.data['modo'] ?? 'escuela';
 
   readonly escuela = computed(() => this.escuelas().find((e) => e.id_escuela === this.idEscuela()) ?? null);
   readonly estilo = computed(() => estiloDeEscuela(this.escuela()));
@@ -86,8 +93,14 @@ export class PortalEscuelaProyectosComponent {
         }),
         switchMap((id) =>
           forkJoin({
-            proyectos: this.portal.listarProyectos(id),
+            proyectos: this.portal.listarProyectos({ idEscuela: id, sinSemillero: true }),
             cursos: this.portal.listarCursos(id).pipe(catchError(() => of([] as Curso[]))),
+            semilleros: this.portal
+              .listarSemilleros({ idEscuela: id, limite: 50 })
+              .pipe(
+                map((resp) => resp.data),
+                catchError(() => of([] as SemilleroPublico[])),
+              ),
           }).pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(),
@@ -100,6 +113,7 @@ export class PortalEscuelaProyectosComponent {
         }
         this.proyectos.set(datos.proyectos);
         this.cursos.set(datos.cursos);
+        this.semilleros.set(datos.semilleros);
       });
   }
 

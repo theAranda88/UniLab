@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { eventoController } from '../controllers/evento.controller';
+import { certificadoController } from '../controllers/certificado.controller';
 import { verifyToken } from '../middlewares/auth/verifyToken';
 import { checkPrimerLogin, checkPerfilPendiente } from '../middlewares/auth/checkPrimerLogin';
 import { requireRole } from '../middlewares/roles/requireRole';
@@ -64,6 +65,19 @@ router.delete(
   ...admin,
   validate(idParamSchema, 'params'),
   eventoController.eliminar,
+);
+// Certificados: administrador u organizador del evento (lo valida el servicio)
+router.get(
+  '/:id/certificados',
+  ...autenticado,
+  validate(idParamSchema, 'params'),
+  certificadoController.resumenEvento,
+);
+router.post(
+  '/:id/certificados',
+  ...autenticado,
+  validate(idParamSchema, 'params'),
+  certificadoController.emitir,
 );
 router.get(
   '/:id/jornadas',

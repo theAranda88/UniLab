@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type { Curso } from '../../core/models/portal.model';
+import { environment } from '../../../environments/environment';
 
 export interface CursoDto {
   id_escuela: number;
@@ -13,7 +14,7 @@ export interface CursoDto {
 @Injectable({ providedIn: 'root' })
 export class CursosService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/cursos';
+  private apiUrl = `${environment.apiUrl}/cursos`;
 
   listar(idEscuela?: number): Observable<Curso[]> {
     const params = idEscuela ? { id_escuela: idEscuela } : undefined;

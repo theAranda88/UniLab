@@ -73,3 +73,11 @@
     gap: t.$space-8;
   }
 }
+
+.configuracion__porcentaje-control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  max-width: 140px;
+  font-weight: 700;
+}
