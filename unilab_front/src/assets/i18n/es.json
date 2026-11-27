@@ -1340,7 +1340,8 @@
     "errorCargar": "Error al cargar la configuración",
     "secciones": {
       "acceso": "Registro y solicitudes",
-      "portal": "Portal público"
+      "portal": "Portal público",
+      "certificados": "Certificados de eventos"
     },
     "registroAbierto": "Permitir registro de nuevas cuentas",
     "registroAbiertoHint": "Estudiantes y externos pueden crear su cuenta (formulario y Google). Si lo desactivas, solo el administrador crea usuarios.",
@@ -1353,7 +1354,10 @@
     "descartar": "Descartar cambios",
     "guardar": "Guardar cambios",
     "exitoGuardar": "Configuración guardada.",
-    "errorGuardar": "No se pudo guardar la configuración"
+    "errorGuardar": "No se pudo guardar la configuración",
+    "porcentajeMinimo": "Asistencia mínima para el certificado",
+    "porcentajeMinimoHint": "Porcentaje de jornadas que una persona debe asistir para recibir el certificado de un evento.",
+    "porcentajeMinimoError": "Escribe un número entre 1 y 100."
   },
   "panel": {
     "saludo": {
@@ -1665,6 +1669,76 @@
         "Creatividad",
         "Resolución de problemas"
       ]
+    }
+  },
+  "certificados": {
+    "titulo": "Certificados de asistencia",
+    "regla": "Se emiten a quienes asistieron al menos al {{minimo}} % de las {{jornadas}} jornada(s), con el evento finalizado.",
+    "emitir": "Emitir certificados",
+    "emitirTitulo": "Emitir certificados",
+    "emitirMensaje": "Se emitirán {{n}} certificado(s) a los inscritos que cumplen la asistencia mínima. ¿Continuar?",
+    "emitidos": "Se emitieron {{n}} certificado(s).",
+    "soloFinalizado": "Los certificados se emiten cuando el evento está finalizado.",
+    "sinJornadas": "El evento no tiene jornadas: no hay asistencia que certificar.",
+    "inscritos": "inscritos",
+    "conCertificado": "con certificado",
+    "porEmitir": "por emitir",
+    "asistente": "Asistente",
+    "asistencia": "Asistencia",
+    "estado": "Estado",
+    "estados": {
+      "emitido": "Emitido",
+      "cumple": "Cumple",
+      "pago": "Pago pendiente",
+      "noCumple": "No cumple"
+    },
+    "descargar": "Descargar certificado",
+    "anular": "Anular",
+    "anularTitulo": "Anular certificado",
+    "anularMensaje": "¿Anular el certificado de {{nombre}}? Su código de verificación dejará de ser válido.",
+    "anulado": "Certificado anulado.",
+    "errorCargar": "No se pudieron cargar los certificados.",
+    "errorDescargar": "No se pudo descargar el certificado.",
+    "errorAnular": "No se pudo anular el certificado.",
+    "miCertificado": "Certificado de asistencia",
+    "listo": "Tu certificado está listo: asististe a {{asistidas}} de {{total}} jornada(s) ({{porcentaje}} %).",
+    "noDisponible": "Aún no tienes certificado para este evento. Se emite a quienes cumplen la asistencia mínima.",
+    "mios": "Mis certificados",
+    "miosHint": "Certificados de los eventos a los que asististe. Cada uno tiene un código QR para verificar su autenticidad.",
+    "sinCertificados": "Aún no tienes certificados.",
+    "asistenciaDe": "{{asistidas}} de {{total}} jornada(s) · {{porcentaje}} %",
+    "verificar": "Verificar",
+    "publico": {
+      "texto": "¿Te inscribiste sin cuenta? Descarga tu certificado con la cédula y el correo de tu inscripción.",
+      "boton": "Descargar mi certificado",
+      "documento": "Documento de identidad",
+      "email": "Correo de la inscripción",
+      "noEncontrado": "No encontramos un certificado con esos datos para este evento."
+    },
+    "firma": {
+      "titulo": "Mi firma",
+      "hint": "Se imprime en los certificados de los eventos que organizas. Usa una imagen PNG con fondo transparente (o JPG con fondo blanco), máximo 2 MB.",
+      "sinFirma": "Sin firma registrada",
+      "subir": "Subir firma",
+      "cambiar": "Cambiar firma",
+      "quitar": "Quitar",
+      "guardada": "Firma guardada.",
+      "errorTipo": "La firma debe ser una imagen PNG o JPG.",
+      "errorTamano": "La firma debe pesar máximo 2 MB.",
+      "errorSubir": "No se pudo guardar la firma.",
+      "errorQuitar": "No se pudo quitar la firma."
+    },
+    "verificacion": {
+      "kicker": "Verificación de certificado",
+      "valido": "Certificado auténtico",
+      "invalido": "Certificado no válido",
+      "invalidoTexto": "El código no corresponde a ningún certificado vigente de Eduinnova. Puede haber sido anulado o estar mal escrito.",
+      "titular": "Otorgado a",
+      "documento": "Documento",
+      "evento": "Evento",
+      "organizador": "Organizador(a)",
+      "emision": "Fecha de expedición",
+      "codigo": "Código de verificación"
     }
   }
 }

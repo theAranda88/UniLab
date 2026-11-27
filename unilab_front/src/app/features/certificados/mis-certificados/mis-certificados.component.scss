@@ -1,0 +1,81 @@
+@use '../../../../styles/design-tokens' as t;
+
+:host {
+  display: block;
+}
+
+.mis-cert__h3 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 4px;
+  color: t.$blue;
+}
+
+.mis-cert__contador {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: t.$accent;
+  color: t.$blue-pressed;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mis-cert__hint,
+.mis-cert__vacio {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: t.$text-secondary;
+}
+
+.mis-cert__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.mis-cert__item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid t.$border-subtle;
+  border-left: 4px solid t.$accent;
+  border-radius: 10px;
+  background: t.$cream;
+}
+
+.mis-cert__sello {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  background: t.$blue;
+  color: t.$white;
+  font-size: 19px;
+  flex: none;
+}
+
+.mis-cert__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 200px;
+
+  small {
+    font-size: 12.5px;
+    color: t.$text-secondary;
+  }
+
+  a {
+    color: t.$blue;
+    font-weight: 700;
+  }
+}

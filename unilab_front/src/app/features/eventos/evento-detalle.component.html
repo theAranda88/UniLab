@@ -132,6 +132,14 @@
         }
       </div>
 
+      @if (muestraMiCertificado()) {
+        <app-mi-certificado-evento [idEvento]="ev.id_evento" [nombreEvento]="ev.nombre_evento" />
+      }
+
+      @if (gestionaCertificados()) {
+        <app-certificados-evento [idEvento]="ev.id_evento" />
+      }
+
       @if (puedeListarInscripciones()) {
         <div class="inscripciones-section">
           <h3>{{ 'eventos.inscripciones.titulo' | translate }} ({{ inscripciones().length }})</h3>

@@ -1,0 +1,30 @@
+<h3 class="firma__h3"><i class="ti ti-signature" aria-hidden="true"></i>{{ 'certificados.firma.titulo' | translate }}</h3>
+<p class="firma__hint">{{ 'certificados.firma.hint' | translate }}</p>
+
+<div class="firma">
+  <div class="firma__lienzo">
+    @if (url()) {
+      <img [src]="url()" [alt]="'certificados.firma.titulo' | translate" />
+    } @else {
+      <span class="firma__vacia">{{ 'certificados.firma.sinFirma' | translate }}</span>
+    }
+    <span class="firma__linea" aria-hidden="true"></span>
+  </div>
+
+  <div class="firma__acciones">
+    <label class="edu-btn edu-btn--secondary edu-btn--sm firma__subir" [class.firma__subir--off]="subiendo()">
+      <i class="ti ti-upload" aria-hidden="true"></i>
+      {{ (subiendo() ? 'common.cargando' : url() ? 'certificados.firma.cambiar' : 'certificados.firma.subir') | translate }}
+      <input type="file" accept="image/png,image/jpeg" [disabled]="subiendo()" (change)="elegir($event)" />
+    </label>
+    @if (url()) {
+      <button type="button" class="edu-btn edu-btn--ghost edu-btn--sm" (click)="quitar()" [disabled]="subiendo()">
+        <i class="ti ti-trash" aria-hidden="true"></i>{{ 'certificados.firma.quitar' | translate }}
+      </button>
+    }
+  </div>
+</div>
+
+@if (error()) {
+  <p class="firma__error" role="alert">{{ error()! | translate }}</p>
+}

@@ -27,6 +27,8 @@ export interface User {
   telefono?: string;
   /** Foto de perfil; null si no ha subido una. */
   url_foto?: string | null;
+  /** Firma que se imprime en los certificados de los eventos que organiza. */
+  url_firma?: string | null;
   escuela?: EscuelaResumen | null;
   semilleros?: SemilleroUsuario[];
   redes?: RedesContacto;
@@ -136,6 +138,16 @@ export class AuthService {
 
   eliminarFoto(): Observable<User> {
     return this.http.delete<User>(`${this.apiUrl}/me/foto`).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  subirFirma(archivo: File): Observable<User> {
+    const datos = new FormData();
+    datos.append('firma', archivo);
+    return this.http.post<User>(`${this.apiUrl}/me/firma`, datos).pipe(tap((user) => this.updateUser(user)));
+  }
+
+  eliminarFirma(): Observable<User> {
+    return this.http.delete<User>(`${this.apiUrl}/me/firma`).pipe(tap((user) => this.updateUser(user)));
   }
 
   /** «Ahora no» en el aviso de completar el perfil: no se vuelve a mostrar. */

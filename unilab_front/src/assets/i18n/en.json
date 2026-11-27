@@ -1340,7 +1340,8 @@
     "errorCargar": "Error loading settings",
     "secciones": {
       "acceso": "Sign-up and requests",
-      "portal": "Public portal"
+      "portal": "Public portal",
+      "certificados": "Event certificates"
     },
     "registroAbierto": "Allow new account sign-ups",
     "registroAbiertoHint": "Students and external users can create their account (form and Google). If disabled, only administrators create users.",
@@ -1353,7 +1354,10 @@
     "descartar": "Discard changes",
     "guardar": "Save changes",
     "exitoGuardar": "Settings saved.",
-    "errorGuardar": "Settings couldn’t be saved"
+    "errorGuardar": "Settings couldn’t be saved",
+    "porcentajeMinimo": "Minimum attendance for the certificate",
+    "porcentajeMinimoHint": "Share of sessions a person must attend to receive an event certificate.",
+    "porcentajeMinimoError": "Enter a number between 1 and 100."
   },
   "panel": {
     "saludo": {
@@ -1665,6 +1669,76 @@
         "Creativity",
         "Problem solving"
       ]
+    }
+  },
+  "certificados": {
+    "titulo": "Attendance certificates",
+    "regla": "Issued to attendees of at least {{minimo}}% of the {{jornadas}} session(s), once the event has finished.",
+    "emitir": "Issue certificates",
+    "emitirTitulo": "Issue certificates",
+    "emitirMensaje": "{{n}} certificate(s) will be issued to attendees who meet the minimum attendance. Continue?",
+    "emitidos": "{{n}} certificate(s) issued.",
+    "soloFinalizado": "Certificates are issued when the event has finished.",
+    "sinJornadas": "The event has no sessions: there is no attendance to certify.",
+    "inscritos": "registered",
+    "conCertificado": "with certificate",
+    "porEmitir": "pending",
+    "asistente": "Attendee",
+    "asistencia": "Attendance",
+    "estado": "Status",
+    "estados": {
+      "emitido": "Issued",
+      "cumple": "Eligible",
+      "pago": "Payment pending",
+      "noCumple": "Not eligible"
+    },
+    "descargar": "Download certificate",
+    "anular": "Revoke",
+    "anularTitulo": "Revoke certificate",
+    "anularMensaje": "Revoke the certificate of {{nombre}}? Its verification code will no longer be valid.",
+    "anulado": "Certificate revoked.",
+    "errorCargar": "Certificates could not be loaded.",
+    "errorDescargar": "The certificate could not be downloaded.",
+    "errorAnular": "The certificate could not be revoked.",
+    "miCertificado": "Attendance certificate",
+    "listo": "Your certificate is ready: you attended {{asistidas}} of {{total}} session(s) ({{porcentaje}}%).",
+    "noDisponible": "You do not have a certificate for this event yet. It is issued to attendees who meet the minimum attendance.",
+    "mios": "My certificates",
+    "miosHint": "Certificates for the events you attended. Each one has a QR code to verify it.",
+    "sinCertificados": "You do not have certificates yet.",
+    "asistenciaDe": "{{asistidas}} of {{total}} session(s) · {{porcentaje}}%",
+    "verificar": "Verify",
+    "publico": {
+      "texto": "Registered without an account? Download your certificate with the ID and email you registered with.",
+      "boton": "Download my certificate",
+      "documento": "ID number",
+      "email": "Registration email",
+      "noEncontrado": "We could not find a certificate with those details for this event."
+    },
+    "firma": {
+      "titulo": "My signature",
+      "hint": "Printed on the certificates of the events you organize. Use a PNG with a transparent background (or a JPG with a white background), up to 2 MB.",
+      "sinFirma": "No signature yet",
+      "subir": "Upload signature",
+      "cambiar": "Change signature",
+      "quitar": "Remove",
+      "guardada": "Signature saved.",
+      "errorTipo": "The signature must be a PNG or JPG image.",
+      "errorTamano": "The signature must be 2 MB or less.",
+      "errorSubir": "The signature could not be saved.",
+      "errorQuitar": "The signature could not be removed."
+    },
+    "verificacion": {
+      "kicker": "Certificate verification",
+      "valido": "Authentic certificate",
+      "invalido": "Invalid certificate",
+      "invalidoTexto": "This code does not match any valid Eduinnova certificate. It may have been revoked or mistyped.",
+      "titular": "Awarded to",
+      "documento": "ID",
+      "evento": "Event",
+      "organizador": "Organizer",
+      "emision": "Issue date",
+      "codigo": "Verification code"
     }
   }
 }

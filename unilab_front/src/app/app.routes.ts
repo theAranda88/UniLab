@@ -488,6 +488,14 @@ export const routes: Routes = [
           ),
       },
       {
+        // Página que abre el QR de los certificados
+        path: 'certificados/verificar/:codigo',
+        loadComponent: () =>
+          import('./features/certificados/verificar-certificado/verificar-certificado.component').then(
+            (m) => m.VerificarCertificadoComponent,
+          ),
+      },
+      {
         path: 'eventos',
         children: eventosPortalChildren,
       },

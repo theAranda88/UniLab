@@ -1,0 +1,124 @@
+<section class="cert-evento">
+  <header class="cert-evento__head">
+    <div>
+      <h3><i class="ti ti-certificate" aria-hidden="true"></i>{{ 'certificados.titulo' | translate }}</h3>
+      @if (datos(); as d) {
+        <p class="cert-evento__regla">
+          {{ 'certificados.regla' | translate: { minimo: d.porcentaje_minimo, jornadas: d.jornadas_totales } }}
+        </p>
+      }
+    </div>
+    @if (datos(); as d) {
+      <button
+        type="button"
+        class="edu-btn"
+        (click)="emitir()"
+        [disabled]="!d.puede_emitir || pendientes() === 0 || emitiendo()"
+        [attr.title]="!d.puede_emitir ? ('certificados.soloFinalizado' | translate) : null"
+      >
+        <i class="ti ti-certificate" aria-hidden="true"></i>
+        {{ (emitiendo() ? 'common.cargando' : 'certificados.emitir') | translate }}
+        @if (pendientes() > 0 && d.puede_emitir) {
+          <span class="cert-evento__num">{{ pendientes() }}</span>
+        }
+      </button>
+    }
+  </header>
+
+  @if (cargando() && !datos()) {
+    <p class="cert-evento__vacio">{{ 'common.cargando' | translate }}</p>
+  } @else if (error()) {
+    <p class="cert-evento__vacio">{{ 'certificados.errorCargar' | translate }}</p>
+  } @else if (datos(); as d) {
+    @if (!d.puede_emitir) {
+      <div class="edu-alert edu-alert--warning" role="status">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>
+        <span>{{ (d.jornadas_totales === 0 ? 'certificados.sinJornadas' : 'certificados.soloFinalizado') | translate }}</span>
+      </div>
+    }
+
+    <ul class="cert-evento__resumen">
+      <li><b>{{ d.inscritos.length }}</b>{{ 'certificados.inscritos' | translate }}</li>
+      <li><b>{{ emitidos() }}</b>{{ 'certificados.conCertificado' | translate }}</li>
+      <li><b>{{ pendientes() }}</b>{{ 'certificados.porEmitir' | translate }}</li>
+    </ul>
+
+    @if (d.inscritos.length === 0) {
+      <p class="cert-evento__vacio">{{ 'eventos.inscripciones.sinInscripciones' | translate }}</p>
+    } @else {
+      <div class="edu-table-wrap">
+        <table class="edu-table">
+          <thead>
+            <tr>
+              <th>{{ 'certificados.asistente' | translate }}</th>
+              <th>{{ 'certificados.asistencia' | translate }}</th>
+              <th>{{ 'certificados.estado' | translate }}</th>
+              <th class="cert-evento__acciones-th"><span class="sr-only">{{ 'common.acciones' | translate }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (i of d.inscritos; track i.id_inscripcion) {
+              <tr>
+                <td>
+                  <strong>{{ i.nombre_completo }}</strong>
+                  <small class="cert-evento__doc">{{ i.documento_identidad }} · {{ i.email }}</small>
+                </td>
+                <td>
+                  <div class="cert-evento__barra">
+                    <span
+                      [style.width.%]="i.porcentaje"
+                      [class.cert-evento__barra--ok]="i.porcentaje >= d.porcentaje_minimo"
+                    ></span>
+                  </div>
+                  <small>{{ i.jornadas_asistidas }}/{{ d.jornadas_totales }} · {{ i.porcentaje }} %</small>
+                </td>
+                <td>
+                  @switch (estado(i)) {
+                    @case ('emitido') {
+                      <span class="edu-badge edu-badge--publicado">
+                        <i class="ti ti-certificate" aria-hidden="true"></i>{{ 'certificados.estados.emitido' | translate }}
+                      </span>
+                    }
+                    @case ('cumple') {
+                      <span class="edu-badge edu-badge--info">{{ 'certificados.estados.cumple' | translate }}</span>
+                    }
+                    @case ('pago') {
+                      <span class="edu-badge edu-badge--warning">{{ 'certificados.estados.pago' | translate }}</span>
+                    }
+                    @default {
+                      <span class="edu-badge">{{ 'certificados.estados.noCumple' | translate }}</span>
+                    }
+                  }
+                </td>
+                <td class="cert-evento__acciones">
+                  @if (i.certificado) {
+                    <button
+                      type="button"
+                      class="edu-icon-btn"
+                      (click)="descargar(i)"
+                      [disabled]="ocupadoId() === i.id_inscripcion"
+                      [attr.aria-label]="'certificados.descargar' | translate"
+                      [attr.title]="'certificados.descargar' | translate"
+                    >
+                      <i class="ti ti-download" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="edu-icon-btn"
+                      (click)="anular(i)"
+                      [disabled]="ocupadoId() === i.id_inscripcion"
+                      [attr.aria-label]="'certificados.anular' | translate"
+                      [attr.title]="'certificados.anular' | translate"
+                    >
+                      <i class="ti ti-ban" aria-hidden="true"></i>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>

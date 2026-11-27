@@ -1,0 +1,67 @@
+<div class="verificar">
+  @if (cargando()) {
+    <p class="verificar__cargando">{{ 'common.cargando' | translate }}</p>
+  } @else if (certificado(); as c) {
+    <article class="verificar__card">
+      <header class="verificar__estado verificar__estado--ok">
+        <span class="verificar__icono" aria-hidden="true"><i class="ti ti-rosette-discount-check"></i></span>
+        <div>
+          <p class="verificar__kicker">{{ 'certificados.verificacion.kicker' | translate }}</p>
+          <h1>{{ 'certificados.verificacion.valido' | translate }}</h1>
+        </div>
+      </header>
+
+      <dl class="verificar__datos">
+        <div>
+          <dt>{{ 'certificados.verificacion.titular' | translate }}</dt>
+          <dd><strong>{{ c.nombre_completo }}</strong></dd>
+        </div>
+        <div>
+          <dt>{{ 'certificados.verificacion.documento' | translate }}</dt>
+          <dd>{{ c.documento_identidad }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'certificados.verificacion.evento' | translate }}</dt>
+          <dd>
+            <a [routerLink]="['/eventos', c.id_evento]">{{ c.nombre_evento }}</a>
+            <small>{{ c.tipo_evento }} · {{ rango(c) }} · {{ c.lugar }}</small>
+          </dd>
+        </div>
+        <div>
+          <dt>{{ 'certificados.asistencia' | translate }}</dt>
+          <dd>
+            {{ 'certificados.asistenciaDe' | translate: { asistidas: c.jornadas_asistidas, total: c.jornadas_totales, porcentaje: c.porcentaje_asistencia } }}
+          </dd>
+        </div>
+        <div>
+          <dt>{{ 'certificados.verificacion.organizador' | translate }}</dt>
+          <dd>{{ c.organizador }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'certificados.verificacion.emision' | translate }}</dt>
+          <dd>{{ fecha(c.fecha_emision) }}</dd>
+        </div>
+      </dl>
+
+      <footer class="verificar__codigo">
+        <span>{{ 'certificados.verificacion.codigo' | translate }}</span>
+        <code>{{ c.codigo_verificacion }}</code>
+      </footer>
+    </article>
+  } @else {
+    <article class="verificar__card">
+      <header class="verificar__estado verificar__estado--mal">
+        <span class="verificar__icono" aria-hidden="true"><i class="ti ti-alert-triangle"></i></span>
+        <div>
+          <p class="verificar__kicker">{{ 'certificados.verificacion.kicker' | translate }}</p>
+          <h1>{{ 'certificados.verificacion.invalido' | translate }}</h1>
+        </div>
+      </header>
+      <p class="verificar__texto">{{ 'certificados.verificacion.invalidoTexto' | translate }}</p>
+      <footer class="verificar__codigo">
+        <span>{{ 'certificados.verificacion.codigo' | translate }}</span>
+        <code>{{ codigo }}</code>
+      </footer>
+    </article>
+  }
+</div>

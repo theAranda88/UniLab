@@ -48,6 +48,7 @@ describe('ConfiguracionService', () => {
       registro_abierto: true,
       semilleros_solicitudes_abiertas: true,
       mensaje_portal: '',
+      certificado_porcentaje_minimo: 80,
     });
   });
 

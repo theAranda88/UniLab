@@ -327,6 +327,16 @@
     </section>
 
     <section class="edu-card">
+      <app-mis-certificados />
+    </section>
+
+    @if (puedeFirmar()) {
+      <section class="edu-card">
+        <app-firma-usuario />
+      </section>
+    }
+
+    <section class="edu-card">
       <h3 class="mi-perfil__h3">
         <i class="ti ti-lock" aria-hidden="true"></i>{{ 'perfil.password.titulo' | translate }}
       </h3>

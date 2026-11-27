@@ -1,0 +1,89 @@
+@use '../../../../styles/design-tokens' as t;
+
+:host {
+  display: block;
+}
+
+.firma__h3 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 4px;
+  color: t.$blue;
+}
+
+.firma__hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: t.$text-secondary;
+}
+
+.firma {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.firma__lienzo {
+  position: relative;
+  display: flex;
+  width: 260px;
+  height: 96px;
+  padding: 8px 16px 14px;
+  border: 1px dashed t.$gray-500;
+  border-radius: 10px;
+  align-items: flex-end;
+  justify-content: center;
+  background: t.$white;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+.firma__linea {
+  position: absolute;
+  right: 20px;
+  bottom: 12px;
+  left: 20px;
+  height: 1px;
+  background: t.$ink;
+}
+
+.firma__vacia {
+  align-self: center;
+  font-size: 13px;
+  color: t.$text-secondary;
+}
+
+.firma__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.firma__subir {
+  position: relative;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.firma__subir--off {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.firma__error {
+  margin: 8px 0 0;
+  color: t.$danger;
+  font-weight: 600;
+}

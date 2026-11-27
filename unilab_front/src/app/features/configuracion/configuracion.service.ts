@@ -9,6 +9,7 @@ const CONFIGURACION_FALLBACK: ConfiguracionSistema = {
   registro_abierto: true,
   semilleros_solicitudes_abiertas: true,
   mensaje_portal: '',
+  certificado_porcentaje_minimo: 80,
 };
 
 /** RA-013 · Parámetros del sistema editables sin despliegue. */

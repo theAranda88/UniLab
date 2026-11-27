@@ -1,0 +1,52 @@
+<section class="mi-cert" [class.mi-cert--listo]="!!certificado()">
+  <span class="mi-cert__icono" aria-hidden="true"><i class="ti ti-certificate"></i></span>
+
+  <div class="mi-cert__cuerpo">
+    <h3>{{ 'certificados.miCertificado' | translate }}</h3>
+
+    @if (conSesion) {
+      @if (buscando()) {
+        <p>{{ 'common.cargando' | translate }}</p>
+      } @else if (certificado(); as c) {
+        <p>
+          {{ 'certificados.listo' | translate: { asistidas: c.jornadas_asistidas, total: c.jornadas_totales, porcentaje: c.porcentaje_asistencia } }}
+        </p>
+      } @else {
+        <p>{{ 'certificados.noDisponible' | translate }}</p>
+      }
+    } @else {
+      <p>{{ 'certificados.publico.texto' | translate }}</p>
+      @if (formAbierto()) {
+        <form class="mi-cert__form" [formGroup]="form" (ngSubmit)="descargarPublico()">
+          <label class="edu-field">
+            <span class="edu-field__label">{{ 'certificados.publico.documento' | translate }}</span>
+            <input class="edu-control" formControlName="documento_identidad" inputmode="numeric" autocomplete="off" />
+          </label>
+          <label class="edu-field">
+            <span class="edu-field__label">{{ 'certificados.publico.email' | translate }}</span>
+            <input class="edu-control" type="email" formControlName="email" autocomplete="email" />
+          </label>
+          <button type="submit" class="edu-btn" [disabled]="descargando()">
+            <i class="ti ti-download" aria-hidden="true"></i>
+            {{ (descargando() ? 'common.cargando' : 'certificados.descargar') | translate }}
+          </button>
+        </form>
+      }
+    }
+
+    @if (error()) {
+      <p class="mi-cert__error" role="alert">{{ error()! | translate }}</p>
+    }
+  </div>
+
+  @if (conSesion && certificado()) {
+    <button type="button" class="edu-btn" (click)="descargarMio()" [disabled]="descargando()">
+      <i class="ti ti-download" aria-hidden="true"></i>
+      {{ (descargando() ? 'common.cargando' : 'certificados.descargar') | translate }}
+    </button>
+  } @else if (!conSesion && !formAbierto()) {
+    <button type="button" class="edu-btn" (click)="formAbierto.set(true)">
+      <i class="ti ti-certificate" aria-hidden="true"></i>{{ 'certificados.publico.boton' | translate }}
+    </button>
+  }
+</section>

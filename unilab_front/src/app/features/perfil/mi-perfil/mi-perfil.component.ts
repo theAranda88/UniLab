@@ -57,10 +57,20 @@ function passwordsCoinciden(group: AbstractControl): ValidationErrors | null {
  * Mi perfil: rol, escuela y semilleros (solo lectura); teléfono, profesión (Coordinador)
  * y redes de contacto editables; cambio de contraseña.
  */
+import { MisCertificadosComponent } from '../../certificados/mis-certificados/mis-certificados.component';
+import { FirmaUsuarioComponent } from '../../certificados/firma-usuario/firma-usuario.component';
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, RedesContactoComponent, RouterLink, FotoPerfilComponent],
+  imports: [
+    ReactiveFormsModule,
+    TranslatePipe,
+    RedesContactoComponent,
+    RouterLink,
+    FotoPerfilComponent,
+    MisCertificadosComponent,
+    FirmaUsuarioComponent,
+  ],
   templateUrl: './mi-perfil.component.html',
   styleUrl: './mi-perfil.component.scss',
 })
@@ -81,6 +91,10 @@ export class MiPerfilComponent implements OnInit {
   readonly mostrarPasswords = signal(false);
 
   readonly esCoordinador = computed(() => this.usuario()?.id_rol === 'Coordinador');
+  /** Quienes pueden organizar eventos registran la firma que va en los certificados. */
+  readonly puedeFirmar = computed(() =>
+    ['Administrador', 'Coordinador', 'Profesor'].includes(this.usuario()?.id_rol ?? ''),
+  );
 
   readonly form = this.fb.nonNullable.group({
     telefono: ['', [Validators.required, Validators.pattern(TELEFONO_PATTERN)]],
