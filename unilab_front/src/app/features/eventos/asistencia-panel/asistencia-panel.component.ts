@@ -39,7 +39,13 @@ export class AsistenciaPanelComponent implements OnInit {
 
   /** Activos primero; luego por fecha de inicio. */
   readonly filtrados = computed(() => {
-    const orden: Record<Evento['estado'], number> = { activo: 0, planeado: 1, finalizado: 2 };
+    const orden: Record<Evento['estado'], number> = {
+      activo: 0,
+      planeado: 1,
+      finalizado: 2,
+      solicitado: 3,
+      rechazado: 4,
+    };
     const estado = this.filtro();
     return this.items()
       .filter((i) => !estado || i.evento.estado === estado)
@@ -58,7 +64,9 @@ export class AsistenciaPanelComponent implements OnInit {
     this.cargando.set(true);
     this.error.set(null);
     this.eventoService.listar().subscribe({
-      next: (eventos) => {
+      next: (todos) => {
+        // Las solicitudes externas sin aprobar no tienen jornadas ni asistencia
+        const eventos = todos.filter((e) => e.estado !== 'solicitado' && e.estado !== 'rechazado');
         if (eventos.length === 0) {
           this.items.set([]);
           this.cargando.set(false);

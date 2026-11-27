@@ -989,6 +989,8 @@ export const paths = {
     get: {
       tags: ['Eventos'],
       summary: 'Listar eventos',
+      description:
+        'Incluye `alcance`, `escuela` y `semillero`. Solo el Administrador ve también las solicitudes (`solicitado`/`rechazado`).',
       responses: { 200: { description: 'Lista de eventos' }, ...err },
     },
     post: {
@@ -997,6 +999,35 @@ export const paths = {
       description: '**Rol requerido:** Administrador. El organizador es siempre el admin autenticado.',
       requestBody: jsonBody('#/components/schemas/EventoRequest'),
       responses: { 201: { description: 'Evento creado' }, ...err },
+    },
+  },
+  '/eventos/solicitudes': {
+    post: {
+      tags: ['Eventos'],
+      summary: 'Solicitar un evento externo',
+      description:
+        '**Rol requerido:** Externo. Crea el evento con alcance `externo` y estado `solicitado`; el solicitante queda como organizador hasta que el Administrador lo resuelva.',
+      requestBody: jsonBody('#/components/schemas/SolicitudEventoRequest'),
+      responses: { 201: { description: 'Solicitud creada' }, ...err },
+    },
+  },
+  '/eventos/solicitudes/mias': {
+    get: {
+      tags: ['Eventos'],
+      summary: 'Mis solicitudes de evento',
+      description: '**Rol requerido:** Externo. Todas sus solicitudes con su estado y motivo de rechazo.',
+      responses: { 200: { description: 'Solicitudes del usuario' }, ...err },
+    },
+  },
+  '/eventos/{id}/solicitud': {
+    patch: {
+      tags: ['Eventos'],
+      summary: 'Aprobar o rechazar una solicitud de evento',
+      description:
+        '**Rol requerido:** Administrador. Aprobar → estado `planeado`; rechazar → estado `rechazado` con `motivo_rechazo`. 422 si el evento no está `solicitado`.',
+      parameters: [paramId],
+      requestBody: jsonBody('#/components/schemas/ResolverSolicitudEventoRequest'),
+      responses: { 200: { description: 'Solicitud resuelta' }, ...err },
     },
   },
   '/eventos/{id}': {

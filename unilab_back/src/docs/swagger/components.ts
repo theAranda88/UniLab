@@ -768,6 +768,15 @@ export const schemas = {
       lugar: { type: 'string', example: 'Auditorio Principal' },
       estado: { type: 'string', enum: ['planeado', 'activo', 'finalizado'], example: 'planeado' },
       requiere_pago: { type: 'boolean', default: false },
+      alcance: {
+        type: 'string',
+        enum: ['institucional', 'escuela', 'semillero', 'externo'],
+        default: 'institucional',
+        description: 'A quién pertenece el evento. escuela → id_escuela; semillero → id_semillero; externo → organizacion_externa.',
+      },
+      id_escuela: { type: 'integer', nullable: true, example: 5 },
+      id_semillero: { type: 'integer', nullable: true, example: 1 },
+      organizacion_externa: { type: 'string', nullable: true, example: 'Fundación Cauca Digital' },
     },
   },
   EventoUpdateRequest: {
@@ -782,6 +791,37 @@ export const schemas = {
       lugar: { type: 'string', example: 'Auditorio Principal' },
       estado: { type: 'string', enum: ['planeado', 'activo', 'finalizado'], example: 'activo' },
       requiere_pago: { type: 'boolean', example: true },
+      alcance: {
+        type: 'string',
+        enum: ['institucional', 'escuela', 'semillero', 'externo'],
+        default: 'institucional',
+        description: 'A quién pertenece el evento. escuela → id_escuela; semillero → id_semillero; externo → organizacion_externa.',
+      },
+      id_escuela: { type: 'integer', nullable: true, example: 5 },
+      id_semillero: { type: 'integer', nullable: true, example: 1 },
+      organizacion_externa: { type: 'string', nullable: true, example: 'Fundación Cauca Digital' },
+    },
+  },
+  SolicitudEventoRequest: {
+    type: 'object',
+    required: ['nombre_evento', 'tipo_evento', 'descripcion', 'fecha_inicio', 'fecha_fin', 'lugar', 'organizacion_externa'],
+    properties: {
+      nombre_evento: { type: 'string', example: 'Hackathon Ciudad Inteligente' },
+      tipo_evento: { type: 'string', example: 'Hackathon' },
+      descripcion: { type: 'string', example: 'Reto abierto organizado por una fundación aliada' },
+      fecha_inicio: { type: 'string', format: 'date', example: '2026-12-01' },
+      fecha_fin: { type: 'string', format: 'date', example: '2026-12-02' },
+      lugar: { type: 'string', example: 'Campus Central' },
+      requiere_pago: { type: 'boolean', default: false },
+      organizacion_externa: { type: 'string', example: 'Fundación Cauca Digital' },
+    },
+  },
+  ResolverSolicitudEventoRequest: {
+    type: 'object',
+    required: ['decision'],
+    properties: {
+      decision: { type: 'string', enum: ['aprobar', 'rechazar'] },
+      motivo_rechazo: { type: 'string', description: 'Obligatorio si decision=rechazar', example: 'Fechas cruzadas con otro evento' },
     },
   },
   JornadaRequest: {

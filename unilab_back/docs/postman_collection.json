@@ -990,6 +990,63 @@
           }
         },
         {
+          "name": "Crear evento de un semillero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_evento\": \"Jornada del semillero\",\n  \"tipo_evento\": \"Taller\",\n  \"descripcion\": \"Evento propio del semillero\",\n  \"fecha_inicio\": \"2026-12-01\",\n  \"fecha_fin\": \"2026-12-01\",\n  \"lugar\": \"Sala 2\",\n  \"estado\": \"planeado\",\n  \"alcance\": \"semillero\",\n  \"id_semillero\": {{id_semillero}}\n}"
+            },
+            "url": "{{base_url}}/eventos",
+            "description": "Solo Administrador. `alcance`: institucional (por defecto) | escuela (`id_escuela`) | semillero (`id_semillero`, la escuela se toma del semillero) | externo (`organizacion_externa`)."
+          }
+        },
+        {
+          "name": "Solicitar evento externo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_evento\": \"Hackathon Ciudad Inteligente\",\n  \"tipo_evento\": \"Hackathon\",\n  \"descripcion\": \"Reto abierto organizado por una fundación aliada\",\n  \"fecha_inicio\": \"2026-12-01\",\n  \"fecha_fin\": \"2026-12-02\",\n  \"lugar\": \"Campus Central\",\n  \"organizacion_externa\": \"Fundación Cauca Digital\"\n}"
+            },
+            "url": "{{base_url}}/eventos/solicitudes",
+            "description": "Solo Externo (usar su token). Queda en estado `solicitado` hasta que el Administrador lo resuelva."
+          }
+        },
+        {
+          "name": "Mis solicitudes de evento",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/eventos/solicitudes/mias",
+            "description": "Solo Externo."
+          }
+        },
+        {
+          "name": "Aprobar / rechazar solicitud de evento",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"rechazar\",\n  \"motivo_rechazo\": \"Fechas cruzadas con otro evento\"\n}"
+            },
+            "url": "{{base_url}}/eventos/{{id_evento}}/solicitud",
+            "description": "Solo Administrador. `aprobar` → planeado; `rechazar` → rechazado (motivo obligatorio)."
+          }
+        },
+        {
           "name": "Subir flyer del evento",
           "request": {
             "method": "POST",

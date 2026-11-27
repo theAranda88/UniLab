@@ -184,7 +184,7 @@ export const publicoService = {
   },
 
   obtenerEventoActivo(id: number) {
-    return eventoService.obtenerVisible(id);
+    return eventoService.obtenerVisiblePublico(id);
   },
 
   inscribirEvento(

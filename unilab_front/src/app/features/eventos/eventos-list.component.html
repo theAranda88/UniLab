@@ -102,6 +102,10 @@
         <option value="activo">{{ 'eventos.estado.activo' | translate }}</option>
 
         <option value="finalizado">{{ 'eventos.estado.finalizado' | translate }}</option>
+        @if (puedeResolverSolicitudes()) {
+          <option value="solicitado">{{ 'eventos.estado.solicitado' | translate }}</option>
+          <option value="rechazado">{{ 'eventos.estado.rechazado' | translate }}</option>
+        }
 
       </select>
 
@@ -110,6 +114,16 @@
   }
 
 
+
+  @if (puedeResolverSolicitudes() && solicitudesPendientes() > 0 && filtroEstado() !== 'solicitado') {
+    <div class="solicitudes-aviso" role="status">
+      <i class="ti ti-inbox" aria-hidden="true"></i>
+      <span>{{ 'eventos.solicitud.avisoPendientes' | translate: { total: solicitudesPendientes() } }}</span>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="filtroEstado.set('solicitado')">
+        {{ 'eventos.solicitud.verPendientes' | translate }}
+      </button>
+    </div>
+  }
 
   @if (cargando()) {
     <app-skeleton variant="cards" [rows]="3" />

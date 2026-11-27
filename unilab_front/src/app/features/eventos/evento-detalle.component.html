@@ -58,6 +58,15 @@
                 <span>{{ ev.tipo_evento }}</span>
               </span>
             </li>
+            @if (alcance(); as a) {
+              <li>
+                <span class="evento-facts__icon"><i class="ti {{ a.icono }}" aria-hidden="true"></i></span>
+                <span class="evento-facts__text">
+                  <span class="evento-facts__label">{{ a.clave | translate }}</span>
+                  <span>{{ a.texto ?? ('eventos.alcance.institucionalTexto' | translate) }}</span>
+                </span>
+              </li>
+            }
             <li [class.evento-facts__pago]="ev.requiere_pago">
               <span class="evento-facts__icon">
                 <i class="ti" [class.ti-cash]="ev.requiere_pago" [class.ti-cash-off]="!ev.requiere_pago" aria-hidden="true"></i>
@@ -70,6 +79,68 @@
           </ul>
         </div>
       </div>
+
+      @if (ev.estado === 'solicitado') {
+        <section class="solicitud-banner" aria-labelledby="solicitud-title">
+          <div class="solicitud-banner__text">
+            <h3 id="solicitud-title">
+              <i class="ti ti-hourglass" aria-hidden="true"></i>
+              {{ 'eventos.solicitud.pendienteTitulo' | translate }}
+            </h3>
+            <p>
+              {{ (puedeResolverSolicitud() ? 'eventos.solicitud.pendienteAdmin' : 'eventos.solicitud.pendienteExterno') | translate }}
+            </p>
+          </div>
+          @if (puedeResolverSolicitud()) {
+            @if (!rechazandoSolicitud()) {
+              <div class="solicitud-banner__actions">
+                <button type="button" class="btn btn-primary" (click)="aprobarSolicitud()" [disabled]="resolviendo()">
+                  {{ 'eventos.solicitud.aprobar' | translate }}
+                </button>
+                <button type="button" class="btn btn-danger" (click)="rechazandoSolicitud.set(true)" [disabled]="resolviendo()">
+                  {{ 'eventos.solicitud.rechazar' | translate }}
+                </button>
+              </div>
+            } @else {
+              <div class="solicitud-banner__rechazo">
+                <label for="motivo-rechazo">{{ 'eventos.solicitud.motivo' | translate }} *</label>
+                <textarea
+                  id="motivo-rechazo"
+                  rows="3"
+                  class="form-control"
+                  [ngModel]="motivoRechazo()"
+                  (ngModelChange)="motivoRechazo.set($event)"
+                ></textarea>
+                <div class="solicitud-banner__actions">
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    (click)="rechazarSolicitud()"
+                    [disabled]="resolviendo() || !motivoRechazo().trim()"
+                  >
+                    {{ 'eventos.solicitud.confirmarRechazo' | translate }}
+                  </button>
+                  <button type="button" class="btn btn-secondary" (click)="rechazandoSolicitud.set(false)">
+                    {{ 'common.cancelar' | translate }}
+                  </button>
+                </div>
+              </div>
+            }
+          }
+        </section>
+      } @else if (ev.estado === 'rechazado') {
+        <section class="solicitud-banner solicitud-banner--rechazada">
+          <div class="solicitud-banner__text">
+            <h3>
+              <i class="ti ti-circle-x" aria-hidden="true"></i>
+              {{ 'eventos.solicitud.rechazadaTitulo' | translate }}
+            </h3>
+            @if (ev.motivo_rechazo) {
+              <p><strong>{{ 'eventos.solicitud.motivo' | translate }}:</strong> {{ ev.motivo_rechazo }}</p>
+            }
+          </div>
+        </section>
+      }
 
       <div class="descripcion-section">
         <h3>{{ 'eventos.descripcion' | translate }}</h3>

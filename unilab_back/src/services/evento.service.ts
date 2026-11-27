@@ -3,7 +3,100 @@ import QRCode from 'qrcode';
 import ExcelJS from 'exceljs';
 import { AppError } from '../utils/AppError';
 import { eventoRepository } from '../models/evento.repository';
+import { escuelaRepository } from '../models/escuela.repository';
+import { semilleroRepository } from '../models/semillero.repository';
 import { prisma } from '../models/prisma.client';
+
+/** Estados de una solicitud de evento externo que todavía no es un evento aprobado. */
+const ESTADOS_SOLICITUD = ['solicitado', 'rechazado'];
+
+type Alcance = 'institucional' | 'escuela' | 'semillero' | 'externo';
+
+type DatosAlcance = {
+  alcance?: Alcance;
+  id_escuela?: number | null;
+  id_semillero?: number | null;
+  organizacion_externa?: string | null;
+};
+
+type AlcanceResuelto = {
+  alcance: Alcance;
+  id_escuela: number | null;
+  id_semillero: number | null;
+  organizacion_externa: string | null;
+};
+
+/**
+ * Normaliza a quién pertenece el evento:
+ * - institucional: sin escuela ni semillero.
+ * - escuela: requiere escuela.
+ * - semillero: requiere semillero; la escuela se toma del semillero.
+ * - externo: requiere el nombre de la organización externa.
+ */
+async function resolverAlcance(data: DatosAlcance): Promise<AlcanceResuelto> {
+  const alcance = data.alcance ?? 'institucional';
+  const vacio = { id_escuela: null, id_semillero: null, organizacion_externa: null };
+
+  switch (alcance) {
+    case 'escuela': {
+      if (!data.id_escuela) throw new AppError('Seleccione la escuela del evento', 422);
+      if (data.id_semillero) {
+        throw new AppError('Un evento de escuela no se asocia a un semillero; use el alcance semillero', 422);
+      }
+      const escuela = await escuelaRepository.findById(data.id_escuela);
+      if (!escuela) throw new AppError('Escuela no encontrada', 404);
+      return { alcance, ...vacio, id_escuela: escuela.id_escuela };
+    }
+
+    case 'semillero': {
+      if (!data.id_semillero) throw new AppError('Seleccione el semillero del evento', 422);
+      const semillero = await semilleroRepository.findById(data.id_semillero);
+      if (!semillero) throw new AppError('Semillero no encontrado', 404);
+      return { alcance, ...vacio, id_escuela: semillero.id_escuela, id_semillero: semillero.id_semillero };
+    }
+
+    case 'externo': {
+      const organizacion = data.organizacion_externa?.trim();
+      if (!organizacion) throw new AppError('Indique la organización externa que realiza el evento', 422);
+      if (data.id_escuela || data.id_semillero) {
+        throw new AppError('Un evento externo no se asocia a una escuela ni a un semillero', 422);
+      }
+      return { alcance, ...vacio, organizacion_externa: organizacion };
+    }
+
+    default:
+      if (data.id_escuela || data.id_semillero) {
+        throw new AppError('Un evento institucional no se asocia a una escuela ni a un semillero', 422);
+      }
+      return { alcance: 'institucional', ...vacio };
+  }
+}
+
+/** Relaciones del alcance para crear un evento. */
+function alcanceCreate(a: AlcanceResuelto) {
+  return {
+    alcance: a.alcance,
+    organizacion_externa: a.organizacion_externa,
+    ...(a.id_escuela ? { escuela: { connect: { id_escuela: a.id_escuela } } } : {}),
+    ...(a.id_semillero ? { semillero: { connect: { id_semillero: a.id_semillero } } } : {}),
+  };
+}
+
+/** Relaciones del alcance al actualizar: desconecta la escuela/semillero que ya no aplican. */
+function alcanceUpdate(a: AlcanceResuelto) {
+  return {
+    alcance: a.alcance,
+    organizacion_externa: a.organizacion_externa,
+    escuela: a.id_escuela ? { connect: { id_escuela: a.id_escuela } } : { disconnect: true },
+    semillero: a.id_semillero ? { connect: { id_semillero: a.id_semillero } } : { disconnect: true },
+  };
+}
+
+function assertEventoAprobado(evento: { estado: string }) {
+  if (ESTADOS_SOLICITUD.includes(evento.estado)) {
+    throw new AppError('El evento aún no ha sido aprobado', 422);
+  }
+}
 
 function parseDate(fecha: string): Date {
   const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -70,8 +163,65 @@ async function validarYRegistrarAsistencia(
 }
 
 export const eventoService = {
-  listar() {
-    return eventoRepository.findMany();
+  /** El administrador ve también las solicitudes; los demás solo eventos aprobados. */
+  listar(rol?: string) {
+    return eventoRepository.findMany(
+      rol === 'Administrador' ? undefined : { excluirEstados: ESTADOS_SOLICITUD },
+    );
+  },
+
+  /** Detalle visible: una solicitud solo la ven el administrador y quien la hizo. */
+  async obtenerVisible(id: number, usuario: { id_usuario: number; id_rol: string }) {
+    const evento = await eventoService.obtener(id);
+    const esSolicitud = ESTADOS_SOLICITUD.includes(evento.estado);
+    if (esSolicitud && usuario.id_rol !== 'Administrador' && evento.id_organizador !== usuario.id_usuario) {
+      throw new AppError('Evento no encontrado', 404);
+    }
+    return evento;
+  },
+
+  /** Solicitudes de evento hechas por un usuario Externo, en todos sus estados. */
+  misSolicitudes(id_usuario: number) {
+    return eventoRepository.findMany({ id_organizador: id_usuario, alcance: 'externo' });
+  },
+
+  async solicitar(data: {
+    nombre_evento: string;
+    tipo_evento: string;
+    descripcion: string;
+    fecha_inicio: string;
+    fecha_fin: string;
+    lugar: string;
+    requiere_pago?: boolean;
+    organizacion_externa: string;
+    id_usuario: number;
+  }) {
+    const alcance = await resolverAlcance({ alcance: 'externo', organizacion_externa: data.organizacion_externa });
+    return eventoRepository.create({
+      nombre_evento: data.nombre_evento,
+      tipo_evento: data.tipo_evento,
+      descripcion: data.descripcion,
+      fecha_inicio: parseDate(data.fecha_inicio),
+      fecha_fin: parseDate(data.fecha_fin),
+      lugar: data.lugar,
+      estado: 'solicitado',
+      requiere_pago: data.requiere_pago ?? false,
+      ...alcanceCreate(alcance),
+      organizador: { connect: { id_usuario: data.id_usuario } },
+      creador: { connect: { id_usuario: data.id_usuario } },
+    });
+  },
+
+  /** El administrador aprueba (pasa a `planeado`) o rechaza (con motivo) una solicitud. */
+  async resolverSolicitud(id: number, decision: 'aprobar' | 'rechazar', motivo_rechazo?: string) {
+    const evento = await eventoService.obtener(id);
+    if (evento.estado !== 'solicitado') {
+      throw new AppError('Solo se pueden resolver eventos en estado solicitado', 422);
+    }
+    return eventoRepository.update(id, {
+      estado: decision === 'aprobar' ? 'planeado' : 'rechazado',
+      motivo_rechazo: decision === 'rechazar' ? (motivo_rechazo ?? '').trim() : null,
+    });
   },
 
   async obtener(id: number) {
@@ -91,7 +241,7 @@ export const eventoService = {
   },
 
   /** Detalle público: también muestra eventos planeados y finalizados (p. ej. los del perfil de una persona). */
-  async obtenerVisible(id: number) {
+  async obtenerVisiblePublico(id: number) {
     const evento = await eventoRepository.findByIdVisible(id);
     if (!evento) throw new AppError('Evento no encontrado', 404);
     return evento;
@@ -108,7 +258,8 @@ export const eventoService = {
     requiere_pago?: boolean;
     id_organizador: number;
     created_by: number;
-  }) {
+  } & DatosAlcance) {
+    const alcance = await resolverAlcance(data);
     return eventoRepository.create({
       nombre_evento: data.nombre_evento,
       tipo_evento: data.tipo_evento,
@@ -118,6 +269,7 @@ export const eventoService = {
       lugar: data.lugar,
       estado: data.estado,
       requiere_pago: data.requiere_pago ?? false,
+      ...alcanceCreate(alcance),
       organizador: { connect: { id_usuario: data.id_organizador } },
       creador: { connect: { id_usuario: data.created_by } },
     });
@@ -134,10 +286,37 @@ export const eventoService = {
       lugar?: string;
       estado?: string;
       requiere_pago?: boolean;
-    },
+    } & DatosAlcance,
   ) {
-    await eventoService.obtener(id);
+    const actual = await eventoService.obtener(id);
+    if (data.estado && ESTADOS_SOLICITUD.includes(actual.estado)) {
+      throw new AppError('Apruebe o rechace la solicitud antes de cambiar su estado', 422);
+    }
+
+    const cambiaAlcance =
+      data.alcance !== undefined ||
+      data.id_escuela !== undefined ||
+      data.id_semillero !== undefined ||
+      data.organizacion_externa !== undefined;
+    let alcance: AlcanceResuelto | null = null;
+    if (cambiaAlcance) {
+      // Si cambia el tipo de alcance no se heredan la escuela, el semillero ni la organización anteriores.
+      const mismoTipo = !data.alcance || data.alcance === actual.alcance;
+      alcance = await resolverAlcance({
+        alcance: data.alcance ?? (actual.alcance as Alcance),
+        id_escuela: data.id_escuela !== undefined ? data.id_escuela : mismoTipo ? actual.id_escuela : null,
+        id_semillero: data.id_semillero !== undefined ? data.id_semillero : mismoTipo ? actual.id_semillero : null,
+        organizacion_externa:
+          data.organizacion_externa !== undefined
+            ? data.organizacion_externa
+            : mismoTipo
+              ? actual.organizacion_externa
+              : null,
+      });
+    }
+
     return eventoRepository.update(id, {
+      ...(alcance ? alcanceUpdate(alcance) : {}),
       nombre_evento: data.nombre_evento,
       tipo_evento: data.tipo_evento,
       descripcion: data.descripcion,
@@ -230,6 +409,7 @@ export const eventoService = {
     genero: string;
   }) {
     const evento = await eventoService.obtener(id_evento);
+    assertEventoAprobado(evento);
 
     const existente = await eventoRepository.findInscripcionEventoUsuario(id_evento, id_usuario);
     if (existente) throw new AppError('Ya está inscrito en este evento', 409);
@@ -279,7 +459,7 @@ export const eventoService = {
   },
 
   async obtenerInscripcionPorDocumento(id_evento: number, documento_identidad: string) {
-    await eventoService.obtenerVisible(id_evento);
+    await eventoService.obtenerVisiblePublico(id_evento);
     const inscripcion = await eventoRepository.findInscripcionEventoDocumento(
       id_evento,
       documento_identidad,

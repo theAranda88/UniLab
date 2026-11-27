@@ -98,6 +98,18 @@
               </a>
             </li>
           }
+          @if (isLoggedIn() && isExterno()) {
+            <li>
+              <a
+                routerLink="/mis-solicitudes"
+                class="portal__nav-link"
+                [class.portal__nav-link--active]="activeSection() === 'mis-solicitudes'"
+                [attr.aria-current]="activeSection() === 'mis-solicitudes' ? 'page' : null"
+              >
+                {{ 'eventos.solicitud.navLink' | translate }}
+              </a>
+            </li>
+          }
         </ul>
 
         <div class="portal__actions">

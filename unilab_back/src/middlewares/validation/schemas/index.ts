@@ -385,16 +385,45 @@ export const resolverMembresiaSchema = z.object({
   estado_solicitud: z.enum(['aprobado', 'rechazado']),
 });
 
-export const eventoSchema = z.object({
+/** Campos que definen a quién pertenece el evento; la coherencia se valida en el service. */
+const eventoAlcanceShape = {
+  alcance: z.enum(['institucional', 'escuela', 'semillero', 'externo']).optional(),
+  id_escuela: z.number().int().positive().nullable().optional(),
+  id_semillero: z.number().int().positive().nullable().optional(),
+  organizacion_externa: z.string().trim().max(255).nullable().optional(),
+};
+
+const eventoDatosShape = {
   nombre_evento: z.string().min(1),
   tipo_evento: z.string().min(1),
   descripcion: z.string().min(1),
   fecha_inicio: z.string(),
   fecha_fin: z.string(),
   lugar: z.string().min(1),
-  estado: z.enum(['planeado', 'activo', 'finalizado']),
   requiere_pago: z.boolean().optional(),
+};
+
+export const eventoSchema = z.object({
+  ...eventoDatosShape,
+  estado: z.enum(['planeado', 'activo', 'finalizado']),
+  ...eventoAlcanceShape,
 });
+
+/** POST /eventos/solicitudes: un usuario Externo pide un evento; queda en estado `solicitado`. */
+export const solicitudEventoSchema = z.object({
+  ...eventoDatosShape,
+  organizacion_externa: z.string().trim().min(1).max(255),
+});
+
+export const resolverSolicitudEventoSchema = z
+  .object({
+    decision: z.enum(['aprobar', 'rechazar']),
+    motivo_rechazo: z.string().trim().max(1000).optional(),
+  })
+  .refine((d) => d.decision === 'aprobar' || !!d.motivo_rechazo, {
+    message: 'Indique el motivo del rechazo',
+    path: ['motivo_rechazo'],
+  });
 
 export const eventoUpdateSchema = eventoSchema.partial().refine(
   (data) => Object.keys(data).length > 0,

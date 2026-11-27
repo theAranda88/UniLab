@@ -1,0 +1,46 @@
+@use '../../../../styles/design-tokens' as t;
+
+.mis-solicitudes {
+  max-width: t.$content-max-width;
+  margin: 0 auto;
+  padding: t.$space-32 t.$space-24 t.$space-48;
+
+  @include t.respond-to(t.$breakpoint-sm) {
+    padding: t.$space-24 t.$space-16 t.$space-32;
+  }
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: t.$space-16;
+  margin-bottom: t.$space-24;
+
+  h1 {
+    @include t.page-title;
+  }
+
+  &__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__kicker {
+    @include t.kicker;
+  }
+
+  &__lead {
+    @include t.page-description;
+    max-width: 56ch;
+    margin: 0;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: t.$space-20;
+}

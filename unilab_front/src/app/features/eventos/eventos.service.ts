@@ -13,6 +13,8 @@ import {
   MiInscripcionResponse,
   ReporteEvento,
   JornadaEvidencia,
+  SolicitudEventoDto,
+  ResolverSolicitudEventoDto,
 } from '../../core/models/evento.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { getEventosBasePath } from '../../core/config/eventos-paths';
@@ -60,6 +62,14 @@ export class EventosService {
     return this.authService.hasRole('Administrador');
   }
 
+  puedeSolicitarEventos(): boolean {
+    return this.authService.hasRole('Externo');
+  }
+
+  puedeResolverSolicitudes(): boolean {
+    return this.authService.hasRole('Administrador');
+  }
+
   puedeInscribirse(): boolean {
     return !this.authService.hasRole('Administrador');
   }
@@ -74,6 +84,18 @@ export class EventosService {
 
   listar(): Observable<Evento[]> {
     return this.http.get<Evento[]>(`${this.apiUrl}`);
+  }
+
+  misSolicitudes(): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/solicitudes/mias`);
+  }
+
+  solicitar(data: SolicitudEventoDto): Observable<Evento> {
+    return this.http.post<Evento>(`${this.apiUrl}/solicitudes`, data);
+  }
+
+  resolverSolicitud(id: number, data: ResolverSolicitudEventoDto): Observable<Evento> {
+    return this.http.patch<Evento>(`${this.apiUrl}/${id}/solicitud`, data);
   }
 
   obtener(id: number): Observable<Evento> {

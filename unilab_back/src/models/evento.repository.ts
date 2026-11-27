@@ -2,10 +2,17 @@ import { prisma } from './prisma.client';
 import { activo } from './base.repository';
 import type { Prisma } from '@prisma/client';
 
+/** Escuela y semillero a los que pertenece el evento (si aplica). */
+const alcanceInclude = {
+  escuela: { select: { id_escuela: true, nombre_escuela: true } },
+  semillero: { select: { id_semillero: true, nombre_semillero: true } },
+} as const;
+
 export const eventoRepository = {
   findManyActivos() {
     return prisma.eventos.findMany({
       where: { ...activo, estado: 'activo' },
+      include: alcanceInclude,
       orderBy: { id_evento: 'desc' },
     });
   },
@@ -13,6 +20,7 @@ export const eventoRepository = {
   findByIdActivo(id: number) {
     return prisma.eventos.findFirst({
       where: { id_evento: id, estado: 'activo', ...activo },
+      include: alcanceInclude,
     });
   },
 
@@ -23,10 +31,15 @@ export const eventoRepository = {
     });
   },
 
-  findMany() {
+  findMany(filtro?: { excluirEstados?: string[]; id_organizador?: number; alcance?: string }) {
     return prisma.eventos.findMany({
-      where: activo,
-      include: { jornadas: { where: activo }, organizador: true },
+      where: {
+        ...activo,
+        ...(filtro?.excluirEstados ? { estado: { notIn: filtro.excluirEstados } } : {}),
+        ...(filtro?.id_organizador ? { id_organizador: filtro.id_organizador } : {}),
+        ...(filtro?.alcance ? { alcance: filtro.alcance } : {}),
+      },
+      include: { jornadas: { where: activo }, organizador: true, ...alcanceInclude },
       orderBy: { id_evento: 'desc' },
     });
   },
@@ -38,6 +51,7 @@ export const eventoRepository = {
         jornadas: { where: activo },
         organizador: true,
         inscripciones: { where: activo },
+        ...alcanceInclude,
       },
     });
   },
